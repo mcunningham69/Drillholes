@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drillholes.FileDialog", "Drillholes.FileDialog.csproj", "{C0C24161-4DFC-4A0C-87D3-7F824E41F19C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C0C24161-4DFC-4A0C-87D3-7F824E41F19C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0C24161-4DFC-4A0C-87D3-7F824E41F19C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0C24161-4DFC-4A0C-87D3-7F824E41F19C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0C24161-4DFC-4A0C-87D3-7F824E41F19C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F76DB308-CFAD-4BC6-BF92-6B615389E546}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 1
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://mcunningham.visualstudio.com/
+		SccProjectUniqueName0 = Drillholes.FileDialog.csproj
+		SccProjectName0 = .
+		SccAuxPath0 = https://mcunningham.visualstudio.com
+		SccLocalPath0 = .
+		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+	EndGlobalSection
+EndGlobal

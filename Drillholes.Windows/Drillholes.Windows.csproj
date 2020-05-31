@@ -35,6 +35,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=9.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>packages\AutoMapper.9.0.0\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -55,20 +61,62 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Dialogs\DrillholeDialog.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
+    <Compile Include="Dialogs\DrillholeDialog.xaml.cs">
+      <DependentUpon>DrillholeDialog.xaml</DependentUpon>
     </Compile>
+    <Page Include="Dialogs\DrillholeEdits.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DrillholeExcelSheet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DrillholeImport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DrillholeSummaryMessages.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DrillholeSummaryStatistics.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\GlassButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GlassButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\DrillholeEdits.xaml.cs">
+      <DependentUpon>DrillholeEdits.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DrillholeExcelSheet.xaml.cs">
+      <DependentUpon>DrillholeExcelSheet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DrillholeImport.xaml.cs">
+      <DependentUpon>DrillholeImport.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DrillholeSummaryMessages.xaml.cs">
+      <DependentUpon>DrillholeSummaryMessages.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DrillholeSummaryStatistics.xaml.cs">
+      <DependentUpon>DrillholeSummaryStatistics.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -86,6 +134,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -93,6 +142,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Drillholes.Domain\Drillholes.Domain.csproj">
+      <Project>{faaa7f51-4262-4c9a-9997-592f6d5ad802}</Project>
+      <Name>Drillholes.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Drillholes.FileDialog\Drillholes.FileDialog.csproj">
+      <Project>{c0c24161-4dfc-4a0c-87d3-7f824e41f19c}</Project>
+      <Name>Drillholes.FileDialog</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\fault.jpg" />
+    <Resource Include="Images\glencoe.jpg" />
+    <Resource Include="Images\skye.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

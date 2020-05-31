@@ -1,0 +1,10 @@
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\bin\Debug\Drillholes.Domain.dll
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\bin\Debug\Drillholes.Domain.pdb
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\bin\Debug\AutoMapper.dll
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\bin\Debug\AutoMapper.pdb
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\bin\Debug\AutoMapper.xml
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csprojAssemblyReference.cache
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csproj.CoreCompileInputs.cache
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csproj.CopyComplete
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.dll
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.pdb

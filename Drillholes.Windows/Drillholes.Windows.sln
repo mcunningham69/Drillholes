@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drillholes.Windows", "Drillholes.Windows.csproj", "{E1C6767F-EB49-4646-B48B-E9EFC57D61C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drillholes.FileDialog", "..\Drillholes.FileDialog\Drillholes.FileDialog.csproj", "{C0C24161-4DFC-4A0C-87D3-7F824E41F19C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drillholes.Domain", "..\Drillholes.Domain\Drillholes.Domain.csproj", "{FAAA7F51-4262-4C9A-9997-592F6D5AD802}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{E1C6767F-EB49-4646-B48B-E9EFC57D61C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1C6767F-EB49-4646-B48B-E9EFC57D61C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1C6767F-EB49-4646-B48B-E9EFC57D61C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0C24161-4DFC-4A0C-87D3-7F824E41F19C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0C24161-4DFC-4A0C-87D3-7F824E41F19C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0C24161-4DFC-4A0C-87D3-7F824E41F19C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0C24161-4DFC-4A0C-87D3-7F824E41F19C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAAA7F51-4262-4C9A-9997-592F6D5AD802}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAAA7F51-4262-4C9A-9997-592F6D5AD802}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAAA7F51-4262-4C9A-9997-592F6D5AD802}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAAA7F51-4262-4C9A-9997-592F6D5AD802}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
