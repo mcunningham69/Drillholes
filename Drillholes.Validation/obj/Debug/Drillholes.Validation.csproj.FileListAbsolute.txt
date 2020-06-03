@@ -1,0 +1,12 @@
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\bin\Debug\Drillholes.Validation.dll
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\bin\Debug\Drillholes.Validation.pdb
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\bin\Debug\Drillholes.Domain.dll
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\bin\Debug\AutoMapper.dll
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\bin\Debug\Drillholes.Domain.pdb
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\bin\Debug\AutoMapper.pdb
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\bin\Debug\AutoMapper.xml
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.csprojAssemblyReference.cache
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.csproj.CoreCompileInputs.cache
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.csproj.CopyComplete
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.dll
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.pdb

@@ -13,13 +13,15 @@ namespace Drillholes.Domain.DTO
         public string tableName { get; set; }
         public bool tableIsValid { get; set; }
         public List<string> fields { get; set; }
-        // public string tableFields { get; set; }
+         public string tableField { get; set; }
         public ImportTableFields tableData { get; set; }
         public DrillholeImportFormat tableFormat { get; set; }
         public System.Xml.Linq.XElement xPreview { get; set; }
         public string collarKey { get; set; }
         public bool isValid { get; set; }
         public bool isCancelled { get; set; }
+        public SummaryCollarStatistics SummaryStats { get; set; }
+
         //  public TestMessages testMessages { get; set; }
         public bool hasEdits { get; set; }
         public string tableLocation { get; set; }

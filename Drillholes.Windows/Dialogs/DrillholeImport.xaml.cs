@@ -611,6 +611,38 @@ namespace Drillholes.Windows.Dialogs
 
         private void btnStatistics_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                DrillholeSummaryStatistics summaryView = new DrillholeSummaryStatistics(collarPreviewModel, surveyPreviewModel, assayPreviewModel,
+                    intervalPreviewModel);
+
+                if (_tabcontrol.SelectedIndex == 0)
+                {
+                    summaryView.selectedIndex = 0;
+                }
+                else if (_tabcontrol.SelectedIndex == 1)
+                {
+                    summaryView.selectedIndex = 1;
+                }
+                else if (_tabcontrol.SelectedIndex == 2)
+                {
+                    summaryView.selectedIndex = 2;
+                }
+                else if (_tabcontrol.SelectedIndex == 3)
+                {
+                    summaryView.selectedIndex = 3;
+                }
+
+                summaryView.Show();
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+
+            }
 
         }
 

@@ -33,3 +33,5 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialog
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeSummaryStatistics.g.cs
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeSummaryMessages.baml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeSummaryStatistics.baml
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\bin\Debug\Drillholes.Validation.dll
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\bin\Debug\Drillholes.Validation.pdb

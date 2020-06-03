@@ -10,6 +10,7 @@ using Drillholes.Domain.DataObject;
 using Drillholes.Domain.Services;
 using Drillholes.Domain.Interfaces;
 using Drillholes.Domain.DTO;
+using Drillholes.Validation.Statistics;
 using AutoMapper;
 using System.Xml.Linq;
 using System.Data;
@@ -20,11 +21,19 @@ namespace Drillholes.Windows.ViewModel
     public class CollarView : ViewEditModel
     {
         public CollarTableObject collarTableObject { get; set; }
+
         private CollarTableService _collarService;
+
         private ICollarTable _collarTable;
+
         public System.Data.DataTable dataGrid { get; set; }
 
         public IMapper classMapper = null;
+        public IMapper statisticsMapper = null;
+
+        public DisplaySummaryStatistics TableStatistics = new DisplaySummaryStatistics();
+        public List<SummaryCollarStatistics> ShowStatistics { get { return TableStatistics.DisplayStatistcs.ToList(); } }
+
 
         private ImportTableFields _collarDataFields;
         public ImportTableFields collarDataFields
@@ -43,7 +52,10 @@ namespace Drillholes.Windows.ViewModel
         public string tableCaption { get; set; }
         public string collarKey { get; set; }
         public bool skipTable { get; set; }
-        public bool importChecked {get;set;}
+        public bool importChecked { get; set; }
+
+        public string tableFields { get; set; }
+        
 
         public CollarView(DrillholeImportFormat _tableFormat, DrillholeTableType _tableType, string _tableLocation,
             string _tableName)
@@ -62,7 +74,7 @@ namespace Drillholes.Windows.ViewModel
         }
 
         //TODO move out of here
-        public virtual void InitialiseMapping()
+        public virtual void InitialiseTableMapping()
         {
             //Add ArcSDE
             if (DrillholeImportFormat.fgdb_table == collarTableObject.tableFormat ||
@@ -86,6 +98,23 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
+        public virtual void InitialiseStatisticsMapping(ICollarStatistics _collarStatistics, CollarStatisticsService _collarStatisticsService)
+        {
+            if (_collarStatistics == null)
+                _collarStatistics = new CollarStatistics();
+
+            var config = new MapperConfiguration(cfg => { cfg.CreateMap<CollarTableDto, CollarTableObject>(); });
+
+            statisticsMapper = config.CreateMapper();
+
+            var source = new CollarTableDto();
+
+            var dest = statisticsMapper.Map<CollarTableDto, CollarTableObject>(source);
+
+            _collarStatisticsService = new CollarStatisticsService(_collarStatistics);
+
+        }
+
         public virtual void SetDataContext(DataGrid dataPreview)
         {
             if (dataGrid.Columns.Count > 0)
@@ -95,7 +124,7 @@ namespace Drillholes.Windows.ViewModel
         public virtual async Task<bool> RetrieveFieldsToMap()
         {
             if (classMapper == null)
-                InitialiseMapping();
+                InitialiseTableMapping();
 
             var collarService = await _collarService.GetCollarFields(classMapper, collarTableObject.tableFormat,
                 collarTableObject.tableLocation, collarTableObject.tableName);
@@ -133,7 +162,7 @@ namespace Drillholes.Windows.ViewModel
                 }
 
 
-                tableCaption = char.ToUpper(collarTableObject.tableType.ToString()[0]) + 
+                tableCaption = char.ToUpper(collarTableObject.tableType.ToString()[0]) +
                     collarTableObject.tableType.ToString().Substring(1);
 
 
@@ -144,14 +173,14 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public virtual void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList, 
+        public virtual void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
             bool bImport)
         {
 
             string _strSearch = _searchList.columnHeader;
             string _strName = _searchList.columnImportName;
 
-            var collarService = _collarService.UpdateFieldvalues(previousSelection, classMapper, selectedValue, 
+            var collarService = _collarService.UpdateFieldvalues(previousSelection, classMapper, selectedValue,
                 _strSearch, _strName);
 
 
@@ -206,8 +235,8 @@ namespace Drillholes.Windows.ViewModel
             int noOfRecords = dataTable.Rows.Count;
 
             //white space for formatting on status bar
-            string displayItems = (noOfRecords == 1 ? noOfRecords.ToString() + " " + collarTableObject.tableType + 
-                "          " : noOfRecords.ToString() + " " + collarTableObject.tableType + "s          "); 
+            string displayItems = (noOfRecords == 1 ? noOfRecords.ToString() + " " + collarTableObject.tableType +
+                "          " : noOfRecords.ToString() + " " + collarTableObject.tableType + "s          ");
 
         }
 
@@ -234,7 +263,7 @@ namespace Drillholes.Windows.ViewModel
 
         public virtual async Task<bool> UpdateFieldnamesInXml()
         {
-            UpdateFieldnamesXml.UpdateFieldnamesXML(collarTableObject.tableType, collarTableObject.tableData, 
+            UpdateFieldnamesXml.UpdateFieldnamesXML(collarTableObject.tableType, collarTableObject.tableData,
                 collarTableObject.collarKey, "", collarTableObject.tableName);
 
             return true;
@@ -250,6 +279,56 @@ namespace Drillholes.Windows.ViewModel
         public virtual void SetPrimaryKey(string holeKey)
         {
             collarTableObject.collarKey = collarDataFields.Where(o => o.columnImportName == holeKey).Select(p => p.columnHeader).FirstOrDefault().ToString();
+        }
+
+        public virtual async Task<bool> SummaryStatistics()
+        {
+            ICollarStatistics _collarStatistics = null;
+            CollarStatisticsService _collarStatisticsService = null;
+
+            if (classMapper == null)
+                InitialiseStatisticsMapping(_collarStatistics, _collarStatisticsService);
+
+
+            ImportTableField holeField = collarTableObject.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single();
+            ImportTableField xField = collarTableObject.tableData.Where(o => o.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Single();
+            ImportTableField yField = collarTableObject.tableData.Where(o => o.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Single();
+            ImportTableField zField = collarTableObject.tableData.Where(o => o.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Single();
+            ImportTableField maxField = collarTableObject.tableData.Where(o => o.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Single();
+
+            ImportTableField dipField = null;
+            ImportTableField aziField = null;
+
+            if (collarTableObject.surveyType == DrillholeSurveyType.collarsurvey)
+            {
+                dipField = collarTableObject.tableData.Where(o => o.columnImportName == DrillholeConstants.dipName).FirstOrDefault();
+                aziField = collarTableObject.tableData.Where(o => o.columnImportName == DrillholeConstants.azimuthName).FirstOrDefault();
+            }
+
+            List<ImportTableField> tempFields = new List<ImportTableField>();
+            tempFields.Add(holeField);
+            tempFields.Add(xField);
+            tempFields.Add(yField);
+            tempFields.Add(zField);
+            tempFields.Add(maxField);
+
+            if (collarTableObject.surveyType == DrillholeSurveyType.collarsurvey)
+            {
+                tempFields.Add(dipField);
+                tempFields.Add(aziField);
+            }
+
+            var summaryStatistics = await _collarStatisticsService.SummaryStatistics(classMapper, tempFields, 
+                collarTableObject.xPreview, collarTableObject.surveyType);
+
+            collarTableObject.SummaryStats = summaryStatistics.SummaryStats;
+
+            //summary of field mapping
+            tableFields = summaryStatistics.tableField;
+
+            TableStatistics.DisplayStatistcs.Add(collarTableObject.SummaryStats);
+            return true;
+
         }
     }
 }
