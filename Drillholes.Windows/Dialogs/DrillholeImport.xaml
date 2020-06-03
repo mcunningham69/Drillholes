@@ -186,7 +186,9 @@
                     </TransformGroup>
                 </TabItem.LayoutTransform>
 
-                <ListView x:Name="fieldMapping" VerticalAlignment="Top" Grid.Column="3" Grid.Row="3" Width="Auto" Height="250" Grid.RowSpan="1" ItemsSource="{Binding collarDataFields}" IsSynchronizedWithCurrentItem="True" SelectionMode="Single">
+                <ListView x:Name="fieldMapping" VerticalAlignment="Top" Grid.Column="3" Grid.Row="3" Width="Auto" 
+                          Height="250" Grid.RowSpan="1" ItemsSource="{Binding collarDataFields}"  
+                          IsSynchronizedWithCurrentItem="True" SelectionMode="Single">
 
                     <ListView.View>
                         <GridView x:Name="fieldsToMap" >
@@ -208,7 +210,7 @@
                             <GridViewColumn Width="Auto" Header="Import As" >
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox Name="cboImportAs" MinWidth="150" MaxWidth="250" HorizontalAlignment="Right" SelectionChanged="cboImportAs_SelectionChanged" SelectedIndex="0">
+                                        <ComboBox Name="cboImport" MinWidth="150" MaxWidth="250" HorizontalAlignment="Right" SelectionChanged="cboImportAs_SelectionChanged" SelectedIndex="0">
                                             <TextBlock Text="{Binding Path=columnImportAs}" FontSize="14" Foreground="Blue"/>
                                             <ComboBoxItem Content="Hole ID" Foreground="DarkGreen"/>
                                             <ComboBoxItem Content="East (X)" Foreground="DarkGreen"/>
