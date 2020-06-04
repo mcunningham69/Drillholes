@@ -18,6 +18,8 @@ namespace Drillholes.Validation.Statistics
         private CollarTableDto collarTableDto;
         public async Task<CollarTableDto> SummaryStatistics(List<ImportTableField> fields, XElement collarValues, DrillholeSurveyType surveyType)
         {
+            collarTableDto = new CollarTableDto();
+
             var queryFields = fields.Where(o => o.genericType == false);
 
             string holeID = "";
@@ -165,6 +167,8 @@ namespace Drillholes.Validation.Statistics
                 collarTableDto.SummaryStats.AverageAzi = "n/a";
                 collarTableDto.SummaryStats.MaximumAzi = "n/a";
             }
+
+            collarTableDto.isValid = true;
 
             return collarTableDto;
         }

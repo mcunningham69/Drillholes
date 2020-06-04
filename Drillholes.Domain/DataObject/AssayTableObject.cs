@@ -8,6 +8,8 @@ namespace Drillholes.Domain.DataObject
 {
     public class AssayTableObject : SurveyTableObject
     {
+        public new SummaryAssayStatistics SummaryStats { get; set; }
+
         public string assayKey { get; set; }
     }
 }

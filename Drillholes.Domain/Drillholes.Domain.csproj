@@ -57,7 +57,10 @@
     <Compile Include="DTO\SurveyTableDto.cs" />
     <Compile Include="Enum\DrillholeEnums.cs" />
     <Compile Include="Exceptions\AssayException.cs" />
+    <Compile Include="Exceptions\IntervalStatisticsException.cs" />
     <Compile Include="Exceptions\CollarException.cs" />
+    <Compile Include="Exceptions\AssayStatisticsException.cs" />
+    <Compile Include="Exceptions\SurveyStatisticsException.cs" />
     <Compile Include="Exceptions\CollarStatisticsException.cs" />
     <Compile Include="Exceptions\ImportClassException.cs" />
     <Compile Include="Exceptions\ImportFormatException.cs" />
@@ -77,11 +80,14 @@
     <Compile Include="PresentationType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReturnFormatAndUpdateFields.cs" />
+    <Compile Include="Services\IntervalStatisticsService.cs" />
     <Compile Include="Services\AssayTableService.cs" />
     <Compile Include="Services\CollarStatisticsService.cs" />
     <Compile Include="Services\CollarTableService.cs" />
     <Compile Include="Services\DrillholeImportServices.cs" />
     <Compile Include="Services\IntervalTableService.cs" />
+    <Compile Include="Services\AssayStatisticsService.cs" />
+    <Compile Include="Services\SurveyStatisticsService.cs" />
     <Compile Include="Services\SurveyTableService.cs" />
     <Compile Include="SummaryStatistics.cs" />
     <Compile Include="UpdateFieldnamesXml.cs" />

@@ -27,7 +27,7 @@ namespace Drillholes.Domain.Services
         {
             collarDto = await _collar.SummaryStatistics(fields, collarValues, surveyType);
 
-            if (collarDto.tableIsValid == false)
+            if (collarDto.isValid == false)
             {
                 throw new CollarStatisticsException("Issue with calculating Collar statistics");
             }

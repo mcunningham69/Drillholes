@@ -9,5 +9,7 @@ namespace Drillholes.Domain.DataObject
     public class SurveyTableObject : CollarTableObject
     {
         public string surveyKey { get; set; }
+        public new SummarySurveyStatistics SummaryStats { get; set; }
+
     }
 }

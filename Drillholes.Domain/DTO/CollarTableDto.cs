@@ -27,5 +27,10 @@ namespace Drillholes.Domain.DTO
         public string tableLocation { get; set; }
         public DrillholeSurveyType surveyType { get; set; }
         public List<string> collarIDs { get; set; }
+
+        public CollarTableDto()
+        {
+            tableField = "";
+        }
     }
 }

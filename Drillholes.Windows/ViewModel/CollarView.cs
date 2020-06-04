@@ -15,6 +15,7 @@ using AutoMapper;
 using System.Xml.Linq;
 using System.Data;
 using System.Windows.Controls;
+using Microsoft.Office.Interop.Excel;
 
 namespace Drillholes.Windows.ViewModel
 {
@@ -23,8 +24,11 @@ namespace Drillholes.Windows.ViewModel
         public CollarTableObject collarTableObject { get; set; }
 
         private CollarTableService _collarService;
+        CollarStatisticsService _collarStatisticsService;
+
 
         private ICollarTable _collarTable;
+        ICollarStatistics _collarStatistics;
 
         public System.Data.DataTable dataGrid { get; set; }
 
@@ -32,7 +36,7 @@ namespace Drillholes.Windows.ViewModel
         public IMapper statisticsMapper = null;
 
         public DisplaySummaryStatistics TableStatistics = new DisplaySummaryStatistics();
-        public List<SummaryCollarStatistics> ShowStatistics { get { return TableStatistics.DisplayStatistcs.ToList(); } }
+        public List<SummaryCollarStatistics> ShowStatistics { get { return TableStatistics.DisplayStatistics.ToList(); } }
 
 
         private ImportTableFields _collarDataFields;
@@ -50,6 +54,9 @@ namespace Drillholes.Windows.ViewModel
         }
 
         public string tableCaption { get; set; }
+        public string tableName { get; set; }
+        public string tableLocation { get; set; }
+        public string tableFormat { get; set; }
         public string collarKey { get; set; }
         public bool skipTable { get; set; }
         public bool importChecked { get; set; }
@@ -68,6 +75,10 @@ namespace Drillholes.Windows.ViewModel
                 tableName = _tableName,
                 surveyType = DrillholeSurveyType.vertical //default
             };
+
+            tableName = _tableName;
+            tableLocation = _tableLocation;
+            tableFormat = _tableFormat.ToString();
 
             dataGrid = new System.Data.DataTable();
 
@@ -98,7 +109,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public virtual void InitialiseStatisticsMapping(ICollarStatistics _collarStatistics, CollarStatisticsService _collarStatisticsService)
+        public virtual async Task<ICollarStatistics> InitialiseStatisticsMapping()
         {
             if (_collarStatistics == null)
                 _collarStatistics = new CollarStatistics();
@@ -112,6 +123,8 @@ namespace Drillholes.Windows.ViewModel
             var dest = statisticsMapper.Map<CollarTableDto, CollarTableObject>(source);
 
             _collarStatisticsService = new CollarStatisticsService(_collarStatistics);
+
+            return _collarStatistics;
 
         }
 
@@ -198,7 +211,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public virtual void FillTable(string descendants, DataTable dataTable)
+        public virtual void FillTable(string descendants, System.Data.DataTable dataTable)
         {
 
             var elements = collarTableObject.xPreview.Descendants(descendants).  //collar
@@ -283,12 +296,9 @@ namespace Drillholes.Windows.ViewModel
 
         public virtual async Task<bool> SummaryStatistics()
         {
-            ICollarStatistics _collarStatistics = null;
-            CollarStatisticsService _collarStatisticsService = null;
 
-            if (classMapper == null)
-                InitialiseStatisticsMapping(_collarStatistics, _collarStatisticsService);
-
+            if (statisticsMapper == null)
+                _collarStatistics = await InitialiseStatisticsMapping();
 
             ImportTableField holeField = collarTableObject.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single();
             ImportTableField xField = collarTableObject.tableData.Where(o => o.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Single();
@@ -318,7 +328,7 @@ namespace Drillholes.Windows.ViewModel
                 tempFields.Add(aziField);
             }
 
-            var summaryStatistics = await _collarStatisticsService.SummaryStatistics(classMapper, tempFields, 
+            var summaryStatistics = await _collarStatisticsService.SummaryStatistics(statisticsMapper, tempFields, 
                 collarTableObject.xPreview, collarTableObject.surveyType);
 
             collarTableObject.SummaryStats = summaryStatistics.SummaryStats;
@@ -326,7 +336,7 @@ namespace Drillholes.Windows.ViewModel
             //summary of field mapping
             tableFields = summaryStatistics.tableField;
 
-            TableStatistics.DisplayStatistcs.Add(collarTableObject.SummaryStats);
+            TableStatistics.DisplayStatistics.Add(collarTableObject.SummaryStats);
             return true;
 
         }

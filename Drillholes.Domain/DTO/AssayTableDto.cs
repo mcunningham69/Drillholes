@@ -9,6 +9,8 @@ namespace Drillholes.Domain.DTO
     public class AssayTableDto : SurveyTableDto
     {
         public string assayKey { get; set; }
+        public new SummaryAssayStatistics SummaryStats { get; set; }
+
 
     }
 }

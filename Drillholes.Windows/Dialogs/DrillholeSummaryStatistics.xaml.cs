@@ -96,14 +96,16 @@ namespace Drillholes.Windows.Dialogs
         private async void SummariseValues()
         {
             bool bCheck;
-            if (TabIndex == 0)
+            if (selectedIndex == 0)
+            {            
                 bCheck = await CollarStatistics();
-            else if (TabIndex == 1)
+            }
+            else if (selectedIndex == 1)
             {
                 bCheck = await CollarStatistics();
                 bCheck = await SurveyStatistics();
             }
-            else if (TabIndex == 2)
+            else if (selectedIndex == 2)
             {
                 bCheck = await CollarStatistics();
 
@@ -113,7 +115,7 @@ namespace Drillholes.Windows.Dialogs
                 }
                 bCheck = await AssayStatistics();
             }
-            else if (TabIndex == 3)
+            else if (selectedIndex == 3)
             {
                 bCheck = await CollarStatistics();
 
@@ -133,6 +135,7 @@ namespace Drillholes.Windows.Dialogs
         private async Task<bool> CollarStatistics()
         {
             await collarPreviewModel.SummaryStatistics();
+
             DataContext = collarPreviewModel;
 
             return true;
