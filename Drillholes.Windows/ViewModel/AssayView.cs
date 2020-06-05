@@ -218,12 +218,12 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public override async Task<bool> SummaryStatistics()
-        {
-            //if (classMapper == null)
-            //    InitialiseStatisticsMapping();
+        //public override async Task<bool> SummaryStatistics()
+        //{
+        //    //if (classMapper == null)
+        //    //    InitialiseStatisticsMapping();
 
-            return true;
-        }
+        //    return true;
+        //}
     }
 }

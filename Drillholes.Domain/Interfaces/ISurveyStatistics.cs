@@ -12,6 +12,6 @@ namespace Drillholes.Domain.Interfaces
 {
     public interface ISurveyStatistics
     {
-        Task<SurveyTableDto> SummaryStatistics(List<ImportTableField> fields, XElement surveyValues);
+        Task<SummarySurveyStatisticsDto> SummaryStatistics(List<ImportTableField> fields, XElement surveyValues);
     }
 }

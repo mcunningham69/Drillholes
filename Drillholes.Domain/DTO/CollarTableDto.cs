@@ -20,7 +20,7 @@ namespace Drillholes.Domain.DTO
         public string collarKey { get; set; }
         public bool isValid { get; set; }
         public bool isCancelled { get; set; }
-        public SummaryCollarStatistics SummaryStats { get; set; }
+       // public SummaryCollarStatistics SummaryStats { get; set; }
 
         //  public TestMessages testMessages { get; set; }
         public bool hasEdits { get; set; }
@@ -30,7 +30,7 @@ namespace Drillholes.Domain.DTO
 
         public CollarTableDto()
         {
-            tableField = "";
+            //tableField = "";
         }
     }
 }

@@ -14,8 +14,8 @@ namespace Drillholes.Validation.Statistics
 {
     public class IntervalStatistics : IIntervalStatistics
     {
-        IntervalTableDto intervalTableDto = new IntervalTableDto();
-        public async Task<IntervalTableDto> SummaryStatistics(List<ImportTableField> fields, XElement intervalValues)
+        SummaryIntervalStatisticsDto intervalTableDto = new SummaryIntervalStatisticsDto();
+        public async Task<SummaryIntervalStatisticsDto> SummaryStatistics(List<ImportTableField> fields, XElement intervalValues)
         {
             var queryFields = fields.Where(o => o.genericType == false);
 
@@ -29,17 +29,17 @@ namespace Drillholes.Validation.Statistics
                 {
                     case DrillholeConstants.holeIDName:
                         holeID = fields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(f => f.columnHeader).Single();
-                        intervalTableDto.tableField = fields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(f => f.columnImportAs).Single() + " ==> " +
+                        intervalTableDto.tableFieldMapping = fields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(f => f.columnImportAs).Single() + " ==> " +
                             holeID + Environment.NewLine;
                         break;
                     case DrillholeConstants.distFromName:
                         fromID = fields.Where(o => o.columnImportName == DrillholeConstants.distFromName).Select(f => f.columnHeader).Single();
-                        intervalTableDto.tableField = intervalTableDto.tableField + fields.Where(o => o.columnImportName == DrillholeConstants.distFromName).Select(f => f.columnImportAs).Single() + " ==> " +
+                        intervalTableDto.tableFieldMapping = intervalTableDto.tableFieldMapping + fields.Where(o => o.columnImportName == DrillholeConstants.distFromName).Select(f => f.columnImportAs).Single() + " ==> " +
                             fromID + Environment.NewLine;
                         break;
                     case DrillholeConstants.distToName:
                         toID = fields.Where(o => o.columnImportName == DrillholeConstants.distToName).Select(f => f.columnHeader).Single();
-                        intervalTableDto.tableField = intervalTableDto.tableField + fields.Where(o => o.columnImportName == DrillholeConstants.distToName).Select(f => f.columnImportAs).Single() + " ==> " +
+                        intervalTableDto.tableFieldMapping = intervalTableDto.tableFieldMapping + fields.Where(o => o.columnImportName == DrillholeConstants.distToName).Select(f => f.columnImportAs).Single() + " ==> " +
                             toID + Environment.NewLine;
                         break;
                 }
@@ -47,8 +47,7 @@ namespace Drillholes.Validation.Statistics
 
             var elements = intervalValues.Elements();
 
-            intervalTableDto.SummaryStats = new SummaryIntervalStatistics();
-            intervalTableDto.SummaryStats.IntervalCount = elements.Count();
+            intervalTableDto.IntervalCount = elements.Count();
             var holes = elements.GroupBy(x => x.Element(holeID).Value).Where(group => group.Count() > 0).Select(group => group.Key).ToList();
 
             List<int> IntervalCount = new List<int>();
@@ -82,16 +81,16 @@ namespace Drillholes.Validation.Statistics
                 }
             }
 
-            intervalTableDto.SummaryStats.collarCount = IntervalCount.Count();
-            intervalTableDto.SummaryStats.MinIntervalCount = IntervalCount.Min();
-            intervalTableDto.SummaryStats.MaxIntervalCount = IntervalCount.Max();
-            intervalTableDto.SummaryStats.AverageIntervalCount = Math.Round(IntervalCount.Average(), 1);
+            intervalTableDto.collarCount = IntervalCount.Count();
+            intervalTableDto.MinIntervalCount = IntervalCount.Min();
+            intervalTableDto.MaxIntervalCount = IntervalCount.Max();
+            intervalTableDto.AverageIntervalCount = Math.Round(IntervalCount.Average(), 1);
 
-            intervalTableDto.SummaryStats.IntervalCount = IntervalCount.Sum();
+            intervalTableDto.IntervalCount = IntervalCount.Sum();
 
-            intervalTableDto.SummaryStats.MinIntervalLength = Math.Round(IntervalLength.Min(), 1);
-            intervalTableDto.SummaryStats.MaxIntervalLength = Math.Round(IntervalLength.Max(), 1);
-            intervalTableDto.SummaryStats.AverageIntervalLength = Math.Round(IntervalLength.Average(), 1);
+            intervalTableDto.MinIntervalLength = Math.Round(IntervalLength.Min(), 1);
+            intervalTableDto.MaxIntervalLength = Math.Round(IntervalLength.Max(), 1);
+            intervalTableDto.AverageIntervalLength = Math.Round(IntervalLength.Average(), 1);
 
             intervalTableDto.isValid = true;
 

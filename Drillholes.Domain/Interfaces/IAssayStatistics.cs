@@ -11,6 +11,6 @@ namespace Drillholes.Domain.Interfaces
 {
     public interface IAssayStatistics
     {
-        Task<AssayTableDto> SummaryStatistics(List<ImportTableField> fields, XElement assayValues);
+        Task<SummaryAssayStatisticsDto> SummaryStatistics(List<ImportTableField> fields, XElement assayValues);
     }
 }

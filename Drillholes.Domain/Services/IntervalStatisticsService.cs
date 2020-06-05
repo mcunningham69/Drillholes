@@ -15,23 +15,23 @@ namespace Drillholes.Domain.Services
     public class IntervalStatisticsService
     {
         private readonly IIntervalStatistics _interval;
-        private IntervalTableDto intervalDto = null;
+        private SummaryIntervalStatisticsDto intervalDto = null;
         public IntervalStatisticsService(IIntervalStatistics interval)
         {
             this._interval = interval;
         }
 
-        public async Task<IntervalTableObject> SummaryStatistics(IMapper mapper, List<ImportTableField> fields,
+        public async Task<SummaryIntervalStatistics> SummaryStatistics(IMapper mapper, List<ImportTableField> fields,
             XElement intervalValues)
         {
             intervalDto = await _interval.SummaryStatistics(fields, intervalValues);
 
             if (intervalDto.isValid == false)
             {
-                throw new SurveyStatisticsException("Issue with calculating Interval statistics");
+                throw new IntervalStatisticsException("Issue with calculating Interval statistics");
             }
 
-            return mapper.Map<IntervalTableDto, IntervalTableObject>(intervalDto);
+            return mapper.Map<SummaryIntervalStatisticsDto, SummaryIntervalStatistics>(intervalDto);
         }
     }
 }

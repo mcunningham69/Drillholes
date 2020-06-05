@@ -15,23 +15,24 @@ namespace Drillholes.Domain.Services
     public class AssayStatisticsService
     {
         private readonly IAssayStatistics _assay;
-        private AssayTableDto assayDto = null;
+        private SummaryAssayStatisticsDto summaryStatistics = null;
+
         public AssayStatisticsService(IAssayStatistics assay)
         {
             this._assay = assay;
         }
 
-        public async Task<AssayTableObject> SummaryStatistics(IMapper mapper, List<ImportTableField> fields,
+        public async Task<SummaryAssayStatistics> SummaryStatistics(IMapper mapper, List<ImportTableField> fields,
             XElement assayValues)
         {
-            assayDto = await _assay.SummaryStatistics(fields, assayValues);
+            summaryStatistics = await _assay.SummaryStatistics(fields, assayValues);
 
-            if (assayDto.isValid == false)
+            if (summaryStatistics.isValid == false)
             {
-                throw new SurveyStatisticsException("Issue with calculating Assay statistics");
+                throw new AssayStatisticsException("Issue with calculating Assay statistics");
             }
 
-            return mapper.Map<AssayTableDto, AssayTableObject>(assayDto);
+            return mapper.Map<SummaryAssayStatisticsDto, SummaryAssayStatistics>(summaryStatistics);
         }
     }
 }

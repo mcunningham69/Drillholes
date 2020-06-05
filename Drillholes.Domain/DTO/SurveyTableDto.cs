@@ -9,7 +9,7 @@ namespace Drillholes.Domain.DTO
     public class SurveyTableDto : CollarTableDto
     {
         public string surveyKey { get; set; }
-        public new SummarySurveyStatistics SummaryStats { get; set; }
+     //   public new SummarySurveyStatistics SummaryStats { get; set; }
 
 
     }

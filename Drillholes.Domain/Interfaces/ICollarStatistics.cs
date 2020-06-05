@@ -11,7 +11,10 @@ namespace Drillholes.Domain.Interfaces
 {
     public interface ICollarStatistics
     {
-        Task<CollarTableDto> SummaryStatistics(List<ImportTableField> fields, XElement collarValues,
+      //  Task<CollarTableDto> SummaryStatistics(List<ImportTableField> fields, XElement collarValues,
+        //    DrillholeSurveyType surveyType);
+
+        Task<SummaryCollarStatisticsDto> SummaryStatistics(List<ImportTableField> fields, XElement collarValues,
             DrillholeSurveyType surveyType);
     }
 }

@@ -19,6 +19,10 @@ namespace Drillholes.Windows.ViewModel
         private SurveyTableService _surveyService;
         private ISurveyTable _surveyTable;
 
+        SurveyStatisticsService _surveyStatisticsService;
+        ISurveyStatistics _surveyStatistics;
+
+
         public SurveyTableObject surveyTableObject { get; set; }
 
         private ImportTableFields _surveyDataFields;
@@ -47,6 +51,9 @@ namespace Drillholes.Windows.ViewModel
                 surveyType = DrillholeSurveyType.downholesurvey //default
             };
 
+            tableName = _tableName;
+            tableLocation = _tableLocation;
+            tableFormat = _tableFormat.ToString();
         }
 
         public override void InitialiseTableMapping()
@@ -217,12 +224,12 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public override async Task<bool> SummaryStatistics()
-        {
-            //if (classMapper == null)
-            //    InitialiseStatisticsMapping();
+        //public override async Task<bool> SummaryStatistics()
+        //{
+        //    //if (statisticsMapper == null)
+        //    //    _surveyStatistics = await InitialiseStatisticsMapping();
 
-            return true;
-        }
+        //    return true;
+        //}
     }
 }

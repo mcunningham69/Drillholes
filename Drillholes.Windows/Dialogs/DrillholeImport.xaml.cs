@@ -613,8 +613,8 @@ namespace Drillholes.Windows.Dialogs
         {
             try
             {
-                DrillholeSummaryStatistics summaryView = new DrillholeSummaryStatistics(collarPreviewModel, surveyPreviewModel, assayPreviewModel,
-                    intervalPreviewModel);
+                DrillholeSummaryStatistics summaryView = new DrillholeSummaryStatistics(collarPreviewModel.collarTableObject, 
+                    surveyPreviewModel.surveyTableObject, assayPreviewModel.assayTableObject,intervalPreviewModel.intervalTableObject);
 
                 if (_tabcontrol.SelectedIndex == 0)
                 {

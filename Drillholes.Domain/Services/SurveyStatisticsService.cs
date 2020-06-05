@@ -15,24 +15,27 @@ namespace Drillholes.Domain.Services
     public class SurveyStatisticsService
     {
         private readonly ISurveyStatistics _survey;
-        private SurveyTableDto surveyDto = null;
+        private SummarySurveyStatisticsDto summaryStatistics = null;
+
         public SurveyStatisticsService(ISurveyStatistics survey)
         {
             this._survey = survey;
         }
 
-        public async Task<SurveyTableObject> SummaryStatistics(IMapper mapper, List<ImportTableField> fields,
+        public async Task<SummarySurveyStatistics> SummaryStatistics(IMapper mapper, List<ImportTableField> fields,
             XElement surveyValues)
         {
-            surveyDto = await _survey.SummaryStatistics(fields, surveyValues);
+            summaryStatistics = await _survey.SummaryStatistics(fields, surveyValues);
 
-            if (surveyDto.isValid == false)
+            if (summaryStatistics.isValid == false)
             {
                 throw new SurveyStatisticsException("Issue with calculating Survey statistics");
             }
 
-            return mapper.Map<SurveyTableDto, SurveyTableObject>(surveyDto);
+            return mapper.Map<SummarySurveyStatisticsDto, SummarySurveyStatistics>(summaryStatistics);
         }
+
+    
     }
 }
 

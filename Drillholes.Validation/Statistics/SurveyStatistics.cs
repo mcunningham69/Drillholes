@@ -14,9 +14,9 @@ namespace Drillholes.Validation.Statistics
 {
     public class SurveyStatistics : ISurveyStatistics
     {
-        private SurveyTableDto surveyTableDto = new SurveyTableDto();
+        private SummarySurveyStatisticsDto surveyTableDto = new SummarySurveyStatisticsDto();
 
-        public async Task<SurveyTableDto> SummaryStatistics(List<ImportTableField> fields, XElement surveyValues)
+        public async Task<SummarySurveyStatisticsDto> SummaryStatistics(List<ImportTableField> fields, XElement surveyValues)
         {
             var queryFields = fields.Where(o => o.genericType == false);
 
@@ -31,22 +31,22 @@ namespace Drillholes.Validation.Statistics
                 {
                     case DrillholeConstants.holeIDName:
                         holeID = fields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(f => f.columnHeader).Single();
-                        surveyTableDto.tableField = fields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(f => f.columnImportAs).Single() + " ==> " +
+                        surveyTableDto.tableFieldMapping = fields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(f => f.columnImportAs).Single() + " ==> " +
                             holeID + Environment.NewLine;
                         break;
                     case DrillholeConstants.distName:
                         distID = fields.Where(o => o.columnImportName == DrillholeConstants.distName).Select(f => f.columnHeader).Single();
-                        surveyTableDto.tableField = surveyTableDto.tableField + fields.Where(o => o.columnImportName == DrillholeConstants.distName).Select(f => f.columnImportAs).Single() + " ==> " +
+                        surveyTableDto.tableFieldMapping = surveyTableDto.tableFieldMapping + fields.Where(o => o.columnImportName == DrillholeConstants.distName).Select(f => f.columnImportAs).Single() + " ==> " +
                             distID + Environment.NewLine;
                         break;
                     case DrillholeConstants.dipName:
                         dipID = fields.Where(o => o.columnImportName == DrillholeConstants.dipName).Select(f => f.columnHeader).Single();
-                        surveyTableDto.tableField = surveyTableDto.tableField + fields.Where(o => o.columnImportName == DrillholeConstants.dipName).Select(f => f.columnImportAs).Single() + " ==> " +
+                        surveyTableDto.tableFieldMapping = surveyTableDto.tableFieldMapping + fields.Where(o => o.columnImportName == DrillholeConstants.dipName).Select(f => f.columnImportAs).Single() + " ==> " +
                             dipID + Environment.NewLine;
                         break;
                     case DrillholeConstants.azimuthName:
                         aziID = fields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Select(f => f.columnHeader).Single();
-                        surveyTableDto.tableField = surveyTableDto.tableField + fields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Select(f => f.columnImportAs).Single() + " ==> " +
+                        surveyTableDto.tableFieldMapping = surveyTableDto.tableFieldMapping + fields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Select(f => f.columnImportAs).Single() + " ==> " +
                             aziID + Environment.NewLine;
                         break;
 
@@ -55,12 +55,11 @@ namespace Drillholes.Validation.Statistics
 
             var elements = surveyValues.Elements();
 
-            surveyTableDto.SummaryStats = new SummarySurveyStatistics();
-            surveyTableDto.SummaryStats.surveyCount = elements.Count();
+            surveyTableDto.surveyCount = elements.Count();
 
             var holes = elements.GroupBy(x => x.Element(holeID).Value).Where(group => group.Count() > 0).Select(group => group.Key).ToList();
 
-            surveyTableDto.SummaryStats.collarCount = holes.Count();
+            surveyTableDto.collarCount = holes.Count();
 
             List<int> SurvCount = new List<int>();
             List<double> _survLength = new List<double>();
@@ -140,25 +139,27 @@ namespace Drillholes.Validation.Statistics
 
             }
 
-            surveyTableDto.SummaryStats.MinSurveyLength = _survLength.Min();
-            surveyTableDto.SummaryStats.MaxSurveyLength = _survLength.Max();
-            surveyTableDto.SummaryStats.AverageSurveyLength = _survLength.Average();
+            surveyTableDto.MinSurveyLength = _survLength.Min();
+            surveyTableDto.MaxSurveyLength = _survLength.Max();
+            surveyTableDto.AverageSurveyLength = _survLength.Average();
 
-            surveyTableDto.SummaryStats.MinSurveyCount = SurvCount.Min();
-            surveyTableDto.SummaryStats.MaxSurveyCount = SurvCount.Max();
-            surveyTableDto.SummaryStats.AverageSurveyCount = SurvCount.Average();
+            surveyTableDto.MinSurveyCount = SurvCount.Min();
+            surveyTableDto.MaxSurveyCount = SurvCount.Max();
+            surveyTableDto.AverageSurveyCount = SurvCount.Average();
 
-            surveyTableDto.SummaryStats.MinimumDip = _dip.Min();
-            surveyTableDto.SummaryStats.MaximumDip = _dip.Max();
-            surveyTableDto.SummaryStats.AverageDip = _dip.Average();
+            surveyTableDto.MinimumDip = _dip.Min();
+            surveyTableDto.MaximumDip = _dip.Max();
+            surveyTableDto.AverageDip = _dip.Average();
 
-            surveyTableDto.SummaryStats.MinDipDir = _direction.Min();
-            surveyTableDto.SummaryStats.MaxDipDir = _direction.Max();
-            surveyTableDto.SummaryStats.AverageDipDir = _direction.Average();
+            surveyTableDto.MinDipDir = _direction.Min();
+            surveyTableDto.MaxDipDir = _direction.Max();
+            surveyTableDto.AverageDipDir = _direction.Average();
 
             surveyTableDto.isValid = true;
 
             return surveyTableDto;
         }
+
+       
     }
 }

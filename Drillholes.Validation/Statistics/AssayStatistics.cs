@@ -14,8 +14,8 @@ namespace Drillholes.Validation.Statistics
 {
     public class AssayStatistics : IAssayStatistics
     {
-        AssayTableDto assayTableDto = new AssayTableDto();
-        public async Task<AssayTableDto> SummaryStatistics(List<ImportTableField> fields, XElement assayValues)
+        SummaryAssayStatisticsDto assayTableDto = new SummaryAssayStatisticsDto();
+        public async Task<SummaryAssayStatisticsDto> SummaryStatistics(List<ImportTableField> fields, XElement assayValues)
         {
             var queryFields = fields.Where(o => o.genericType == false);
 
@@ -29,25 +29,23 @@ namespace Drillholes.Validation.Statistics
                 {
                     case DrillholeConstants.holeIDName:
                         holeID = fields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(f => f.columnHeader).Single();
-                        assayTableDto.tableField = fields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(f => f.columnImportAs).Single() + " ==> " +
+                        assayTableDto.tableFieldMapping = fields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(f => f.columnImportAs).Single() + " ==> " +
                             holeID + Environment.NewLine;
                         break;
                     case DrillholeConstants.distFromName:
                         fromID = fields.Where(o => o.columnImportName == DrillholeConstants.distFromName).Select(f => f.columnHeader).Single();
-                        assayTableDto.tableField = assayTableDto.tableField + fields.Where(o => o.columnImportName == DrillholeConstants.distFromName).Select(f => f.columnImportAs).Single() + " ==> " +
+                        assayTableDto.tableFieldMapping = assayTableDto.tableFieldMapping + fields.Where(o => o.columnImportName == DrillholeConstants.distFromName).Select(f => f.columnImportAs).Single() + " ==> " +
                             fromID + Environment.NewLine;
                         break;
                     case DrillholeConstants.distToName:
                         toID = fields.Where(o => o.columnImportName == DrillholeConstants.distToName).Select(f => f.columnHeader).Single();
-                        assayTableDto.tableField = assayTableDto.tableField + fields.Where(o => o.columnImportName == DrillholeConstants.distToName).Select(f => f.columnImportAs).Single() + " ==> " +
+                        assayTableDto.tableFieldMapping = assayTableDto.tableFieldMapping + fields.Where(o => o.columnImportName == DrillholeConstants.distToName).Select(f => f.columnImportAs).Single() + " ==> " +
                             toID + Environment.NewLine;
                         break;
                 }
             }
 
             var elements = assayValues.Elements();
-
-            assayTableDto.SummaryStats = new SummaryAssayStatistics();
 
             var holes = elements.GroupBy(x => x.Element(holeID).Value).Where(group => group.Count() > 0).Select(group => group.Key).ToList();
 
@@ -82,16 +80,16 @@ namespace Drillholes.Validation.Statistics
                 }
             }
 
-            assayTableDto.SummaryStats.collarCount = AssayCount.Count();
-            assayTableDto.SummaryStats.MinAssayCount = AssayCount.Min();
-            assayTableDto.SummaryStats.MaxAssayCount = AssayCount.Max();
-            assayTableDto.SummaryStats.AverageAssayCount = Math.Round(AssayCount.Average(), 1);
+            assayTableDto.collarCount = AssayCount.Count();
+            assayTableDto.MinAssayCount = AssayCount.Min();
+            assayTableDto.MaxAssayCount = AssayCount.Max();
+            assayTableDto.AverageAssayCount = Math.Round(AssayCount.Average(), 1);
 
-            assayTableDto.SummaryStats.AssayCount = AssayCount.Sum();
+            assayTableDto.AssayCount = AssayCount.Sum();
 
-            assayTableDto.SummaryStats.MinAssayLength = Math.Round(AssayLength.Min(), 1);
-            assayTableDto.SummaryStats.MaxAssayLength = Math.Round(AssayLength.Max(), 1);
-            assayTableDto.SummaryStats.AverageAssayLength = Math.Round(AssayLength.Average(), 1);
+            assayTableDto.MinAssayLength = Math.Round(AssayLength.Min(), 1);
+            assayTableDto.MaxAssayLength = Math.Round(AssayLength.Max(), 1);
+            assayTableDto.AverageAssayLength = Math.Round(AssayLength.Average(), 1);
 
             assayTableDto.isValid = true;
 

@@ -62,9 +62,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DisplaySummaryStatistics.cs" />
+    <Compile Include="ViewModel\AssayStatisticsView.cs" />
     <Compile Include="ViewModel\AssayView.cs" />
+    <Compile Include="ViewModel\CollarStatisticsView.cs" />
     <Compile Include="ViewModel\CollarView.cs" />
+    <Compile Include="ViewModel\IntervalStatisticsView.cs" />
     <Compile Include="ViewModel\IntervalView.cs" />
+    <Compile Include="ViewModel\SurveyStatisticsView.cs" />
     <Compile Include="ViewModel\SurveyView.cs" />
     <Compile Include="ViewModel\ViewEditModel.cs" />
     <Page Include="Dialogs\DrillholeDialog.xaml">

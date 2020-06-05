@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Drillholes.Domain.DTO
 {
-    public class AssayTableDto : SurveyTableDto
+    public class SummaryStatisticsDto
     {
-        public string assayKey { get; set; }
-      //  public new SummaryAssayStatistics SummaryStats { get; set; }
+        public string tableFieldMapping { get; set; }
 
-
+        public bool isValid { get; set; }
     }
 }

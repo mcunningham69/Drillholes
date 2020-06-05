@@ -16,23 +16,26 @@ namespace Drillholes.Domain.Services
     public class CollarStatisticsService
     {
         private readonly ICollarStatistics _collar;
-        private CollarTableDto collarDto = null;
+        private SummaryCollarStatisticsDto summaryStatistics = null;
+
         public CollarStatisticsService(ICollarStatistics collar)
         {
             this._collar = collar;
         }
 
-        public async Task<CollarTableObject> SummaryStatistics(IMapper mapper, List<ImportTableField> fields, 
+        public async Task<SummaryCollarStatistics> SummaryStatistics(IMapper mapper, List<ImportTableField> fields, 
             XElement collarValues, DrillholeSurveyType surveyType)
         {
-            collarDto = await _collar.SummaryStatistics(fields, collarValues, surveyType);
+            //collarDto = await _collar.SummaryStatistics(fields, collarValues, surveyType);
 
-            if (collarDto.isValid == false)
+            summaryStatistics = await _collar.SummaryStatistics(fields, collarValues, surveyType);
+
+            if (summaryStatistics.isValid == false)
             {
                 throw new CollarStatisticsException("Issue with calculating Collar statistics");
             }
 
-            return mapper.Map<CollarTableDto, CollarTableObject>(collarDto);
+            return mapper.Map<SummaryCollarStatisticsDto, SummaryCollarStatistics>(summaryStatistics);
         }
     }
 
