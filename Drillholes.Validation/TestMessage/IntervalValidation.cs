@@ -53,7 +53,7 @@ namespace Drillholes.Validation.TestMessage
                             int noDups = holeAttr.Count();
 
                             message = "Value for record '" + holeAttr + "' and HoleID '" + hole + "' of field type ' "
-                            + check.tableFields[0].columnImportName + "'  " + " at distance " + distance + " is repeated " + noDups.ToString() +
+                            + check.tableField.columnImportName + "'  " + " at distance " + distance + " is repeated " + noDups.ToString() +
                             "  times for the following survey records: " + idList;
 
                             check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange" });
@@ -171,16 +171,12 @@ namespace Drillholes.Validation.TestMessage
         {
             intervalValidationDto.testMessages = ValuesToCheck;
 
-            int counter = 0;
-
             foreach (var check in ValuesToCheck.testMessage)
             {
-                string fieldID = check.tableFields[counter].columnHeader;
-                string fieldName = check.tableFields[counter].columnImportAs;
+                string fieldID = check.tableField.columnHeader;
+                string fieldName = check.tableField.columnImportAs;
 
                 CheckNumericValues(assayValues, check, fieldID, fieldName);
-
-                counter++;
             }
 
             return intervalValidationDto;
@@ -190,16 +186,12 @@ namespace Drillholes.Validation.TestMessage
         {
             intervalValidationDto.testMessages = ValuesToCheck;
 
-            int counter = 0;
-
             foreach (var check in ValuesToCheck.testMessage)
             {
-                string fieldID = check.tableFields[counter].columnHeader;
-                string fieldName = check.tableFields[counter].columnImportAs;
+                string fieldID = check.tableField.columnHeader;
+                string fieldName = check.tableField.columnImportAs;
 
                 CheckEmptyValues(assayValues, check, fieldID, fieldName);
-
-                counter++;
             }
 
             return intervalValidationDto;

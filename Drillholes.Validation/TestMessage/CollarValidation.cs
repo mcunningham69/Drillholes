@@ -31,7 +31,7 @@ namespace Drillholes.Validation.TestMessage
 
             foreach (var check in ValuesToCheck.testMessage)
             {
-                string fieldID = check.tableFields[0].columnHeader;
+                string fieldID = check.tableField.columnHeader;
 
                 check.count = elements.Count();
 
@@ -49,7 +49,7 @@ namespace Drillholes.Validation.TestMessage
                         int noDups = holeAttr.Count();
 
                         message = "Value for record '" + holeAttr + "' and HoleID '" + hole + "' of field type ' "
-                       + check.tableFields[0].columnImportName + "' is repeated " + noDups.ToString() +
+                       + check.tableField.columnImportName + "' is repeated " + noDups.ToString() +
                              "  times for the following records: " + idList;
 
                         check.ValidationStatus.Add(new DrillholeValidationStatus
@@ -88,15 +88,13 @@ namespace Drillholes.Validation.TestMessage
         {
             validationCollarDto.testMessages = ValuesToCheck;
 
-            int counter = 0;
             foreach (var check in ValuesToCheck.testMessage)
             {
-                string fieldID = check.tableFields[counter].columnHeader;
-                string fieldName = check.tableFields[counter].columnImportAs;
+                string fieldID = check.tableField.columnHeader;
+                string fieldName = check.tableField.columnImportAs;
 
                 CheckNumericValues(collarValues, check, fieldID, fieldName);
 
-                counter++;
             }
 
             return validationCollarDto;
@@ -299,15 +297,12 @@ namespace Drillholes.Validation.TestMessage
         {
             validationCollarDto.testMessages = ValuesToCheck;
 
-            int counter = 0;
             foreach (var check in ValuesToCheck.testMessage)
             {
-                string fieldID = check.tableFields[counter].columnHeader;
-                string fieldName = check.tableFields[counter].columnImportAs;
+                string fieldID = check.tableField.columnHeader;
+                string fieldName = check.tableField.columnImportAs;
 
                 CheckEmptyValues(collarValues, check, fieldID, fieldName);
-
-                counter++;
             }
 
             return validationCollarDto;

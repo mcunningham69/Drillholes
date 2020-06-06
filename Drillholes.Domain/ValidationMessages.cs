@@ -25,6 +25,8 @@ namespace Drillholes.Domain
     {
         public int count { get; set; }
         public List<ImportTableField> tableFields { get; set; }
+        public ImportTableField tableField { get; set; }
+
         public string validationTest { get; set; }
         public List<string> validationMessages { get; set; }
         public List<DrillholeValidationStatus> ValidationStatus { get; set; }
