@@ -47,6 +47,10 @@
     <Compile Include="Statistics\CollarStatistics.cs" />
     <Compile Include="Statistics\IntervalStatistics.cs" />
     <Compile Include="Statistics\SurveyStatistics.cs" />
+    <Compile Include="TestMessage\AssayValidation.cs" />
+    <Compile Include="TestMessage\CollarValidation.cs" />
+    <Compile Include="TestMessage\IntervalValidation.cs" />
+    <Compile Include="TestMessage\SurveyValidation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Drillholes.Domain\Drillholes.Domain.csproj">
@@ -54,8 +58,6 @@
       <Name>Drillholes.Domain</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Messages\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
