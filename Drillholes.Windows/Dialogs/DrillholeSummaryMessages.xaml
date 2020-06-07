@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Drillholes.Windows.Dialogs"
         mc:Ignorable="d"
-        Title="Preview Drillhole Validation Messages" MaxHeight="680" Height="Auto" MaxWidth="1000" Width="Auto" WindowStartupLocation="CenterScreen" FontSize="14" Loaded="Window_Loaded">
+        Title="Preview Drillhole Validation Messages" MaxHeight="680" Height="Auto" MaxWidth="1000" Width="Auto" WindowStartupLocation="CenterScreen" FontSize="14" Loaded="Window_Loaded" Closing="Window_Closing">
 
     <Window.Background>
         <ImageBrush ImageSource="../Images/skye.jpg" Opacity="0.7" Stretch="UniformToFill"/>

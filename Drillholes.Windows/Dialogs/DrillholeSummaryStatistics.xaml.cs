@@ -34,9 +34,16 @@ namespace Drillholes.Windows.Dialogs
         private AssayStatisticsView assayStatisticsView { get; set; }
         private IntervalStatisticsView intervalStatisticsView { get; set; }
 
+        private static DrillholeSummaryStatistics m_instance;
 
 
         public int selectedIndex { get; set; }
+
+        public DrillholeSummaryStatistics()
+        {
+
+        }
+
         public DrillholeSummaryStatistics(CollarTableObject _collarView, SurveyTableObject _surveyView,
             AssayTableObject _assayView, IntervalTableObject _intervalView)
         {
@@ -48,8 +55,22 @@ namespace Drillholes.Windows.Dialogs
             intervalObject = _intervalView;
         }
 
+        public static DrillholeSummaryStatistics GetInstance(CollarTableObject _collarView, SurveyTableObject _surveyView,
+            AssayTableObject _assayView, IntervalTableObject _intervalView)
+        {
+            if (m_instance == null)
+            {
+
+                return m_instance = new DrillholeSummaryStatistics(_collarView, _surveyView, _assayView, _intervalView);
+            }
+
+
+            return m_instance;
+        }
+
         private void CloseForm(object sender, RoutedEventArgs e)
         {
+            m_instance = null;
             this.Close();
         }
 
@@ -125,7 +146,7 @@ namespace Drillholes.Windows.Dialogs
             {
                 bCheck = await CollarStatistics();
 
-                if (surveyObject != null)
+                if (surveyObject.tableData != null)
                 {
                     bCheck = await SurveyStatistics();
                 }
@@ -135,12 +156,12 @@ namespace Drillholes.Windows.Dialogs
             {
                 bCheck = await CollarStatistics();
 
-                if (surveyObject != null)
+                if (surveyObject.tableData != null)
                 {
                     bCheck = await SurveyStatistics();
                 }
 
-                if (assayObject != null)
+                if (assayObject.tableData != null)
                     bCheck = await AssayStatistics();
 
                 bCheck = await IntervalStatistics();

@@ -21,7 +21,7 @@ namespace Drillholes.Windows.ViewModel
     public class CollarValidationView : ViewEditModel
     {      
 
-        public delegate Task<bool> ValidationDelegate();
+        public delegate Task<bool> ValidationDelegate(bool editData);
 
         public CollarValidationService _validationService;
         public ICollarValidation _validateValues;
@@ -78,7 +78,7 @@ namespace Drillholes.Windows.ViewModel
             _validationService = new CollarValidationService(_validateValues);
         }
 
-        public virtual async Task<bool> ValidateAllTables()
+        public virtual async Task<bool> ValidateAllTables(bool editData)
         {
             ValidationDelegate mTables = null;
             mTables += CheckForEmptyFields;
@@ -92,7 +92,7 @@ namespace Drillholes.Windows.ViewModel
                 mTables += CheckRange;
             }
 
-            return await mTables();
+            return await mTables(editData);
         }
 
         public virtual void InitialiseMapping()
@@ -112,15 +112,13 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public virtual async Task<bool> CheckForEmptyFields()
+        public virtual async Task<bool> CheckForEmptyFields(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
 
             List<ValidationMessage> collarTest = new List<ValidationMessage>();
-            List<ImportTableField> tempFields = new List<ImportTableField>();
 
-            tempFields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single());
 
             collarTest.Add
                 (new ValidationMessage
@@ -221,7 +219,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        public virtual async Task<bool> CheckNumericFields()
+        public virtual async Task<bool> CheckNumericFields(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -314,7 +312,7 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public virtual async Task<bool> CheckForDuplicates()
+        public virtual async Task<bool> CheckForDuplicates(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -343,7 +341,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        public virtual async Task<bool> CheckMaxDepth()
+        public virtual async Task<bool> CheckMaxDepth(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -379,7 +377,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        public virtual async Task<bool> CheckZeroCoordinates()
+        public virtual async Task<bool> CheckZeroCoordinates(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -414,7 +412,7 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public virtual async Task<bool> CheckRange()
+        public virtual async Task<bool> CheckRange(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();

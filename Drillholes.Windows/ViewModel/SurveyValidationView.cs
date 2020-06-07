@@ -40,12 +40,14 @@ namespace Drillholes.Windows.ViewModel
         {
             tableLabel = (_tableType.ToString() + " Table").ToUpper();
 
+            xmlSurveyData = _xmlSurveyData;
+
             _surveyValidateValues = new SurveyValidation();
 
             _surveyValidationService = new SurveyValidationService(_surveyValidateValues);
         }
 
-        public override async Task<bool> ValidateAllTables()
+        public override async Task<bool> ValidateAllTables(bool editData)
         {
             ValidationDelegate mTables = null;
             mTables += CheckForEmptyFields;
@@ -56,7 +58,7 @@ namespace Drillholes.Windows.ViewModel
             mTables += CheckSurveyDistance;
             mTables += CheckCollarsSurveys;
 
-            return await mTables();
+            return await mTables(editData);
 
         }
 
@@ -77,7 +79,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public async override Task<bool> CheckForEmptyFields()
+        public async override Task<bool> CheckForEmptyFields(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -90,7 +92,7 @@ namespace Drillholes.Windows.ViewModel
                 validationTest = DrillholeConstants.checkHole,
                 count = 0,
                 validationMessages = new List<string>(),
-                tableField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single()
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single()
             });
 
             surveyFieldTest.Add(new ValidationMessage
@@ -99,7 +101,7 @@ namespace Drillholes.Windows.ViewModel
                 validationTest = DrillholeConstants.checkDist,
                 count = 0,
                 validationMessages = new List<string>(),
-                tableField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Single()
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Single()
             });
 
             surveyFieldTest.Add(new ValidationMessage
@@ -108,7 +110,7 @@ namespace Drillholes.Windows.ViewModel
                 validationTest = DrillholeConstants.checkDip,
                 count = 0,
                 validationMessages = new List<string>(),
-                tableField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Single()
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Single()
             });
 
             surveyFieldTest.Add(new ValidationMessage
@@ -117,10 +119,10 @@ namespace Drillholes.Windows.ViewModel
                 validationTest = DrillholeConstants.checkAzi,
                 count = 0,
                 validationMessages = new List<string>(),
-                tableField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Single()
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Single()
             });
 
-            var isNumericField = importCollarFields.Where(o => o.fieldType == "Double").Where(p => p.genericType == true).ToList();
+            var isNumericField = importSurveyFields.Where(o => o.fieldType == "Double").Where(p => p.genericType == true).ToList();
 
             if (isNumericField.Count > 0)
             {
@@ -147,13 +149,13 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        public async override Task<bool> CheckForDuplicates()
+        public async override Task<bool> CheckForDuplicates(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
 
-            ImportTableField holeField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single();
-            ImportTableField distanceField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Single();
+            ImportTableField holeField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single();
+            ImportTableField distanceField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Single();
 
             List<ImportTableField> tempFields = new List<ImportTableField>();
             tempFields.Add(holeField);
@@ -177,7 +179,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        private async Task<bool> CheckSurveyDistance()
+        private async Task<bool> CheckSurveyDistance(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -216,7 +218,7 @@ namespace Drillholes.Windows.ViewModel
             DisplayMessages.DisplayResults.Add(validationCheck.testMessages);
             return true;
         }
-        public async override Task<bool> CheckNumericFields()
+        public async override Task<bool> CheckNumericFields(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -228,7 +230,7 @@ namespace Drillholes.Windows.ViewModel
                 validationTest = DrillholeConstants.checkDist,
                 count = 0,
                 validationMessages = new List<string>(),
-                tableField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Single()
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Single()
             });
 
             surveyFieldTest.Add(new ValidationMessage
@@ -237,7 +239,7 @@ namespace Drillholes.Windows.ViewModel
                 validationTest = DrillholeConstants.checkDip,
                 count = 0,
                 validationMessages = new List<string>(),
-                tableField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Single()
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Single()
             });
 
             surveyFieldTest.Add(new ValidationMessage
@@ -246,10 +248,10 @@ namespace Drillholes.Windows.ViewModel
                 validationTest = DrillholeConstants.checkAzi,
                 count = 0,
                 validationMessages = new List<string>(),
-                tableField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Single()
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Single()
             });
 
-            var isNumericField = importCollarFields.Where(o => o.fieldType == "Double").Where(p => p.genericType == true).ToList();
+            var isNumericField = importSurveyFields.Where(o => o.fieldType == "Double").Where(p => p.genericType == true).ToList();
 
             if (isNumericField.Count > 0)
             {
@@ -276,7 +278,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        public async override Task<bool> CheckMaxDepth()
+        public async override Task<bool> CheckMaxDepth(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -317,12 +319,56 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public async override Task<bool> CheckRange()
+        public async override Task<bool> CheckRange(bool editData)
         {
+            if (mapper == null)
+                InitialiseMapping();
+
+            ImportTableField holeField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single();
+            ImportTableField dipField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Single();
+            ImportTableField aziField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Single();
+
+            List<ImportTableField> dipFields = new List<ImportTableField>();
+            dipFields.Add(holeField);
+            dipFields.Add(dipField);
+
+            List<ValidationMessage> surveyFieldTest = new List<ValidationMessage>();
+
+            //Check if azimuth and dip fields set
+            surveyFieldTest.Add(new ValidationMessage
+            {
+                verified = true,
+                validationTest = DrillholeConstants.checkDip,
+                count = 0,
+                validationMessages = new List<string>(),
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Single(),
+                tableFields = dipFields
+            });
+
+            List<ImportTableField> aziFields = new List<ImportTableField>();
+            aziFields.Add(holeField);
+            aziFields.Add(aziField);
+
+            surveyFieldTest.Add(new ValidationMessage
+            {
+                verified = true,
+                validationTest = DrillholeConstants.checkAzi,
+                count = 0,
+                validationMessages = new List<string>(),
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Single(),
+                tableFields = aziFields
+            });
+
+            ValidationMessages surveyTests = new ValidationMessages { testType = DrillholeConstants.SurveyRange, testMessage = surveyFieldTest};
+
+            var validationCheck = await _surveyValidationService.CheckRange(mapper, surveyTests, xmlSurveyData);
+
+            DisplayMessages.DisplayResults.Add(validationCheck.testMessages);
+
             return true;
         }
 
-        private async Task<bool> CheckCollarsSurveys()
+        private async Task<bool> CheckCollarsSurveys(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();

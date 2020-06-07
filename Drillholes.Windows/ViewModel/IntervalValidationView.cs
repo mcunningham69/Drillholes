@@ -48,7 +48,7 @@ namespace Drillholes.Windows.ViewModel
             _intervalValidationService = new IntervalValidationService(_intervalValidateValues);
         }
 
-        public override async Task<bool> ValidateAllTables()
+        public override async Task<bool> ValidateAllTables(bool editData)
         {
             ValidationDelegate mTables = null;
             mTables += CheckForEmptyFields;
@@ -60,7 +60,7 @@ namespace Drillholes.Windows.ViewModel
             mTables += CheckForMissingIntervals;
             mTables += CheckForOverlappingIntervals;
 
-            return await mTables();
+            return await mTables(editData);
         }
 
         public override void InitialiseMapping()
@@ -81,7 +81,7 @@ namespace Drillholes.Windows.ViewModel
         }
 
 
-        public override async Task<bool> CheckForEmptyFields()
+        public override async Task<bool> CheckForEmptyFields(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -145,7 +145,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        public override async Task<bool> CheckForDuplicates()
+        public override async Task<bool> CheckForDuplicates(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -175,7 +175,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        public override async Task<bool> CheckNumericFields()
+        public override async Task<bool> CheckNumericFields(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -228,7 +228,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        public override async Task<bool> CheckMaxDepth()
+        public override async Task<bool> CheckMaxDepth(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -268,7 +268,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        public override async Task<bool> CheckForNegativeIntervals()
+        public override async Task<bool> CheckForNegativeIntervals(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -300,7 +300,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        public override async Task<bool> CheckForMissingIntervals()
+        public override async Task<bool> CheckForMissingIntervals(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -340,7 +340,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
-        public override async Task<bool> CheckForOverlappingIntervals()
+        public override async Task<bool> CheckForOverlappingIntervals(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -373,7 +373,7 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public async Task<bool> CheckCollarsIntervals()
+        private async Task<bool> CheckCollarsIntervals(bool editData)
         {
             if (mapper == null)
                 InitialiseMapping();
