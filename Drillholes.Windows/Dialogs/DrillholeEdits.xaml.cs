@@ -64,6 +64,7 @@ namespace Drillholes.Windows.Dialogs
             {
                 ValidateCollar();
 
+
                 DataContext = collarEditView;
 
             }
@@ -124,6 +125,8 @@ namespace Drillholes.Windows.Dialogs
             collarEditView = new CollarValidationView(DrillholeTableType.collar, collarObject.surveyType, collarObject.xPreview);
             collarEditView.importCollarFields = collarObject.tableData;
             await collarEditView.ValidateAllTables(true);
+
+            collarEditView.ReshapeMessages();
         }
 
         //testtype

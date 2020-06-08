@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using Drillholes.Domain.DataObject;
 using Drillholes.Domain.DTO;
+using System.Text.RegularExpressions;
 
 namespace Drillholes.Windows.ViewModel
 {
@@ -78,6 +79,24 @@ namespace Drillholes.Windows.ViewModel
             _validationService = new CollarValidationService(_validateValues);
         }
 
+        public virtual void InitialiseMapping()
+        {
+            if (_validateValues == null)
+                _validateValues = new CollarValidation(surveyType);
+
+            var config = new MapperConfiguration(cfg => { cfg.CreateMap<ValidationCollarDto, ValidationCollar>(); });
+
+            mapper = config.CreateMapper();
+
+            var source = new ValidationCollarDto();
+
+            var dest = mapper.Map<ValidationCollarDto, ValidationCollar>(source);
+
+            _validationService = new CollarValidationService(_validateValues);
+
+        }
+
+        #region Messages
         public virtual async Task<bool> ValidateAllTables(bool editData)
         {
             ValidationDelegate mTables = null;
@@ -95,23 +114,7 @@ namespace Drillholes.Windows.ViewModel
             return await mTables(editData);
         }
 
-        public virtual void InitialiseMapping()
-        {
-            if (_validateValues == null)
-                _validateValues = new CollarValidation(surveyType);
-
-            var config = new MapperConfiguration(cfg => { cfg.CreateMap<ValidationCollarDto, ValidationCollar>(); });
-
-            mapper = config.CreateMapper();
-
-            var source = new ValidationCollarDto();
-
-            var dest = mapper.Map< ValidationCollarDto, ValidationCollar> (source);
-
-            _validationService = new CollarValidationService(_validateValues);
-
-        }
-
+        
         public virtual async Task<bool> CheckForEmptyFields(bool editData)
         {
             if (mapper == null)
@@ -459,6 +462,218 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
+
+        #endregion
+
+
+        public virtual async void ReshapeMessages()
+        {
+
+            foreach(var test in ShowTestMessages)
+            {
+                switch (test.testType)
+                {
+                    case DrillholeConstants.IsEmptyOrNull:
+                        foreach(var message in test.testMessage)
+                        {
+                            if (message.validationTest == DrillholeConstants.checkHole)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkHole);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkX)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkX);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkY)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkY);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkZ)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkZ);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkTD)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkTD);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkAzi)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkAzi);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkDip)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkDip);
+                            }
+                        }
+                        break;
+
+                    case DrillholeConstants.IsNumeric:
+                        foreach (var message in test.testMessage)
+                        {
+                            if (message.validationTest == DrillholeConstants.checkX)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkX);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkY)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkY);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkZ)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkZ);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkTD)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkTD);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkAzi)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkAzi);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkDip)
+                            {
+                                ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkDip);
+                            }
+                        }
+
+                        break;
+
+                    case DrillholeConstants.Duplicates:
+                        foreach (var message in test.testMessage)
+                        {
+                            ReformatResults(message, DrillholeConstants.Duplicates, DrillholeConstants.checkHole);
+                        }
+                        break;
+
+                    case DrillholeConstants.HoleLength:
+                        foreach (var message in test.testMessage)
+                        {
+                            ReformatResults(message, DrillholeConstants.HoleLength, DrillholeConstants.checkTD);
+                        }
+                        break;
+
+                    case DrillholeConstants.ZeroCoordinate:
+                        foreach (var message in test.testMessage)
+                        {
+                            ReformatResults(message, DrillholeConstants.ZeroCoordinate, DrillholeConstants.checkCoord);
+                        }
+                        break;
+
+                    case DrillholeConstants.SurveyRange:
+                        foreach (var message in test.testMessage)
+                        {
+                            if (message.validationTest == DrillholeConstants.checkDip)
+                            {
+                                ReformatResults(message, DrillholeConstants.SurveyRange, DrillholeConstants.checkDip);
+                            }
+                            else if (message.validationTest == DrillholeConstants.checkAzi)
+                            {
+                                ReformatResults(message, DrillholeConstants.SurveyRange, DrillholeConstants.checkAzi);
+                            }
+                        }
+                        break;
+
+
+                }
+            }
+
+            GroupByTable groupByTable = new GroupByTable() { TableType = "Collar"};
+
+            List<ReshapedDataToEdit> reshapedData = new List<ReshapedDataToEdit>();
+
+            reshapedData.Add(new ReshapedDataToEdit { ErrorType = DrillholeMessageStatus.Error.ToString() });
+            reshapedData.Add(new ReshapedDataToEdit { ErrorType = DrillholeMessageStatus.Warning.ToString() });
+            reshapedData.Add(new ReshapedDataToEdit { ErrorType = DrillholeMessageStatus.Valid.ToString() });
+
+        }
+
+        public virtual async void ReformatResults(ValidationMessage message, string _TestType, string validation)
+        {
+            List<ReshapedDataToEdit> reshapedData = new List<ReshapedDataToEdit>();
+
+            List<DrillholeMessageStatus> statusMessages = new List<DrillholeMessageStatus>();
+            statusMessages.Add(DrillholeMessageStatus.Error);
+            statusMessages.Add(DrillholeMessageStatus.Warning);
+            statusMessages.Add(DrillholeMessageStatus.Valid);
+
+            var holeName = importCollarFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Select(s => s.columnHeader).FirstOrDefault();
+
+            //get fields to query XML
+            List<string> fields = new List<string>();
+            fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false)
+                .Select(s => s.columnHeader).FirstOrDefault());
+            fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false)
+                .Select(s => s.columnHeader).FirstOrDefault());
+            fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false)
+                .Select(s => s.columnHeader).FirstOrDefault());
+            fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false)
+                .Select(s => s.columnHeader).FirstOrDefault());
+            fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false)
+                .Select(s => s.columnHeader).FirstOrDefault());
+
+            if (surveyType == DrillholeSurveyType.collarsurvey)
+            {
+                fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false)
+                    .Select(s => s.columnHeader).FirstOrDefault());
+                fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false)
+                    .Select(s => s.columnHeader).FirstOrDefault());
+            }
+
+
+
+            foreach (var status in statusMessages)
+            {
+                List<int> _status = message.ValidationStatus.Where(e => e.ErrorType == status).Select(p => p.id).ToList();
+                List<string> tooltips = message.ValidationStatus.Where(e => e.ErrorType == status).Select(p => p.Description).ToList();
+
+                RowsToEdit rowToEdit = new RowsToEdit() { Ignore = false, ErrorType = status };
+                List<RowsToEdit> rows = new List<RowsToEdit>();
+                rows.Add(rowToEdit);
+
+                GroupByTestField testField = new GroupByTestField() { Ignore = false, TableData = rows, TestField = validation };
+                List<GroupByTestField> testFields = new List<GroupByTestField>();
+                testFields.Add(testField);
+
+                GroupByTest test = new GroupByTest() { Ignore = false, TestFields = testFields, MainTest = _TestType };
+                List<GroupByTest> groupedTests = new List<GroupByTest>();
+                groupedTests.Add(test);
+
+                GroupByTable table = new GroupByTable() { Ignore = false, TableType = "Collar", GroupedTests = groupedTests }; ;
+                List<GroupByTable> groupedTables = new List<GroupByTable>();
+                groupedTables.Add(table);
+
+                GroupByHoles  hole = new GroupByHoles() { Ignore = false, GroupedTables = groupedTables };
+                List<GroupByHoles> groupedHoles = new List<GroupByHoles>();
+                groupedHoles.Add(hole);
+
+                ReshapedDataToEdit _edits = new ReshapedDataToEdit() { Count = 0, ErrorType = status.ToString(), Ignore = false, GroupedHoles = groupedHoles };
+                reshapedData.Add(_edits);
+
+                if (_status.Count > 0)
+                {
+
+                }
+                else
+                {
+                    _edits.Ignore = true;
+                    hole.Ignore = true;
+                    table.Ignore = true;
+                    test.Ignore = true;
+                    test.MainTest = "";
+                    testField.TestField = "";
+                    testField.Ignore = true;
+                    rowToEdit.Ignore = true;
+
+
+                }
+
+
+            }
+
+
+        }
+
+
     }
 
 }

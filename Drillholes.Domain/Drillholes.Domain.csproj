@@ -101,6 +101,7 @@
     <Compile Include="Interfaces\ISurveyValidation.cs" />
     <Compile Include="PresentationType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RespahedDataToEdit.cs" />
     <Compile Include="ReturnFormatAndUpdateFields.cs" />
     <Compile Include="Services\AssayValidationService.cs" />
     <Compile Include="Services\CollarValidationService.cs" />
