@@ -455,7 +455,7 @@ namespace Drillholes.Windows.Dialogs
                 DataContext = collarPreviewModel;
 
                 //update key 
-                collarPreviewModel.UpdateHoleKeyInXml();
+                await collarPreviewModel.UpdateHoleKeyInXml();
 
                 //TODO update changed field in XML
             }
@@ -469,7 +469,7 @@ namespace Drillholes.Windows.Dialogs
                 DataContext = surveyPreviewModel;
 
                 //update key 
-                surveyPreviewModel.UpdateHoleKeyInXml();
+                await surveyPreviewModel.UpdateHoleKeyInXml();
 
                 //TODO update changed field in XML
             }
@@ -482,7 +482,7 @@ namespace Drillholes.Windows.Dialogs
                 DataContext = assayPreviewModel;
 
                 //update key 
-                assayPreviewModel.UpdateHoleKeyInXml();
+                await assayPreviewModel.UpdateHoleKeyInXml();
 
                 //TODO update changed field in XML
 

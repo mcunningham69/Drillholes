@@ -50,6 +50,8 @@ namespace Drillholes.Domain
         public const string _text = "Text";
         public const string _numeric = "Numeric";
         public const string _grade = "Grade";
+        public const string _sample = "Sample ID";
+
         public const string _density = "Density";
         public const string _time = "Time";
         public const string _date = "Date";

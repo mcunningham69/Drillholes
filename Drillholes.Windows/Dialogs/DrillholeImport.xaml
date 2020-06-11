@@ -330,6 +330,7 @@
                                             <ComboBoxItem Content="From" Foreground="DarkGreen"/>
                                             <ComboBoxItem Content="To" Foreground="DarkGreen"/>
                                             <Separator/>
+                                            <ComboBoxItem Content="Sample ID" Foreground="DarkBlue"/>
                                             <ComboBoxItem Content="Grade" Foreground="DarkBlue"/>
                                             <Separator/>
                                             <ComboBoxItem Content="Numeric" Foreground="DarkOrange"/>
