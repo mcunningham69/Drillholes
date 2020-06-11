@@ -92,6 +92,13 @@ namespace Drillholes.Domain.Services
             return mapper.Map<ValidationAssayDto, ValidationAssay>(validateValues);
         }
 
+        public async Task<ValidationAssay> CheckForZeroGrade(IMapper mapper, ValidationMessages ValuesToCheck, XElement assayValues)
+        {
+
+            var validateValues = await _validation.CheckForZeroGradeValues(ValuesToCheck, assayValues);
+
+            return mapper.Map<ValidationAssayDto, ValidationAssay>(validateValues);
+        }
     }
 
 }

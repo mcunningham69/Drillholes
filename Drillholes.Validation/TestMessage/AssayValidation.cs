@@ -691,5 +691,10 @@ namespace Drillholes.Validation.TestMessage
 
             return assayValidationDto;
         }
+
+        public async Task<ValidationAssayDto> CheckForZeroGradeValues(ValidationMessages ValuesToCheck, XElement assayValues)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -59,6 +59,7 @@ namespace Drillholes.Windows.ViewModel
             mTables += CheckForNegativeIntervals;
             mTables += CheckForMissingIntervals;
             mTables += CheckForOverlappingIntervals;
+            mTables += CheckForZeroGrades;
 
             return await mTables(editData);
         }
@@ -446,6 +447,12 @@ namespace Drillholes.Windows.ViewModel
             var validationCheck = await _assayValidationService.CheckOverlappingIntervals(mapper, assayTests, xmlAssayData);
 
             DisplayMessages.DisplayResults.Add(validationCheck.testMessages);
+
+            return true;
+        }
+
+        private async Task<bool> CheckForZeroGrades(bool editData)
+        {
 
             return true;
         }

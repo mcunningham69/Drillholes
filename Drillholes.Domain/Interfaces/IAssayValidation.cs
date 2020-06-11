@@ -25,5 +25,8 @@ namespace Drillholes.Domain.Interfaces
 
         Task<ValidationAssayDto> CheckForMissingCollars(ValidationMessages ValuesToCheck, List<XElement> drillholeValues);
 
+        Task<ValidationAssayDto> CheckForZeroGradeValues(ValidationMessages ValuesToCheck, XElement assayValues);
+
+
     }
 }

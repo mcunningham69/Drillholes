@@ -25,6 +25,7 @@ namespace Drillholes.Domain
         public const string checkTo = "Check 'To' field";
         public const string checkCoord = "Check 'X' and 'Y' fields";
 
+
         //test type
         public const string IsEmptyOrNull = "Empty or Null";
         public const string IsNumeric = "Is Numeric";
@@ -37,7 +38,7 @@ namespace Drillholes.Domain
         public const string MissingInterval = "Missing Interval";
         public const string NegativeOrZeroInterval = "Negative or Zero Interval";
         public const string OverlappingInterval = "Interval Overlap";
-
+        public const string CheckZeroGrade = "Zero Grade";
 
 
 
