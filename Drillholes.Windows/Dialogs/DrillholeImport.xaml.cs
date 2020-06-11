@@ -14,6 +14,7 @@ using Drillholes.Domain.Enum;
 using Drillholes.Domain.DataObject;
 using System.Xml.Linq;
 using Drillholes.Domain;
+using Drillholes.Windows.ViewModel;
 
 namespace Drillholes.Windows.Dialogs
 {
@@ -22,6 +23,10 @@ namespace Drillholes.Windows.Dialogs
     /// </summary>
     public partial class DrillholeImport : Window
     {
+        DrillholeSummaryStatistics singletonStatistics = null;
+        DrillholeSummaryMessages singletonMessages = null;
+        DrillholeEdits singletonEdits = null;
+
 
         private string tableCollarLocation { get; set; }
         private string tableCollarName { get; set; }
@@ -611,17 +616,165 @@ namespace Drillholes.Windows.Dialogs
 
         private void btnStatistics_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                singletonStatistics = DrillholeSummaryStatistics.GetInstance(collarPreviewModel.collarTableObject,
+                    surveyPreviewModel.surveyTableObject, assayPreviewModel.assayTableObject, intervalPreviewModel.intervalTableObject);
+
+                if (_tabcontrol.SelectedIndex == 0)
+                {
+                    singletonStatistics.selectedIndex = 0;
+                }
+                else if (_tabcontrol.SelectedIndex == 1)
+                {
+                    singletonStatistics.selectedIndex = 1;
+                }
+                else if (_tabcontrol.SelectedIndex == 2)
+                {
+                    singletonStatistics.selectedIndex = 2;
+                }
+                else if (_tabcontrol.SelectedIndex == 3)
+                {
+                    singletonStatistics.selectedIndex = 3;
+                }
+
+                singletonStatistics.Show();
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+
+            }
 
         }
 
         private void ValidateDrillholes(object sender, RoutedEventArgs e)
         {
+            singletonMessages = null;
+
+            singletonMessages = DrillholeSummaryMessages.GetInstance();
+
+            int _tabIndex = _tabcontrol.SelectedIndex;
+
+            if (_tabIndex == -1)
+                return;
+
+            else if (_tabIndex == 0)
+            {
+                singletonMessages.collarObject = collarPreviewModel.collarTableObject;
+                singletonMessages.selectedIndex = 0;
+            }
+            else if (_tabIndex == 1)
+            {
+                
+                singletonMessages.collarObject = collarPreviewModel.collarTableObject;
+                singletonMessages.surveyObject = surveyPreviewModel.surveyTableObject;
+                singletonMessages.selectedIndex = 1;
+
+            }
+            else if (_tabIndex == 2)
+            {
+                singletonMessages.collarObject = collarPreviewModel.collarTableObject;
+                singletonMessages.assayObject = assayPreviewModel.assayTableObject;
+                singletonMessages.selectedIndex = 2;
+
+            }
+            else if (_tabIndex == 3)
+            {
+                singletonMessages.collarObject = collarPreviewModel.collarTableObject;
+                singletonMessages.intervalObject = intervalPreviewModel.intervalTableObject;
+                singletonMessages.selectedIndex = 3;
+
+            }
+
+            singletonMessages.Show();
+
 
         }
 
         private void btnValidate_Click(object sender, RoutedEventArgs e)
         {
+            singletonEdits = null;
 
+            singletonEdits = DrillholeEdits.GetInstance();
+
+            int _tabIndex = _tabcontrol.SelectedIndex;
+
+            if (_tabIndex == -1)
+                return;
+
+            else if (_tabIndex == 0)
+            {
+                singletonEdits.collarObject = collarPreviewModel.collarTableObject;
+                singletonEdits.surveyType = collarPreviewModel.collarTableObject.surveyType;
+
+                if (collarPreviewModel.collarTableObject.surveyType == DrillholeSurveyType.downholesurvey)
+                {
+                    if (surveyPreviewModel.surveyTableObject.tableData != null)
+                        singletonEdits.surveyObject = surveyPreviewModel.surveyTableObject;
+                }
+
+                if (assayPreviewModel.surveyTableObject.tableData != null)
+                    singletonEdits.assayObject = assayPreviewModel.assayTableObject;
+
+                if (intervalPreviewModel.surveyTableObject.tableData != null)
+                    singletonEdits.intervalObject = intervalPreviewModel.intervalTableObject;
+
+                singletonEdits.selectedIndex = 0;
+            }
+            else if (_tabIndex == 1)
+            {
+                singletonEdits.collarObject = collarPreviewModel.collarTableObject;
+                singletonEdits.surveyObject = surveyPreviewModel.surveyTableObject;
+                singletonEdits.surveyType = DrillholeSurveyType.downholesurvey;
+
+                if (assayPreviewModel.surveyTableObject.tableData != null)
+                    singletonEdits.assayObject = assayPreviewModel.assayTableObject;
+
+                if (intervalPreviewModel.surveyTableObject.tableData != null)
+                    singletonEdits.intervalObject = intervalPreviewModel.intervalTableObject;
+
+                singletonEdits.selectedIndex = 1;
+            }
+            else if (_tabIndex == 2)
+            {
+                singletonEdits.collarObject = collarPreviewModel.collarTableObject;
+                singletonEdits.assayObject = assayPreviewModel.assayTableObject;
+
+                if (collarPreviewModel.collarTableObject.surveyType == DrillholeSurveyType.downholesurvey)
+                {
+                    if (surveyPreviewModel.surveyTableObject.tableData != null)
+                        singletonEdits.surveyObject = surveyPreviewModel.surveyTableObject;
+                }
+
+                if (intervalPreviewModel.surveyTableObject.tableData != null)
+                    singletonEdits.intervalObject = intervalPreviewModel.intervalTableObject;
+
+                singletonEdits.selectedIndex = 2;
+
+            }
+            else if (_tabIndex == 3)
+            {
+                singletonEdits.collarObject = collarPreviewModel.collarTableObject;
+                singletonEdits.intervalObject = intervalPreviewModel.intervalTableObject;
+
+                if (collarPreviewModel.collarTableObject.surveyType == DrillholeSurveyType.downholesurvey)
+                {
+                    if (surveyPreviewModel.surveyTableObject.tableData != null)
+                        singletonEdits.surveyObject = surveyPreviewModel.surveyTableObject;
+                }
+
+                if (assayPreviewModel.surveyTableObject.tableData != null)
+                    singletonEdits.assayObject = assayPreviewModel.assayTableObject;
+
+                singletonEdits.selectedIndex = 3;
+
+            }
+
+            singletonEdits.Show();
         }
 
         private void radVertical_Click(object sender, RoutedEventArgs e)

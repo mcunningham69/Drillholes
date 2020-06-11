@@ -10,21 +10,27 @@ using Drillholes.Domain.DataObject;
 using Drillholes.Domain.Services;
 using Drillholes.Domain.Interfaces;
 using Drillholes.Domain.DTO;
+using Drillholes.Validation.Statistics;
 using AutoMapper;
 using System.Xml.Linq;
 using System.Data;
 using System.Windows.Controls;
+using System.Collections.ObjectModel;
 
 namespace Drillholes.Windows.ViewModel
 {
     public class CollarView : ViewEditModel
     {
         public CollarTableObject collarTableObject { get; set; }
+
         private CollarTableService _collarService;
+
         private ICollarTable _collarTable;
+
         public System.Data.DataTable dataGrid { get; set; }
 
         public IMapper classMapper = null;
+
 
         private ImportTableFields _collarDataFields;
         public ImportTableFields collarDataFields
@@ -41,9 +47,27 @@ namespace Drillholes.Windows.ViewModel
         }
 
         public string tableCaption { get; set; }
+        public string tableName { get; set; }
+        public string tableLocation { get; set; }
+        public string tableFormat { get; set; }
         public string collarKey { get; set; }
         public bool skipTable { get; set; }
-        public bool importChecked {get;set;}
+        public bool importChecked { get; set; }
+
+        private string _tableFields;
+        public string tableFields
+        {
+            get
+            {
+                return this._tableFields;
+            }
+            set
+            {
+                this._tableFields = value;
+                OnPropertyChanged("tableFields");
+            }
+        }
+
 
         public CollarView(DrillholeImportFormat _tableFormat, DrillholeTableType _tableType, string _tableLocation,
             string _tableName)
@@ -57,12 +81,16 @@ namespace Drillholes.Windows.ViewModel
                 surveyType = DrillholeSurveyType.vertical //default
             };
 
+            tableName = _tableName;
+            tableLocation = _tableLocation;
+            tableFormat = _tableFormat.ToString();
+
             dataGrid = new System.Data.DataTable();
 
         }
 
         //TODO move out of here
-        public virtual void InitialiseMapping()
+        public virtual void InitialiseTableMapping()
         {
             //Add ArcSDE
             if (DrillholeImportFormat.fgdb_table == collarTableObject.tableFormat ||
@@ -86,6 +114,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
+
         public virtual void SetDataContext(DataGrid dataPreview)
         {
             if (dataGrid.Columns.Count > 0)
@@ -95,7 +124,7 @@ namespace Drillholes.Windows.ViewModel
         public virtual async Task<bool> RetrieveFieldsToMap()
         {
             if (classMapper == null)
-                InitialiseMapping();
+                InitialiseTableMapping();
 
             var collarService = await _collarService.GetCollarFields(classMapper, collarTableObject.tableFormat,
                 collarTableObject.tableLocation, collarTableObject.tableName);
@@ -133,7 +162,7 @@ namespace Drillholes.Windows.ViewModel
                 }
 
 
-                tableCaption = char.ToUpper(collarTableObject.tableType.ToString()[0]) + 
+                tableCaption = char.ToUpper(collarTableObject.tableType.ToString()[0]) +
                     collarTableObject.tableType.ToString().Substring(1);
 
 
@@ -144,14 +173,14 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public virtual void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList, 
+        public virtual void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
             bool bImport)
         {
 
             string _strSearch = _searchList.columnHeader;
             string _strName = _searchList.columnImportName;
 
-            var collarService = _collarService.UpdateFieldvalues(previousSelection, classMapper, selectedValue, 
+            var collarService = _collarService.UpdateFieldvalues(previousSelection, classMapper, selectedValue,
                 _strSearch, _strName);
 
 
@@ -169,7 +198,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public virtual void FillTable(string descendants, DataTable dataTable)
+        public virtual void FillTable(string descendants, System.Data.DataTable dataTable)
         {
 
             var elements = collarTableObject.xPreview.Descendants(descendants).  //collar
@@ -206,8 +235,8 @@ namespace Drillholes.Windows.ViewModel
             int noOfRecords = dataTable.Rows.Count;
 
             //white space for formatting on status bar
-            string displayItems = (noOfRecords == 1 ? noOfRecords.ToString() + " " + collarTableObject.tableType + 
-                "          " : noOfRecords.ToString() + " " + collarTableObject.tableType + "s          "); 
+            string displayItems = (noOfRecords == 1 ? noOfRecords.ToString() + " " + collarTableObject.tableType +
+                "          " : noOfRecords.ToString() + " " + collarTableObject.tableType + "s          ");
 
         }
 
@@ -234,7 +263,7 @@ namespace Drillholes.Windows.ViewModel
 
         public virtual async Task<bool> UpdateFieldnamesInXml()
         {
-            UpdateFieldnamesXml.UpdateFieldnamesXML(collarTableObject.tableType, collarTableObject.tableData, 
+            UpdateFieldnamesXml.UpdateFieldnamesXML(collarTableObject.tableType, collarTableObject.tableData,
                 collarTableObject.collarKey, "", collarTableObject.tableName);
 
             return true;
@@ -251,5 +280,7 @@ namespace Drillholes.Windows.ViewModel
         {
             collarTableObject.collarKey = collarDataFields.Where(o => o.columnImportName == holeKey).Select(p => p.columnHeader).FirstOrDefault().ToString();
         }
+
+     
     }
 }

@@ -38,10 +38,8 @@ namespace Drillholes.Domain.Services
 
         }
 
-        //public async Task<CollarTableObject> PreviewData(IMapper mapper, string tablePath, DrillholeTableType tableType, DrillholeImportFormat tableFormat, string tableName, int limit)
         public async Task<CollarTableObject> PreviewData(IMapper mapper, DrillholeTableType tableType, int limit)
         {
-          //  collarDto = await _collar.PreviewAndImportFields(tablePath, tableType, tableFormat, tableName, limit);
             collarDto = await _collar.PreviewAndImportFields(tableType, limit);
 
 

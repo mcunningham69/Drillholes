@@ -8,6 +8,8 @@ namespace Drillholes.Domain.DataObject
 {
     public class IntervalTableObject : SurveyTableObject
     {
+        public new SummaryIntervalStatistics SummaryStats { get; set; }
+
         public string intervalKey { get; set; }
     }
 }

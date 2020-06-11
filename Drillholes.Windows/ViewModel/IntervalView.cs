@@ -49,7 +49,7 @@ namespace Drillholes.Windows.ViewModel
         }
 
 
-        public override void InitialiseMapping()
+        public override void InitialiseTableMapping()
         {
             //Add ArcSDE
             if (DrillholeImportFormat.fgdb_table == intervalTableObject.tableFormat ||
@@ -76,7 +76,7 @@ namespace Drillholes.Windows.ViewModel
         public override async Task<bool> RetrieveFieldsToMap()
         {
             if (classMapper == null)
-                InitialiseMapping();
+                InitialiseTableMapping();
 
             var intervalService = await _intervalService.GetSurveyFields(classMapper, intervalTableObject.tableLocation,
                 intervalTableObject.tableFormat, intervalTableObject.tableName);
@@ -220,5 +220,7 @@ namespace Drillholes.Windows.ViewModel
             intervalTableObject.surveyKey = intervalDataFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
         }
+
+       
     }
 }

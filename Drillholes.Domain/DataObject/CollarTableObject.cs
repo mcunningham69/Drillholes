@@ -10,10 +10,12 @@ namespace Drillholes.Domain.DataObject
     public class CollarTableObject
     {
         public DrillholeTableType tableType { get; set; }
+       // public SummaryCollarStatistics SummaryStats { get; set; }
+
         public string tableName { get; set; }
         public bool tableIsValid { get; set; }
         public List<string> fields { get; set; }
-       // public string tableFields { get; set; }
+       // public string tableField { get; set; }
         public ImportTableFields tableData { get; set; }
         public DrillholeImportFormat tableFormat { get; set; }
         public System.Xml.Linq.XElement xPreview { get; set; }

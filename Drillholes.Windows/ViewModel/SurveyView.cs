@@ -19,6 +19,10 @@ namespace Drillholes.Windows.ViewModel
         private SurveyTableService _surveyService;
         private ISurveyTable _surveyTable;
 
+        SurveyStatisticsService _surveyStatisticsService;
+        ISurveyStatistics _surveyStatistics;
+
+
         public SurveyTableObject surveyTableObject { get; set; }
 
         private ImportTableFields _surveyDataFields;
@@ -47,9 +51,12 @@ namespace Drillholes.Windows.ViewModel
                 surveyType = DrillholeSurveyType.downholesurvey //default
             };
 
+            tableName = _tableName;
+            tableLocation = _tableLocation;
+            tableFormat = _tableFormat.ToString();
         }
 
-        public override void InitialiseMapping()
+        public override void InitialiseTableMapping()
         {
             //Add ArcSDE
             if (DrillholeImportFormat.fgdb_table == surveyTableObject.tableFormat ||
@@ -76,7 +83,7 @@ namespace Drillholes.Windows.ViewModel
         public override async Task<bool> RetrieveFieldsToMap()
         {
             if (classMapper == null)
-                InitialiseMapping();
+                InitialiseTableMapping();
 
             var surveyService = await _surveyService.GetSurveyFields(classMapper, surveyTableObject.tableLocation, 
                 surveyTableObject.tableFormat, surveyTableObject.tableName);
@@ -210,12 +217,19 @@ namespace Drillholes.Windows.ViewModel
 
             if (selectedValue == DrillholeConstants.notImported)
             {
-
                 ImportGenericFields(bImport);
             }
 
             surveyTableObject.surveyKey = surveyDataFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
         }
+
+        //public override async Task<bool> SummaryStatistics()
+        //{
+        //    //if (statisticsMapper == null)
+        //    //    _surveyStatistics = await InitialiseStatisticsMapping();
+
+        //    return true;
+        //}
     }
 }
