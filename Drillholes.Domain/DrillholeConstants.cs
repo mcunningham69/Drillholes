@@ -38,7 +38,7 @@ namespace Drillholes.Domain
         public const string MissingInterval = "Missing Interval";
         public const string NegativeOrZeroInterval = "Negative or Zero Interval";
         public const string OverlappingInterval = "Interval Overlap";
-        public const string CheckZeroGrade = "Zero Grade";
+        public const string ZeroGrade = "Zero Grade";
 
 
 
@@ -91,6 +91,7 @@ namespace Drillholes.Domain
         //fieldnames in underlying other/assay/litho tables
         public const string distFromName = "distfrom";
         public const string distToName = "distto";
+        public const string sampleName = "SampleID";
 
         //Grouping
         public const string GroupMapFields = "Mandatory Fields";

@@ -453,6 +453,52 @@ namespace Drillholes.Windows.ViewModel
 
         private async Task<bool> CheckForZeroGrades(bool editData)
         {
+            if (mapper == null)
+                InitialiseMapping();
+
+            List<ValidationMessage> assayFieldTest = new List<ValidationMessage>();
+
+            List<ImportTableField> tempFields = new List<ImportTableField>();
+
+            //check for grade
+            if (importAssayFields.Where(o => o.columnImportAs == "Grade").Count() > 0)
+            {
+                ImportTableField assayHoleField = importAssayFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single();
+                tempFields.Add(assayHoleField);
+
+                //import SampleID if it exists
+                ImportTableField SampleIDField = importAssayFields.Where(o => o.columnImportName == DrillholeConstants.sampleName).Where(m => m.genericType == true).FirstOrDefault();
+
+                if (SampleIDField == null)
+                    SampleIDField = new ImportTableField() { columnImportName = DrillholeConstants.sampleName };
+
+                tempFields.Add(SampleIDField);
+
+
+                var gradeFields = importAssayFields.Where(o => o.columnImportAs == "Grade").ToList();
+
+                foreach (var field in gradeFields)
+                {
+                    tempFields.Add(field);
+                }
+
+
+                assayFieldTest.Add(new ValidationMessage
+                {
+                    verified = true,
+                    count = 0,
+                    validationTest = DrillholeConstants.checkGrade,
+                    validationMessages = new List<string>(),
+                    tableFields = tempFields
+
+                });
+
+                ValidationMessages assayTests = new ValidationMessages { testType = DrillholeConstants.ZeroGrade, testMessage = assayFieldTest };
+
+                var validationCheck = await _assayValidationService.CheckOverlappingIntervals(mapper, assayTests, xmlAssayData);
+
+                DisplayMessages.DisplayResults.Add(validationCheck.testMessages);
+            }
 
             return true;
         }
