@@ -27,7 +27,7 @@ namespace Drillholes.Windows.Dialogs
         public AssayTableObject assayObject { get; set; }
         public IntervalTableObject intervalObject { get; set; }
 
-        private CollarValidationView collarEditView { get; set; }
+        private CollarValidationView collarEdits { get; set; }
         private SurveyValidationView surveyEditView { get; set; }
         private AssayValidationView assayEditView { get; set; }
         private IntervalValidationView intervalEditView { get; set; }
@@ -65,7 +65,7 @@ namespace Drillholes.Windows.Dialogs
                 ValidateCollar();
 
 
-                DataContext = collarEditView;
+                DataContext = collarEdits;
 
             }
             else if (selectedIndex == 1)
@@ -122,11 +122,11 @@ namespace Drillholes.Windows.Dialogs
 
         private async void ValidateCollar()
         {
-            collarEditView = new CollarValidationView(DrillholeTableType.collar, collarObject.surveyType, collarObject.xPreview);
-            collarEditView.importCollarFields = collarObject.tableData;
-            await collarEditView.ValidateAllTables(true);
+            collarEdits = new CollarValidationView(DrillholeTableType.collar, collarObject.surveyType, collarObject.xPreview);
+            collarEdits.importCollarFields = collarObject.tableData;
+            await collarEdits.ValidateAllTables(true);
 
-            collarEditView.ReshapeMessages();
+            collarEdits.ReshapeMessages();
         }
 
         //testtype
