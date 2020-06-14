@@ -3,6 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Drillholes.Domain;assembly=Drillholes.Domain"
+
         mc:Ignorable="d"
         Title="Fix Errors and Review Warnings" Height="450" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
 
@@ -158,8 +160,8 @@
         </Grid.RowDefinitions>
 
         <TreeView Grid.RowSpan="2" Grid.Column="1" Grid.Row="2" Name="tvEdit" ItemsSource="{Binding EditDrillholeData}" SelectedItemChanged="tvEdit_SelectedItemChanged" SourceUpdated="tvEdit_SourceUpdated" >
-           <!-- <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding GroupedHoles}" DataType="{x:Type local:ReshapeDataToEdit}">
+           <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding GroupedHoles}" DataType="{x:Type local:ReshapedDataToEdit}">
                     <Label Content="{Binding ErrorType}"/>
                     <HierarchicalDataTemplate.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding GroupedTables}" DataType="{x:Type local:GroupByHoles}">
@@ -168,12 +170,17 @@
                                 <HierarchicalDataTemplate ItemsSource="{Binding GroupedTests}" DataType="{x:Type local:GroupByTable}">
                                     <Label Content="{Binding TableType}"/>
                                     <HierarchicalDataTemplate.ItemTemplate>
-                                        <HierarchicalDataTemplate ItemsSource="{Binding TableData}" DataType="{x:Type local:GroupByTest}">
-                                            <Label Content="{Binding TestName}"/>
+                                        <HierarchicalDataTemplate ItemsSource="{Binding TestFields}" DataType="{x:Type local:GroupByTest}">
+                                            <Label Content="{Binding MainTest}"/>
                                             <HierarchicalDataTemplate.ItemTemplate>
-                                                <DataTemplate DataType="{x:Type local:RowsToEdit}">
-                                                    <Label Content="{Binding Description}"/>
-                                                </DataTemplate>
+                                                <HierarchicalDataTemplate ItemsSource="{Binding TableData}" DataType="{x:Type local:GroupByTestField}">
+                                                    <Label Content="{Binding TestField}"/>
+                                                    <HierarchicalDataTemplate.ItemTemplate>
+                                                        <DataTemplate DataType="{x:Type local:RowsToEdit}">
+                                                            <Label Content="{Binding Description}"/>
+                                                        </DataTemplate>
+                                                    </HierarchicalDataTemplate.ItemTemplate>
+                                                </HierarchicalDataTemplate>
                                             </HierarchicalDataTemplate.ItemTemplate>
                                         </HierarchicalDataTemplate>
                                     </HierarchicalDataTemplate.ItemTemplate>
@@ -182,7 +189,7 @@
                         </HierarchicalDataTemplate>
                     </HierarchicalDataTemplate.ItemTemplate>
                 </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>-->
+            </TreeView.ItemTemplate>
 
         </TreeView>
 

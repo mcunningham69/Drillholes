@@ -23,6 +23,7 @@ namespace Drillholes.Validation.TestMessage
 
         }
 
+        #region Messages
         public async Task<ValidationSurveyDto> CheckForDuplicates(ValidationMessages ValuesToCheck, XElement surveyValues)
         {
             surveyValidationDto.testMessages = ValuesToCheck;
@@ -56,7 +57,8 @@ namespace Drillholes.Validation.TestMessage
                        + check.tableField.columnImportName + "'  " + " at distance " + distance + " is repeated " + noDups.ToString() +
                              "  times for the following survey records: " + idList;
 
-                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", id = Convert.ToInt32(holeAttr) });
+                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", id = Convert.ToInt32(holeAttr),
+                                holeID=hole });
 
                             check.validationMessages.Add(message);
                         }
@@ -209,6 +211,7 @@ namespace Drillholes.Validation.TestMessage
                 string message = "";
                 string valueCheck = element.Element(fieldID).Value;
                 string holeAttr = element.Attribute("ID").Value;
+               
 
                 if (string.IsNullOrEmpty(valueCheck) || string.IsNullOrWhiteSpace(valueCheck))
                 {
@@ -580,5 +583,7 @@ namespace Drillholes.Validation.TestMessage
 
             return surveyValidationDto;
         }
+
+        #endregion
     }
 }

@@ -13,4 +13,10 @@ namespace Drillholes.Windows
         public ObservableCollection<ValidationMessages> DisplayResults = new ObservableCollection<ValidationMessages>();
 
     }
+
+    public class DrillholeDataToEdit
+    {
+        public ObservableCollection<ReshapedDataToEdit> ReturnDataToEdit = new ObservableCollection<ReshapedDataToEdit>();
+
+    }
 }

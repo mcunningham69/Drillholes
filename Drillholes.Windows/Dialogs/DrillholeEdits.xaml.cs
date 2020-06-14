@@ -28,7 +28,7 @@ namespace Drillholes.Windows.Dialogs
         public IntervalTableObject intervalObject { get; set; }
 
         private CollarValidationView collarEdits { get; set; }
-        private SurveyValidationView surveyEditView { get; set; }
+        private SurveyValidationView surveyEdits { get; set; }
         private AssayValidationView assayEditView { get; set; }
         private IntervalValidationView intervalEditView { get; set; }
 
@@ -73,7 +73,7 @@ namespace Drillholes.Windows.Dialogs
                 ValidateCollar();
                 ValidateSurvey();
 
-                DataContext = surveyEditView;
+                DataContext = surveyEdits;
 
             }
             else if (selectedIndex == 2)
@@ -126,19 +126,21 @@ namespace Drillholes.Windows.Dialogs
             collarEdits.importCollarFields = collarObject.tableData;
             await collarEdits.ValidateAllTables(true);
 
-            collarEdits.ReshapeMessages();
+            collarEdits.ReshapeMessages(DrillholeTableType.collar);
         }
-
-        //testtype
-        //validation test & validation status
 
         private async void ValidateSurvey()
         {
-            surveyEditView = new SurveyValidationView(DrillholeTableType.survey, surveyObject.xPreview);
-            surveyEditView.importSurveyFields = surveyObject.tableData;
-            surveyEditView.importCollarFields = collarObject.tableData;
-            surveyEditView.xmlCollarData = collarObject.xPreview;
-            await surveyEditView.ValidateAllTables(true);
+            ValidateCollar();
+
+            surveyEdits = new SurveyValidationView(DrillholeTableType.survey, surveyObject.xPreview);
+            surveyEdits.EditDrillholeData = collarEdits.EditDrillholeData;
+            surveyEdits.importSurveyFields = surveyObject.tableData;
+            surveyEdits.importCollarFields = collarObject.tableData;
+            surveyEdits.xmlCollarData = collarObject.xPreview;
+            await surveyEdits.ValidateAllTables(true);
+
+            surveyEdits.ReshapeMessages(DrillholeTableType.survey);
         }
 
         private async void ValidateAssay()
