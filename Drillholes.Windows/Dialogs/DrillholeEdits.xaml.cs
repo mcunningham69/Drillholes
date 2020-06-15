@@ -29,8 +29,8 @@ namespace Drillholes.Windows.Dialogs
 
         private CollarValidationView collarEdits { get; set; }
         private SurveyValidationView surveyEdits { get; set; }
-        private AssayValidationView assayEditView { get; set; }
-        private IntervalValidationView intervalEditView { get; set; }
+        private AssayValidationView assayEdits { get; set; }
+        private IntervalValidationView intervalEdits { get; set; }
 
         public DrillholeSurveyType surveyType { get; set; }
         public int selectedIndex { get; set; }
@@ -91,7 +91,7 @@ namespace Drillholes.Windows.Dialogs
 
                 ValidateAssay();
 
-                DataContext = assayEditView;
+                DataContext = assayEdits;
 
             }
             else if (selectedIndex == 3)
@@ -115,7 +115,7 @@ namespace Drillholes.Windows.Dialogs
 
                 ValidateInterval();
 
-                DataContext = intervalEditView;
+                DataContext = intervalEdits;
 
             }
         }
@@ -145,20 +145,59 @@ namespace Drillholes.Windows.Dialogs
 
         private async void ValidateAssay()
         {
-            assayEditView = new AssayValidationView(DrillholeTableType.assay, assayObject.xPreview);
-            assayEditView.importAssayFields = assayObject.tableData;
-            assayEditView.importCollarFields = collarObject.tableData;
-            assayEditView.xmlCollarData = collarObject.xPreview;
-            await assayEditView.ValidateAllTables(true);
+            ValidateCollar();
+
+            assayEdits = new AssayValidationView(DrillholeTableType.assay, assayObject.xPreview);
+
+            if (surveyType == DrillholeSurveyType.downholesurvey)
+            {
+                ValidateSurvey();
+                assayEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
+            }
+            else
+                assayEdits.EditDrillholeData = collarEdits.EditDrillholeData;
+
+            assayEdits.importAssayFields = assayObject.tableData;
+            assayEdits.importCollarFields = collarObject.tableData;
+            assayEdits.xmlCollarData = collarObject.xPreview;
+            await assayEdits.ValidateAllTables(true);
+
+            assayEdits.ReshapeMessages(DrillholeTableType.assay);
+
         }
 
         private async void ValidateInterval()
         {
-            intervalEditView = new IntervalValidationView(DrillholeTableType.interval, intervalObject.xPreview);
-            intervalEditView.importIntervalFields = intervalObject.tableData;
-            intervalEditView.importCollarFields = collarObject.tableData;
-            intervalEditView.xmlCollarData = collarObject.xPreview;
-            await intervalEditView.ValidateAllTables(true);
+            ValidateCollar();
+
+            if (surveyType == DrillholeSurveyType.downholesurvey)
+            {
+                ValidateSurvey();
+
+                if (assayObject.tableData != null)
+                {
+                    ValidateAssay();
+                    intervalEdits.EditDrillholeData = assayEdits.EditDrillholeData;
+
+                }
+                else
+                    intervalEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
+
+            }
+            else if (assayObject.tableData != null)
+                intervalEdits.EditDrillholeData = assayEdits.EditDrillholeData;
+            else
+                intervalEdits.EditDrillholeData = collarEdits.EditDrillholeData;
+
+
+            intervalEdits = new IntervalValidationView(DrillholeTableType.interval, intervalObject.xPreview);
+            intervalEdits.importIntervalFields = intervalObject.tableData;
+            intervalEdits.importCollarFields = collarObject.tableData;
+            intervalEdits.xmlCollarData = collarObject.xPreview;
+            await intervalEdits.ValidateAllTables(true);
+
+            intervalEdits.ReshapeMessages(DrillholeTableType.interval);
+
         }
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {

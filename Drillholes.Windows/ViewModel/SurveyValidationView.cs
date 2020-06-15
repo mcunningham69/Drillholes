@@ -410,7 +410,7 @@ namespace Drillholes.Windows.ViewModel
         #endregion
 
 
-        public virtual async void ReshapeMessages(DrillholeTableType tableType)
+        public override async void ReshapeMessages(DrillholeTableType tableType)
         {
             List<string> fields = await ReturnFieldnamesForXmlQuery();
             List<DrillholeMessageStatus> status = await ReturnStatusAlerts(); //set up three alert states
