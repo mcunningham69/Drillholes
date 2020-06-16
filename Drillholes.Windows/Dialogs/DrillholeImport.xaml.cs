@@ -27,7 +27,7 @@ namespace Drillholes.Windows.Dialogs
         DrillholeSummaryMessages singletonMessages = null;
         DrillholeEdits singletonEdits = null;
 
-
+        private DrillholeSurveyType surveyType { get; set; }
         private string tableCollarLocation { get; set; }
         private string tableCollarName { get; set; }
         private string tableSurveyLocation { get; set; }
@@ -270,7 +270,7 @@ namespace Drillholes.Windows.Dialogs
             finally
             {
                 //house keeping
-                SetSurveyType();
+                SetSurveyType(false);
             }
         }
 
@@ -383,38 +383,56 @@ namespace Drillholes.Windows.Dialogs
             return true;
         }
 
-        private void SetSurveyType()
+        private void SetSurveyType(bool edits)
         {
-            if ((bool)radVertical.IsChecked)
+            if (edits)
             {
-                collarPreviewModel.collarTableObject.surveyType = DrillholeSurveyType.vertical;
-
-                if (assayPreviewModel.assayTableObject != null)
-                    assayPreviewModel.assayTableObject.surveyType = DrillholeSurveyType.vertical;
-
-                if (intervalPreviewModel.intervalTableObject != null)
-                    intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.vertical;
-            }
-            else if ((bool)radSurvey.IsChecked)
-            {
-                collarPreviewModel.collarTableObject.surveyType = DrillholeSurveyType.collarsurvey;
-
-                if (assayPreviewModel.assayTableObject != null)
-                    assayPreviewModel.assayTableObject.surveyType = DrillholeSurveyType.collarsurvey;
-
-                if (intervalPreviewModel.intervalTableObject != null)
-                    intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.collarsurvey;
+                if ((bool)radVertical.IsChecked)
+                {
+                    surveyType = DrillholeSurveyType.vertical;
+                }
+                else if ((bool)radSurvey.IsChecked)
+                {
+                    surveyType = DrillholeSurveyType.collarsurvey;
+                }
+                else
+                {
+                    surveyType = DrillholeSurveyType.downholesurvey;
+                }
             }
             else
             {
-                collarPreviewModel.collarTableObject.surveyType = DrillholeSurveyType.downholesurvey;
-                surveyPreviewModel.surveyTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+                if ((bool)radVertical.IsChecked)
+                {
+                    collarPreviewModel.collarTableObject.surveyType = DrillholeSurveyType.vertical;
 
-                if (assayPreviewModel.assayTableObject != null)
-                    assayPreviewModel.assayTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+                    if (assayPreviewModel.assayTableObject != null)
+                        assayPreviewModel.assayTableObject.surveyType = DrillholeSurveyType.vertical;
 
-                if (intervalPreviewModel.intervalTableObject != null)
-                    intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+                    if (intervalPreviewModel.intervalTableObject != null)
+                        intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.vertical;
+                }
+                else if ((bool)radSurvey.IsChecked)
+                {
+                    collarPreviewModel.collarTableObject.surveyType = DrillholeSurveyType.collarsurvey;
+
+                    if (assayPreviewModel.assayTableObject != null)
+                        assayPreviewModel.assayTableObject.surveyType = DrillholeSurveyType.collarsurvey;
+
+                    if (intervalPreviewModel.intervalTableObject != null)
+                        intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.collarsurvey;
+                }
+                else
+                {
+                    collarPreviewModel.collarTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+                    surveyPreviewModel.surveyTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+
+                    if (assayPreviewModel.assayTableObject != null)
+                        assayPreviewModel.assayTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+
+                    if (intervalPreviewModel.intervalTableObject != null)
+                        intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+                }
             }
         }
         private void cboImportAs_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -601,12 +619,12 @@ namespace Drillholes.Windows.Dialogs
         }
         private void radSurvey_Click(object sender, RoutedEventArgs e)
         {
-            SetSurveyType();
+            SetSurveyType(false);
         }
 
         private void radDhole_Click(object sender, RoutedEventArgs e)
         {
-            SetSurveyType();
+            SetSurveyType(false);
         }
 
         private void chkSkip_Click(object sender, RoutedEventArgs e)
@@ -695,23 +713,25 @@ namespace Drillholes.Windows.Dialogs
 
         }
 
-        private void btnValidate_Click(object sender, RoutedEventArgs e)
+        private async void btnValidate_Click(object sender, RoutedEventArgs e)
         {
             singletonEdits = null;
 
             singletonEdits = DrillholeEdits.GetInstance();
 
+          //  SetSurveyType(true);
+
             int _tabIndex = _tabcontrol.SelectedIndex;
 
             if (_tabIndex == -1)
                 return;
-
+            
             else if (_tabIndex == 0)
             {
                 singletonEdits.collarObject = collarPreviewModel.collarTableObject;
-                singletonEdits.surveyType = collarPreviewModel.collarTableObject.surveyType;
+            //    singletonEdits.surveyType = collarPreviewModel.collarTableObject.surveyType;
 
-                if (collarPreviewModel.collarTableObject.surveyType == DrillholeSurveyType.downholesurvey)
+                if (collarPreviewModel.collarTableObject.surveyType == surveyType)
                 {
                     if (surveyPreviewModel.surveyTableObject.tableData != null)
                         singletonEdits.surveyObject = surveyPreviewModel.surveyTableObject;
@@ -729,7 +749,7 @@ namespace Drillholes.Windows.Dialogs
             {
                 singletonEdits.collarObject = collarPreviewModel.collarTableObject;
                 singletonEdits.surveyObject = surveyPreviewModel.surveyTableObject;
-                singletonEdits.surveyType = DrillholeSurveyType.downholesurvey;
+          //      singletonEdits.surveyType = surveyType;
 
                 if (assayPreviewModel.surveyTableObject.tableData != null)
                     singletonEdits.assayObject = assayPreviewModel.assayTableObject;
@@ -779,7 +799,7 @@ namespace Drillholes.Windows.Dialogs
 
         private void radVertical_Click(object sender, RoutedEventArgs e)
         {
-            SetSurveyType();
+            SetSurveyType(false);
 
         }
 

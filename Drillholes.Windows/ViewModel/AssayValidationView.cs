@@ -608,26 +608,26 @@ namespace Drillholes.Windows.ViewModel
 
                         }
                         break;
-                    case DrillholeConstants.ZeroGrade:
-                        foreach (var message in test.testMessage)
-                        {
-                            if (importAssayFields.Where(o => o.columnImportAs == "Grade").Count() > 0)
-                            {
-                                var gradeFields = importAssayFields.Where(o => o.columnImportAs == "Grade").ToList();
+                    //case DrillholeConstants.ZeroGrade:
+                    //    foreach (var message in test.testMessage)
+                    //    {
+                    //        if (importAssayFields.Where(o => o.columnImportAs == "Grade").Count() > 0)
+                    //        {
+                    //            var gradeFields = importAssayFields.Where(o => o.columnImportAs == "Grade").ToList();
 
-                                foreach (var field in gradeFields)
-                                {
-                                    if (message.validationTest == DrillholeConstants.checkGrade)
-                                    {
-                                        await ReformatResults(message, DrillholeConstants.ZeroGrade, DrillholeConstants.checkFromTo, fields, status, tableType, surveyvalues); //TODO
-                                    }
-                                }
-                            }
+                    //            foreach (var field in gradeFields)
+                    //            {
+                    //                if (message.validationTest == DrillholeConstants.checkGrade)
+                    //                {
+                    //                    await ReformatResults(message, DrillholeConstants.ZeroGrade, DrillholeConstants.checkFromTo, fields, status, tableType, surveyvalues); //TODO
+                    //                }
+                    //            }
+                    //        }
 
                                 
 
-                        }
-                        break;
+                    //    }
+                    //    break;
                 }
             }
         }
@@ -644,24 +644,40 @@ IEnumerable<XElement> assayValues)
 
                 if (count > 0)
                 {
+                    string holeIDName = importAssayFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(n => n.columnHeader).FirstOrDefault(); //get hole name for querying XML
+
                     //note that all these lists and checks reside in the CollarValidationView
                     bool bCheck = await CheckReshapedData(status); //checks if a previous entry for status exists, and then adds to it.
 
                     //setup outside the foreach hole loop below as it is the last item to add to the ReshapedToEdit list (which is data bound to the XAML DrillholeEdits form
                     List<GroupByHoles> groupedHoles = new List<GroupByHoles>();
 
-                    List<int> ids = message.ValidationStatus.Where(e => e.ErrorType == status).Select(a => a.id).ToList(); //get IDs of all messages
-
                     List<string> SelectedHoles = new List<string>();
 
-                    string holeIDName = importAssayFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(n => n.columnHeader).FirstOrDefault(); //get hole name for querying XML
 
-                    foreach (int id in ids) //get the holes for each record
+                    if (status == DrillholeMessageStatus.Valid && _TestType == DrillholeConstants.Duplicates)
                     {
-                        var value = assayValues.Where(a => a.Attribute("ID").Value == id.ToString()).Select(h => h.Element(holeIDName).Value).FirstOrDefault();
+                        var queryHole = assayValues.Select(h => h.Element(holeIDName).Value).ToList();
 
-                        SelectedHoles.Add(value);
+                        foreach(var value in queryHole)
+                            SelectedHoles.Add(value);
+
                     }
+                    else
+                    {
+                        List<int> ids = message.ValidationStatus.Where(e => e.ErrorType == status).Select(a => a.id).ToList(); //get IDs of all messages
+
+                        foreach (int id in ids) //get the holes for each record
+                        {
+                            var value = assayValues.Where(a => a.Attribute("ID").Value == id.ToString()).Select(h => h.Element(holeIDName).Value).FirstOrDefault();
+
+                            SelectedHoles.Add(value);
+                        }
+
+                    }
+
+
+                    
 
                     var holes = SelectedHoles.GroupBy(x => x).Where(group => group.Count() >= 1).Select(group => group.Key).ToList(); //group the records under each hole
 

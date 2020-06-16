@@ -546,7 +546,10 @@ namespace Drillholes.Validation.TestMessage
                                 {
                                     for (int a = 1; a < convertSurveys.Count; a++)
                                     {
-                                        var survAttr = surveyElements.Where(s => s.Element(surveyFieldID).Value == convertSurveys[a].ToString()).Select(c => c.Attribute("ID").Value).SingleOrDefault();
+
+                                        var survAttr = surveyElements.Where(s => s.Element(distanceField).Value  == convertSurveys[a].ToString() && s.Element(surveyFieldID).Value == bhid).Select(c => c.Attribute("ID").Value).FirstOrDefault();
+
+
 
                                         if (convertSurveys[a] > tD) //checks if survey greater than max collar depth
                                         {

@@ -32,7 +32,7 @@ namespace Drillholes.Windows.Dialogs
         private AssayValidationView assayEdits { get; set; }
         private IntervalValidationView intervalEdits { get; set; }
 
-        public DrillholeSurveyType surveyType { get; set; }
+   //     public DrillholeSurveyType surveyType { get; set; }
         public int selectedIndex { get; set; }
 
         private static DrillholeEdits m_instance;
@@ -70,24 +70,24 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (selectedIndex == 1)
             {
-                ValidateCollar();
-                ValidateSurvey();
+                //ValidateCollar();
+                ValidateSurvey(true);
 
                 DataContext = surveyEdits;
 
             }
             else if (selectedIndex == 2)
             {
-                ValidateCollar();
+              //  ValidateCollar();
 
-                if (DrillholeSurveyType.downholesurvey == surveyType)
-                {
-                    if (surveyObject != null)
-                    {
-                        if (surveyObject.tableData != null)
-                            ValidateSurvey();
-                    }
-                }
+              // // if (DrillholeSurveyType.downholesurvey == surveyType)
+              ////  {
+              //      if (surveyObject != null)
+              //      {
+              //          if (surveyObject.tableData != null)
+              //              ValidateSurvey();
+              //      }
+               // }
 
                 ValidateAssay();
 
@@ -96,22 +96,22 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (selectedIndex == 3)
             {
-                ValidateCollar();
+              //  ValidateCollar();
 
-                if (DrillholeSurveyType.downholesurvey == surveyType)
-                {
-                    if (surveyObject != null)
-                    {
-                        if (surveyObject.tableData != null)
-                            ValidateSurvey();
-                    }
-                }
+              ////  if (DrillholeSurveyType.downholesurvey == surveyType)
+              ////  {
+              //      if (surveyObject != null)
+              //      {
+              //          if (surveyObject.tableData != null)
+              //              ValidateSurvey();
+              //      }
+              ////  }
 
-                if (assayObject != null)
-                {
-                    if (assayObject.tableData != null)
-                        ValidateAssay();
-                }
+              //  if (assayObject != null)
+              //  {
+              //      if (assayObject.tableData != null)
+              //          ValidateAssay();
+              //  }
 
                 ValidateInterval();
 
@@ -129,9 +129,10 @@ namespace Drillholes.Windows.Dialogs
             collarEdits.ReshapeMessages(DrillholeTableType.collar);
         }
 
-        private async void ValidateSurvey()
+        private async void ValidateSurvey(bool bEdit)
         {
-            ValidateCollar();
+            if (bEdit)
+                ValidateCollar();
 
             surveyEdits = new SurveyValidationView(DrillholeTableType.survey, surveyObject.xPreview);
             surveyEdits.EditDrillholeData = collarEdits.EditDrillholeData;
@@ -149,10 +150,13 @@ namespace Drillholes.Windows.Dialogs
 
             assayEdits = new AssayValidationView(DrillholeTableType.assay, assayObject.xPreview);
 
-            if (surveyType == DrillholeSurveyType.downholesurvey)
+            if (assayObject.surveyType == DrillholeSurveyType.downholesurvey)
             {
-                ValidateSurvey();
-                assayEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
+                if (surveyObject.xPreview != null)
+                {
+                    ValidateSurvey(false);
+                    assayEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
+                }
             }
             else
                 assayEdits.EditDrillholeData = collarEdits.EditDrillholeData;
@@ -170,9 +174,9 @@ namespace Drillholes.Windows.Dialogs
         {
             ValidateCollar();
 
-            if (surveyType == DrillholeSurveyType.downholesurvey)
+            if (intervalObject.surveyType == DrillholeSurveyType.downholesurvey)
             {
-                ValidateSurvey();
+                ValidateSurvey(false);
 
                 if (assayObject.tableData != null)
                 {

@@ -44,25 +44,33 @@ namespace Drillholes.Validation.TestMessage
                     var duplicates = elements.Where(h => h.Element(fieldID).Value == hole).GroupBy(d => d.Element(distField).Value).Where(group => group.Count() > 1).Select(group => group.Key).ToList();
 
                     string message = "";
+                    List<string> holeAttr = new List<string>();
 
                     if (duplicates.Count > 0)
                     {
+
                         foreach (string distance in duplicates)
                         {
-                            var holeAttr = elements.Where(y => y.Element(distField).Value == distance && y.Element(fieldID).Value == hole).Select(z => String.Join(distance, z.Attribute("ID").Value)).ToList();
+                            holeAttr = elements.Where(y => y.Element(distField).Value == distance && y.Element(fieldID).Value == hole).Select(z => String.Join(distance, z.Attribute("ID").Value)).ToList();
 
-                            string idList = String.Join(", ", holeAttr.ToArray());
-                            int noDups = holeAttr.Count();
+                            if (duplicates.Count > 0)
+                            {
 
-                            message = "Value for record '" + holeAttr + "' and HoleID '" + hole + "' of field type ' "
-                            + check.tableField.columnImportName + "'  " + " at distance " + distance + " is repeated " + noDups.ToString() +
-                            "  times for the following survey records: " + idList;
+                                string idList = String.Join(", ", holeAttr.ToArray());
+                                int noDups = holeAttr.Count();
 
-                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", id = Convert.ToInt32(holeAttr) });
+                                
+                                    message = "Value for record '" + holeAttr.First() + "' and HoleID '" + hole + "' of field type ' at distance " + distance + " is repeated " + noDups.ToString() +
+     "  times for the following assay records: " + idList;
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", id = Convert.ToInt32(holeAttr.First()) });
+                                
 
-                            check.validationMessages.Add(message);
+                                check.validationMessages.Add(message);
+
+                            }
+
+
                         }
-                        check.verified = false;
                     }
                     else
                     {
@@ -71,6 +79,8 @@ namespace Drillholes.Validation.TestMessage
 
                         check.validationMessages.Add(message);
                     }
+                    check.verified = false;
+
                 }
             }
 
@@ -325,7 +335,7 @@ namespace Drillholes.Validation.TestMessage
                         var collar = element.Element(holeFieldID).Value;
                         var length = element.Element(maxField).Value;
                         var intervalQuery = distanceElements.Where(c => c.Element(holeFieldID).Value == collar.ToString()).ToList();
-                        var holeIDs = distanceElements.Where(c => c.Element(holeFieldID).Value == collar.ToString()).Select(a => a.Attribute("ID")).ToList();
+                        List<XAttribute> holeIDs = distanceElements.Where(c => c.Element(holeFieldID).Value == collar.ToString()).Select(a => a.Attribute("ID")).ToList();
 
                         double tD = 0.0;
 
@@ -351,6 +361,11 @@ namespace Drillholes.Validation.TestMessage
                             {
                                 double assayMaxDepth = assayIntervals.Max();
 
+                                var attributeVal = holeIDs.Last().Value;
+                                int lastID = 0;
+                                if (Information.IsNumeric(attributeVal))
+                                    lastID = Convert.ToInt16(attributeVal);
+
                                 if (assayMaxDepth > tD)
                                 {
                                     message = "Assay value has a maximum distance of " + assayMaxDepth.ToString() +
@@ -362,7 +377,7 @@ namespace Drillholes.Validation.TestMessage
                                         ErrorType = DrillholeMessageStatus.Warning,
                                         Description = message,
                                         ErrorColour = "Orange",
-                                        id = Convert.ToInt32(holeIDs.Last())
+                                        id = lastID
                                     });
                                     check.verified = false;
                                 }
@@ -373,14 +388,18 @@ namespace Drillholes.Validation.TestMessage
                                         submessge = "equal to";
 
                                     message = "Assay max. distance of " + assayMaxDepth + " for hole " + collar + " is " + submessge + " the total length of " + tD;
+                                    check.validationMessages.Add(message);
+
                                     check.ValidationStatus.Add(new DrillholeValidationStatus
                                     {
                                         ErrorType = DrillholeMessageStatus.Valid,
                                         Description = message,
                                         ErrorColour = "Green",
-                                        id = Convert.ToInt32(holeIDs.Last())
+                                        id = lastID
                                     });
-                                    check.validationMessages.Add(message);
+
+                                    check.verified = true;
+
                                 }
                             }
 
@@ -394,6 +413,8 @@ namespace Drillholes.Validation.TestMessage
 
         public async Task<ValidationAssayDto> CheckMissingIntervals(ValidationMessages ValuesToCheck, List<XElement> drillholeValues)
         {
+            bool bValid = true;
+                
             assayValidationDto.testMessages = ValuesToCheck;
 
             foreach (var check in ValuesToCheck.testMessage)
@@ -415,6 +436,8 @@ namespace Drillholes.Validation.TestMessage
 
                     foreach (var hole in intervalHoles)
                     {
+                        bValid = true;
+
                         var lenVal = collarElements.Where(t => t.Element(collarFieldID).Value == hole).Select(c => c.Element(lengthID).Value).Single();
                         var fromVals = intervalElements.Where(s => s.Element(assayFieldID).Value == hole).Select(c => c.Element(fromField).Value).ToList();
                         var toVals = intervalElements.Where(s => s.Element(assayFieldID).Value == hole).Select(c => c.Element(toField).Value).ToList();
@@ -458,6 +481,12 @@ namespace Drillholes.Validation.TestMessage
                                             id = Convert.ToInt32(holeAttr[v])
                                         });
                                         check.verified = false;
+
+                                        bValid = false;
+                                    }
+                                    else
+                                    {
+
                                     }
                                 }
 
@@ -481,6 +510,8 @@ namespace Drillholes.Validation.TestMessage
                                                     id = Convert.ToInt32(holeAttr[v])
                                                 });
                                                 check.verified = false;
+
+                                                bValid = false;
                                             }
                                         }
                                     }
@@ -497,17 +528,26 @@ namespace Drillholes.Validation.TestMessage
                                             id = Convert.ToInt32(holeAttr[v - 1])
                                         });
                                         check.verified = false;
+
+                                        bValid = false;
                                     }
+                                }
+                                else
+                                {
+                                   
                                 }
                             }
                         }
+
+                        if (bValid)
+                        {
+
+                            message = "There are no missing intervals for hole " + hole;
+                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
+                        }
                     }
                 }
-                if (check.ValidationStatus.Count == 0)
-                {
-                    message = "There are no missing intervals";
-                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
-                }
+
             }
 
             return assayValidationDto;
@@ -515,6 +555,8 @@ namespace Drillholes.Validation.TestMessage
 
         public async Task<ValidationAssayDto> CheckNegativeIntervals(ValidationMessages ValuesToCheck, XElement drillholeValues)
         {
+            bool bValid = true;
+
             assayValidationDto.testMessages = ValuesToCheck;
 
             foreach (var check in ValuesToCheck.testMessage)
@@ -532,6 +574,8 @@ namespace Drillholes.Validation.TestMessage
 
                     foreach (var hole in intervalHoles)
                     {
+                        bValid = true;
+
                         var fromVals = intervalElements.Where(s => s.Element(holeFieldID).Value == hole).Select(c => c.Element(fromField).Value).ToList();
                         var toVals = intervalElements.Where(s => s.Element(holeFieldID).Value == hole).Select(c => c.Element(toField).Value).ToList();
                         var holeAttrs = intervalElements.Where(i => i.Element(holeFieldID).Value == hole).Select(a => a.Attribute("ID").Value).ToList();
@@ -565,6 +609,7 @@ namespace Drillholes.Validation.TestMessage
                                                 id = Convert.ToInt32(holeAttrs[d])
                                             });
 
+                                            bValid = false;
                                             check.verified = false;
                                         }
                                         else if (dblTo < 0)
@@ -579,10 +624,11 @@ namespace Drillholes.Validation.TestMessage
                                             });
                                             check.validationMessages.Add(message);
                                             check.verified = false;
+                                            bValid = false;
                                         }
                                         else if (dblTo < dblFrom)
                                         {
-                                            message = "Interval is negative for hole " + hole + " at interval + " + holeAttrs[d] + "! 'From' (" + dblFrom.ToString() + ") is greater than 'To' (" + dblTo.ToString() + ")";
+                                            message = "Interval is negative for " + hole + " at record  " + holeAttrs[d] + "! 'From' (" + dblFrom.ToString() + ") is greater than 'To' (" + dblTo.ToString() + ")";
 
                                             check.validationMessages.Add(message);
                                             check.ValidationStatus.Add(new DrillholeValidationStatus
@@ -593,19 +639,21 @@ namespace Drillholes.Validation.TestMessage
                                                 id = Convert.ToInt32(holeAttrs[d])
                                             });
                                             check.verified = false;
+                                            bValid = false;
                                         }
                                     }
                                 }
                             }
                         }
+                        if (bValid)
+                        {
+                            message = "There are no negative intervals for hole " + hole;
+                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
+                        }
+
                     }
                 }
-
-                if (check.ValidationStatus.Count == 0)
-                {
-                    message = "There are no negative intervals";
-                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
-                }
+                
             }
 
             return assayValidationDto;
@@ -613,6 +661,7 @@ namespace Drillholes.Validation.TestMessage
 
         public async Task<ValidationAssayDto> CheckOverlappingIntervals(ValidationMessages ValuesToCheck, XElement drillholeValues)
         {
+            bool bValid = true;
             assayValidationDto.testMessages = ValuesToCheck;
 
             foreach (var check in ValuesToCheck.testMessage)
@@ -631,6 +680,8 @@ namespace Drillholes.Validation.TestMessage
 
                     foreach (var hole in intervalHoles)
                     {
+                        bValid = true;
+
                         var holeIDs = intervalElements.Where(s => s.Element(holeFieldID).Value == hole).Select(c => c.Attribute("ID").Value).ToList();
                         var fromVals = intervalElements.Where(s => s.Element(holeFieldID).Value == hole).Select(c => c.Element(fromField).Value).ToList();
                         var toVals = intervalElements.Where(s => s.Element(holeFieldID).Value == hole).Select(c => c.Element(toField).Value).ToList();
@@ -673,19 +724,21 @@ namespace Drillholes.Validation.TestMessage
                                                 id = Convert.ToInt32(holeIDs[v])
                                             });
                                             check.verified = false;
+                                            bValid = false;
                                         }
                                     }
                                 }
                             }
 
                         }
+
+                        
+                            message = "There are no overlapping intervals for hole " + hole;
+                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
+                        
                     }
 
-                    if (check.ValidationStatus.Count == 0)
-                    {
-                        message = "There are no overlapping intervals";
-                        check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
-                    }
+                    
                 }
             }
 
