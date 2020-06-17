@@ -152,11 +152,14 @@ namespace Drillholes.Windows.Dialogs
 
             if (assayObject.surveyType == DrillholeSurveyType.downholesurvey)
             {
-                if (surveyObject.xPreview != null)
+                if (surveyObject != null)
                 {
                     ValidateSurvey(false);
                     assayEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
                 }
+                else
+                    assayEdits.EditDrillholeData = collarEdits.EditDrillholeData;
+
             }
             else
                 assayEdits.EditDrillholeData = collarEdits.EditDrillholeData;

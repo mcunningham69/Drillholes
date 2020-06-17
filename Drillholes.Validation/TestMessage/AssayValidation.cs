@@ -68,14 +68,14 @@ namespace Drillholes.Validation.TestMessage
                                 check.validationMessages.Add(message);
 
                             }
-
-
                         }
                     }
                     else
                     {
+                        //get first id for collar in assay table
+                        string assayID = elements.Where(y => y.Element(fieldID).Value == hole).Select(i => i.Attribute("ID").Value).FirstOrDefault();
                         message = "There are no duplicates for " + hole;
-                        check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
+                        check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green", id = Convert.ToInt32(assayID) });
 
                         check.validationMessages.Add(message);
                     }
@@ -541,9 +541,9 @@ namespace Drillholes.Validation.TestMessage
 
                         if (bValid)
                         {
-
+                            string assayID = intervalElements.Where(y => y.Element(assayFieldID).Value == hole).Select(i => i.Attribute("ID").Value).FirstOrDefault();
                             message = "There are no missing intervals for hole " + hole;
-                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
+                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green", id = Convert.ToInt32(assayID) });
                         }
                     }
                 }
@@ -647,8 +647,10 @@ namespace Drillholes.Validation.TestMessage
                         }
                         if (bValid)
                         {
+                            string assayID = intervalElements.Where(y => y.Element(holeFieldID).Value == hole).Select(i => i.Attribute("ID").Value).FirstOrDefault();
+
                             message = "There are no negative intervals for hole " + hole;
-                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
+                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green", id=Convert.ToInt32(assayID) });
                         }
 
                     }
@@ -732,9 +734,9 @@ namespace Drillholes.Validation.TestMessage
 
                         }
 
-                        
-                            message = "There are no overlapping intervals for hole " + hole;
-                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
+                        string assayID = intervalElements.Where(y => y.Element(holeFieldID).Value == hole).Select(i => i.Attribute("ID").Value).FirstOrDefault();
+                        message = "There are no overlapping intervals for hole " + hole;
+                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green", id=Convert.ToInt32(assayID) });
                         
                     }
 

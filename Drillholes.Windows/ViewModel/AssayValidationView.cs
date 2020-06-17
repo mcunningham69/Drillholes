@@ -510,7 +510,7 @@ namespace Drillholes.Windows.ViewModel
             List<string> fields = await ReturnFieldnamesForXmlQuery();
             List<DrillholeMessageStatus> status = await ReturnStatusAlerts(); //set up three alert states
 
-            var surveyvalues = xmlAssayData.Elements();
+            var assayvalues = xmlAssayData.Elements();
 
             foreach (var test in ShowTestMessages)  //get messages after running validation above
             {
@@ -522,21 +522,18 @@ namespace Drillholes.Windows.ViewModel
                         {
                             if (message.validationTest == DrillholeConstants.checkHole)  //specific field being checked
                             {
-                                await ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkHole, fields, status, tableType, surveyvalues);
+                                await ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkHole, fields, status, tableType, assayvalues);
                             }
                             else if (message.validationTest == DrillholeConstants.checkFrom)
                             {
-                                await ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkFrom, fields, status, tableType, surveyvalues);
+                                await ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkFrom, fields, status, tableType, assayvalues);
                             }
 
                             else if (message.validationTest == DrillholeConstants.checkTo)
                             {
-                                await ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkAzi, fields, status, tableType, surveyvalues);
+                                await ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkTo, fields, status, tableType, assayvalues);
                             }
-                            else if (message.validationTest == DrillholeConstants.checkTo)
-                            {
-                                await ReformatResults(message, DrillholeConstants.IsEmptyOrNull, DrillholeConstants.checkDip, fields, status, tableType, surveyvalues);
-                            }
+                           
                         }
                         break;
 
@@ -545,15 +542,15 @@ namespace Drillholes.Windows.ViewModel
                         {
                             if (message.validationTest == DrillholeConstants.checkFrom)
                             {
-                                await ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkFrom, fields, status, tableType, surveyvalues);
+                                await ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkFrom, fields, status, tableType, assayvalues);
                             }
                             else if (message.validationTest == DrillholeConstants.checkTo)
                             {
-                                await ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkTo, fields, status, tableType, surveyvalues);
+                                await ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkTo, fields, status, tableType, assayvalues);
                             }
                             else if (message.validationTest == DrillholeConstants.checkGrade)
                             {
-                                await ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkGrade, fields, status, tableType, surveyvalues);
+                                await ReformatResults(message, DrillholeConstants.IsNumeric, DrillholeConstants.checkGrade, fields, status, tableType, assayvalues);
                             }
                         }
 
@@ -562,21 +559,21 @@ namespace Drillholes.Windows.ViewModel
                     case DrillholeConstants.Duplicates:
                         foreach (var message in test.testMessage)
                         {
-                            await ReformatResults(message, DrillholeConstants.Duplicates, DrillholeConstants.checkFrom, fields, status, tableType, surveyvalues);
+                            await ReformatResults(message, DrillholeConstants.Duplicates, DrillholeConstants.checkFrom, fields, status, tableType, assayvalues);
                         }
                         break;
 
                     case DrillholeConstants.HoleLength:
                         foreach (var message in test.testMessage)
                         {
-                            await ReformatResults(message, DrillholeConstants.HoleLength, DrillholeConstants.checkTD, fields, status, tableType, surveyvalues);
+                            await ReformatResults(message, DrillholeConstants.HoleLength, DrillholeConstants.checkTD, fields, status, tableType, assayvalues);
                         }
                         break;
 
                     case DrillholeConstants.NegativeOrZeroInterval:
                         foreach (var message in test.testMessage)
                         {
-                            await ReformatResults(message, DrillholeConstants.NegativeOrZeroInterval, DrillholeConstants.checkFromTo, fields, status, tableType, surveyvalues);
+                            await ReformatResults(message, DrillholeConstants.NegativeOrZeroInterval, DrillholeConstants.checkFromTo, fields, status, tableType, assayvalues);
                         }
                         break;
 
@@ -584,16 +581,16 @@ namespace Drillholes.Windows.ViewModel
                         foreach (var message in test.testMessage)
                         {
 
-                            await ReformatResults(message, DrillholeConstants.MissingInterval, DrillholeConstants.checkFromTo, fields, status, tableType, surveyvalues);
+                            await ReformatResults(message, DrillholeConstants.MissingInterval, DrillholeConstants.checkFromTo, fields, status, tableType, assayvalues);
 
                         }
                         break;
-                    case DrillholeConstants.MissingCollar:
+                    case DrillholeConstants.MissingCollar:  //TEST
                         foreach (var message in test.testMessage)
                         {
                             if (message.validationTest == DrillholeConstants.checkHole)
                             {
-                                await ReformatResults(message, DrillholeConstants.SurveyRange, DrillholeConstants.checkHole, fields, status, tableType, surveyvalues);
+                                await ReformatResults(message, DrillholeConstants.MissingCollar, DrillholeConstants.checkHole, fields, status, tableType, assayvalues);
                             }
 
                         }
@@ -603,7 +600,7 @@ namespace Drillholes.Windows.ViewModel
                         {
                             if (message.validationTest == DrillholeConstants.checkFromTo)
                             {
-                                await ReformatResults(message, DrillholeConstants.OverlappingInterval, DrillholeConstants.checkFromTo, fields, status, tableType, surveyvalues);
+                                await ReformatResults(message, DrillholeConstants.OverlappingInterval, DrillholeConstants.checkFromTo, fields, status, tableType, assayvalues);
                             }
 
                         }
@@ -653,19 +650,20 @@ IEnumerable<XElement> assayValues)
                     List<GroupByHoles> groupedHoles = new List<GroupByHoles>();
 
                     List<string> SelectedHoles = new List<string>();
+                    List<int> ids = new List<int>();
 
 
-                    if (status == DrillholeMessageStatus.Valid && _TestType == DrillholeConstants.Duplicates)
-                    {
-                        var queryHole = assayValues.Select(h => h.Element(holeIDName).Value).ToList();
+                    //if (status == DrillholeMessageStatus.Valid || _TestType == DrillholeConstants.Duplicates)
+                    //{
+                    //    var queryHole = assayValues.Select(h => h.Element(holeIDName).Value).ToList();
 
-                        foreach(var value in queryHole)
-                            SelectedHoles.Add(value);
+                    //    foreach(var value in queryHole)
+                    //        SelectedHoles.Add(value);
 
-                    }
-                    else
-                    {
-                        List<int> ids = message.ValidationStatus.Where(e => e.ErrorType == status).Select(a => a.id).ToList(); //get IDs of all messages
+                    //}
+                    //else
+                    //{
+                         ids = message.ValidationStatus.Where(e => e.ErrorType == status).Select(a => a.id).ToList(); //get IDs of all messages
 
                         foreach (int id in ids) //get the holes for each record
                         {
@@ -674,7 +672,7 @@ IEnumerable<XElement> assayValues)
                             SelectedHoles.Add(value);
                         }
 
-                    }
+                   // }
 
 
                     
@@ -776,18 +774,46 @@ IEnumerable<XElement> assayValues)
 
                         //return records within hole
 
+                       // List<string> survIDs = null;
+
+                        if(status == DrillholeMessageStatus.Valid)
+                        {
+                            if (_TestType == DrillholeConstants.MissingInterval || _TestType == DrillholeConstants.NegativeOrZeroInterval || _TestType == DrillholeConstants.OverlappingInterval)
+                            {
+                                var survIDs = message.ValidationStatus.Where(e => e.ErrorType == status && e.holeID == assayHole).Select(a => a.id).ToList(); //get IDs of all messages
+
+                                foreach (var id in ids)
+                                {
+                                    rows.Add(new RowsToEdit
+                                    {
+                                        id_col = counter,
+                                        id_ass = id,
+                                        testType = _TestType,
+                                        validationTest = validation,
+                                        Description = tooltips[counter]
+                                    });
+
+                                }
+                            }
+                        }
 
                         //only need collar id for Duplicates.
                         if (_TestType == DrillholeConstants.Duplicates)
                         {
-                            rows.Add(new RowsToEdit
-                            {
-                                id_col = counter,
-                                id_ass = counter,
-                                testType = _TestType,
-                                validationTest = validation,
-                                Description = tooltips[counter]
-                            });
+                            var survIDs = message.ValidationStatus.Where(e => e.ErrorType == status && e.holeID == assayHole).Select(a => a.id).ToList(); //get IDs of all messages
+
+                            foreach (var id in ids)
+                                {
+                                    rows.Add(new RowsToEdit
+                                    {
+                                        id_col = counter,
+                                        id_ass = id,
+                                        testType = _TestType,
+                                        validationTest = validation,
+                                        Description = tooltips[counter]
+                                    });
+                                
+                            }
                         }
                         else if (_TestType == DrillholeConstants.ZeroGrade)
                         {
@@ -795,17 +821,18 @@ IEnumerable<XElement> assayValues)
                             rows.Add(new RowsToEdit
                             {
                                 id_col = counter,
-                                id_sur = 0,
+                                id_ass = 0,
                                 testType = _TestType,
                                 validationTest = validation,
                                 Description = tooltips[0]
                             });
 
                         }
+ 
                         else
                         {
 
-                            List<string> survIDs = assayValues.Where(h => h.Element(fields[0]).Value == assayHole).Select(v => v.Attribute("ID").Value).ToList(); //get the survey IDs for hole to check which records have a message
+                            var survIDs = assayValues.Where(h => h.Element(fields[0]).Value == assayHole).Select(v => v.Attribute("ID").Value).ToList(); //get the survey IDs for hole to check which records have a message
 
                             int messageCount = 0;
 
@@ -823,7 +850,7 @@ IEnumerable<XElement> assayValues)
                                         rows.Add(new RowsToEdit
                                         {
                                             id_col = counter,
-                                            id_sur = value,
+                                            id_ass = value,
                                             testType = _TestType,
                                             validationTest = validation,
                                             Description = tooltips[messageCount]

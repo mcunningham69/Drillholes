@@ -503,7 +503,7 @@ namespace Drillholes.Windows.ViewModel
                         {
                             if (message.validationTest == DrillholeConstants.checkHole)
                             {
-                                await ReformatResults(message, DrillholeConstants.SurveyRange, DrillholeConstants.checkHole, fields, status, tableType, surveyvalues);
+                                await ReformatResults(message, DrillholeConstants.MissingCollar, DrillholeConstants.checkHole, fields, status, tableType, surveyvalues);
                             }
                            
                         }
