@@ -1,8 +1,10 @@
-﻿using Drillholes.Domain.DataObject;
+﻿using Drillholes.Domain;
+using Drillholes.Domain.DataObject;
 using Drillholes.Domain.Enum;
 using Drillholes.Windows.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -246,9 +248,109 @@ namespace Drillholes.Windows.Dialogs
 
         }
 
-        private void tvEdit_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private async void tvEdit_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            List<RowsToEdit> _edits = new List<RowsToEdit>();
 
+            var value = tvEdit.SelectedItem.GetType();
+
+            if (value.Name == "GroupByTest")
+            {
+                var edits = tvEdit.SelectedItem as GroupByTestField;
+
+                foreach (var edit in edits.TableData)
+                {
+                    _edits.Add(edit);
+                }
+            }
+            else if (value.Name == "RowsToEdit")
+            {
+                var edit = tvEdit.SelectedItem as RowsToEdit;
+
+                _edits.Add(edit);
+            }
+            else
+                return;
+
+            DataTable collarTable = null;
+            DataTable previewTable = null;
+            DataTable surveyTable = null;
+            DataTable assayTable = null;
+            DataTable intervalTable = null;
+
+            string holeID = _edits[0].holeid;
+            string testType = _edits[0].testType;
+
+            if (_edits[0].TableType == DrillholeTableType.collar)
+            {
+                collarTable = await collarEdits.PopulateGridValues(_edits, DrillholeTableType.collar, false);
+
+                collarEdits.SetDataContext(dataEdits, collarTable);
+
+                dataCollar.Visibility = Visibility.Hidden;
+                lblPreview.Visibility = Visibility.Visible;
+            }
+            else if (_edits[0].TableType == DrillholeTableType.survey)
+            {
+                //surveyTable = surveyViewModel.PopulateGridValues(_edits, DrillholeTableType.survey, false).Result;
+                //// surveyViewModel.SetDataContext(dataEdits, surveyTable);
+
+                //_edits.Clear();
+
+                ////Get CollarRow
+                //_edits.Add(collarViewModel.CollarRow(holeID, testType).Result);
+                //previewTable = await collarViewModel.PopulateGridValues(_edits, DrillholeTableType.collar, true);
+
+                //collarViewModel.SetDataContext(dataCollar, previewTable);
+                //surveyViewModel.SetDataContext(dataEdits, surveyTable);
+
+                //dataCollar.Visibility = Visibility.Visible;
+                //lblPreview.Visibility = Visibility.Hidden;
+            }
+            else if (_edits[0].TableType == DrillholeTableType.assay)
+            {
+                //assayTable = await assayViewModel.PopulateGridValues(_edits, DrillholeTableType.assay, false);
+
+                //_edits.Clear();
+
+                ////Get CollarRow
+                //_edits.Add(collarViewModel.CollarRow(holeID, testType).Result);
+                //previewTable = await collarViewModel.PopulateGridValues(_edits, DrillholeTableType.collar, true);
+
+                //collarViewModel.SetDataContext(dataCollar, previewTable);
+                //assayViewModel.SetDataContext(dataEdits, assayTable);
+
+                //dataCollar.Visibility = Visibility.Visible;
+                //lblPreview.Visibility = Visibility.Hidden;
+            }
+
+            else if (_edits[0].TableType == DrillholeTableType.interval)
+            {
+                //intervalTable = await intervalViewModel.PopulateGridValues(_edits, DrillholeTableType.interval, false);
+                //intervalViewModel.SetDataContext(dataEdits, intervalTable);
+
+                //_edits.Clear();
+
+                ////Get CollarRow
+                //_edits.Add(collarViewModel.CollarRow(holeID, testType).Result);
+                //previewTable = await collarViewModel.PopulateGridValues(_edits, DrillholeTableType.collar, true);
+
+                //collarViewModel.SetDataContext(dataCollar, previewTable);
+
+                //dataCollar.Visibility = Visibility.Visible;
+                //lblPreview.Visibility = Visibility.Hidden;
+            }
+            foreach (var column in dataEdits.Columns)
+            {
+                string name = column.Header.ToString();
+
+                //make readonly columns
+                if (name == "ID" || name == "Message")
+                {
+                    column.IsReadOnly = true;
+                }
+
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

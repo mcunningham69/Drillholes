@@ -18,6 +18,8 @@ using Drillholes.Domain.DTO;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using System.Threading;
+using System.Data;
+using System.Windows.Controls;
 
 namespace Drillholes.Windows.ViewModel
 {
@@ -38,8 +40,6 @@ namespace Drillholes.Windows.ViewModel
         public ObservableCollection<ValidationMessages> ShowTestMessages { get { return DisplayMessages.DisplayResults; } }
 
         public DrillholeDataToEdit EditData = new DrillholeDataToEdit();
-
-        //public ObservableCollection<ReshapedDataToEdit> EditDrillholeData => EditData.ReturnDataToEdit;
 
         public ObservableCollection<ReshapedDataToEdit> EditDrillholeData { get; set; }
 
@@ -474,7 +474,7 @@ namespace Drillholes.Windows.ViewModel
 
         #endregion
 
-        #region Edits
+        #region TreeView databound
         public virtual async void ReshapeMessages(DrillholeTableType tableType)
         {
             List<string> fields = await ReturnFieldnamesForXmlQuery();
@@ -601,7 +601,7 @@ namespace Drillholes.Windows.ViewModel
             {
                 List<int> _status = message.ValidationStatus.Where(e => e.ErrorType == status).Select(p => p.id).ToList();
 
-                int counter = 0;
+              //  int counter = 0;
                 if (_status.Count > 0)
                 {
 
@@ -740,13 +740,15 @@ namespace Drillholes.Windows.ViewModel
 
                         rows.Add(new RowsToEdit
                         {
-                            id_col = counter,
+                            id_col = Convert.ToInt16(value),
+                            holeid = queryHole,
                             testType = _TestType,
                             validationTest = validation,
+                            ErrorType = status,
                             Description = tooltip
                         });
 
-                        counter++;
+                       // counter++;
                     }
 
                 }
@@ -1360,6 +1362,99 @@ namespace Drillholes.Windows.ViewModel
 
             return null;
 
+        }
+
+        #endregion
+
+        #region Actual Data
+        public async Task<DataTable> PopulateGridValues(List<RowsToEdit> _edit, DrillholeTableType tableType, bool preview)
+        {
+            DataTable dataTable = new DataTable();
+            var collar = xmlCollarData.Elements();
+
+            dataTable = await AddColumns(tableType, preview);
+
+            List<object> rowValues = new List<object>();
+
+            //holeid
+
+            //x
+            var x = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.xName).Select(m => m.columnHeader).Single();
+            
+            //y
+            var y = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.yName).Select(m => m.columnHeader).Single();
+
+            //z
+            var z = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.zName).Select(m => m.columnHeader).Single();
+
+            var holeID = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(m => m.columnHeader).FirstOrDefault();
+
+
+            //max depth
+            var depth = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.maxName).Select(m => m.columnHeader).Single();
+
+            foreach (var value in _edit) //populate dataTable
+            {
+                // rowValues.Add(value.Ignore);
+                rowValues.Add(value.id_col.ToString());
+                rowValues.Add(value.holeid);
+                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(x).Value).Single());
+                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(y).Value).Single());
+                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(z).Value).Single());
+                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(depth).Value).Single());
+
+                if (surveyType == DrillholeSurveyType.collarsurvey)
+                {
+                    var azi = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Select(m => m.columnHeader).Single();
+                    var dip = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Select(m => m.columnHeader).Single();
+
+                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(azi).Value).Single());
+                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(dip).Value).Single());
+                }
+
+                rowValues.Add(value.testType);
+
+                if (!preview)
+                    rowValues.Add(value.Description);
+
+                dataTable.Rows.Add(rowValues.ToArray());
+            }
+
+            return dataTable; //TODO
+        }
+
+        public async Task<DataTable> AddColumns(DrillholeTableType tableType, bool preview)
+        {
+            DataTable dataTable = new DataTable();
+            // dataTable.Columns.Add("Ignore");
+            dataTable.Columns.Add("ID");
+            dataTable.Columns.Add(DrillholeConstants.holeID);
+            dataTable.Columns.Add(DrillholeConstants.x);
+            dataTable.Columns.Add(DrillholeConstants.y);
+            dataTable.Columns.Add(DrillholeConstants.z);
+            dataTable.Columns.Add(DrillholeConstants.maxDepth);
+
+            if (surveyType == DrillholeSurveyType.collarsurvey)
+            {
+                dataTable.Columns.Add(DrillholeConstants.azimuth);
+                dataTable.Columns.Add(DrillholeConstants.dip);
+            }
+
+            dataTable.Columns.Add("Validation");
+
+            if (!preview)
+                dataTable.Columns.Add("Description");
+
+            return dataTable;
+        }
+
+        public void SetDataContext(DataGrid dataEdits, DataTable dataTable)
+        {
+            if (dataTable != null)
+            {
+                if (dataTable.Columns.Count > 0)
+                    dataEdits.DataContext = dataTable;
+            }
         }
 
         #endregion

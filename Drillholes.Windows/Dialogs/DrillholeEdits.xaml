@@ -212,7 +212,7 @@
                   VerticalAlignment="Stretch" BorderBrush="Blue" AutoGenerateColumns="True" 
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" 
                   IsReadOnly="False" CanUserAddRows="False" 
-                  ToolTip="{Binding Path=EditDrillholeData/GroupedHoles/GroupedTables/GroupedTests/TableData/ToolTip}">
+                  ToolTip="{Binding Path=EditDrillholeData/GroupedHoles/GroupedTables/GroupedTests/TestFields/TableData/ToolTip}">
 
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Ignore" Binding="{Binding Ignore, Mode=TwoWay}"/>
