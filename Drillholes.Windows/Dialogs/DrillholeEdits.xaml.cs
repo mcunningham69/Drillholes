@@ -292,33 +292,33 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (_edits[0].TableType == DrillholeTableType.survey)
             {
-                //surveyTable = surveyViewModel.PopulateGridValues(_edits, DrillholeTableType.survey, false).Result;
+                surveyTable = surveyEdits.PopulateGridValues(_edits, DrillholeTableType.survey, false).Result;  //TODO => override
                 //// surveyViewModel.SetDataContext(dataEdits, surveyTable);
 
-                //_edits.Clear();
+                _edits.Clear();
 
-                ////Get CollarRow
-                //_edits.Add(collarViewModel.CollarRow(holeID, testType).Result);
+                //Get CollarRow
+                _edits.Add(collarEdits.CollarRow(holeID, testType).Result);
                 //previewTable = await collarViewModel.PopulateGridValues(_edits, DrillholeTableType.collar, true);
 
                 //collarViewModel.SetDataContext(dataCollar, previewTable);
-                //surveyViewModel.SetDataContext(dataEdits, surveyTable);
+                surveyEdits.SetDataContext(dataEdits, surveyTable);
 
                 //dataCollar.Visibility = Visibility.Visible;
                 //lblPreview.Visibility = Visibility.Hidden;
             }
             else if (_edits[0].TableType == DrillholeTableType.assay)
             {
-                //assayTable = await assayViewModel.PopulateGridValues(_edits, DrillholeTableType.assay, false);
+                assayTable = await assayEdits.PopulateGridValues(_edits, DrillholeTableType.assay, false); //TODO override
 
-                //_edits.Clear();
+                _edits.Clear();
 
-                ////Get CollarRow
+                //Get CollarRow
                 //_edits.Add(collarViewModel.CollarRow(holeID, testType).Result);
                 //previewTable = await collarViewModel.PopulateGridValues(_edits, DrillholeTableType.collar, true);
 
                 //collarViewModel.SetDataContext(dataCollar, previewTable);
-                //assayViewModel.SetDataContext(dataEdits, assayTable);
+                assayEdits.SetDataContext(dataEdits, assayTable);
 
                 //dataCollar.Visibility = Visibility.Visible;
                 //lblPreview.Visibility = Visibility.Hidden;
@@ -326,12 +326,12 @@ namespace Drillholes.Windows.Dialogs
 
             else if (_edits[0].TableType == DrillholeTableType.interval)
             {
-                //intervalTable = await intervalViewModel.PopulateGridValues(_edits, DrillholeTableType.interval, false);
-                //intervalViewModel.SetDataContext(dataEdits, intervalTable);
+                intervalTable = await intervalEdits.PopulateGridValues(_edits, DrillholeTableType.interval, false); //TODO override
+                intervalEdits.SetDataContext(dataEdits, intervalTable);
 
-                //_edits.Clear();
+                _edits.Clear();
 
-                ////Get CollarRow
+                //Get CollarRow
                 //_edits.Add(collarViewModel.CollarRow(holeID, testType).Result);
                 //previewTable = await collarViewModel.PopulateGridValues(_edits, DrillholeTableType.collar, true);
 

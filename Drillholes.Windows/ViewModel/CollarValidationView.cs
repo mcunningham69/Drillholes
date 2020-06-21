@@ -1448,6 +1448,40 @@ namespace Drillholes.Windows.ViewModel
             return dataTable;
         }
 
+        public async Task<RowsToEdit> CollarRow(string holeID, string testType)
+        {
+            List<string> fields = new List<string>();
+            fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false)
+                .Select(s => s.columnHeader).FirstOrDefault());
+            fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false)
+                .Select(s => s.columnHeader).FirstOrDefault());
+            fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false)
+                .Select(s => s.columnHeader).FirstOrDefault());
+            fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false)
+                .Select(s => s.columnHeader).FirstOrDefault());
+            fields.Add(importCollarFields.Where(o => o.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false)
+                .Select(s => s.columnHeader).FirstOrDefault());
+
+            var collarValues = xmlCollarData.Elements();
+
+            var queryHole = collarValues.Where(h => h.Element(fields[0]).Value == holeID).Select(v => v.Attribute("ID").Value).FirstOrDefault();
+            var queryX = collarValues.Where(h => h.Element(fields[0]).Value == holeID).Select(v => v.Element(fields[1]).Value).FirstOrDefault();
+            var queryY = collarValues.Where(h => h.Element(fields[0]).Value == holeID).Select(v => v.Element(fields[2]).Value).FirstOrDefault();
+            var queryZ = collarValues.Where(h => h.Element(fields[0]).Value == holeID).Select(v => v.Element(fields[3]).Value).FirstOrDefault();
+            var queryTD = collarValues.Where(h => h.Element(fields[0]).Value == holeID).Select(v => v.Element(fields[4]).Value).FirstOrDefault();
+
+            RowsToEdit collarRow = new RowsToEdit();
+            collarRow.id_col = Convert.ToInt16(queryHole);
+            collarRow.holeid = holeID;
+            collarRow.x = queryX;
+            collarRow.y = queryY;
+            collarRow.z = queryZ;
+            collarRow.maxDepth = queryTD;
+            collarRow.testType = testType;
+
+            return collarRow;
+        }
+
         public void SetDataContext(DataGrid dataEdits, DataTable dataTable)
         {
             if (dataTable != null)
