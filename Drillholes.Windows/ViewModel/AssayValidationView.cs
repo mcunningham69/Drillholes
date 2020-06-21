@@ -634,7 +634,6 @@ IEnumerable<XElement> assayValues)
         {
             foreach (var status in statusMessages)  //iterate three times for each error type
             {
-                List<string> tooltips = message.ValidationStatus.Where(e => e.ErrorType == status).Select(p => p.Description).ToList();
                 var count = message.ValidationStatus.Where(e => e.ErrorType == status).Count();  //for checking each status for messages
 
                 int counter = 0; //use this for collar id
@@ -643,8 +642,6 @@ IEnumerable<XElement> assayValues)
                 {
                     string holeIDName = importAssayFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(n => n.columnHeader).FirstOrDefault(); //get hole name for querying XML
 
-                    //note that all these lists and checks reside in the CollarValidationView
-                    bool bCheck = await CheckReshapedData(status); //checks if a previous entry for status exists, and then adds to it.
 
                     //setup outside the foreach hole loop below as it is the last item to add to the ReshapedToEdit list (which is data bound to the XAML DrillholeEdits form
                     List<GroupByHoles> groupedHoles = new List<GroupByHoles>();
@@ -652,17 +649,6 @@ IEnumerable<XElement> assayValues)
                     List<string> SelectedHoles = new List<string>();
                     List<int> ids = new List<int>();
 
-
-                    //if (status == DrillholeMessageStatus.Valid || _TestType == DrillholeConstants.Duplicates)
-                    //{
-                    //    var queryHole = assayValues.Select(h => h.Element(holeIDName).Value).ToList();
-
-                    //    foreach(var value in queryHole)
-                    //        SelectedHoles.Add(value);
-
-                    //}
-                    //else
-                    //{
                          ids = message.ValidationStatus.Where(e => e.ErrorType == status).Select(a => a.id).ToList(); //get IDs of all messages
 
                         foreach (int id in ids) //get the holes for each record
@@ -672,12 +658,10 @@ IEnumerable<XElement> assayValues)
                             SelectedHoles.Add(value);
                         }
 
-                   // }
-
-
-                    
-
                     var holes = SelectedHoles.GroupBy(x => x).Where(group => group.Count() >= 1).Select(group => group.Key).ToList(); //group the records under each hole
+
+                    bool holeExists = true;
+                    bool statusExists = true;
 
                     foreach (var assayHole in holes)
                     {
@@ -691,12 +675,34 @@ IEnumerable<XElement> assayValues)
                         GroupByTable table = null;
                         GroupByTest test = null;
                         GroupByTestField testField = null;
+                        ReshapedDataToEdit dataToEdit = null;
 
-                        bool surveyHoleExists = await HoleExist(assayHole, status); //check if hole exists
+                        //note that all these lists and checks reside in the CollarValidationView
+                        statusExists = await CheckReshapedData(status); //checks if a previous entry for status exists, and then adds to it.
 
-                        if (!surveyHoleExists) //means status and hole don't already exist so add
+                        if (!statusExists)
+                        {
+                            dataToEdit = new ReshapedDataToEdit() { ErrorType = status.ToString(), Ignore = false };
+                            EditDrillholeData.Add(dataToEdit);
+                            dataToEdit.GroupedHoles = groupedHoles;
+                        }
+                        else
+                        {
+                            dataToEdit = await ReturnDataStatus(status);
+                        }
+
+
+                        holeExists = await HoleExist(assayHole, status); //check if hole exists
+
+                        if (!holeExists) //means status and hole don't already exist so add
                         {
                             hole = new GroupByHoles() { Ignore = false, holeid = assayHole };
+
+                            List<GroupByHoles> testGroup = await ReturnGroupedHoles(status);
+
+                            if (testGroup != null)
+                                groupedHoles = testGroup;
+
                             groupedHoles.Add(hole);
                         }
                         else
@@ -772,13 +778,40 @@ IEnumerable<XElement> assayValues)
 
                         table.GroupedTests = groupedTests;
 
-                        //return records within hole
-
-                       // List<string> survIDs = null;
-
-                        if(status == DrillholeMessageStatus.Valid)
+                        if (_TestType == DrillholeConstants.Duplicates || _TestType == DrillholeConstants.MissingCollar)
                         {
-                            if (_TestType == DrillholeConstants.MissingInterval || _TestType == DrillholeConstants.NegativeOrZeroInterval || _TestType == DrillholeConstants.OverlappingInterval)
+
+                            var value = assayValues.Where(a => a.Element(holeIDName).Value == assayHole).Select(v => v.Attribute("ID").Value).FirstOrDefault();
+                            string tooltip = message.ValidationStatus.Where(e => e.ErrorType == status && e.id == Convert.ToInt32(value)).Select(p => p.Description).FirstOrDefault();
+
+
+                            //return records within hole
+
+                            // List<string> survIDs = null;
+
+                            //if(status == DrillholeMessageStatus.Valid)
+                            //{
+                            //    if (_TestType == DrillholeConstants.MissingInterval || _TestType == DrillholeConstants.NegativeOrZeroInterval || _TestType == DrillholeConstants.OverlappingInterval)
+                            //    {
+                            //        var survIDs = message.ValidationStatus.Where(e => e.ErrorType == status && e.holeID == assayHole).Select(a => a.id).ToList(); //get IDs of all messages
+
+                            //        foreach (var id in ids)
+                            //        {
+                            //            rows.Add(new RowsToEdit
+                            //            {
+                            //                id_col = counter,
+                            //                id_ass = id,
+                            //                testType = _TestType,
+                            //                validationTest = validation,
+                            //                Description = tooltips[counter]
+                            //            });
+
+                            //        }
+                            //    }
+                            //}
+
+                            //only need collar id for Duplicates.
+                            if (_TestType == DrillholeConstants.Duplicates)
                             {
                                 var survIDs = message.ValidationStatus.Where(e => e.ErrorType == status && e.holeID == assayHole).Select(a => a.id).ToList(); //get IDs of all messages
 
@@ -790,45 +823,39 @@ IEnumerable<XElement> assayValues)
                                         id_ass = id,
                                         testType = _TestType,
                                         validationTest = validation,
-                                        Description = tooltips[counter]
+                                        Description = tooltip
                                     });
 
                                 }
                             }
-                        }
-
-                        //only need collar id for Duplicates.
-                        if (_TestType == DrillholeConstants.Duplicates)
-                        {
-                            var survIDs = message.ValidationStatus.Where(e => e.ErrorType == status && e.holeID == assayHole).Select(a => a.id).ToList(); //get IDs of all messages
-
-                            foreach (var id in ids)
+                            else if (_TestType == DrillholeConstants.ZeroGrade)
+                            {
+                                //WRITE  CODE HERE
+                                rows.Add(new RowsToEdit
                                 {
-                                    rows.Add(new RowsToEdit
-                                    {
-                                        id_col = counter,
-                                        id_ass = id,
-                                        testType = _TestType,
-                                        validationTest = validation,
-                                        Description = tooltips[counter]
-                                    });
-                                
+                                    id_col = counter,
+                                    id_ass = 0,
+                                    testType = _TestType,
+                                    validationTest = validation,
+                                    Description = tooltip
+                                });
+
+                            }
+                            else if (_TestType == DrillholeConstants.MissingCollar)
+                            {
+                                //WRITE  CODE HERE
+                                rows.Add(new RowsToEdit
+                                {
+                                    id_col = counter,
+                                    id_ass = 0,
+                                    testType = _TestType,
+                                    validationTest = validation,
+                                    Description = tooltip
+                                });
+
                             }
                         }
-                        else if (_TestType == DrillholeConstants.ZeroGrade)
-                        {
-                            //WRITE  CODE HERE
-                            rows.Add(new RowsToEdit
-                            {
-                                id_col = counter,
-                                id_ass = 0,
-                                testType = _TestType,
-                                validationTest = validation,
-                                Description = tooltips[0]
-                            });
 
-                        }
- 
                         else
                         {
 
@@ -853,7 +880,7 @@ IEnumerable<XElement> assayValues)
                                             id_ass = value,
                                             testType = _TestType,
                                             validationTest = validation,
-                                            Description = tooltips[messageCount]
+                                            Description = message.ValidationStatus.Where(e => e.ErrorType == status && e.id == Convert.ToInt32(value)).Select(p => p.Description).FirstOrDefault()
                                         });
 
                                         messageCount++;
@@ -868,9 +895,6 @@ IEnumerable<XElement> assayValues)
 
                     }
 
-
-                    if (!bCheck)
-                        EditDrillholeData.Add(new ReshapedDataToEdit { Count = 0, ErrorType = status.ToString(), Ignore = false, GroupedHoles = groupedHoles }); //only add if new status type
                 }
 
             }

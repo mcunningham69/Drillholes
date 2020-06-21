@@ -596,38 +596,71 @@ namespace Drillholes.Windows.ViewModel
         public virtual async Task<bool> ReformatResults(ValidationMessage message, string _TestType, string validation, List<string> fields, List<DrillholeMessageStatus> statusMessages, DrillholeTableType tableType,
             IEnumerable<XElement> collarValues)
         {
-           // var collarValues = xmlCollarData.Elements();  //get dollar data from stored XML
 
             foreach (var status in statusMessages)  //iterate three times for each error type
             {
                 List<int> _status = message.ValidationStatus.Where(e => e.ErrorType == status).Select(p => p.id).ToList();
 
+                int counter = 0;
                 if (_status.Count > 0)
                 {
-                    List<string> tooltips = message.ValidationStatus.Where(e => e.ErrorType == status).Select(p => p.Description).ToList();
 
-                    bool bCheck = await CheckReshapedData(status);
                     List<GroupByHoles> groupedHoles = new List<GroupByHoles>();
 
-                    foreach (int valid in _status)
+                    List<int> ids = message.ValidationStatus.Where(e => e.ErrorType == status).Select(a => a.id).ToList(); //get IDs of all messages
+
+                    List<string> SelectedHoles = new List<string>();
+                    string holeIDName = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(n => n.columnHeader).FirstOrDefault(); //get hole name for querying XML
+
+                    foreach (int id in ids) //get the holes for each record
+                    {
+                        var value = collarValues.Where(a => a.Attribute("ID").Value == id.ToString()).Select(h => h.Element(holeIDName).Value).FirstOrDefault();
+
+                        SelectedHoles.Add(value);
+                    }
+
+                    var holes = SelectedHoles.GroupBy(x => x).Where(group => group.Count() >= 1).Select(group => group.Key).ToList(); //group the records under each hole
+
+                    bool holeExists = true;
+                    bool statusExists = true;
+
+                    foreach (var queryHole in holes)
                     {
                         List<RowsToEdit> rows = new List<RowsToEdit>();  //new
                         List<GroupByTest> groupedTests = new List<GroupByTest>(); 
                         List<GroupByTable> groupedTables = new List<GroupByTable>();
                         List<GroupByTestField> groupedTestFields = new List<GroupByTestField>();
 
-                        GroupByHoles hole = null;
-                        GroupByTable table = null;
-                        GroupByTest test = null;
-                        GroupByTestField testField = null;
+                        GroupByHoles hole = new GroupByHoles();
+                        GroupByTable table = new GroupByTable();
+                        GroupByTest test = new GroupByTest();
+                        GroupByTestField testField = new GroupByTestField();
+                        ReshapedDataToEdit dataToEdit = null;
 
-                        var queryHole = collarValues.Where(h => h.Attribute("ID").Value == valid.ToString()).Select(v => v.Element(fields[0]).Value).FirstOrDefault();
+                        statusExists = await CheckReshapedData(status);
 
-                        bool holeExists = await HoleExist(queryHole, status);
+                        if (!statusExists)
+                        {
+                            dataToEdit = new ReshapedDataToEdit() {ErrorType = status.ToString(), Ignore = false };
+                            EditDrillholeData.Add(dataToEdit);
+                            dataToEdit.GroupedHoles = groupedHoles;
+                        }
+                        else
+                        {
+                            dataToEdit = await ReturnDataStatus(status);
+                        }
+
+                        holeExists = await HoleExist(queryHole, status);
 
                         if (!holeExists) //means status and hole don't already exist so add
                         {
                             hole = new GroupByHoles() { Ignore = false, holeid = queryHole };
+                           
+                            List<GroupByHoles> testGroup = await ReturnGroupedHoles(status);
+
+                            if (testGroup != null)
+                                groupedHoles = testGroup;
+
                             groupedHoles.Add(hole);
                         }
                         else
@@ -702,26 +735,34 @@ namespace Drillholes.Windows.ViewModel
 
                         table.GroupedTests = groupedTests;
 
-                        var tips = tooltips[valid];
+                        var value = collarValues.Where(a => a.Element(holeIDName).Value == queryHole).Select(v => v.Attribute("ID").Value).FirstOrDefault();
+                        string tooltip = message.ValidationStatus.Where(e => e.ErrorType == status && e.id == Convert.ToInt32(value)).Select(p => p.Description).FirstOrDefault();
 
                         rows.Add(new RowsToEdit
                         {
-                            id_col = valid,
-
+                            id_col = counter,
                             testType = _TestType,
                             validationTest = validation,
-                            Description = tips
+                            Description = tooltip
                         });
+
+                        counter++;
                     }
 
-
-                    if (!bCheck)
-                        EditDrillholeData.Add(new ReshapedDataToEdit { Count = 0, ErrorType = status.ToString(), Ignore = false, GroupedHoles = groupedHoles });
                 }
 
             }
 
             return true;
+        }
+
+        public async Task<ReshapedDataToEdit> ReturnDataStatus(DrillholeMessageStatus ErrorStatus)
+        {
+
+            var status = EditDrillholeData.Where(t => t.ErrorType == ErrorStatus.ToString()).Where(i => i.Ignore == false).FirstOrDefault();
+
+            return status;
+
         }
 
         public virtual async Task<List<string>>ReturnFieldnamesForXmlQuery()
@@ -754,21 +795,11 @@ namespace Drillholes.Windows.ViewModel
             List<DrillholeMessageStatus> statusMessages = new List<DrillholeMessageStatus>();
             statusMessages.Add(DrillholeMessageStatus.Error);
             statusMessages.Add(DrillholeMessageStatus.Warning);
-            statusMessages.Add(DrillholeMessageStatus.Valid);
+          //  statusMessages.Add(DrillholeMessageStatus.Valid);
 
             return statusMessages;
         }
 
-        public async Task<bool> CheckReshapedData(List<ReshapedDataToEdit> reshapedData, DrillholeMessageStatus ErrorStatus)
-        {
-            var status = reshapedData.Where(t => t.ErrorType == ErrorStatus.ToString()).Where(i => i.Ignore == false).FirstOrDefault();
-
-            if (status == null)
-                return false;
-            
-
-            return true;
-        }
 
         public async Task<bool> CheckReshapedData(DrillholeMessageStatus ErrorStatus)
         {
@@ -1076,10 +1107,14 @@ namespace Drillholes.Windows.ViewModel
 
                     if (check > 0)
                     {
+
                         var tables = hole.Where(h => h.holeid == holeID).Select(t => t.GroupedTables);
 
                         foreach (var table in tables)
                         {
+                            if (table == null)
+                                return false;
+
                             var checkTable = table.Where(n => n.TableType == tableType.ToString()).Count();
 
                             if (checkTable > 0)
@@ -1267,30 +1302,17 @@ namespace Drillholes.Windows.ViewModel
             return rows;
         }
 
-
-        public async Task<bool> HoleExist(List<ReshapedDataToEdit> reshapedData, string holeID, DrillholeMessageStatus ErrorStatus)
+        public async Task<List<GroupByHoles>> ReturnGroupedHoles(DrillholeMessageStatus ErrorStatus)
         {
-            bool bCheck = false;
+           //List<GroupByHoles> rows = new List<GroupByHoles>();
 
-            var holes = reshapedData.Where(t => t.ErrorType == ErrorStatus.ToString()).Where(i => i.Ignore == false).Select(h => h.GroupedHoles);
+            List<GroupByHoles> rows = EditDrillholeData.Where(t => t.ErrorType == ErrorStatus.ToString()).Where(i => i.Ignore == false).Select(h => h.GroupedHoles).FirstOrDefault();
 
-            if (holes != null)
-            {
-                foreach (var hole in holes)
-                {
-                    var check = hole.Where(h => h.holeid == holeID).Count();
-
-                    if (check > 0)
-                    {
-                        return true;
-                    }
-                }
-
-            }
-
-            return bCheck;
-
+          
+            return rows;
         }
+
+
 
         public async Task<bool> HoleExist(string holeID, DrillholeMessageStatus ErrorStatus)
         {
@@ -1316,29 +1338,6 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-
-        public async Task<GroupByHoles>ReturnHole(List<ReshapedDataToEdit> reshapedData, string holeID, DrillholeMessageStatus ErrorStatus)
-        {
-           
-            var holes = reshapedData.Where(t => t.ErrorType == ErrorStatus.ToString()).Where(i => i.Ignore == false).Select(h => h.GroupedHoles);
-
-            if (holes != null)
-            {
-                foreach (var hole in holes)
-                {
-                    var value = hole.Where(h => h.holeid == holeID).FirstOrDefault();
-
-                    if (value != null)
-                        return value;
-
-                }
-
-            }
-            
-
-                return null;
-
-        }
 
         public async Task<GroupByHoles> ReturnHole(string holeID, DrillholeMessageStatus ErrorStatus)
         {

@@ -770,7 +770,7 @@ namespace Drillholes.Windows.Dialogs
                         singletonEdits.surveyObject = surveyPreviewModel.surveyTableObject;
                 }
 
-                if (intervalPreviewModel.surveyTableObject.tableData != null)
+                if (intervalPreviewModel.intervalTableObject.tableData != null)
                     singletonEdits.intervalObject = intervalPreviewModel.intervalTableObject;
 
                 singletonEdits.selectedIndex = 2;
@@ -787,7 +787,7 @@ namespace Drillholes.Windows.Dialogs
                         singletonEdits.surveyObject = surveyPreviewModel.surveyTableObject;
                 }
 
-                if (assayPreviewModel.surveyTableObject.tableData != null)
+                if (assayPreviewModel.assayTableObject.tableData != null)
                     singletonEdits.assayObject = assayPreviewModel.assayTableObject;
 
                 singletonEdits.selectedIndex = 3;

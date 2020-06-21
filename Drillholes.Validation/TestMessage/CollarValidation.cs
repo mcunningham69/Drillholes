@@ -43,12 +43,13 @@ namespace Drillholes.Validation.TestMessage
                 {
                     foreach (string hole in duplicates)
                     {
+
                         var holeAttr = elements.Where(y => y.Element(fieldID).Value == hole).Select(z => String.Join(hole, z.Attribute("ID").Value)).ToList();
 
                         string idList = String.Join(", ", holeAttr.ToArray());
                         int noDups = holeAttr.Count();
 
-                        message = "Value for record '" + holeAttr + "' and HoleID '" + hole + "' of field type ' "
+                        message = "The following hole '" + hole + "' of field type ' "
                        + check.tableField.columnImportName + "' is repeated " + noDups.ToString() +
                              "  times for the following records: " + idList;
 
@@ -57,7 +58,8 @@ namespace Drillholes.Validation.TestMessage
                             ErrorType = DrillholeMessageStatus.Warning,
                             Description = message,
                             ErrorColour = "Orange",
-                            id = Convert.ToInt32(holeAttr)
+                            id = Convert.ToInt32(holeAttr.First().ToString()),
+                            holeID = hole
                         });
 
                         check.validationMessages.Add(message);
@@ -94,6 +96,7 @@ namespace Drillholes.Validation.TestMessage
                 string fieldName = check.tableField.columnImportAs;
 
                 CheckNumericValues(collarValues, check, fieldID, fieldName);
+
 
             }
 
@@ -331,6 +334,22 @@ namespace Drillholes.Validation.TestMessage
                 }
 
                 if (string.IsNullOrEmpty(valueCheck) || string.IsNullOrWhiteSpace(valueCheck))
+                {
+                    message = "Value for record " + holeAttr + " and field '" + fieldID + "' of field type '"
+                        + fieldName + "' IS EMPTY";
+                    validationTest.validationMessages.Add(message);
+
+                    validationTest.ValidationStatus.Add(new DrillholeValidationStatus
+                    {
+                        ErrorType = _errorType,
+                        Description = message,
+                        ErrorColour = _errorColour,
+                        id = Convert.ToInt32(holeAttr)
+                    });
+
+                    validationTest.verified = false;
+                }
+                else if (valueCheck.ToString() == "-")
                 {
                     message = "Value for record " + holeAttr + " and field '" + fieldID + "' of field type '"
                         + fieldName + "' IS EMPTY";

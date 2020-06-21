@@ -57,8 +57,8 @@ namespace Drillholes.Validation.TestMessage
                        + check.tableField.columnImportName + "'  " + " at distance " + distance + " is repeated " + noDups.ToString() +
                              "  times for the following survey records: " + idList;
 
-                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", id = Convert.ToInt32(holeAttr),
-                                holeID=hole });
+                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, 
+                                ErrorColour = "Orange", id = Convert.ToInt32(holeAttr.First().ToString())});
 
                             check.validationMessages.Add(message);
                         }
@@ -128,7 +128,8 @@ namespace Drillholes.Validation.TestMessage
                                 foreach (string dist in noDist)
                                 {
                                     message = "Hole '" + dist + "' has no corresponding hole in the Survey table";
-                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange" });
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, 
+                                        ErrorColour = "Orange", id=-999 });
                                     check.validationMessages.Add(message);
                                 }
                             }
@@ -137,11 +138,17 @@ namespace Drillholes.Validation.TestMessage
                             {
                                 var noDistances = distanceHoles.Except(collarHoles);
 
+                                int counter = 0;
                                 foreach (string dist in noDistances)
                                 {
+                                    var holeAttr = distanceElements.Where(y => y.Element(distanceFieldID).Value == dist).Select(z => z.Attribute("ID").Value).FirstOrDefault();
+
                                     message = "Survey hole '" + dist + "' has no corresponding value in the Collar table";
-                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange" });
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, 
+                                        ErrorColour = "Orange", id=Convert.ToInt32(holeAttr) });
                                     check.validationMessages.Add(message);
+
+                                    counter++;
                                 }
                             }
                         }

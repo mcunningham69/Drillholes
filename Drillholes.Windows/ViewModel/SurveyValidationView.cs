@@ -517,18 +517,16 @@ namespace Drillholes.Windows.ViewModel
         public override async Task<bool> ReformatResults(ValidationMessage message, string _TestType, string validation, List<string> fields, List<DrillholeMessageStatus> statusMessages, DrillholeTableType tableType,
     IEnumerable<XElement> surveyValues)
         {
+
             foreach (var status in statusMessages)  //iterate three times for each error type
             {
-                List<string> tooltips = message.ValidationStatus.Where(e => e.ErrorType == status).Select(p => p.Description).ToList();
                 var count = message.ValidationStatus.Where(e => e.ErrorType == status).Count();  //for checking each status for messages
 
                 int counter = 0; //use this for collar id
 
                 if (count > 0)
                 {
-                    //note that all these lists and checks reside in the CollarValidationView
-                    bool bCheck = await CheckReshapedData(status); //checks if a previous entry for status exists, and then adds to it.
-
+                   
                     //setup outside the foreach hole loop below as it is the last item to add to the ReshapedToEdit list (which is data bound to the XAML DrillholeEdits form
                     List<GroupByHoles> groupedHoles = new List<GroupByHoles>();
 
@@ -540,16 +538,22 @@ namespace Drillholes.Windows.ViewModel
 
                     foreach(int id in ids) //get the holes for each record
                     {
-                        var value = surveyValues.Where(a => a.Attribute("ID").Value == id.ToString()).Select(h => h.Element(holeIDName).Value).FirstOrDefault();
+                        if (id > -999)
+                        {
+                            var value = surveyValues.Where(a => a.Attribute("ID").Value == id.ToString()).Select(h => h.Element(holeIDName).Value).FirstOrDefault();
 
-                        SelectedHoles.Add(value);
+                            SelectedHoles.Add(value);
+                        }
                     }
 
                     var holes = SelectedHoles.GroupBy(x => x).Where(group => group.Count() >= 1).Select(group => group.Key).ToList(); //group the records under each hole
 
+                    bool holeExists = true;
+                    bool statusExists = true;
+
                     foreach (var surveyHole in holes)
                     {
-                         //set up the classes
+                        //set up the classes
                         List<RowsToEdit> rows = new List<RowsToEdit>();  //new
                         List<GroupByTest> groupedTests = new List<GroupByTest>();
                         List<GroupByTable> groupedTables = new List<GroupByTable>();
@@ -559,12 +563,35 @@ namespace Drillholes.Windows.ViewModel
                         GroupByTable table = null;
                         GroupByTest test = null;
                         GroupByTestField testField = null;
+                        ReshapedDataToEdit dataToEdit = null;
 
-                        bool surveyHoleExists = await HoleExist(surveyHole, status); //check if hole exists
+                        //note that all these lists and checks reside in the CollarValidationView
+                        statusExists = await CheckReshapedData(status); //checks if a previous entry for status exists, and then adds to it.
 
-                        if (!surveyHoleExists) //means status and hole don't already exist so add
+
+                        if (!statusExists)
+                        {
+                            dataToEdit = new ReshapedDataToEdit() { ErrorType = status.ToString(), Ignore = false };
+                            EditDrillholeData.Add(dataToEdit);
+                            dataToEdit.GroupedHoles = groupedHoles;
+                        }
+                        else
+                        {
+                            dataToEdit = await ReturnDataStatus(status);
+                        }
+
+
+                        holeExists = await HoleExist(surveyHole, status); //check if hole exists
+
+                        if (!holeExists) //means status and hole don't already exist so add
                         {
                             hole = new GroupByHoles() { Ignore = false, holeid = surveyHole };
+
+                            List<GroupByHoles> testGroup = await ReturnGroupedHoles(status);
+
+                            if (testGroup != null)
+                                groupedHoles = testGroup;
+
                             groupedHoles.Add(hole);
                         }
                         else
@@ -637,27 +664,40 @@ namespace Drillholes.Windows.ViewModel
 
                         }
 
-
                         table.GroupedTests = groupedTests;
 
-                        //return records within hole
-
-
-                        //only need collar id for Duplicates.
-                        if (_TestType == DrillholeConstants.Duplicates)
+                        if (_TestType == DrillholeConstants.Duplicates || _TestType == DrillholeConstants.MissingCollar)
                         {
-                            rows.Add(new RowsToEdit
+                            var value = surveyValues.Where(a => a.Element(holeIDName).Value == surveyHole).Select(v => v.Attribute("ID").Value).FirstOrDefault();
+                            string tooltip = message.ValidationStatus.Where(e => e.ErrorType == status && e.id == Convert.ToInt32(value)).Select(p => p.Description).FirstOrDefault();
+
+                            //only need collar id for Duplicates.
+                            if (_TestType == DrillholeConstants.Duplicates)
                             {
-                                id_col = counter,
-                                id_sur = counter,
-                                testType = _TestType,
-                                validationTest = validation,
-                                Description = tooltips[counter]
-                            });
+                                rows.Add(new RowsToEdit
+                                {
+                                    // id_col = counter,
+                                    id_sur = counter,
+                                    testType = _TestType,
+                                    validationTest = validation,
+                                    Description = tooltip
+                                });
+                            }
+                            else if (_TestType == DrillholeConstants.MissingCollar)
+                            {
+
+                                rows.Add(new RowsToEdit
+                                {
+                                    id_sur = Convert.ToInt32(value),
+                                    testType = _TestType,
+                                    validationTest = validation,
+                                    Description = tooltip
+                                });
+                            }
                         }
+
                         else
                         {
-
                             List<string> survIDs = surveyValues.Where(h => h.Element(fields[0]).Value == surveyHole).Select(v => v.Attribute("ID").Value).ToList(); //get the survey IDs for hole to check which records have a message
 
                             int messageCount = 0;
@@ -669,23 +709,23 @@ namespace Drillholes.Windows.ViewModel
 
                                 int check = Convert.ToInt16(_id);
 
-                                foreach (var value in ids)
+                                foreach (var result in ids)
                                 {
-                                    if (value == check) //check survey ID against ID in messages 
+                                    if (result == check) //check survey ID against ID in messages 
                                     {
                                         rows.Add(new RowsToEdit
                                         {
-                                            id_col = counter,
-                                            id_sur = value,
+                                            // id_col = counter,
+                                            id_sur = result,
                                             testType = _TestType,
                                             validationTest = validation,
-                                            Description = tooltips[messageCount]
+                                            Description = message.ValidationStatus.Where(e => e.ErrorType == status && e.id == Convert.ToInt32(result)).Select(p => p.Description).FirstOrDefault()
                                         });
 
                                         messageCount++;
                                         break;
                                     }
-  
+
                                 }
                             }
                         }
@@ -694,9 +734,6 @@ namespace Drillholes.Windows.ViewModel
 
                     }
 
-
-                    if (!bCheck)
-                        EditDrillholeData.Add(new ReshapedDataToEdit { Count = 0, ErrorType = status.ToString(), Ignore = false, GroupedHoles = groupedHoles }); //only add if new status type
                 }
 
             }

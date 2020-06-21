@@ -177,27 +177,46 @@ namespace Drillholes.Windows.Dialogs
         {
             ValidateCollar();
 
+            intervalEdits = new IntervalValidationView(DrillholeTableType.interval, intervalObject.xPreview);
+
             if (intervalObject.surveyType == DrillholeSurveyType.downholesurvey)
             {
-                ValidateSurvey(false);
-
-                if (assayObject.tableData != null)
+                if (surveyObject != null)
                 {
-                    ValidateAssay();
-                    intervalEdits.EditDrillholeData = assayEdits.EditDrillholeData;
+                    ValidateSurvey(false);
+                    intervalEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
+
+                    if (assayObject != null)
+                    {
+                        ValidateAssay();
+                        intervalEdits.EditDrillholeData = assayEdits.EditDrillholeData;
+
+                    }
+                    else
+                        intervalEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
 
                 }
                 else
-                    intervalEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
+                {
+                    if (assayObject != null)
+                    {
+                        ValidateAssay();
+                        intervalEdits.EditDrillholeData = assayEdits.EditDrillholeData;
+
+                    }
+                    else
+                        intervalEdits.EditDrillholeData = collarEdits.EditDrillholeData;
+
+                }
+
 
             }
-            else if (assayObject.tableData != null)
+            else if (assayObject != null)
                 intervalEdits.EditDrillholeData = assayEdits.EditDrillholeData;
             else
                 intervalEdits.EditDrillholeData = collarEdits.EditDrillholeData;
 
 
-            intervalEdits = new IntervalValidationView(DrillholeTableType.interval, intervalObject.xPreview);
             intervalEdits.importIntervalFields = intervalObject.tableData;
             intervalEdits.importCollarFields = collarObject.tableData;
             intervalEdits.xmlCollarData = collarObject.xPreview;
