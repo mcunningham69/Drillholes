@@ -230,6 +230,14 @@ namespace Drillholes.Windows.ViewModel
             surveyFieldTest.Add(new ValidationMessage
             {
                 verified = true,
+                validationTest = DrillholeConstants.checkHole,
+                count = 0,
+                validationMessages = new List<string>(),
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single()
+            });
+            surveyFieldTest.Add(new ValidationMessage
+            {
+                verified = true,
                 validationTest = DrillholeConstants.checkDist,
                 count = 0,
                 validationMessages = new List<string>(),
@@ -680,6 +688,8 @@ namespace Drillholes.Windows.ViewModel
                                     id_sur = counter,
                                     testType = _TestType,
                                     validationTest = validation,
+                                    TableType = DrillholeTableType.survey,
+                                    ErrorType = status,
                                     Description = tooltip
                                 });
                             }
@@ -691,6 +701,8 @@ namespace Drillholes.Windows.ViewModel
                                     id_sur = Convert.ToInt32(value),
                                     testType = _TestType,
                                     validationTest = validation,
+                                    TableType = DrillholeTableType.survey,
+                                    ErrorType = status,
                                     Description = tooltip
                                 });
                             }
@@ -719,6 +731,8 @@ namespace Drillholes.Windows.ViewModel
                                             id_sur = result,
                                             testType = _TestType,
                                             validationTest = validation,
+                                            TableType = DrillholeTableType.survey,
+                                            ErrorType = status,
                                             Description = message.ValidationStatus.Where(e => e.ErrorType == status && e.id == Convert.ToInt32(result)).Select(p => p.Description).FirstOrDefault()
                                         });
 
@@ -741,7 +755,65 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
+        public override async Task<System.Data.DataTable> PopulateGridValues(List<RowsToEdit> _edit, DrillholeTableType tableType, bool preview)
+        {
+            System.Data.DataTable dataTable = new System.Data.DataTable();
+            var survey = xmlSurveyData.Elements();
 
+            dataTable = await AddColumns(tableType, preview);
+
+            List<object> rowValues = new List<object>();
+
+            var holeID = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(m => m.columnHeader).FirstOrDefault();
+            var distance = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.distName).Select(m => m.columnHeader).FirstOrDefault();
+            var azimuth = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Select(m => m.columnHeader).FirstOrDefault();
+            var dip = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Select(m => m.columnHeader).FirstOrDefault();
+
+
+            foreach (var value in _edit) //populate dataTable
+            {
+
+                rowValues.Add(value.id_sur.ToString());
+                rowValues.Add(survey.Where(h => h.Attribute("ID").Value == value.id_sur.ToString()).Select(o => o.Element(holeID).Value).Single());
+                rowValues.Add(survey.Where(h => h.Attribute("ID").Value == value.id_sur.ToString()).Select(o => o.Element(distance).Value).Single());
+                rowValues.Add(survey.Where(h => h.Attribute("ID").Value == value.id_sur.ToString()).Select(o => o.Element(azimuth).Value).Single());
+                rowValues.Add(survey.Where(h => h.Attribute("ID").Value == value.id_sur.ToString()).Select(o => o.Element(dip).Value).Single());
+
+                rowValues.Add(value.testType);
+                rowValues.Add(value.Description);
+
+                dataTable.Rows.Add(rowValues.ToArray());
+
+                rowValues.Clear();
+            }
+
+            return dataTable; //TODO
+        }
+
+        public override async Task<System.Data.DataTable> AddColumns(DrillholeTableType tableType, bool preview)
+        {
+            System.Data.DataTable dataTable = new System.Data.DataTable();
+
+            dataTable.Columns.Add("ID");
+            dataTable.Columns.Add(DrillholeConstants.holeID);
+
+            //if (tableType == DrillholeTableType.survey)
+            //{
+                dataTable.Columns.Add(DrillholeConstants.distName);
+                dataTable.Columns.Add(DrillholeConstants.azimuth);
+                dataTable.Columns.Add(DrillholeConstants.dip);
+           // }
+            //else
+            //{
+            //    dataTable.Columns.Add(DrillholeConstants.distFromName);
+            //    dataTable.Columns.Add(DrillholeConstants.distToName);
+            //}
+
+            dataTable.Columns.Add("Validation");
+            dataTable.Columns.Add("Description");
+
+            return dataTable;
+        }
 
         public override async Task<List<string>> ReturnFieldnamesForXmlQuery() //original in CollarValidationView
         {

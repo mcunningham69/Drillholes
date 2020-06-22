@@ -90,20 +90,31 @@ namespace Drillholes.Validation.TestMessage
         {
             validationCollarDto.testMessages = ValuesToCheck;
 
+            string holeName = "";
+            int counter = 0;
+
             foreach (var check in ValuesToCheck.testMessage)
             {
-                string fieldID = check.tableField.columnHeader;
-                string fieldName = check.tableField.columnImportAs;
+                if (counter == 0)
+                {
+                    holeName = check.tableField.columnHeader;
+                }
+                else
+                {
 
-                CheckNumericValues(collarValues, check, fieldID, fieldName);
+                    string fieldID = check.tableField.columnHeader;
+                    string fieldName = check.tableField.columnImportAs;
 
+                    CheckNumericValues(collarValues, check, fieldID, fieldName, holeName);
+                }
 
+                counter++;
             }
 
             return validationCollarDto;
         }
 
-        private async void CheckNumericValues(XElement drillholeValues, ValidationMessage validationTest, string fieldID, string fieldName)
+        private async void CheckNumericValues(XElement drillholeValues, ValidationMessage validationTest, string fieldID, string fieldName, string holeName)
         {
             var elements = drillholeValues.Elements();
             validationTest.count = elements.Count();
@@ -112,6 +123,7 @@ namespace Drillholes.Validation.TestMessage
             {
                 string fieldValue = element.Element(fieldID).Value;
                 string holeAttr = element.Attribute("ID").Value;
+                string hole = element.Element(holeName).Value;
                 string message = "";
 
                 if (!Information.IsNumeric(fieldValue))
@@ -135,7 +147,8 @@ namespace Drillholes.Validation.TestMessage
                         ErrorType = _errorType,
                         Description = message,
                         ErrorColour = _errorColour,
-                        id = Convert.ToInt32(holeAttr)
+                        id = Convert.ToInt32(holeAttr),
+                        holeID = hole
                     });
                     validationTest.verified = false;
                 }
@@ -149,7 +162,8 @@ namespace Drillholes.Validation.TestMessage
                         ErrorType = DrillholeMessageStatus.Valid,
                         Description = message,
                         ErrorColour = "Green",
-                        id = Convert.ToInt32(holeAttr)
+                        id = Convert.ToInt32(holeAttr),
+                        holeID = hole
                     });
                 }
             }
@@ -199,7 +213,8 @@ namespace Drillholes.Validation.TestMessage
                                     ErrorType = DrillholeMessageStatus.Warning,
                                     Description = message,
                                     ErrorColour = "Orange",
-                                    id = Convert.ToInt32(holeAttr)
+                                    id = Convert.ToInt32(holeAttr),
+                                    holeID = hole
                                 });
 
                                 check.verified = false;
@@ -215,8 +230,9 @@ namespace Drillholes.Validation.TestMessage
                                     ErrorType = DrillholeMessageStatus.Warning,
                                     Description = message,
                                     ErrorColour = "Orange",
-                                    id = Convert.ToInt32(holeAttr)
-                                });
+                                    id = Convert.ToInt32(holeAttr),
+                                    holeID = hole
+                                }) ;
 
                                 check.verified = false;
 
@@ -299,19 +315,26 @@ namespace Drillholes.Validation.TestMessage
         public async Task<ValidationCollarDto> CheckIsEmpty(ValidationMessages ValuesToCheck, XElement collarValues)
         {
             validationCollarDto.testMessages = ValuesToCheck;
+            string holeName = "";
+            int counter = 0;
 
             foreach (var check in ValuesToCheck.testMessage)
             {
+                if (counter == 0)
+                    holeName = check.tableField.columnHeader;
+
                 string fieldID = check.tableField.columnHeader;
                 string fieldName = check.tableField.columnImportAs;
 
-                CheckEmptyValues(collarValues, check, fieldID, fieldName);
+                CheckEmptyValues(collarValues, check, fieldID, fieldName, holeName);
+
+                counter++;
             }
 
             return validationCollarDto;
         }
 
-        private async void CheckEmptyValues(XElement collarValues, ValidationMessage validationTest, string fieldID, string fieldName)
+        private async void CheckEmptyValues(XElement collarValues, ValidationMessage validationTest, string fieldID, string fieldName, string holeName)
         {
             var elements = collarValues.Elements();
 
@@ -321,6 +344,7 @@ namespace Drillholes.Validation.TestMessage
             {
                 string valueCheck = element.Element(fieldID).Value;
                 string holeAttr = element.Attribute("ID").Value;
+                string hole = element.Element(holeName).Value;
 
                 string message = "";
 
@@ -344,7 +368,8 @@ namespace Drillholes.Validation.TestMessage
                         ErrorType = _errorType,
                         Description = message,
                         ErrorColour = _errorColour,
-                        id = Convert.ToInt32(holeAttr)
+                        id = Convert.ToInt32(holeAttr),
+                        holeID = hole
                     });
 
                     validationTest.verified = false;
@@ -360,7 +385,8 @@ namespace Drillholes.Validation.TestMessage
                         ErrorType = _errorType,
                         Description = message,
                         ErrorColour = _errorColour,
-                        id = Convert.ToInt32(holeAttr)
+                        id = Convert.ToInt32(holeAttr),
+                        holeID = hole
                     });
 
                     validationTest.verified = false;
@@ -419,7 +445,8 @@ namespace Drillholes.Validation.TestMessage
                                     ErrorType = DrillholeMessageStatus.Error,
                                     Description = message,
                                     ErrorColour = "Red",
-                                    id = Convert.ToInt32(holeAttr)
+                                    id = Convert.ToInt32(holeAttr),
+                                    holeID = hole
                                 });
                                 check.validationMessages.Add(message);
                                 check.verified = false;
@@ -437,7 +464,8 @@ namespace Drillholes.Validation.TestMessage
                                     ErrorType = DrillholeMessageStatus.Valid,
                                     Description = message,
                                     ErrorColour = "Green",
-                                    id = Convert.ToInt32(holeAttr)
+                                    id = Convert.ToInt32(holeAttr),
+                                    holeID = hole
                                 });
                             }
                         }
@@ -452,7 +480,8 @@ namespace Drillholes.Validation.TestMessage
                                 ErrorType = DrillholeMessageStatus.Error,
                                 Description = message,
                                 ErrorColour = "Red",
-                                id = Convert.ToInt32(holeAttr)
+                                id = Convert.ToInt32(holeAttr),
+                                holeID = hole
                             });
 
                             check.verified = false;
@@ -509,7 +538,8 @@ namespace Drillholes.Validation.TestMessage
                                     ErrorType = DrillholeMessageStatus.Warning,
                                     Description = message,
                                     ErrorColour = "Orange",
-                                    id = Convert.ToInt32(holeAttr)
+                                    id = Convert.ToInt32(holeAttr),
+                                    holeID = hole
                                 });
 
                                 check.validationMessages.Add(message);
@@ -525,7 +555,8 @@ namespace Drillholes.Validation.TestMessage
                                     ErrorType = DrillholeMessageStatus.Valid,
                                     Description = message,
                                     ErrorColour = "Green",
-                                    id = Convert.ToInt32(holeAttr)
+                                    id = Convert.ToInt32(holeAttr),
+                                    holeID = hole
                                 });
                             }
                         }
@@ -538,7 +569,8 @@ namespace Drillholes.Validation.TestMessage
                                 ErrorType = DrillholeMessageStatus.Error,
                                 Description = message,
                                 ErrorColour = "Red",
-                                id = Convert.ToInt32(holeAttr)
+                                id = Convert.ToInt32(holeAttr),
+                                holeID = hole
                             });
 
                             check.validationMessages.Add(message);
@@ -568,7 +600,8 @@ namespace Drillholes.Validation.TestMessage
                                     ErrorType = DrillholeMessageStatus.Warning,
                                     Description = message,
                                     ErrorColour = "Orange",
-                                    id = Convert.ToInt32(holeAttr)
+                                    id = Convert.ToInt32(holeAttr),
+                                    holeID = hole
                                 });
 
                                 check.validationMessages.Add(message);
@@ -583,7 +616,8 @@ namespace Drillholes.Validation.TestMessage
                                     ErrorType = DrillholeMessageStatus.Valid,
                                     Description = message,
                                     ErrorColour = "Green",
-                                    id = Convert.ToInt32(holeAttr)
+                                    id = Convert.ToInt32(holeAttr),
+                                    holeID = hole
                                 });
                                 check.validationMessages.Add(message);
                             }
@@ -597,7 +631,8 @@ namespace Drillholes.Validation.TestMessage
                                 ErrorType = DrillholeMessageStatus.Error,
                                 Description = message,
                                 ErrorColour = "Red",
-                                id = Convert.ToInt32(holeAttr)
+                                id = Convert.ToInt32(holeAttr),
+                                holeID = hole
                             });
 
                             check.validationMessages.Add(message);

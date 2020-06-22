@@ -184,6 +184,14 @@ namespace Drillholes.Windows.ViewModel
             intervalFieldTest.Add(new ValidationMessage
             {
                 verified = true,
+                validationTest = DrillholeConstants.checkHole,
+                count = 0,
+                validationMessages = new List<string>(),
+                tableField = importIntervalFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single()
+            });
+            intervalFieldTest.Add(new ValidationMessage
+            {
+                verified = true,
                 validationTest = DrillholeConstants.checkFrom,
                 count = 0,
                 validationMessages = new List<string>(),

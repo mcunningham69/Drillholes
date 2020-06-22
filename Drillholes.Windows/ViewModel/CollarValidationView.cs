@@ -241,6 +241,15 @@ namespace Drillholes.Windows.ViewModel
             collarTest.Add(new ValidationMessage
             {
                 verified = true,
+                validationTest = DrillholeConstants.checkHole,
+                count = 0,
+                validationMessages = new List<string>(),
+                tableField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single()
+            });
+
+            collarTest.Add(new ValidationMessage
+            {
+                verified = true,
                 validationTest = DrillholeConstants.checkX,
                 count = 0,
                 validationMessages = new List<string>(),
@@ -744,6 +753,7 @@ namespace Drillholes.Windows.ViewModel
                             holeid = queryHole,
                             testType = _TestType,
                             validationTest = validation,
+                            TableType = DrillholeTableType.collar,
                             ErrorType = status,
                             Description = tooltip
                         });
@@ -1367,7 +1377,7 @@ namespace Drillholes.Windows.ViewModel
         #endregion
 
         #region Actual Data
-        public async Task<DataTable> PopulateGridValues(List<RowsToEdit> _edit, DrillholeTableType tableType, bool preview)
+        public virtual async Task<DataTable> PopulateGridValues(List<RowsToEdit> _edit, DrillholeTableType tableType, bool preview)
         {
             DataTable dataTable = new DataTable();
             var collar = xmlCollarData.Elements();
@@ -1397,7 +1407,7 @@ namespace Drillholes.Windows.ViewModel
             {
                 // rowValues.Add(value.Ignore);
                 rowValues.Add(value.id_col.ToString());
-                rowValues.Add(value.holeid);
+                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(holeID).Value).Single());
                 rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(x).Value).Single());
                 rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(y).Value).Single());
                 rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(z).Value).Single());
@@ -1423,7 +1433,7 @@ namespace Drillholes.Windows.ViewModel
             return dataTable; //TODO
         }
 
-        public async Task<DataTable> AddColumns(DrillholeTableType tableType, bool preview)
+        public virtual async Task<DataTable> AddColumns(DrillholeTableType tableType, bool preview)
         {
             DataTable dataTable = new DataTable();
             // dataTable.Columns.Add("Ignore");

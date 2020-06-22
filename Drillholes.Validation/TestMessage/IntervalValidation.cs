@@ -56,7 +56,7 @@ namespace Drillholes.Validation.TestMessage
                             + check.tableField.columnImportName + "'  " + " at distance " + distance + " is repeated " + noDups.ToString() +
                             "  times for the following survey records: " + idList;
 
-                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange" });
+                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", holeID=hole });
 
                             check.validationMessages.Add(message);
                         }
@@ -171,12 +171,22 @@ namespace Drillholes.Validation.TestMessage
         {
             intervalValidationDto.testMessages = ValuesToCheck;
 
+            string holeName = "";
+            int counter = 0;
+
             foreach (var check in ValuesToCheck.testMessage)
             {
-                string fieldID = check.tableField.columnHeader;
-                string fieldName = check.tableField.columnImportAs;
+                if (counter == 0)
+                    holeName = check.tableField.columnHeader;
+                else
+                {
+                    string fieldID = check.tableField.columnHeader;
+                    string fieldName = check.tableField.columnImportAs;
 
-                CheckNumericValues(assayValues, check, fieldID, fieldName);
+                    CheckNumericValues(assayValues, check, fieldID, fieldName, holeName);
+                }
+
+                counter++;
             }
 
             return intervalValidationDto;
@@ -186,18 +196,25 @@ namespace Drillholes.Validation.TestMessage
         {
             intervalValidationDto.testMessages = ValuesToCheck;
 
+
+            string holeName = "";
+            int counter = 0;
+
             foreach (var check in ValuesToCheck.testMessage)
             {
+                if (counter ==0)
+                    holeName = check.tableField.columnHeader;
+
                 string fieldID = check.tableField.columnHeader;
                 string fieldName = check.tableField.columnImportAs;
 
-                CheckEmptyValues(assayValues, check, fieldID, fieldName);
+                CheckEmptyValues(assayValues, check, fieldID, fieldName, holeName);
             }
 
             return intervalValidationDto;
         }
 
-        private async void CheckEmptyValues(XElement assayValues, ValidationMessage validationTest, string fieldID, string fieldName)
+        private async void CheckEmptyValues(XElement assayValues, ValidationMessage validationTest, string fieldID, string fieldName, string holeName)
         {
             var elements = assayValues.Elements();
 
@@ -207,6 +224,7 @@ namespace Drillholes.Validation.TestMessage
             {
                 string message = "";
                 string valueCheck = element.Element(fieldID).Value;
+                string hole = element.Element(holeName).Value;
                 string holeAttr = element.Attribute("ID").Value;
 
                 if (string.IsNullOrEmpty(valueCheck) || string.IsNullOrWhiteSpace(valueCheck))
@@ -224,7 +242,7 @@ namespace Drillholes.Validation.TestMessage
                         + fieldName + "' has no value";
 
                     validationTest.validationMessages.Add(message);
-                    validationTest.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = _errorType, Description = message, ErrorColour = _errorColour });
+                    validationTest.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = _errorType, Description = message, ErrorColour = _errorColour, holeID=hole, id=Convert.ToInt32(holeAttr) });
 
                     validationTest.verified = false;
                 }
@@ -233,13 +251,13 @@ namespace Drillholes.Validation.TestMessage
                     message = "'" + fieldID + "' of field type '" + fieldName + "' with record " + holeAttr + "' verified as not EMPTY or WHITESPACE";
 
                     validationTest.validationMessages.Add(message);
-                    validationTest.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
+                    validationTest.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green", holeID = hole, id = Convert.ToInt32(holeAttr) });
 
                 }
             }
 
         }
-        private async void CheckNumericValues(XElement drillholeValues, ValidationMessage validationTest, string fieldID, string fieldName)
+        private async void CheckNumericValues(XElement drillholeValues, ValidationMessage validationTest, string fieldID, string fieldName, string holeName)
         {
             var elements = drillholeValues.Elements();
             validationTest.count = elements.Count();
@@ -248,6 +266,7 @@ namespace Drillholes.Validation.TestMessage
             {
                 string message = "";
                 string fieldValue = element.Element(fieldID).Value;
+                string hole = element.Element(holeName).Value;
                 string holeAttr = element.Attribute("ID").Value;
 
                 if (!Information.IsNumeric(fieldValue))
@@ -265,7 +284,7 @@ namespace Drillholes.Validation.TestMessage
                        + fieldName + "' is not NUMERIC";
 
                     validationTest.validationMessages.Add(message);
-                    validationTest.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = _errorType, Description = message, ErrorColour = _errorColour });
+                    validationTest.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = _errorType, Description = message, ErrorColour = _errorColour, holeID = hole, id = Convert.ToInt32(holeAttr) });
                     validationTest.verified = false;
 
                 }
@@ -273,7 +292,7 @@ namespace Drillholes.Validation.TestMessage
                 {
                     message = "'" + fieldID + "' of field type '" + fieldName + "' with record " + holeAttr + "' verified as NUMERIC";
                     validationTest.validationMessages.Add(message);
-                    validationTest.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green" });
+                    validationTest.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green", holeID = hole, id = Convert.ToInt32(holeAttr) });
                 }
             }
 
@@ -303,6 +322,7 @@ namespace Drillholes.Validation.TestMessage
                         var collar = element.Element(holeFieldID).Value;
                         var length = element.Element(maxField).Value;
                         var intervalQuery = distanceElements.Where(c => c.Element(holeFieldID).Value == collar.ToString()).ToList();
+                        var holeAttr = element.Attribute("ID").Value;
 
                         double tD = 0.0;
 
@@ -334,7 +354,7 @@ namespace Drillholes.Validation.TestMessage
                                         " which is greater than  length " + tD + " for collar " + collar;
 
                                     check.validationMessages.Add(message);
-                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange" });
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", holeID=collar, id=Convert.ToInt32(holeAttr)});
                                     check.verified = false;
                                 }
                                 else
@@ -383,6 +403,7 @@ namespace Drillholes.Validation.TestMessage
                         var lenVal = collarElements.Where(t => t.Element(collarFieldID).Value == hole).Select(c => c.Element(lengthID).Value).Single();
                         var fromVals = intervalElements.Where(s => s.Element(assayFieldID).Value == hole).Select(c => c.Element(fromField).Value).ToList();
                         var toVals = intervalElements.Where(s => s.Element(assayFieldID).Value == hole).Select(c => c.Element(toField).Value).ToList();
+                        var holeAttr = intervalElements.Where(s => s.Element(collarFieldID).Value == hole).Select(c => c.Attribute("ID").Value).ToList();
 
                         double holeLength = 0.0;
 
@@ -414,7 +435,7 @@ namespace Drillholes.Validation.TestMessage
                                     {
                                         message = "Missing Interval between 0 and " + dblF.ToString() + " for hole " + hole;
                                         check.validationMessages.Add(message);
-                                        check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange" });
+                                        check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", holeID=hole, id = Convert.ToInt32(holeAttr[v]) });
                                         check.verified = false;
                                     }
                                 }
@@ -431,7 +452,10 @@ namespace Drillholes.Validation.TestMessage
                                             {
                                                 message = "Missing Interval between " + dblTo[v].ToString() + " and end of hole at '" + holeLength.ToString() + "' for hole " + hole;
                                                 check.validationMessages.Add(message);
-                                                check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange" });
+                                                check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange",
+                                                    holeID = hole,
+                                                    id = Convert.ToInt32(holeAttr[v])
+                                                });
                                                 check.verified = false;
                                             }
                                         }
@@ -441,7 +465,10 @@ namespace Drillholes.Validation.TestMessage
                                     {
                                         message = "Missing Interval between " + dblTo[v - 1].ToString() + " and " + dblFrom[v].ToString() + " for hole " + hole;
                                         check.validationMessages.Add(message);
-                                        check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange" });
+                                        check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange",
+                                            holeID = hole,
+                                            id = Convert.ToInt32(holeAttr[v])
+                                        });
                                         check.verified = false;
                                     }
                                 }
@@ -503,14 +530,15 @@ namespace Drillholes.Validation.TestMessage
                                         {
                                             message = "Interval is zero for hole " + hole + " at record " + holeAttrs[d] + "!";
                                             check.validationMessages.Add(message);
-                                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Error, Description = message, ErrorColour = "Red" });
+                                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Error, Description = message, ErrorColour = "Red",
+                                                holeID = hole, id = Convert.ToInt32(holeAttrs[d])});
 
                                             check.verified = false;
                                         }
                                         else if (dblTo < 0)
                                         {
                                             message = "'To' is negative for hole " + hole + " at record " + holeAttrs[d] + "!";// 'From'(" + dblFrom.ToString() + ") is greater than 'To'(" + dblTo.ToString() + ")";
-                                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange" });
+                                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", holeID = hole, id = Convert.ToInt32(holeAttrs[d]) });
                                             check.validationMessages.Add(message);
                                             check.verified = false;
                                         }
@@ -519,7 +547,10 @@ namespace Drillholes.Validation.TestMessage
                                             message = "Interval is negative for hole " + hole + " at interval + " + holeAttrs[d] + "! 'From' (" + dblFrom.ToString() + ") is greater than 'To' (" + dblTo.ToString() + ")";
 
                                             check.validationMessages.Add(message);
-                                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Error, Description = message, ErrorColour = "Red" });
+                                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Error, Description = message, ErrorColour = "Red",
+                                                holeID = hole,
+                                                id = Convert.ToInt32(holeAttrs[d])
+                                            });
                                             check.verified = false;
                                         }
                                     }
@@ -559,6 +590,8 @@ namespace Drillholes.Validation.TestMessage
 
                     foreach (var hole in intervalHoles)
                     {
+                        var holeIDs = intervalElements.Where(s => s.Element(holeFieldID).Value == hole).Select(c => c.Attribute("ID").Value).ToList();
+
                         var fromVals = intervalElements.Where(s => s.Element(holeFieldID).Value == hole).Select(c => c.Element(fromField).Value).ToList();
                         var toVals = intervalElements.Where(s => s.Element(holeFieldID).Value == hole).Select(c => c.Element(toField).Value).ToList();
 
@@ -592,7 +625,10 @@ namespace Drillholes.Validation.TestMessage
                                             message = "Overlapping Interval between " + dblF.ToString() + " and " + dblT.ToString() + " for hole " + hole;
 
                                             check.validationMessages.Add(message);
-                                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange" });
+                                            check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange",
+                                                id = Convert.ToInt32(holeIDs[v]),
+                                                holeID = hole
+                                            });
                                             check.verified = false;
                                         }
                                     }

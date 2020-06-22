@@ -256,11 +256,16 @@ namespace Drillholes.Windows.Dialogs
 
             if (value.Name == "GroupByTest")
             {
-                var edits = tvEdit.SelectedItem as GroupByTestField;
+                var edits = tvEdit.SelectedItem as GroupByTest;
 
-                foreach (var edit in edits.TableData)
+                var testResults = edits.TestFields;
+
+                foreach (var testResult in testResults)
                 {
-                    _edits.Add(edit);
+                    var rows = testResult.TableData;
+
+                    foreach(var row in rows)
+                        _edits.Add(row);
                 }
             }
             else if (value.Name == "RowsToEdit")
@@ -292,6 +297,7 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (_edits[0].TableType == DrillholeTableType.survey)
             {
+
                 surveyTable = surveyEdits.PopulateGridValues(_edits, DrillholeTableType.survey, false).Result;  //TODO => override
                 //// surveyViewModel.SetDataContext(dataEdits, surveyTable);
 
@@ -299,13 +305,13 @@ namespace Drillholes.Windows.Dialogs
 
                 //Get CollarRow
                 _edits.Add(collarEdits.CollarRow(holeID, testType).Result);
-                //previewTable = await collarViewModel.PopulateGridValues(_edits, DrillholeTableType.collar, true);
+                previewTable = await collarEdits.PopulateGridValues(_edits, DrillholeTableType.collar, true);
 
-                //collarViewModel.SetDataContext(dataCollar, previewTable);
+                collarEdits.SetDataContext(dataCollar, previewTable);
                 surveyEdits.SetDataContext(dataEdits, surveyTable);
 
-                //dataCollar.Visibility = Visibility.Visible;
-                //lblPreview.Visibility = Visibility.Hidden;
+                dataCollar.Visibility = Visibility.Visible;
+                lblPreview.Visibility = Visibility.Hidden;
             }
             else if (_edits[0].TableType == DrillholeTableType.assay)
             {
