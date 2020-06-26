@@ -55,6 +55,14 @@ namespace Drillholes.Domain.Services
             return mapper.Map<ValidationSurveyDto, ValidationSurvey>(surveyValidate);
         }
 
+        public async Task<ValidationSurvey> CheckDeviations(IMapper mapper, ValidationMessages ValuesToCheck, XElement surveyValues, int dipTolerance, int aziTolerance)
+        {
+
+            var surveyValidate = await _validation.CheckForLargeDeviations(ValuesToCheck, surveyValues, dipTolerance, aziTolerance);
+
+            return mapper.Map<ValidationSurveyDto, ValidationSurvey>(surveyValidate);
+        }
+
         public async Task<ValidationSurvey> CheckMissingCollars(IMapper mapper, ValidationMessages ValuesToCheck, List<XElement> drillholeValues)
         {
             var surveyValidate = await _validation.CheckForMissingCollars(ValuesToCheck, drillholeValues);

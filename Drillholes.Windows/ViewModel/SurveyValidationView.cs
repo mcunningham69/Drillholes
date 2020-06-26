@@ -60,6 +60,7 @@ namespace Drillholes.Windows.ViewModel
             mTables += CheckRange;
             mTables += CheckSurveyDistance;
             mTables += CheckCollarsSurveys;
+            mTables += CheckSurveyDeviations;
 
             return await mTables(editData);
 
@@ -412,6 +413,66 @@ namespace Drillholes.Windows.ViewModel
             var validationCheck = await _surveyValidationService.CheckMissingCollars(mapper, surveyTests, drillholeTableData);
 
             DisplayMessages.DisplayResults.Add(validationCheck.testMessages);
+
+            return true;
+        }
+
+        private async Task<bool> CheckSurveyDeviations(bool editData)
+        {
+            if (mapper == null)
+                InitialiseMapping();
+
+            int dipTol = 5;
+            int aziTol = 10;
+
+            List<XElement> drillholeTableData = new List<XElement>();
+            drillholeTableData.Add(xmlSurveyData);
+
+            ImportTableField surveyHoleField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single();
+            ImportTableField surveyAzimuthField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Single();
+            ImportTableField surveyDipField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Single();
+            ImportTableField surveyDistField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Single();
+
+
+            List<ImportTableField> dipFields = new List<ImportTableField>();
+            dipFields.Add(surveyHoleField);
+            dipFields.Add(surveyDipField);
+            dipFields.Add(surveyDistField);
+
+            List<ImportTableField> aziFields = new List<ImportTableField>();
+            aziFields.Add(surveyHoleField);
+            aziFields.Add(surveyAzimuthField);
+            aziFields.Add(surveyDistField);
+
+            List<ValidationMessage> surveyFieldTest = new List<ValidationMessage>();
+
+            //Check if azimuth and dip fields set
+            surveyFieldTest.Add(new ValidationMessage
+            {
+                verified = true,
+                validationTest = DrillholeConstants.checkDip,
+                count = 0,
+                validationMessages = new List<string>(),
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Single(),
+                tableFields = dipFields
+            });
+
+            surveyFieldTest.Add(new ValidationMessage
+            {
+                verified = true,
+                validationTest = DrillholeConstants.checkAzi,
+                count = 0,
+                validationMessages = new List<string>(),
+                tableField = importSurveyFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Single(),
+                tableFields = aziFields
+            });
+
+            ValidationMessages surveyTests = new ValidationMessages { testType = DrillholeConstants.SurveyDeviation, testMessage = surveyFieldTest };
+
+            var validationCheck = await _surveyValidationService.CheckDeviations(mapper, surveyTests, xmlSurveyData, dipTol, aziTol);
+
+            DisplayMessages.DisplayResults.Add(validationCheck.testMessages);
+
 
             return true;
         }

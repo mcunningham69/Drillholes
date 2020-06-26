@@ -33,6 +33,7 @@ namespace Drillholes.Domain
         public const string HoleLength = "Drillhole Length";
         public const string ZeroCoordinate = "Collar Coordinate";
         public const string SurveyRange = "Dip and Azimuth";
+        public const string SurveyDeviation = "Survey Deviation";
         public const string SurveyDistance = "Survey Distance";
         public const string MissingCollar = "Missing Collar";
         public const string MissingInterval = "Missing Interval";
