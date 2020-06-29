@@ -45,4 +45,11 @@ namespace Drillholes.Domain.Enum
         MacFileDialog,
         MacExcelDialog
     }
+
+    public enum DrillholeSaveEdits
+    {
+        Yes,
+        No,
+        Cancel
+    }
 }

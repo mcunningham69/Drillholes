@@ -109,7 +109,7 @@ namespace Drillholes.FileDialog
                                 rows.Add(new CsvRow { results = strValue });
                             }
 
-                            mFieldItems = new XElement(rootElement, new XAttribute("ID", (counter - 1).ToString()));
+                            mFieldItems = new XElement(rootElement, new XAttribute("ID", (counter - 1).ToString()), new XAttribute("Ignore", "false"));
 
                             for (int i = 0; i < intervalTableDto.fields.Count; i++)
                             {

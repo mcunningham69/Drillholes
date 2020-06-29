@@ -1403,31 +1403,39 @@ namespace Drillholes.Windows.ViewModel
             //max depth
             var depth = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.maxName).Select(m => m.columnHeader).Single();
 
+            bool bOnce = false;
             foreach (var value in _edit) //populate dataTable
             {
-                // rowValues.Add(value.Ignore);
-                rowValues.Add(value.id_col.ToString());
-                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(holeID).Value).Single());
-                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(x).Value).Single());
-                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(y).Value).Single());
-                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(z).Value).Single());
-                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(depth).Value).Single());
-
-                if (surveyType == DrillholeSurveyType.collarsurvey)
+                if (!bOnce)
                 {
-                    var azi = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Select(m => m.columnHeader).Single();
-                    var dip = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Select(m => m.columnHeader).Single();
+                    // rowValues.Add(value.Ignore);
+                    rowValues.Add(value.id_col.ToString());
+                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(holeID).Value).Single());
+                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(x).Value).Single());
+                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(y).Value).Single());
+                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(z).Value).Single());
+                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(depth).Value).Single());
 
-                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(azi).Value).Single());
-                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(dip).Value).Single());
+                    if (surveyType == DrillholeSurveyType.collarsurvey)
+                    {
+                        var azi = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Select(m => m.columnHeader).Single();
+                        var dip = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Select(m => m.columnHeader).Single();
+
+                        rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(azi).Value).Single());
+                        rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(dip).Value).Single());
+                    }
+
+                    rowValues.Add(value.testType);
+
+                    if (!preview)
+                        rowValues.Add(value.Description);
+
+                    dataTable.Rows.Add(rowValues.ToArray());
                 }
+                else
+                    return dataTable;
 
-                rowValues.Add(value.testType);
-
-                if (!preview)
-                    rowValues.Add(value.Description);
-
-                dataTable.Rows.Add(rowValues.ToArray());
+                bOnce = true;
             }
 
             return dataTable; //TODO
@@ -1436,8 +1444,12 @@ namespace Drillholes.Windows.ViewModel
         public virtual async Task<DataTable> AddColumns(DrillholeTableType tableType, bool preview)
         {
             DataTable dataTable = new DataTable();
-            // dataTable.Columns.Add("Ignore");
-            dataTable.Columns.Add("ID");
+
+            DataColumn column = new DataColumn();
+            column.ColumnName = "ID";
+            column.ReadOnly = true;
+            dataTable.Columns.Add(column);
+            //dataTable.Columns.Add("ID");
             dataTable.Columns.Add(DrillholeConstants.holeID);
             dataTable.Columns.Add(DrillholeConstants.x);
             dataTable.Columns.Add(DrillholeConstants.y);
@@ -1454,6 +1466,8 @@ namespace Drillholes.Windows.ViewModel
 
             if (!preview)
                 dataTable.Columns.Add("Description");
+
+        
 
             return dataTable;
         }

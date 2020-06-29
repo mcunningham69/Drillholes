@@ -35,3 +35,5 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Drillh
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Drillholes.Windows.csproj.CopyComplete
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Drillholes.Windows.exe
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Drillholes.Windows.pdb
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\bin\Debug\Drillholes.FixErrors.dll
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\bin\Debug\Drillholes.FixErrors.pdb

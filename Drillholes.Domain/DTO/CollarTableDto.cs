@@ -19,11 +19,7 @@ namespace Drillholes.Domain.DTO
         public System.Xml.Linq.XElement xPreview { get; set; }
         public string collarKey { get; set; }
         public bool isValid { get; set; }
-        public bool isCancelled { get; set; }
-       // public SummaryCollarStatistics SummaryStats { get; set; }
-
-        //  public TestMessages testMessages { get; set; }
-        public bool hasEdits { get; set; }
+ 
         public string tableLocation { get; set; }
         public DrillholeSurveyType surveyType { get; set; }
         public List<string> collarIDs { get; set; }

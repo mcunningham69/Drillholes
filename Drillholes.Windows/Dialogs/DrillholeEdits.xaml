@@ -211,8 +211,9 @@
         <DataGrid ItemsSource="{Binding}" Name="dataEdits" Opacity="1" Grid.Column="3" Grid.Row="2" 
                   VerticalAlignment="Stretch" BorderBrush="Blue" AutoGenerateColumns="True" 
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" 
-                  IsReadOnly="False" CanUserAddRows="False" 
-                  ToolTip="{Binding Path=EditDrillholeData/GroupedHoles/GroupedTables/GroupedTests/TestFields/TableData/ToolTip}">
+                  IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
+                  ToolTip="{Binding Path=EditDrillholeData/GroupedHoles/GroupedTables/GroupedTests/TestFields/TableData/ToolTip}" 
+                  RowEditEnding="dataEdits_RowEditEnding" CellEditEnding="dataEdits_CellEditEnding">
 
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Ignore" Binding="{Binding Ignore, Mode=TwoWay}"/>
@@ -220,15 +221,9 @@
         </DataGrid>
 
         <DataGrid ItemsSource="{Binding}" Name="dataCollar" Grid.Column="3" Grid.Row="3" VerticalAlignment="Stretch" 
-                  Visibility="Hidden" AutoGenerateColumns="True" CanUserAddRows="False" IsSynchronizedWithCurrentItem="true">
+                  Visibility="Hidden" AutoGenerateColumns="True" CanUserAddRows="False" IsSynchronizedWithCurrentItem="true" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Ignore" />
-                <!--<DataGridTextColumn Header="Hole ID" IsReadOnly="True" Binding="{Binding holeid, Mode=OneWay}"/>
-                <DataGridTextColumn Header="East (X)" IsReadOnly="True" Binding="{Binding x, Mode=OneWay}"/>
-                <DataGridTextColumn Header="North (Y)" IsReadOnly="True" Binding="{Binding y, Mode=OneWay}"/>
-                <DataGridTextColumn Header="Elev (Z)" IsReadOnly="True" Binding="{Binding z, Mode=OneWay}"/>
-                <DataGridTextColumn Header="Max Depth" IsReadOnly="True" Binding="{Binding maxDepth, Mode=OneWay}"/>
-                <DataGridTextColumn Header="Validation" IsReadOnly="True" Binding="{Binding testType, Mode=OneWay}"/>-->
             </DataGrid.Columns>
         </DataGrid>
 
@@ -238,13 +233,17 @@
         <ToolBar Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" FontSize="14">
             <StackPanel Orientation="Horizontal">
 
+                <Button Name="btnStartEdits" FontSize="14" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Start Editing" Click="btnStartEdits_Click"/>
+
+                <Button Name="btnSave" FontSize="14" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Save Edits" Click="btnSave_Click" IsEnabled="False"/>
+                <Button Name="btnTD" FontSize="14" Width="125" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Fix Max Depths" Click="btnTD_Click" IsEnabled="False"/>
+                <Button Name="btnReplaceAll" FontSize="14" Width="150" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Find and Replace" Click="btnTD_Click" IsEnabled="False"/>
                 <Button Name="btnExit" FontSize="14" Width="50" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Exit" Click="btnExit_Click"/>
-                <Button Name="btnSave" FontSize="14" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Save" Click="btnSave_Click"/>
-                <Button Name="btnTD" FontSize="14" Width="125" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Fix Max Depths" Click="btnTD_Click"/>
-                <Button Name="btnReplaceAll" FontSize="14" Width="150" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Find and Replace" Click="btnTD_Click"/>
+                <Button Name="btnTest" FontSize="14" Width="50" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="TEST" Click="btnTest_Click"/>
 
             </StackPanel>
         </ToolBar>
+
     </Grid>
 
 </Window>

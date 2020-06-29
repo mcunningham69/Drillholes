@@ -4,6 +4,7 @@ using Drillholes.Domain.Enum;
 using Drillholes.Windows.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -24,29 +25,43 @@ namespace Drillholes.Windows.Dialogs
     /// </summary>
     public partial class DrillholeEdits : Window
     {
+        private static bool editMode { get; set; }
+        private static DrillholeSaveEdits SaveEditMode { get; set; }
+
+        private static bool hasEdits { get; set; }
         public CollarTableObject collarObject { get; set; }
         public SurveyTableObject surveyObject { get; set; }
         public AssayTableObject assayObject { get; set; }
         public IntervalTableObject intervalObject { get; set; }
 
+        public List<RowsToEdit>editedRows { get; set; }
+
         private CollarValidationView collarEdits { get; set; }
+        private CollarEditView collarEdit { get; set; }
+
         private SurveyValidationView surveyEdits { get; set; }
         private AssayValidationView assayEdits { get; set; }
         private IntervalValidationView intervalEdits { get; set; }
 
-   //     public DrillholeSurveyType surveyType { get; set; }
         public int selectedIndex { get; set; }
 
         private static DrillholeEdits m_instance;
         public DrillholeEdits()
         {
+            editMode = false;
+            hasEdits = false;
+            SaveEditMode = DrillholeSaveEdits.Yes;
+
             InitializeComponent();
         }
 
         public static DrillholeEdits GetInstance()
         {
+
             if (m_instance == null)
             {
+                editMode = false;
+                hasEdits = false;
 
                 return m_instance = new DrillholeEdits();
             }
@@ -57,7 +72,8 @@ namespace Drillholes.Windows.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            DisplayMessages();
+            if (collarObject != null)
+                DisplayMessages();
         }
 
         private async void DisplayMessages()
@@ -69,10 +85,10 @@ namespace Drillholes.Windows.Dialogs
 
                 DataContext = collarEdits;
 
+
             }
             else if (selectedIndex == 1)
             {
-                //ValidateCollar();
                 ValidateSurvey(true);
 
                 DataContext = surveyEdits;
@@ -80,16 +96,6 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (selectedIndex == 2)
             {
-              //  ValidateCollar();
-
-              // // if (DrillholeSurveyType.downholesurvey == surveyType)
-              ////  {
-              //      if (surveyObject != null)
-              //      {
-              //          if (surveyObject.tableData != null)
-              //              ValidateSurvey();
-              //      }
-               // }
 
                 ValidateAssay();
 
@@ -98,22 +104,6 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (selectedIndex == 3)
             {
-              //  ValidateCollar();
-
-              ////  if (DrillholeSurveyType.downholesurvey == surveyType)
-              ////  {
-              //      if (surveyObject != null)
-              //      {
-              //          if (surveyObject.tableData != null)
-              //              ValidateSurvey();
-              //      }
-              ////  }
-
-              //  if (assayObject != null)
-              //  {
-              //      if (assayObject.tableData != null)
-              //          ValidateAssay();
-              //  }
 
                 ValidateInterval();
 
@@ -129,6 +119,11 @@ namespace Drillholes.Windows.Dialogs
             await collarEdits.ValidateAllTables(true);
 
             collarEdits.ReshapeMessages(DrillholeTableType.collar);
+            //collarEdits = new CollarValidationView(DrillholeTableType.collar, collarObject.surveyType, collarObject.xPreview);
+            //collarEdits.importCollarFields = collarObject.tableData;
+            //await collarEdits.ValidateAllTables(true);
+
+            //collarEdits.ReshapeMessages(DrillholeTableType.collar);
         }
 
         private async void ValidateSurvey(bool bEdit)
@@ -233,9 +228,16 @@ namespace Drillholes.Windows.Dialogs
             this.Close();
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        private async void btnSave_Click(object sender, RoutedEventArgs e)
         {
+            SaveEdits();
 
+            SaveState();
+        }
+
+        private async void SaveEdits()
+        {
+            hasEdits = false;
         }
 
         private void btnTD_Click(object sender, RoutedEventArgs e)
@@ -268,6 +270,16 @@ namespace Drillholes.Windows.Dialogs
                         _edits.Add(row);
                 }
             }
+            else if (value.Name == "GroupByTestField")
+            {
+                var edits = tvEdit.SelectedItem as GroupByTestField;
+
+                var testResults = edits;
+
+                var edit = testResults.TableData[0] as RowsToEdit;
+                _edits.Add(edit);
+
+            }
             else if (value.Name == "RowsToEdit")
             {
                 var edit = tvEdit.SelectedItem as RowsToEdit;
@@ -299,7 +311,6 @@ namespace Drillholes.Windows.Dialogs
             {
 
                 surveyTable = surveyEdits.PopulateGridValues(_edits, DrillholeTableType.survey, false).Result;  //TODO => override
-                //// surveyViewModel.SetDataContext(dataEdits, surveyTable);
 
                 _edits.Clear();
 
@@ -320,14 +331,14 @@ namespace Drillholes.Windows.Dialogs
                 _edits.Clear();
 
                 //Get CollarRow
-                //_edits.Add(collarViewModel.CollarRow(holeID, testType).Result);
-                //previewTable = await collarViewModel.PopulateGridValues(_edits, DrillholeTableType.collar, true);
+                _edits.Add(collarEdits.CollarRow(holeID, testType).Result);
+                previewTable = await collarEdits.PopulateGridValues(_edits, DrillholeTableType.collar, true);
 
-                //collarViewModel.SetDataContext(dataCollar, previewTable);
+                collarEdits.SetDataContext(dataCollar, previewTable);
                 assayEdits.SetDataContext(dataEdits, assayTable);
 
-                //dataCollar.Visibility = Visibility.Visible;
-                //lblPreview.Visibility = Visibility.Hidden;
+                dataCollar.Visibility = Visibility.Visible;
+                lblPreview.Visibility = Visibility.Hidden;
             }
 
             else if (_edits[0].TableType == DrillholeTableType.interval)
@@ -338,13 +349,13 @@ namespace Drillholes.Windows.Dialogs
                 _edits.Clear();
 
                 //Get CollarRow
-                //_edits.Add(collarViewModel.CollarRow(holeID, testType).Result);
-                //previewTable = await collarViewModel.PopulateGridValues(_edits, DrillholeTableType.collar, true);
+                _edits.Add(collarEdits.CollarRow(holeID, testType).Result);
+                previewTable = await collarEdits.PopulateGridValues(_edits, DrillholeTableType.collar, true);
 
-                //collarViewModel.SetDataContext(dataCollar, previewTable);
+                collarEdits.SetDataContext(dataCollar, previewTable);
 
-                //dataCollar.Visibility = Visibility.Visible;
-                //lblPreview.Visibility = Visibility.Hidden;
+                dataCollar.Visibility = Visibility.Visible;
+                lblPreview.Visibility = Visibility.Hidden;
             }
             foreach (var column in dataEdits.Columns)
             {
@@ -359,9 +370,175 @@ namespace Drillholes.Windows.Dialogs
             }
         }
 
+
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             m_instance = null;
+            hasEdits = false;
+            editMode = false;
+        }
+
+        private async void SaveState()
+        {
+            if (hasEdits)
+            {
+                btnSave.IsEnabled = true;
+            }
+            else
+            {
+                btnSave.IsEnabled = false;
+            }
+        }
+        private void btnStartEdits_Click(object sender, RoutedEventArgs e)
+        {
+            if (editMode)
+            {
+                if (hasEdits)
+                {
+                    MessageBoxResult toSaveEdits = MessageBox.Show("Save Edits?", "Edits", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+                    if (MessageBoxResult.Cancel == toSaveEdits)
+                        return;
+                    else if (MessageBoxResult.Yes == toSaveEdits)
+                    {
+                        SaveEdits();
+                    }
+
+                }
+
+                btnStartEdits.Content = "Start Editing";
+                btnSave.IsEnabled = false;
+                btnReplaceAll.IsEnabled = false;
+                btnTD.IsEnabled = false;
+                dataEdits.IsReadOnly = true;
+                dataCollar.IsReadOnly = true;
+
+                editMode = false;
+                hasEdits = false;
+
+                
+            }
+            else
+            {
+                btnStartEdits.Content = "Stop Editing";
+                btnReplaceAll.IsEnabled = true;
+                btnTD.IsEnabled = true;
+                dataEdits.IsReadOnly = false;
+                dataCollar.IsReadOnly = false;
+                editMode = true;
+            }
+        }
+
+        private void btnTest_Click(object sender, RoutedEventArgs e)
+        {
+            //simulate adding data
+            hasEdits = true;
+            SaveState();
+        }
+
+        private void dataEdits_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            //if (e.EditAction == DataGridEditAction.Commit)
+            //{
+            //    if (SaveEditMode == DrillholeSaveEdits.Yes)
+            //    {
+            //        //check either to add new row or modify existing row
+
+            //        hasEdits = false;
+            //        btnSave.IsEnabled = false;
+            //    }
+            //    else if (SaveEditMode == DrillholeSaveEdits.No)
+            //    {
+
+            //        hasEdits = false;
+            //        btnSave.IsEnabled = false;
+            //    }
+            //    else
+            //    {
+
+            //    }
+
+            //    var edits = e.Row.DataContext;
+            //}
+
+        }
+
+        private void dataEdits_PreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+
+        }
+
+
+
+        private async void dataEdits_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+
+            if (e.Column.Header.ToString() == "Ignore")
+            {
+                CheckBox bState = e.EditingElement as CheckBox;
+
+                DataRowView edits = e.Row.DataContext as DataRowView;
+
+                RowsToEdit row = null;
+                var array = edits.Row.ItemArray;
+
+                if (editedRows == null)
+                {
+                    editedRows = new List<RowsToEdit>();
+                    row = await ReturnRow((bool)bState.IsChecked, array);
+                    editedRows.Add(row);
+                }
+                else
+                {
+                    int holeCount = editedRows.Where(a => a.holeid == array[1].ToString()).Count();
+
+                    if (holeCount == 0)
+                    {
+                        row = await ReturnRow((bool)bState.IsChecked, array);
+                        editedRows.Add(row);
+
+                    }
+                    else
+                    {
+                        row = editedRows.Where(a => a.holeid == array[1].ToString()).FirstOrDefault();
+
+                        if (row != null)
+                            row.Ignore = (bool)bState.IsChecked;
+                    }
+
+                }
+            }
+
+            hasEdits = true;
+            btnSave.IsEnabled = true;
+
+
+        }
+
+        private async Task<RowsToEdit>ReturnRow(bool bChecked, object[] array)
+        {
+            RowsToEdit row = new RowsToEdit()
+            {
+                Ignore = bChecked,
+                id_col = Convert.ToInt32(array[0]),
+                holeid = array[1].ToString(),
+                x = array[2].ToString(),
+                y = array[3].ToString(),
+                z = array[4].ToString(),
+                maxDepth = array[5].ToString()
+
+            };
+
+            if (DrillholeSurveyType.collarsurvey == collarObject.surveyType)
+            {
+                row.azimuth = array[6].ToString();
+                row.dip = array[7].ToString();
+            }
+
+            return row;
         }
     }
+
+ 
 }
