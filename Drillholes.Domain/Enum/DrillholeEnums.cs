@@ -52,4 +52,11 @@ namespace Drillholes.Domain.Enum
         No,
         Cancel
     }
+
+    public enum DrillholeEditSession
+    {
+        Started,
+        Stopped
+        
+    }
 }

@@ -12,7 +12,7 @@ namespace Drillholes.FixErrors
 {
     public class CollarDataEdits : ICollarEdit
     {
-        public Task<CollarTableDto> UpdateValues(List<RowsToEdit> RowsToEdit, XElement collarValues)
+        public Task<CollarTableDto> UpdateValues(List<RowsToEdit> RowsToEdit, XElement collarValues, List<ImportTableField> editFields, bool bIgnore)
         {
             throw new NotImplementedException();
         }

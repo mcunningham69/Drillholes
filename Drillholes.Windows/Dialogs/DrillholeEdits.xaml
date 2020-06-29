@@ -212,6 +212,7 @@
                   VerticalAlignment="Stretch" BorderBrush="Blue" AutoGenerateColumns="True" 
                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" 
                   IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
+                  Visibility="Hidden"
                   ToolTip="{Binding Path=EditDrillholeData/GroupedHoles/GroupedTables/GroupedTests/TestFields/TableData/ToolTip}" 
                   RowEditEnding="dataEdits_RowEditEnding" CellEditEnding="dataEdits_CellEditEnding">
 
@@ -230,6 +231,13 @@
         <Label Name="lblPreview" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" 
                VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="3" FontSize="36" FontStyle="Italic" FontWeight="Bold" Content="PREVIEW TABLE"></Label>
 
+        <Label Name="lblEdits" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" 
+               VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="2" FontSize="36" FontStyle="Italic" FontWeight="Bold" Content="EDIT ROWS"></Label>
+
+        <Border Grid.Column="3" Grid.Row="2" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" ></Border>
+        <Border Grid.Column="3" Grid.Row="3" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" ></Border>
+
+
         <ToolBar Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" FontSize="14">
             <StackPanel Orientation="Horizontal">
 
@@ -237,12 +245,20 @@
 
                 <Button Name="btnSave" FontSize="14" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Save Edits" Click="btnSave_Click" IsEnabled="False"/>
                 <Button Name="btnTD" FontSize="14" Width="125" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Fix Max Depths" Click="btnTD_Click" IsEnabled="False"/>
-                <Button Name="btnReplaceAll" FontSize="14" Width="150" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Find and Replace" Click="btnTD_Click" IsEnabled="False"/>
-                <Button Name="btnExit" FontSize="14" Width="50" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Exit" Click="btnExit_Click"/>
-                <Button Name="btnTest" FontSize="14" Width="50" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="TEST" Click="btnTest_Click"/>
+                <!--<Button Name="btnReplaceAll" FontSize="14" Width="150" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Find and Replace" Click="btnTD_Click" IsEnabled="False"/>-->
+                <Expander Header="Find and Replace">
+                    <StackPanel>
+                        <TextBox ToolTip="Find"></TextBox>
+                        <TextBox ToolTip="Repace"></TextBox>
+                        <Button Content="Go" FontSize="14" Width="25" Height="25" IsEnabled="False"/>
+                    </StackPanel>
+                    
+                </Expander>
 
             </StackPanel>
         </ToolBar>
+
+        <Button Name="btnExit" Grid.Column="3" Grid.Row="4" HorizontalAlignment="Right" Content="EXIT" FontSize="14" Width="50" Height="25" VerticalAlignment="Center" Click="btnExit_Click"></Button>
 
     </Grid>
 

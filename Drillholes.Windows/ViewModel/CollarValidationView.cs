@@ -28,6 +28,9 @@ namespace Drillholes.Windows.ViewModel
 
         public delegate Task<bool> ValidationDelegate(bool editData);
 
+      //  public DataTable dataTable { get; set; }
+
+
         public CollarValidationService _validationService;
         public ICollarValidation _validateValues;
 
@@ -1379,10 +1382,11 @@ namespace Drillholes.Windows.ViewModel
         #region Actual Data
         public virtual async Task<DataTable> PopulateGridValues(List<RowsToEdit> _edit, DrillholeTableType tableType, bool preview)
         {
-            DataTable dataTable = new DataTable();
-            var collar = xmlCollarData.Elements();
 
+            DataTable dataTable = new DataTable();
             dataTable = await AddColumns(tableType, preview);
+
+            var collar = xmlCollarData.Elements();
 
             List<object> rowValues = new List<object>();
 
@@ -1390,7 +1394,7 @@ namespace Drillholes.Windows.ViewModel
 
             //x
             var x = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.xName).Select(m => m.columnHeader).Single();
-            
+
             //y
             var y = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.yName).Select(m => m.columnHeader).Single();
 
@@ -1441,8 +1445,73 @@ namespace Drillholes.Windows.ViewModel
             return dataTable; //TODO
         }
 
-        public virtual async Task<DataTable> AddColumns(DrillholeTableType tableType, bool preview)
+        public virtual async Task<DataTable> ModifyGridValues(List<RowsToEdit> _edits, DrillholeTableType tableType, bool preview)
         {
+            //These are not saved yet only temp
+            DataTable dataTable = new DataTable();
+            dataTable = await AddColumns(tableType, preview);
+
+            var collar = xmlCollarData.Elements();
+
+            List<object> rowValues = new List<object>();
+
+            //holeid
+
+            //x
+            var x = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.xName).Select(m => m.columnHeader).Single();
+
+            //y
+            var y = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.yName).Select(m => m.columnHeader).Single();
+
+            //z
+            var z = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.zName).Select(m => m.columnHeader).Single();
+
+            var holeID = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(m => m.columnHeader).FirstOrDefault();
+
+
+            //max depth
+            var depth = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.maxName).Select(m => m.columnHeader).Single();
+
+            bool bOnce = false;
+
+
+            foreach (var value in _edits) //populate dataTable
+            {
+                if (!bOnce)
+                {
+                    // rowValues.Add(value.Ignore);
+                    rowValues.Add(value.id_col.ToString());
+                    rowValues.Add(value.holeid);
+                    rowValues.Add(value.x);
+                    rowValues.Add(value.y);
+                    rowValues.Add(value.z);
+                    rowValues.Add(value.maxDepth);
+
+                    if (surveyType == DrillholeSurveyType.collarsurvey)
+                    {
+
+                        rowValues.Add(value.azimuth);
+                        rowValues.Add(value.dip);
+                    }
+
+                    rowValues.Add(value.testType);
+
+                    if (!preview)
+                        rowValues.Add(value.Description);
+
+                    dataTable.Rows.Add(rowValues.ToArray());
+                }
+                else
+                    return dataTable;
+
+                bOnce = true;
+            }
+
+            return dataTable; //TODO
+        }
+        private async Task<DataTable> AddColumns(DrillholeTableType tableType, bool preview)
+        {
+
             DataTable dataTable = new DataTable();
 
             DataColumn column = new DataColumn();
@@ -1467,7 +1536,6 @@ namespace Drillholes.Windows.ViewModel
             if (!preview)
                 dataTable.Columns.Add("Description");
 
-        
 
             return dataTable;
         }
@@ -1514,6 +1582,7 @@ namespace Drillholes.Windows.ViewModel
                     dataEdits.DataContext = dataTable;
             }
         }
+
 
         #endregion
 

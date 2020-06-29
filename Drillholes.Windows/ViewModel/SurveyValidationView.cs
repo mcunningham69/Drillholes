@@ -851,7 +851,7 @@ namespace Drillholes.Windows.ViewModel
             return dataTable; //TODO
         }
 
-        public override async Task<System.Data.DataTable> AddColumns(DrillholeTableType tableType, bool preview)
+        public virtual async Task<System.Data.DataTable> AddColumns(DrillholeTableType tableType, bool preview)
         {
             System.Data.DataTable dataTable = new System.Data.DataTable();
 

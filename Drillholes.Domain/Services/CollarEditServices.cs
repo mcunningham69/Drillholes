@@ -20,10 +20,10 @@ namespace Drillholes.Domain.Services
             this._edits = edits;
         }
 
-        public async Task<CollarTableObject> UpdateValues(IMapper mapper, List<RowsToEdit> RowsToEdit, XElement collarValues)
+        public async Task<CollarTableObject> UpdateValues(IMapper mapper, List<RowsToEdit> RowsToEdit, XElement collarValues, List<ImportTableField>editFields, bool bIgnore)
         {
 
-            var collarEdits = await _edits.UpdateValues(RowsToEdit, collarValues);
+            var collarEdits = await _edits.UpdateValues(RowsToEdit, collarValues, editFields, bIgnore);
 
             return mapper.Map<CollarTableDto, CollarTableObject>(collarEdits);
         }

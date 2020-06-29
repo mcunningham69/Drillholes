@@ -25,9 +25,8 @@ namespace Drillholes.Windows.Dialogs
     /// </summary>
     public partial class DrillholeEdits : Window
     {
-        private static bool editMode { get; set; }
         private static DrillholeSaveEdits SaveEditMode { get; set; }
-
+        private DrillholeEditSession editSession { get; set; }
         private static bool hasEdits { get; set; }
         public CollarTableObject collarObject { get; set; }
         public SurveyTableObject surveyObject { get; set; }
@@ -42,15 +41,17 @@ namespace Drillholes.Windows.Dialogs
         private SurveyValidationView surveyEdits { get; set; }
         private AssayValidationView assayEdits { get; set; }
         private IntervalValidationView intervalEdits { get; set; }
-
+        private bool bIgnore { get; set; }
         public int selectedIndex { get; set; }
 
         private static DrillholeEdits m_instance;
         public DrillholeEdits()
         {
-            editMode = false;
             hasEdits = false;
             SaveEditMode = DrillholeSaveEdits.Yes;
+            editSession = DrillholeEditSession.Stopped;
+
+            bIgnore = false;
 
             InitializeComponent();
         }
@@ -60,7 +61,6 @@ namespace Drillholes.Windows.Dialogs
 
             if (m_instance == null)
             {
-                editMode = false;
                 hasEdits = false;
 
                 return m_instance = new DrillholeEdits();
@@ -119,11 +119,7 @@ namespace Drillholes.Windows.Dialogs
             await collarEdits.ValidateAllTables(true);
 
             collarEdits.ReshapeMessages(DrillholeTableType.collar);
-            //collarEdits = new CollarValidationView(DrillholeTableType.collar, collarObject.surveyType, collarObject.xPreview);
-            //collarEdits.importCollarFields = collarObject.tableData;
-            //await collarEdits.ValidateAllTables(true);
 
-            //collarEdits.ReshapeMessages(DrillholeTableType.collar);
         }
 
         private async void ValidateSurvey(bool bEdit)
@@ -237,6 +233,9 @@ namespace Drillholes.Windows.Dialogs
 
         private async void SaveEdits()
         {
+            await collarEdit.SaveEdits(editedRows, bIgnore);
+
+            editSession = DrillholeEditSession.Stopped;
             hasEdits = false;
         }
 
@@ -289,6 +288,51 @@ namespace Drillholes.Windows.Dialogs
             else
                 return;
 
+            //if not in editmode go straight on
+            if (DrillholeEditSession.Started == editSession) //check if in edit mode
+            {
+                bool checkRow = false;
+
+                if (editedRows != null)
+                {
+                    //check if row exists
+                    checkRow = await CheckIfRowExists(_edits); //if in edit mode, check if hole has already been edited and exists in list of modified data
+                }
+
+                if (checkRow)
+                {
+                    var values = editedRows.Where(h => h.holeid == _edits[0].holeid).ToList();
+                    values[0].testType = _edits[0].testType;
+                    values[0].validationTest = _edits[0].validationTest;
+                    values[0].Description = _edits[0].Description;
+
+                    ReturnRows(values, true); //if it exists then modify values
+                }
+                else
+                    ReturnRows(_edits,  false); //if it doesn't exist run as normal
+
+            }
+            else
+            {
+                ReturnRows(_edits,  false); //run normal procedure to populate row from error message
+            }
+
+        }
+
+        private async Task<bool>CheckIfRowExists(List<RowsToEdit> _edits)
+        {
+            string holeID = _edits[0].holeid;
+
+            int holeCount = editedRows.Where(h => h.holeid == _edits[0].holeid).Count();
+
+            if (holeCount > 0)
+                return true;
+            else
+                return false;
+        }
+
+        private async void ReturnRows(List<RowsToEdit> _edits,  bool bModify)
+        {
             DataTable collarTable = null;
             DataTable previewTable = null;
             DataTable surveyTable = null;
@@ -300,12 +344,18 @@ namespace Drillholes.Windows.Dialogs
 
             if (_edits[0].TableType == DrillholeTableType.collar)
             {
-                collarTable = await collarEdits.PopulateGridValues(_edits, DrillholeTableType.collar, false);
+                if (bModify)
+                    collarTable = await collarEdits.ModifyGridValues(_edits, DrillholeTableType.collar, false);
+                else
+                    collarTable = await collarEdits.PopulateGridValues(_edits, DrillholeTableType.collar, false);
 
                 collarEdits.SetDataContext(dataEdits, collarTable);
 
                 dataCollar.Visibility = Visibility.Hidden;
                 lblPreview.Visibility = Visibility.Visible;
+
+                dataEdits.Visibility = Visibility.Visible;
+                lblEdits.Visibility = Visibility.Hidden;
             }
             else if (_edits[0].TableType == DrillholeTableType.survey)
             {
@@ -370,29 +420,30 @@ namespace Drillholes.Windows.Dialogs
             }
         }
 
-
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             m_instance = null;
             hasEdits = false;
-            editMode = false;
         }
 
+        #region Editting Data
         private async void SaveState()
         {
             if (hasEdits)
             {
                 btnSave.IsEnabled = true;
+                editSession = DrillholeEditSession.Started;
             }
             else
             {
                 btnSave.IsEnabled = false;
+                editSession = DrillholeEditSession.Stopped;
+
             }
         }
         private void btnStartEdits_Click(object sender, RoutedEventArgs e)
         {
-            if (editMode)
+            if (editSession == DrillholeEditSession.Started)
             {
                 if (hasEdits)
                 {
@@ -404,17 +455,22 @@ namespace Drillholes.Windows.Dialogs
                     {
                         SaveEdits();
                     }
+                    else
+                    {
+                        //TODO to refresh row
+                    }
 
                 }
 
+                editSession = DrillholeEditSession.Stopped;
+
                 btnStartEdits.Content = "Start Editing";
                 btnSave.IsEnabled = false;
-                btnReplaceAll.IsEnabled = false;
+                //btnReplaceAll.IsEnabled = false;
                 btnTD.IsEnabled = false;
                 dataEdits.IsReadOnly = true;
                 dataCollar.IsReadOnly = true;
 
-                editMode = false;
                 hasEdits = false;
 
                 
@@ -422,45 +478,19 @@ namespace Drillholes.Windows.Dialogs
             else
             {
                 btnStartEdits.Content = "Stop Editing";
-                btnReplaceAll.IsEnabled = true;
+               // btnReplaceAll.IsEnabled = true;
                 btnTD.IsEnabled = true;
                 dataEdits.IsReadOnly = false;
                 dataCollar.IsReadOnly = false;
-                editMode = true;
+                editSession = DrillholeEditSession.Started;
+
             }
         }
 
-        private void btnTest_Click(object sender, RoutedEventArgs e)
-        {
-            //simulate adding data
-            hasEdits = true;
-            SaveState();
-        }
 
         private void dataEdits_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-            //if (e.EditAction == DataGridEditAction.Commit)
-            //{
-            //    if (SaveEditMode == DrillholeSaveEdits.Yes)
-            //    {
-            //        //check either to add new row or modify existing row
 
-            //        hasEdits = false;
-            //        btnSave.IsEnabled = false;
-            //    }
-            //    else if (SaveEditMode == DrillholeSaveEdits.No)
-            //    {
-
-            //        hasEdits = false;
-            //        btnSave.IsEnabled = false;
-            //    }
-            //    else
-            //    {
-
-            //    }
-
-            //    var edits = e.Row.DataContext;
-            //}
 
         }
 
@@ -470,43 +500,74 @@ namespace Drillholes.Windows.Dialogs
         }
 
 
-
+        //activated when focus leaves last cell (in edit mode)
         private async void dataEdits_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
+            //get the row of data (except ignore)
+            DataRowView edits = e.Row.DataContext as DataRowView;
 
+            RowsToEdit row = null;
+            var array = edits.Row.ItemArray;
+
+            if (editedRows == null)
+            {
+                editedRows = new List<RowsToEdit>();
+            }
+
+            int holeCount = editedRows.Where(a => a.holeid == array[1].ToString()).Count();
+            //check for existing holes in list 
+            if (holeCount == 0)
+            {
+                //as above
+                row = await ReturnRow(array);
+                editedRows.Add(row);
+
+            }
+            else
+            {
+                //if row exists return and check which values need to modified from Switch below
+                row = editedRows.Where(a => a.holeid == array[1].ToString()).FirstOrDefault();
+
+            }
+
+
+            //handle Ignore separate as not part of the data row 
             if (e.Column.Header.ToString() == "Ignore")
             {
                 CheckBox bState = e.EditingElement as CheckBox;
 
-                DataRowView edits = e.Row.DataContext as DataRowView;
+                bIgnore = (bool)bState.IsChecked;
 
-                RowsToEdit row = null;
-                var array = edits.Row.ItemArray;
+                if (row != null)
+                    row.Ignore = bIgnore;
+            }
+            else
+            {
+                var changeTo = e.EditingElement as TextBox;
 
-                if (editedRows == null)
+                switch (e.Column.Header.ToString())
                 {
-                    editedRows = new List<RowsToEdit>();
-                    row = await ReturnRow((bool)bState.IsChecked, array);
-                    editedRows.Add(row);
-                }
-                else
-                {
-                    int holeCount = editedRows.Where(a => a.holeid == array[1].ToString()).Count();
-
-                    if (holeCount == 0)
-                    {
-                        row = await ReturnRow((bool)bState.IsChecked, array);
-                        editedRows.Add(row);
-
-                    }
-                    else
-                    {
-                        row = editedRows.Where(a => a.holeid == array[1].ToString()).FirstOrDefault();
-
-                        if (row != null)
-                            row.Ignore = (bool)bState.IsChecked;
-                    }
-
+                    case DrillholeConstants.holeID:
+                        row.holeid = changeTo.Text;
+                        break;
+                    case DrillholeConstants.x:
+                        row.x = changeTo.Text;
+                        break;
+                    case DrillholeConstants.y:
+                        row.y = changeTo.Text;
+                        break;
+                    case DrillholeConstants.z:
+                        row.z = changeTo.Text;
+                        break;
+                    case DrillholeConstants.maxDepth:
+                        row.maxDepth = changeTo.Text;
+                        break;
+                    case DrillholeConstants.azimuth:
+                        row.azimuth = changeTo.Text;
+                        break;
+                    case DrillholeConstants.dip:
+                        row.x = changeTo.Text;
+                        break;
                 }
             }
 
@@ -516,11 +577,11 @@ namespace Drillholes.Windows.Dialogs
 
         }
 
-        private async Task<RowsToEdit>ReturnRow(bool bChecked, object[] array)
+        private async Task<RowsToEdit>ReturnRow(object[] array)
         {
             RowsToEdit row = new RowsToEdit()
             {
-                Ignore = bChecked,
+                Ignore = bIgnore,
                 id_col = Convert.ToInt32(array[0]),
                 holeid = array[1].ToString(),
                 x = array[2].ToString(),
@@ -539,6 +600,6 @@ namespace Drillholes.Windows.Dialogs
             return row;
         }
     }
+    #endregion
 
- 
 }
