@@ -233,6 +233,9 @@ namespace Drillholes.Windows.Dialogs
 
         private async void SaveEdits()
         {
+            if (collarEdit == null)
+                collarEdit = new CollarEditView(collarObject.surveyType, collarObject.xPreview, collarObject.tableData);
+
             await collarEdit.SaveEdits(editedRows, bIgnore);
 
             editSession = DrillholeEditSession.Stopped;

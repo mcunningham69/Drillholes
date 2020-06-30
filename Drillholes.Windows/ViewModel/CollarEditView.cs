@@ -35,10 +35,11 @@ namespace Drillholes.Windows.ViewModel
 
         public IMapper mapper = null;
 
-        public CollarEditView(DrillholeSurveyType _surveyType, XElement _xmlCollarData)
+        public CollarEditView(DrillholeSurveyType _surveyType, XElement _xmlCollarData, ImportTableFields _collarFields)
         {
             surveyType = _surveyType;
             xmlCollarData = _xmlCollarData;
+            importCollarFields = _collarFields;
 
             _editValues = new CollarDataEdits();
 
@@ -81,6 +82,14 @@ namespace Drillholes.Windows.ViewModel
             editFields.Add(zField);
             editFields.Add(maxField);
 
+            if (surveyType == DrillholeSurveyType.collarsurvey)
+            {
+                ImportTableField aziField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Single();
+                ImportTableField dipField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Single();
+
+                editFields.Add(aziField);
+                editFields.Add(dipField);
+            }
 
             var _edits = await _editService.UpdateValues(mapper, rows, xmlCollarData, editFields, bIgnore);
 
