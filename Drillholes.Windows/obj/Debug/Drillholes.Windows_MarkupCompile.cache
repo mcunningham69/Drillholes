@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Windows\obj\Debug\
 Drillholes.Windows
 none
 false
 DEBUG;TRACE
-C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\App.xaml
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Windows\App.xaml
 8-473886038
 
 26215628984
-19-1435469232
+19-156191025
 Dialogs\DrillholeDialog.xaml;Dialogs\DrillholeEdits.xaml;Dialogs\DrillholeExcelSheet.xaml;Dialogs\DrillholeImport.xaml;Dialogs\DrillholeSummaryMessages.xaml;Dialogs\DrillholeSummaryStatistics.xaml;Dialogs\GlassButton.xaml;GlassButton.xaml;
 
 False
