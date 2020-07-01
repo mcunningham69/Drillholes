@@ -1,0 +1,12 @@
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\bin\Debug\Drillholes.FixErrors.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\bin\Debug\Drillholes.FixErrors.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\bin\Debug\Drillholes.Domain.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\bin\Debug\AutoMapper.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\bin\Debug\Drillholes.Domain.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\bin\Debug\AutoMapper.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\bin\Debug\AutoMapper.xml
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\obj\Debug\Drillholes.FixErrors.csprojAssemblyReference.cache
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\obj\Debug\Drillholes.FixErrors.csproj.CoreCompileInputs.cache
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\obj\Debug\Drillholes.FixErrors.csproj.CopyComplete
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\obj\Debug\Drillholes.FixErrors.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FixErrors\obj\Debug\Drillholes.FixErrors.pdb
