@@ -233,10 +233,38 @@ namespace Drillholes.Windows.Dialogs
 
         private async void SaveEdits()
         {
-            if (collarEdit == null)
-                collarEdit = new CollarEditView(collarObject.surveyType, collarObject.xPreview, collarObject.tableData);
+            switch (selectedIndex)
+            {
+                case 0: //collar table
+                if (collarEdit == null)
+                    collarEdit = new CollarEditView(collarObject.surveyType, collarObject.xPreview, collarObject.tableData);
 
-            await collarEdit.SaveEdits(editedRows, bIgnore);
+                await collarEdit.SaveEdits(editedRows, bIgnore);
+                break;
+
+                case 1:
+                if (surveyEdit == null)
+                    surveyEdit = new SurveyEditView(surveyObject.xPreview, surveyObject.tableData);
+
+                await surveyEdit.SaveEdits(editedRows, bIgnore);
+                break;
+
+                case 2:
+                if (assayEdit == null)
+                    assayEdit = new AssayEditView(assayObject.xPreview, assayObject.tableData);
+
+                await assayEdit.SaveEdits(editedRows, bIgnore);
+                break;
+
+                case 3:
+                if (intervalEdit == null)
+                    intervalEdit = new IntervalEditView(intervalObject.xPreview, intervalObject.tableData);
+
+                await intervalEdit.SaveEdits(editedRows, bIgnore);
+                break;
+
+            }
+            
 
             editSession = DrillholeEditSession.Stopped;
             hasEdits = false;
@@ -569,7 +597,17 @@ namespace Drillholes.Windows.Dialogs
                         row.azimuth = changeTo.Text;
                         break;
                     case DrillholeConstants.dip:
-                        row.x = changeTo.Text;
+                        row.dip = changeTo.Text;
+                        break;
+                    case DrillholeConstants.survDistance:
+                        row.distance = changeTo.Text;
+                        break;
+                    case DrillholeConstants.distFrom:
+                        row.distanceFrom = changeTo.Text;
+                        break;
+
+                    case DrillholeConstants.distTo:
+                        row.distanceTo = changeTo.Text;
                         break;
                 }
             }
@@ -582,22 +620,63 @@ namespace Drillholes.Windows.Dialogs
 
         private async Task<RowsToEdit>ReturnRow(object[] array)
         {
-            RowsToEdit row = new RowsToEdit()
+            if (selectedIndex == 0)
             {
-                Ignore = bIgnore,
-                id_col = Convert.ToInt32(array[0]),
-                holeid = array[1].ToString(),
-                x = array[2].ToString(),
-                y = array[3].ToString(),
-                z = array[4].ToString(),
-                maxDepth = array[5].ToString()
+                RowsToEdit row = new RowsToEdit()
+                {
+                    Ignore = bIgnore,
+                    id_col = Convert.ToInt32(array[0]),
+                    holeid = array[1].ToString(),
+                    x = array[2].ToString(),
+                    y = array[3].ToString(),
+                    z = array[4].ToString(),
+                    maxDepth = array[5].ToString()
 
-            };
+                };
 
-            if (DrillholeSurveyType.collarsurvey == collarObject.surveyType)
+                if (DrillholeSurveyType.collarsurvey == collarObject.surveyType)
+                {
+                    row.azimuth = array[6].ToString();
+                    row.dip = array[7].ToString();
+                }
+            }
+            else if (selectedIndex == 1)
             {
-                row.azimuth = array[6].ToString();
-                row.dip = array[7].ToString();
+                 RowsToEdit row = new RowsToEdit()
+                {
+                    Ignore = bIgnore,
+                    id_sur = Convert.ToInt32(array[0]),
+                    holeid = array[1].ToString(),
+                    distance = array[2].ToString(),
+                    azimuth = array[3].ToString(),
+                    dip = array[4].ToString()
+
+                };
+
+            }
+            else if (selectedIndex == 2)
+            {
+                 RowsToEdit row = new RowsToEdit()
+                {
+                    Ignore = bIgnore,
+                    id_ass = Convert.ToInt32(array[0]),
+                    holeid = array[1].ToString(),
+                    distanceFrom = array[2].ToString(),
+                    distanceTo = array[3].ToString()
+                };
+
+            }
+            else if (selectedIndex == 3)
+            {
+                 RowsToEdit row = new RowsToEdit()
+                {
+                    Ignore = bIgnore,
+                    id_int = Convert.ToInt32(array[0]),
+                    holeid = array[1].ToString(),
+                    distanceFrom = array[2].ToString(),
+                    distanceTo = array[3].ToString()
+                };
+
             }
 
             return row;
