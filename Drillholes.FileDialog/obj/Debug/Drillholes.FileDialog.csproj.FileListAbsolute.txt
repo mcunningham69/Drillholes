@@ -21,3 +21,15 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Dri
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.csproj.CopyComplete
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.dll
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\bin\Debug\Drillholes.FileDialog.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\bin\Debug\Drillholes.FileDialog.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\bin\Debug\Drillholes.Domain.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\bin\Debug\AutoMapper.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\bin\Debug\Drillholes.Domain.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\bin\Debug\AutoMapper.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\bin\Debug\AutoMapper.xml
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.csprojAssemblyReference.cache
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.csproj.CoreCompileInputs.cache
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.csproj.CopyComplete
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.pdb

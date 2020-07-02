@@ -191,12 +191,10 @@ namespace Drillholes.Domain
 
         public bool Ignore { get; set; }
       
-        public List<string> Fields { get; set; }
         public string Description { get; set; } //bind as tooltip
         public string testType { get; set; }
         public string validationTest { get; set; }
         public DrillholeMessageStatus ErrorType { get; set; }
         public DrillholeTableType TableType { get; set; }
-        public string ToolTip { get; set; }
     }
 }

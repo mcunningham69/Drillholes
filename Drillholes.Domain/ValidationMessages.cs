@@ -45,6 +45,7 @@ namespace Drillholes.Domain
         public string ErrorColour { get; set; }
         public Enum.DrillholeMessageStatus ErrorType { get; set; }
         public int id { get; set; }
+        public string holeID { get; set; }
 
         public DrillholeValidationStatus()
         {

@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drillholes.Domain", "..\Dri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drillholes.Validation", "..\Drillholes.Validation\Drillholes.Validation.csproj", "{52DF4F61-0E6A-43F8-B20C-AC161D1CD52B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drillholes.FixErrors", "..\Drillholes.FixErrors\Drillholes.FixErrors.csproj", "{EB997BB7-BD5F-4929-A7E7-EFE3BFBF3E5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{52DF4F61-0E6A-43F8-B20C-AC161D1CD52B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52DF4F61-0E6A-43F8-B20C-AC161D1CD52B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52DF4F61-0E6A-43F8-B20C-AC161D1CD52B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB997BB7-BD5F-4929-A7E7-EFE3BFBF3E5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB997BB7-BD5F-4929-A7E7-EFE3BFBF3E5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB997BB7-BD5F-4929-A7E7-EFE3BFBF3E5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB997BB7-BD5F-4929-A7E7-EFE3BFBF3E5D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

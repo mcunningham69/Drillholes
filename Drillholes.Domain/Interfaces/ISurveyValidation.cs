@@ -24,5 +24,8 @@ namespace Drillholes.Domain.Interfaces
 
         Task<ValidationSurveyDto> CheckForMissingCollars(ValidationMessages ValuesToCheck, List<XElement> drillholeValues);
 
+        Task<ValidationSurveyDto> CheckForLargeDeviations(ValidationMessages ValuesToCheck, XElement surveyValues, int dipTolerance, int aziTolerance);
+
+
     }
 }

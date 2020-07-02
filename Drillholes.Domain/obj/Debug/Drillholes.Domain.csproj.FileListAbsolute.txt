@@ -8,3 +8,13 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillho
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csproj.CopyComplete
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.dll
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Domain\bin\Debug\Drillholes.Domain.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Domain\bin\Debug\Drillholes.Domain.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Domain\bin\Debug\AutoMapper.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Domain\bin\Debug\AutoMapper.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Domain\bin\Debug\AutoMapper.xml
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csprojAssemblyReference.cache
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csproj.CoreCompileInputs.cache
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csproj.CopyComplete
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.pdb

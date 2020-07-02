@@ -10,3 +10,15 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\obj\Debug\Dri
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.csproj.CopyComplete
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.dll
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\bin\Debug\Drillholes.Validation.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\bin\Debug\Drillholes.Validation.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\bin\Debug\Drillholes.Domain.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\bin\Debug\AutoMapper.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\bin\Debug\Drillholes.Domain.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\bin\Debug\AutoMapper.pdb
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\bin\Debug\AutoMapper.xml
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.csprojAssemblyReference.cache
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.csproj.CoreCompileInputs.cache
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.csproj.CopyComplete
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.dll
+\\hs-per-fs01\Home\mcunningham\Documents\GitHub\Drillholes\Drillholes.Validation\obj\Debug\Drillholes.Validation.pdb
