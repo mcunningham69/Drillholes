@@ -27,11 +27,6 @@ namespace Drillholes.Windows.ViewModel
 
         public ImportTableFields importCollarFields { get; set; }
         public XElement xmlCollarData { get; set; }
-        public ObservableCollection<ReshapedDataToEdit> EditDrillholeData { get; set; }
-        public DisplayValidationMessages DisplayMessages = new DisplayValidationMessages();
-
-        public ObservableCollection<ValidationMessages> ShowTestMessages { get { return DisplayMessages.DisplayResults; } }
-
 
         public IMapper mapper = null;
 
@@ -63,7 +58,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public virtual async Task<bool> SaveEdits(List<RowsToEdit> rows, bool bIgnore)
+        public async Task<XElement> SaveEdits(List<RowsToEdit> rows, bool bIgnore)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -93,7 +88,7 @@ namespace Drillholes.Windows.ViewModel
 
             var _edits = await _editService.UpdateValues(mapper, rows, xmlCollarData, editFields, bIgnore);
 
-            return true;
+            return _edits.xPreview;
         }
 
 

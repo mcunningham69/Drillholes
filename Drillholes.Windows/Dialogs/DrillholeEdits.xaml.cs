@@ -39,8 +39,14 @@ namespace Drillholes.Windows.Dialogs
         private CollarEditView collarEdit { get; set; }
 
         private SurveyValidationView surveyEdits { get; set; }
+        private SurveyEditView surveyEdit { get; set; }
+
         private AssayValidationView assayEdits { get; set; }
+        private AssayEditView assayEdit { get; set; }
+
         private IntervalValidationView intervalEdits { get; set; }
+        private IntervalEditView intervalEdit { get; set; }
+
         private bool bIgnore { get; set; }
         public int selectedIndex { get; set; }
 
@@ -83,7 +89,7 @@ namespace Drillholes.Windows.Dialogs
                 ValidateCollar();
 
 
-                DataContext = collarEdits;
+             //   DataContext = collarEdits;
 
 
             }
@@ -120,6 +126,7 @@ namespace Drillholes.Windows.Dialogs
 
             collarEdits.ReshapeMessages(DrillholeTableType.collar);
 
+            DataContext = collarEdits;
         }
 
         private async void ValidateSurvey(bool bEdit)
@@ -236,35 +243,43 @@ namespace Drillholes.Windows.Dialogs
             switch (selectedIndex)
             {
                 case 0: //collar table
-                if (collarEdit == null)
-                    collarEdit = new CollarEditView(collarObject.surveyType, collarObject.xPreview, collarObject.tableData);
+                    if (collarEdit == null)
+                        collarEdit = new CollarEditView(collarObject.surveyType, collarObject.xPreview, collarObject.tableData);
 
-                await collarEdit.SaveEdits(editedRows, bIgnore);
-                break;
+                    collarObject.xPreview = await collarEdit.SaveEdits(editedRows, bIgnore);
+
+                    dataEdits.Visibility = Visibility.Hidden;
+                    lblEdits.Visibility = Visibility.Visible;
+
+                    collarEdits = null;
+                    DataContext = null;
+                    
+                    ValidateCollar();
+                    break;
 
                 case 1:
-                if (surveyEdit == null)
-                    surveyEdit = new SurveyEditView(surveyObject.xPreview, surveyObject.tableData);
+                    if (surveyEdit == null)
+                        surveyEdit = new SurveyEditView(surveyObject.xPreview, surveyObject.tableData);
 
-                await surveyEdit.SaveEdits(editedRows, bIgnore);
-                break;
+                    await surveyEdit.SaveEdits(editedRows, bIgnore);
+                    break;
 
                 case 2:
-                if (assayEdit == null)
-                    assayEdit = new AssayEditView(assayObject.xPreview, assayObject.tableData);
+                    if (assayEdit == null)
+                        assayEdit = new AssayEditView(assayObject.xPreview, assayObject.tableData);
 
-                await assayEdit.SaveEdits(editedRows, bIgnore);
-                break;
+                    await assayEdit.SaveEdits(editedRows, bIgnore);
+                    break;
 
                 case 3:
-                if (intervalEdit == null)
-                    intervalEdit = new IntervalEditView(intervalObject.xPreview, intervalObject.tableData);
+                    if (intervalEdit == null)
+                        intervalEdit = new IntervalEditView(intervalObject.xPreview, intervalObject.tableData);
 
-                await intervalEdit.SaveEdits(editedRows, bIgnore);
-                break;
+                    await intervalEdit.SaveEdits(editedRows, bIgnore);
+                    break;
 
             }
-            
+
 
             editSession = DrillholeEditSession.Stopped;
             hasEdits = false;
@@ -283,6 +298,9 @@ namespace Drillholes.Windows.Dialogs
         private async void tvEdit_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             List<RowsToEdit> _edits = new List<RowsToEdit>();
+
+            if (tvEdit.SelectedItem == null)
+                return;
 
             var value = tvEdit.SelectedItem.GetType();
 
@@ -485,10 +503,14 @@ namespace Drillholes.Windows.Dialogs
                     else if (MessageBoxResult.Yes == toSaveEdits)
                     {
                         SaveEdits();
+
+                        editedRows.Clear();
                     }
                     else
                     {
                         //TODO to refresh row
+                        editedRows.Clear();
+
                     }
 
                 }
@@ -514,6 +536,8 @@ namespace Drillholes.Windows.Dialogs
                 dataEdits.IsReadOnly = false;
                 dataCollar.IsReadOnly = false;
                 editSession = DrillholeEditSession.Started;
+
+                DataContext = collarEdits;
 
             }
         }
@@ -620,9 +644,11 @@ namespace Drillholes.Windows.Dialogs
 
         private async Task<RowsToEdit>ReturnRow(object[] array)
         {
+            RowsToEdit row = null;
+
             if (selectedIndex == 0)
             {
-                RowsToEdit row = new RowsToEdit()
+                row = new RowsToEdit()
                 {
                     Ignore = bIgnore,
                     id_col = Convert.ToInt32(array[0]),
@@ -642,7 +668,7 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (selectedIndex == 1)
             {
-                 RowsToEdit row = new RowsToEdit()
+                 row = new RowsToEdit()
                 {
                     Ignore = bIgnore,
                     id_sur = Convert.ToInt32(array[0]),
@@ -656,7 +682,7 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (selectedIndex == 2)
             {
-                 RowsToEdit row = new RowsToEdit()
+                row = new RowsToEdit()
                 {
                     Ignore = bIgnore,
                     id_ass = Convert.ToInt32(array[0]),
@@ -668,7 +694,7 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (selectedIndex == 3)
             {
-                 RowsToEdit row = new RowsToEdit()
+                row = new RowsToEdit()
                 {
                     Ignore = bIgnore,
                     id_int = Convert.ToInt32(array[0]),

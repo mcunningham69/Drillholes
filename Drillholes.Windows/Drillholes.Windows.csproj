@@ -66,6 +66,7 @@
     <Compile Include="ViewModel\AssayStatisticsView.cs" />
     <Compile Include="ViewModel\AssayValidationView.cs" />
     <Compile Include="ViewModel\AssayView.cs" />
+    <Compile Include="ViewModel\AssayEditView.cs" />
     <Compile Include="ViewModel\CollarEditView.cs" />
     <Compile Include="ViewModel\CollarStatisticsView.cs" />
     <Compile Include="ViewModel\CollarValidationView.cs" />
@@ -73,6 +74,8 @@
     <Compile Include="ViewModel\IntervalStatisticsView.cs" />
     <Compile Include="ViewModel\IntervalValidationView.cs" />
     <Compile Include="ViewModel\IntervalView.cs" />
+    <Compile Include="ViewModel\IntervalEditView.cs" />
+    <Compile Include="ViewModel\SurveyEditView.cs" />
     <Compile Include="ViewModel\SurveyStatisticsView.cs" />
     <Compile Include="ViewModel\SurveyValidationView.cs" />
     <Compile Include="ViewModel\SurveyView.cs" />
