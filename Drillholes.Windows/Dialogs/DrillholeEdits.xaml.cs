@@ -246,7 +246,7 @@ namespace Drillholes.Windows.Dialogs
                     if (collarEdit == null)
                         collarEdit = new CollarEditView(collarObject.surveyType, collarObject.xPreview, collarObject.tableData);
 
-                    collarObject.xPreview = await collarEdit.SaveEdits(editedRows, bIgnore);
+                    collarObject.xPreview = await collarEdit.SaveEdits(editedRows);
 
                     dataEdits.Visibility = Visibility.Hidden;
                     lblEdits.Visibility = Visibility.Visible;
@@ -324,8 +324,16 @@ namespace Drillholes.Windows.Dialogs
 
                 var testResults = edits;
 
-                var edit = testResults.TableData[0] as RowsToEdit;
-                _edits.Add(edit);
+                if (testResults.TableData.Count == 1)
+                {
+                    var edit = testResults.TableData[0] as RowsToEdit;
+                    _edits.Add(edit);
+                }
+                else
+                {
+                    foreach(var val in testResults.TableData)
+                        _edits.Add(val);
+                }
 
             }
             else if (value.Name == "RowsToEdit")
@@ -569,9 +577,9 @@ namespace Drillholes.Windows.Dialogs
                 editedRows = new List<RowsToEdit>();
             }
 
-            int holeCount = editedRows.Where(a => a.holeid == array[1].ToString()).Count();
-            //check for existing holes in list 
-            if (holeCount == 0)
+            int idCount = editedRows.Where(a => a.id_col.ToString() == array[0].ToString()).Count();
+
+            if (idCount == 0)
             {
                 //as above
                 row = await ReturnRow(array);
@@ -581,27 +589,19 @@ namespace Drillholes.Windows.Dialogs
             else
             {
                 //if row exists return and check which values need to modified from Switch below
-                row = editedRows.Where(a => a.holeid == array[1].ToString()).FirstOrDefault();
+                row = editedRows.Where(a => a.id_col.ToString() == array[0].ToString()).FirstOrDefault();
 
             }
 
-
-            //handle Ignore separate as not part of the data row 
-            if (e.Column.Header.ToString() == "Ignore")
-            {
-                CheckBox bState = e.EditingElement as CheckBox;
-
-                bIgnore = (bool)bState.IsChecked;
-
-                if (row != null)
-                    row.Ignore = bIgnore;
-            }
-            else
-            {
                 var changeTo = e.EditingElement as TextBox;
 
                 switch (e.Column.Header.ToString())
                 {
+                    case "Ignore":
+                        CheckBox bState = e.EditingElement as CheckBox;
+                        bIgnore = (bool)bState.IsChecked;
+                        row.Ignore = bIgnore;
+                        break;
                     case DrillholeConstants.holeID:
                         row.holeid = changeTo.Text;
                         break;
@@ -634,7 +634,7 @@ namespace Drillholes.Windows.Dialogs
                         row.distanceTo = changeTo.Text;
                         break;
                 }
-            }
+           // }
 
             hasEdits = true;
             btnSave.IsEnabled = true;
@@ -646,17 +646,22 @@ namespace Drillholes.Windows.Dialogs
         {
             RowsToEdit row = null;
 
+            if (array[0].ToString() == "False")
+                bIgnore = false;
+            else
+                bIgnore = true;
+
             if (selectedIndex == 0)
             {
                 row = new RowsToEdit()
                 {
                     Ignore = bIgnore,
-                    id_col = Convert.ToInt32(array[0]),
-                    holeid = array[1].ToString(),
-                    x = array[2].ToString(),
-                    y = array[3].ToString(),
-                    z = array[4].ToString(),
-                    maxDepth = array[5].ToString()
+                    id_col = Convert.ToInt32(array[1]),
+                    holeid = array[2].ToString(),
+                    x = array[3].ToString(),
+                    y = array[4].ToString(),
+                    z = array[5].ToString(),
+                    maxDepth = array[6].ToString()
 
                 };
 
@@ -671,11 +676,11 @@ namespace Drillholes.Windows.Dialogs
                  row = new RowsToEdit()
                 {
                     Ignore = bIgnore,
-                    id_sur = Convert.ToInt32(array[0]),
-                    holeid = array[1].ToString(),
-                    distance = array[2].ToString(),
-                    azimuth = array[3].ToString(),
-                    dip = array[4].ToString()
+                    id_sur = Convert.ToInt32(array[1]),
+                    holeid = array[2].ToString(),
+                    distance = array[3].ToString(),
+                    azimuth = array[4].ToString(),
+                    dip = array[5].ToString()
 
                 };
 
@@ -685,10 +690,10 @@ namespace Drillholes.Windows.Dialogs
                 row = new RowsToEdit()
                 {
                     Ignore = bIgnore,
-                    id_ass = Convert.ToInt32(array[0]),
-                    holeid = array[1].ToString(),
-                    distanceFrom = array[2].ToString(),
-                    distanceTo = array[3].ToString()
+                    id_ass = Convert.ToInt32(array[1]),
+                    holeid = array[2].ToString(),
+                    distanceFrom = array[3].ToString(),
+                    distanceTo = array[4].ToString()
                 };
 
             }
@@ -697,15 +702,30 @@ namespace Drillholes.Windows.Dialogs
                 row = new RowsToEdit()
                 {
                     Ignore = bIgnore,
-                    id_int = Convert.ToInt32(array[0]),
-                    holeid = array[1].ToString(),
-                    distanceFrom = array[2].ToString(),
-                    distanceTo = array[3].ToString()
+                    id_int = Convert.ToInt32(array[1]),
+                    holeid = array[2].ToString(),
+                    distanceFrom = array[3].ToString(),
+                    distanceTo = array[4].ToString()
                 };
 
             }
 
             return row;
+        }
+
+        private void dataEdits_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyName == "Ignore")
+            {
+                DataGridCheckBoxColumn checkBoxColumn = new DataGridCheckBoxColumn();
+                checkBoxColumn.Header = e.Column.Header;
+                checkBoxColumn.Binding = new Binding(e.PropertyName);
+                checkBoxColumn.IsThreeState = true;
+
+                // Replace the auto-generated column with the checkBoxColumn.
+                e.Column = checkBoxColumn;
+            }
+          
         }
     }
     #endregion

@@ -14,7 +14,7 @@ namespace Drillholes.FixErrors
     {
         private CollarTableDto collarTableDto;
 
-        public async Task<CollarTableDto> UpdateValues(List<RowsToEdit> RowsToEdit, XElement collarValues, List<ImportTableField> editFields, bool bIgnore)
+        public async Task<CollarTableDto> UpdateValues(List<RowsToEdit> RowsToEdit, XElement collarValues, List<ImportTableField> editFields)
         {
             collarTableDto = new CollarTableDto();
             collarTableDto.xPreview = collarValues; //update XML
@@ -43,7 +43,7 @@ namespace Drillholes.FixErrors
                 //update the XML
                 foreach(var query in updateQuery)
                 {
-                    query.Attribute("Ignore").SetValue(bIgnore.ToString());
+                    query.Attribute("Ignore").SetValue(row.Ignore.ToString());
                     query.Element(holeIDName).SetValue(row.holeid);
                     query.Element(xName).SetValue(row.x);
                     query.Element(yName).SetValue(row.y);

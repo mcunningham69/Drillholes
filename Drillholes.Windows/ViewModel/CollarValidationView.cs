@@ -606,17 +606,15 @@ namespace Drillholes.Windows.ViewModel
         }
 
         public virtual async Task<bool> ReformatResults(ValidationMessage message, string _TestType, string validation, List<string> fields, List<DrillholeMessageStatus> statusMessages, DrillholeTableType tableType,
-            IEnumerable<XElement> collarValues)
+           IEnumerable<XElement> collarValues)
         {
-
             foreach (var status in statusMessages)  //iterate three times for each error type
             {
                 List<int> _status = message.ValidationStatus.Where(e => e.ErrorType == status).Select(p => p.id).ToList();
 
-              //  int counter = 0;
+                //  int counter = 0;
                 if (_status.Count > 0)
                 {
-
                     List<GroupByHoles> groupedHoles = new List<GroupByHoles>();
 
                     List<int> ids = message.ValidationStatus.Where(e => e.ErrorType == status).Select(a => a.id).ToList(); //get IDs of all messages
@@ -626,20 +624,14 @@ namespace Drillholes.Windows.ViewModel
 
                     foreach (int id in ids) //get the holes for each record
                     {
-                        var value = collarValues.Where(a => a.Attribute("ID").Value == id.ToString()).Select(h => h.Element(holeIDName).Value).FirstOrDefault();
+                        var queryHole = collarValues.Where(a => a.Attribute("ID").Value == id.ToString()).Select(h => h.Element(holeIDName).Value).FirstOrDefault();
+                        string tooltip = message.ValidationStatus.Where(e => e.ErrorType == status && e.id == Convert.ToInt32(id)).Select(p => p.Description).FirstOrDefault();
 
-                        SelectedHoles.Add(value);
-                    }
+                        bool holeExists = true;
+                        bool statusExists = true;
 
-                    var holes = SelectedHoles.GroupBy(x => x).Where(group => group.Count() >= 1).Select(group => group.Key).ToList(); //group the records under each hole
-
-                    bool holeExists = true;
-                    bool statusExists = true;
-
-                    foreach (var queryHole in holes)
-                    {
                         List<RowsToEdit> rows = new List<RowsToEdit>();  //new
-                        List<GroupByTest> groupedTests = new List<GroupByTest>(); 
+                        List<GroupByTest> groupedTests = new List<GroupByTest>();
                         List<GroupByTable> groupedTables = new List<GroupByTable>();
                         List<GroupByTestField> groupedTestFields = new List<GroupByTestField>();
 
@@ -653,7 +645,7 @@ namespace Drillholes.Windows.ViewModel
 
                         if (!statusExists)
                         {
-                            dataToEdit = new ReshapedDataToEdit() {ErrorType = status.ToString(), Ignore = false };
+                            dataToEdit = new ReshapedDataToEdit() { ErrorType = status.ToString(), Ignore = false };
                             EditDrillholeData.Add(dataToEdit);
                             dataToEdit.GroupedHoles = groupedHoles;
                         }
@@ -667,7 +659,7 @@ namespace Drillholes.Windows.ViewModel
                         if (!holeExists) //means status and hole don't already exist so add
                         {
                             hole = new GroupByHoles() { Ignore = false, holeid = queryHole };
-                           
+
                             List<GroupByHoles> testGroup = await ReturnGroupedHoles(status);
 
                             if (testGroup != null)
@@ -710,26 +702,16 @@ namespace Drillholes.Windows.ViewModel
 
                         hole.GroupedTables = groupedTables;
 
-                        bool testFieldExists = await TestFieldExists(status, queryHole, tableType, _TestType, validation);
-
-                        if (!testFieldExists)
-                        {
-                            testField = new GroupByTestField() { Ignore = false, TestField = validation, TableData = rows };
-                            groupedTestFields.Add(testField);
-                        }
-                        else
-                        {
-                            groupedTestFields = await ReturnTestFields(status, queryHole, tableType, _TestType, validation);
-
-                            testField = await ReturnTestField(status, queryHole, tableType, _TestType, validation);
-                        }
 
                         bool testExists = await TestExists(status, queryHole, tableType, _TestType);
 
                         if (!testExists)
                         {
                             test = new GroupByTest() { MainTest = _TestType, Ignore = false, TestFields = groupedTestFields };
-                            test.TestFields = groupedTestFields;
+                            //test.TestFields = groupedTestFields;
+
+                            //test = new GroupByTest() { MainTest = _TestType, Ignore = false, TestFields = groupedTestFields };
+                            //test.TestFields = groupedTestFields;
 
                             groupedTests = await ReturnTestList(status, queryHole, tableType);
 
@@ -741,27 +723,62 @@ namespace Drillholes.Windows.ViewModel
 
 
                             test = await ReturnTest(status, queryHole, tableType, _TestType);
-                            test.TestFields.Add(testField);
+                            // test.TestFields.Add(testField);
 
                         }
 
                         table.GroupedTests = groupedTests;
 
-                        var value = collarValues.Where(a => a.Element(holeIDName).Value == queryHole).Select(v => v.Attribute("ID").Value).FirstOrDefault();
-                        string tooltip = message.ValidationStatus.Where(e => e.ErrorType == status && e.id == Convert.ToInt32(value)).Select(p => p.Description).FirstOrDefault();
+                        bool testFieldExists = await TestFieldExists(status, queryHole, tableType, _TestType, validation);
 
-                        rows.Add(new RowsToEdit
+                        if (!testFieldExists)
                         {
-                            id_col = Convert.ToInt16(value),
-                            holeid = queryHole,
-                            testType = _TestType,
-                            validationTest = validation,
-                            TableType = DrillholeTableType.collar,
-                            ErrorType = status,
-                            Description = tooltip
-                        });
+                            testField = new GroupByTestField() { Ignore = false, TestField = validation, TableData = rows };
 
-                       // counter++;
+                            groupedTestFields = await ReturnTestFields(status, queryHole, tableType, _TestType, validation);
+
+                            groupedTestFields.Add(testField);
+
+                            test.TestFields = groupedTestFields;
+
+                            table.GroupedTests = groupedTests;
+
+                            rows.Add(new RowsToEdit
+                            {
+                                id_col = Convert.ToInt16(id),
+                                holeid = queryHole,
+                                testType = _TestType,
+                                validationTest = validation,
+                                TableType = DrillholeTableType.collar,
+                                ErrorType = status,
+                                Description = tooltip
+                            });
+                        }
+                        else
+                        {
+                            groupedTestFields = await ReturnTestFields(status, queryHole, tableType, _TestType, validation);
+
+                            testField = await ReturnTestField(status, queryHole, tableType, _TestType, validation);
+
+
+                            test.TestFields = groupedTestFields;
+
+                            table.GroupedTests = groupedTests;
+
+                            testField.TableData.Add(new RowsToEdit
+                            {
+                                id_col = Convert.ToInt16(id),
+                                holeid = queryHole,
+                                testType = _TestType,
+                                validationTest = validation,
+                                TableType = DrillholeTableType.collar,
+                                ErrorType = status,
+                                Description = tooltip
+                            });
+                        }
+
+                        // counter++;
+
                     }
 
                 }
@@ -770,6 +787,172 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
+
+        //public virtual async Task<bool> ReformatResults(ValidationMessage message, string _TestType, string validation, List<string> fields, List<DrillholeMessageStatus> statusMessages, DrillholeTableType tableType,
+        //    IEnumerable<XElement> collarValues)
+        //{
+
+        //    foreach (var status in statusMessages)  //iterate three times for each error type
+        //    {
+        //        List<int> _status = message.ValidationStatus.Where(e => e.ErrorType == status).Select(p => p.id).ToList();
+
+        //      //  int counter = 0;
+        //        if (_status.Count > 0)
+        //        {
+
+        //            List<GroupByHoles> groupedHoles = new List<GroupByHoles>();
+
+        //            List<int> ids = message.ValidationStatus.Where(e => e.ErrorType == status).Select(a => a.id).ToList(); //get IDs of all messages
+
+        //            List<string> SelectedHoles = new List<string>();
+        //            string holeIDName = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(n => n.columnHeader).FirstOrDefault(); //get hole name for querying XML
+
+        //            foreach (int id in ids) //get the holes for each record
+        //            {
+        //                var value = collarValues.Where(a => a.Attribute("ID").Value == id.ToString()).Select(h => h.Element(holeIDName).Value).FirstOrDefault();
+
+        //                SelectedHoles.Add(value);
+        //            }
+
+        //            var holes = SelectedHoles.GroupBy(x => x).Where(group => group.Count() >= 1).Select(group => group.Key).ToList(); //group the records under each hole
+
+        //            bool holeExists = true;
+        //            bool statusExists = true;
+
+        //            foreach (var queryHole in holes)
+        //            {
+        //                List<RowsToEdit> rows = new List<RowsToEdit>();  //new
+        //                List<GroupByTest> groupedTests = new List<GroupByTest>(); 
+        //                List<GroupByTable> groupedTables = new List<GroupByTable>();
+        //                List<GroupByTestField> groupedTestFields = new List<GroupByTestField>();
+
+        //                GroupByHoles hole = new GroupByHoles();
+        //                GroupByTable table = new GroupByTable();
+        //                GroupByTest test = new GroupByTest();
+        //                GroupByTestField testField = new GroupByTestField();
+        //                ReshapedDataToEdit dataToEdit = null;
+
+        //                statusExists = await CheckReshapedData(status);
+
+        //                if (!statusExists)
+        //                {
+        //                    dataToEdit = new ReshapedDataToEdit() {ErrorType = status.ToString(), Ignore = false };
+        //                    EditDrillholeData.Add(dataToEdit);
+        //                    dataToEdit.GroupedHoles = groupedHoles;
+        //                }
+        //                else
+        //                {
+        //                    dataToEdit = await ReturnDataStatus(status);
+        //                }
+
+        //                holeExists = await HoleExist(queryHole, status);
+
+        //                if (!holeExists) //means status and hole don't already exist so add
+        //                {
+        //                    hole = new GroupByHoles() { Ignore = false, holeid = queryHole };
+                           
+        //                    List<GroupByHoles> testGroup = await ReturnGroupedHoles(status);
+
+        //                    if (testGroup != null)
+        //                        groupedHoles = testGroup;
+
+        //                    groupedHoles.Add(hole);
+        //                }
+        //                else
+        //                {
+        //                    groupedHoles = await ReturnHolesList(status, queryHole);
+
+        //                    hole = await ReturnHole(queryHole, status);
+        //                }
+
+        //                bool tableExists = await TableExists(status, queryHole, tableType);
+
+        //                if (!tableExists)
+        //                {
+        //                    //check for any other table
+        //                    tableExists = await OtherTableExists(status, queryHole, tableType);
+
+        //                    if (tableExists)
+        //                    {
+        //                        groupedTables = await ReturnOtherTableList(status, queryHole);
+        //                        table = new GroupByTable() { TableType = tableType.ToString(), Ignore = false };
+        //                        groupedTables.Add(table);
+        //                    }
+        //                    else
+        //                    {
+
+        //                        table = new GroupByTable() { TableType = tableType.ToString(), Ignore = false };
+        //                        groupedTables.Add(table);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    groupedTables = await ReturnTableList(status, queryHole, tableType);
+        //                    table = await ReturnTable(status, queryHole, tableType);
+        //                }
+
+        //                hole.GroupedTables = groupedTables;
+
+        //                bool testFieldExists = await TestFieldExists(status, queryHole, tableType, _TestType, validation);
+
+        //                if (!testFieldExists)
+        //                {
+        //                    testField = new GroupByTestField() { Ignore = false, TestField = validation, TableData = rows };
+        //                    groupedTestFields.Add(testField);
+        //                }
+        //                else
+        //                {
+        //                    groupedTestFields = await ReturnTestFields(status, queryHole, tableType, _TestType, validation);
+
+        //                    testField = await ReturnTestField(status, queryHole, tableType, _TestType, validation);
+        //                }
+
+        //                bool testExists = await TestExists(status, queryHole, tableType, _TestType);
+
+        //                if (!testExists)
+        //                {
+        //                    test = new GroupByTest() { MainTest = _TestType, Ignore = false, TestFields = groupedTestFields };
+        //                    test.TestFields = groupedTestFields;
+
+        //                    groupedTests = await ReturnTestList(status, queryHole, tableType);
+
+        //                    groupedTests.Add(test);
+        //                }
+        //                else
+        //                {
+        //                    groupedTests = await ReturnTestList(status, queryHole, tableType, _TestType);
+
+
+        //                    test = await ReturnTest(status, queryHole, tableType, _TestType);
+        //                    test.TestFields.Add(testField);
+
+        //                }
+
+        //                table.GroupedTests = groupedTests;
+
+        //                var value = collarValues.Where(a => a.Element(holeIDName).Value == queryHole).Select(v => v.Attribute("ID").Value).FirstOrDefault();
+        //                string tooltip = message.ValidationStatus.Where(e => e.ErrorType == status && e.id == Convert.ToInt32(value)).Select(p => p.Description).FirstOrDefault();
+
+        //                rows.Add(new RowsToEdit
+        //                {
+        //                    id_col = Convert.ToInt16(value),
+        //                    holeid = queryHole,
+        //                    testType = _TestType,
+        //                    validationTest = validation,
+        //                    TableType = DrillholeTableType.collar,
+        //                    ErrorType = status,
+        //                    Description = tooltip
+        //                });
+
+        //               // counter++;
+        //            }
+
+        //        }
+
+        //    }
+
+        //    return true;
+        //}
 
         public async Task<ReshapedDataToEdit> ReturnDataStatus(DrillholeMessageStatus ErrorStatus)
         {
@@ -980,11 +1163,16 @@ namespace Drillholes.Windows.ViewModel
                                     {
                                         var values = result.TestFields;
 
-                                        foreach (var value in values)
+                                        if (values != null)
                                         {
-                                            if (value.TestField == validation)
-                                                return true;
+                                            foreach (var value in values)
+                                            {
+                                                if (value.TestField == validation)
+                                                    return true;
+                                            }
                                         }
+                                        else
+                                            return false;
 
                                     }
                                 }
@@ -1407,39 +1595,36 @@ namespace Drillholes.Windows.ViewModel
             //max depth
             var depth = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.maxName).Select(m => m.columnHeader).Single();
 
-            bool bOnce = false;
             foreach (var value in _edit) //populate dataTable
             {
-                if (!bOnce)
+                if (value.Ignore == false)
+                    rowValues.Add(value.Ignore);
+
+                rowValues.Add(value.id_col);
+                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(holeID).Value).Single());
+                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(x).Value).Single());
+                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(y).Value).Single());
+                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(z).Value).Single());
+                rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(depth).Value).Single());
+
+                if (surveyType == DrillholeSurveyType.collarsurvey)
                 {
-                    // rowValues.Add(value.Ignore);
-                    rowValues.Add(value.id_col.ToString());
-                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(holeID).Value).Single());
-                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(x).Value).Single());
-                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(y).Value).Single());
-                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(z).Value).Single());
-                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(depth).Value).Single());
+                    var azi = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Select(m => m.columnHeader).Single();
+                    var dip = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Select(m => m.columnHeader).Single();
 
-                    if (surveyType == DrillholeSurveyType.collarsurvey)
-                    {
-                        var azi = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).Select(m => m.columnHeader).Single();
-                        var dip = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.dipName).Select(m => m.columnHeader).Single();
-
-                        rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(azi).Value).Single());
-                        rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(dip).Value).Single());
-                    }
-
-                    rowValues.Add(value.testType);
-
-                    if (!preview)
-                        rowValues.Add(value.Description);
-
-                    dataTable.Rows.Add(rowValues.ToArray());
+                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(azi).Value).Single());
+                    rowValues.Add(collar.Where(h => h.Attribute("ID").Value == value.id_col.ToString()).Select(o => o.Element(dip).Value).Single());
                 }
-                else
-                    return dataTable;
 
-                bOnce = true;
+                rowValues.Add(value.testType);
+
+                if (!preview)
+                    rowValues.Add(value.Description);
+
+                dataTable.Rows.Add(rowValues.ToArray());
+
+                rowValues.Clear();
+
             }
 
             return dataTable; //TODO
@@ -1513,12 +1698,13 @@ namespace Drillholes.Windows.ViewModel
         {
 
             DataTable dataTable = new DataTable();
-
+            dataTable.Columns.Add("Ignore");
             DataColumn column = new DataColumn();
             column.ColumnName = "ID";
             column.ReadOnly = true;
             dataTable.Columns.Add(column);
-            //dataTable.Columns.Add("ID");
+
+           
             dataTable.Columns.Add(DrillholeConstants.holeID);
             dataTable.Columns.Add(DrillholeConstants.x);
             dataTable.Columns.Add(DrillholeConstants.y);

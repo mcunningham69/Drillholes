@@ -214,11 +214,7 @@
                   IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
                   Visibility="Hidden"
                   ToolTip="{Binding Path=EditDrillholeData/GroupedHoles/GroupedTables/GroupedTests/TestFields/TableData/ToolTip}" 
-                  RowEditEnding="dataEdits_RowEditEnding" CellEditEnding="dataEdits_CellEditEnding">
-
-            <DataGrid.Columns>
-                <DataGridCheckBoxColumn Header="Ignore" Binding="{Binding Ignore, Mode=TwoWay}"/>
-            </DataGrid.Columns>
+                  RowEditEnding="dataEdits_RowEditEnding" CellEditEnding="dataEdits_CellEditEnding" AutoGeneratingColumn="dataEdits_AutoGeneratingColumn">
         </DataGrid>
 
         <DataGrid ItemsSource="{Binding}" Name="dataCollar" Grid.Column="3" Grid.Row="3" VerticalAlignment="Stretch" 

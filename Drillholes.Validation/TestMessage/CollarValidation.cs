@@ -37,32 +37,40 @@ namespace Drillholes.Validation.TestMessage
 
                 string message = "";
 
-                var duplicates = elements.GroupBy(x => x.Element(fieldID).Value).Where(group => group.Count() > 1).Select(group => group.Key).ToList();
+                var showElements = elements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
+
+                var duplicates = showElements.GroupBy(x => x.Element(fieldID).Value).Where(group => group.Count() > 1).Select(group => group.Key).ToList();
+
+               // var duplicates = elements.GroupBy(x => x.Element(fieldID).Value).Where(group => group.Count() > 1).Select(group => group.Key).ToList();
 
                 if (duplicates.Count > 0)
                 {
                     foreach (string hole in duplicates)
                     {
-
                         var holeAttr = elements.Where(y => y.Element(fieldID).Value == hole).Select(z => String.Join(hole, z.Attribute("ID").Value)).ToList();
 
                         string idList = String.Join(", ", holeAttr.ToArray());
                         int noDups = holeAttr.Count();
 
                         message = "The following hole '" + hole + "' of field type ' "
-                       + check.tableField.columnImportName + "' is repeated " + noDups.ToString() +
-                             "  times for the following records: " + idList;
+                      + check.tableField.columnImportName + "' is repeated " + noDups.ToString() +
+                            "  times for the following records: " + idList;
 
-                        check.ValidationStatus.Add(new DrillholeValidationStatus
+                        foreach (string attr in holeAttr)
                         {
-                            ErrorType = DrillholeMessageStatus.Warning,
-                            Description = message,
-                            ErrorColour = "Orange",
-                            id = Convert.ToInt32(holeAttr.First().ToString()),
-                            holeID = hole
-                        });
+                            check.ValidationStatus.Add(new DrillholeValidationStatus
+                            {
+                                ErrorType = DrillholeMessageStatus.Warning,
+                                Description = message,
+                                ErrorColour = "Orange",
+                                id = Convert.ToInt32(attr.ToString()),
+                                holeID = hole
+                            });
 
-                        check.validationMessages.Add(message);
+                            check.validationMessages.Add(message);
+                        }
+
+                       
                     }
                     check.verified = false;
                 }
@@ -116,10 +124,13 @@ namespace Drillholes.Validation.TestMessage
 
         private async void CheckNumericValues(XElement drillholeValues, ValidationMessage validationTest, string fieldID, string fieldName, string holeName)
         {
-            var elements = drillholeValues.Elements();
-            validationTest.count = elements.Count();
 
-            foreach (XElement element in elements)
+            var elements = drillholeValues.Elements();
+            var showElements = elements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
+
+            validationTest.count = showElements.Count();
+
+            foreach (XElement element in showElements)
             {
                 string fieldValue = element.Element(fieldID).Value;
                 string holeAttr = element.Attribute("ID").Value;
@@ -175,6 +186,8 @@ namespace Drillholes.Validation.TestMessage
             validationCollarDto.testMessages = _ValuesToCheck;
 
             var elements = collarValues.Elements();
+            var showElements = elements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
+
 
             foreach (var check in _ValuesToCheck.testMessage)
             {
@@ -186,7 +199,7 @@ namespace Drillholes.Validation.TestMessage
 
                 check.count = elements.Count();
 
-                foreach (XElement element in elements)
+                foreach (XElement element in showElements)
                 {
                     string hole = element.Element(fieldID).Value;
                     string xCoord = element.Element(xField).Value;
@@ -337,10 +350,11 @@ namespace Drillholes.Validation.TestMessage
         private async void CheckEmptyValues(XElement collarValues, ValidationMessage validationTest, string fieldID, string fieldName, string holeName)
         {
             var elements = collarValues.Elements();
+            var showElements = elements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
 
             validationTest.count = elements.Count();
 
-            foreach (XElement element in elements)
+            foreach (XElement element in showElements)
             {
                 string valueCheck = element.Element(fieldID).Value;
                 string holeAttr = element.Attribute("ID").Value;
@@ -414,6 +428,8 @@ namespace Drillholes.Validation.TestMessage
 
             var elements = collarValues.Elements();
 
+            var showElements = elements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
+
             foreach (var check in _ValuesToCheck.testMessage)
             {
                 if (check.validationTest == DrillholeConstants.checkTD)
@@ -424,7 +440,7 @@ namespace Drillholes.Validation.TestMessage
 
                     check.count = elements.Count();
 
-                    foreach (XElement element in elements)
+                    foreach (XElement element in showElements)
                     {
                         string hole = element.Element(fieldID).Value;
                         string depthValue = element.Element(depthID).Value;
@@ -499,6 +515,8 @@ namespace Drillholes.Validation.TestMessage
 
             var elements = collarValues.Elements();
 
+            var showElements = elements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
+
             foreach (var check in _ValuesToCheck.testMessage)
             {
                 check.count = collarValues.Elements().Count();
@@ -507,7 +525,7 @@ namespace Drillholes.Validation.TestMessage
                 string fieldID = "";
                 string fieldType = "";
 
-                foreach (XElement element in collarValues.Elements())
+                foreach (XElement element in showElements)
                 {
                     string hole = "";
                     string fieldValue = "";

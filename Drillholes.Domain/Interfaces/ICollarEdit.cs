@@ -10,7 +10,7 @@ namespace Drillholes.Domain.Interfaces
 {
     public interface ICollarEdit
     {
-        Task<CollarTableDto> UpdateValues(List<RowsToEdit> rowsToEdit, XElement collarValues, List<ImportTableField> editFields, bool bIgnore);
+        Task<CollarTableDto> UpdateValues(List<RowsToEdit> rowsToEdit, XElement collarValues, List<ImportTableField> editFields);
 
     }
 }

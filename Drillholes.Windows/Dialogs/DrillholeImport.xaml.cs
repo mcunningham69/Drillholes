@@ -23,6 +23,9 @@ namespace Drillholes.Windows.Dialogs
     /// </summary>
     public partial class DrillholeImport : Window
     {
+        //TODO Delegate/Event to refresh data preview after edits performed
+
+
         DrillholeSummaryStatistics singletonStatistics = null;
         DrillholeSummaryMessages singletonMessages = null;
         DrillholeEdits singletonEdits = null;
@@ -709,7 +712,6 @@ namespace Drillholes.Windows.Dialogs
             }
 
             singletonMessages.Show();
-
 
         }
 

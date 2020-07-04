@@ -58,7 +58,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public async Task<XElement> SaveEdits(List<RowsToEdit> rows, bool bIgnore)
+        public async Task<XElement> SaveEdits(List<RowsToEdit> rows)
         {
             if (mapper == null)
                 InitialiseMapping();
@@ -86,7 +86,7 @@ namespace Drillholes.Windows.ViewModel
                 editFields.Add(dipField);
             }
 
-            var _edits = await _editService.UpdateValues(mapper, rows, xmlCollarData, editFields, bIgnore);
+            var _edits = await _editService.UpdateValues(mapper, rows, xmlCollarData, editFields);
 
             return _edits.xPreview;
         }
