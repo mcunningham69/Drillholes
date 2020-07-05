@@ -39,7 +39,7 @@ namespace Drillholes.Windows.Dialogs
         private string tableAssayName { get; set; }
         private string tableIntervalLocation { get; set; }
         private string tableIntervalName { get; set; }
-
+        private DrillholeDesurveyEnum desurveyMethod { get; set; }
         DrillholeImportFormat collarTableFormat { get; set; }
         DrillholeImportFormat surveyTableFormat { get; set; }
         DrillholeImportFormat intervalTableFormat { get; set; }
@@ -69,6 +69,8 @@ namespace Drillholes.Windows.Dialogs
         public DrillholeImport(List<DrillholeTable> _classes)
         {
             InitializeComponent();
+
+            desurveyMethod = DrillholeDesurveyEnum.Tangential;
 
             tables = _classes;
 
@@ -213,6 +215,9 @@ namespace Drillholes.Windows.Dialogs
                         await LoadCollarTableAndFields(nLimit);
                     }
 
+                    chkImport.IsChecked = collarPreviewModel.importChecked;
+                    collarPreviewModel.ImportAllColumns((bool)chkImport.IsChecked);
+
                     DataContext = collarPreviewModel;
                     collarPreviewModel.SetDataContext(dataPreview);
 
@@ -277,6 +282,7 @@ namespace Drillholes.Windows.Dialogs
             }
         }
 
+        #region Load Tables
         private async Task<bool> LoadCollarTableAndFields(int nLimit)
         {
 
@@ -292,6 +298,8 @@ namespace Drillholes.Windows.Dialogs
 
             chkImport.IsChecked = collarPreviewModel.importChecked;
             collarPreviewModel.ImportAllColumns((bool)chkImport.IsChecked);
+
+
 
             return true;
 
@@ -385,6 +393,7 @@ namespace Drillholes.Windows.Dialogs
 
             return true;
         }
+        #endregion
 
         private void SetSurveyType(bool edits)
         {
@@ -444,7 +453,7 @@ namespace Drillholes.Windows.Dialogs
             //cboImportAs = (ComboBox)sender;
 
             ComboBox cboImportAs = sender as ComboBox;
-            
+
 
             try
             {
@@ -572,9 +581,20 @@ namespace Drillholes.Windows.Dialogs
 
         private void btnDesurvey_Click(object sender, RoutedEventArgs e)
         {
+            if (_tabcontrol.SelectedIndex == 0)
+            {
 
-        }
-
+            }
+            else if (_tabcontrol.SelectedIndex == 1)
+            {
+            }
+            else if (_tabcontrol.SelectedIndex == 2)
+            {
+            }
+            else if (_tabcontrol.SelectedIndex == 3)
+            {
+            }
+        } 
         private void btnCreateToe_Click(object sender, RoutedEventArgs e)
         {
 
@@ -731,7 +751,6 @@ namespace Drillholes.Windows.Dialogs
             else if (_tabIndex == 0)
             {
                 singletonEdits.collarObject = collarPreviewModel.collarTableObject;
-            //    singletonEdits.surveyType = collarPreviewModel.collarTableObject.surveyType;
 
                 if (collarPreviewModel.collarTableObject.surveyType == surveyType)
                 {
@@ -746,12 +765,20 @@ namespace Drillholes.Windows.Dialogs
                     singletonEdits.intervalObject = intervalPreviewModel.intervalTableObject;
 
                 singletonEdits.selectedIndex = 0;
+
+                singletonEdits.ShowDialog();
+
+                collarPreviewModel.FillTable();
+
+                DataContext = collarPreviewModel;
+                collarPreviewModel.SetDataContext(dataPreview);
+
+
             }
             else if (_tabIndex == 1)
             {
                 singletonEdits.collarObject = collarPreviewModel.collarTableObject;
                 singletonEdits.surveyObject = surveyPreviewModel.surveyTableObject;
-          //      singletonEdits.surveyType = surveyType;
 
                 if (assayPreviewModel.surveyTableObject.tableData != null)
                     singletonEdits.assayObject = assayPreviewModel.assayTableObject;
@@ -760,6 +787,7 @@ namespace Drillholes.Windows.Dialogs
                     singletonEdits.intervalObject = intervalPreviewModel.intervalTableObject;
 
                 singletonEdits.selectedIndex = 1;
+
             }
             else if (_tabIndex == 2)
             {
@@ -776,6 +804,9 @@ namespace Drillholes.Windows.Dialogs
                     singletonEdits.intervalObject = intervalPreviewModel.intervalTableObject;
 
                 singletonEdits.selectedIndex = 2;
+
+                singletonEdits.ShowDialog();
+
 
             }
             else if (_tabIndex == 3)
@@ -794,9 +825,11 @@ namespace Drillholes.Windows.Dialogs
 
                 singletonEdits.selectedIndex = 3;
 
+                singletonEdits.ShowDialog();
+
+
             }
 
-            singletonEdits.Show();
         }
 
         private void radVertical_Click(object sender, RoutedEventArgs e)

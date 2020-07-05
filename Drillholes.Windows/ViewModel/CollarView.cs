@@ -10,19 +10,15 @@ using Drillholes.Domain.DataObject;
 using Drillholes.Domain.Services;
 using Drillholes.Domain.Interfaces;
 using Drillholes.Domain.DTO;
-using Drillholes.Validation.Statistics;
 using AutoMapper;
 using System.Xml.Linq;
 using System.Data;
 using System.Windows.Controls;
-using System.Collections.ObjectModel;
 
 namespace Drillholes.Windows.ViewModel
 {
     public class CollarView : ViewEditModel
     {
-        public CollarTableObject collarTableObject { get; set; }
-
         private CollarTableService _collarService;
 
         private ICollarTable _collarTable;
@@ -46,6 +42,20 @@ namespace Drillholes.Windows.ViewModel
             }
         }
 
+        private CollarTableObject _collarTableObject;
+        public CollarTableObject collarTableObject
+        {
+            get
+            {
+                return this._collarTableObject;
+            }
+            set
+            {
+                this._collarTableObject = value;
+                OnPropertyChanged("collarTableObject");
+            }
+        }
+
         public string tableCaption { get; set; }
         public string tableName { get; set; }
         public string tableLocation { get; set; }
@@ -54,6 +64,19 @@ namespace Drillholes.Windows.ViewModel
         public bool skipTable { get; set; }
         public bool importChecked { get; set; }
 
+        public string _importAllColumns;
+        public string importAllColumns
+        {
+            get
+            {
+                return this._importAllColumns;
+            }
+            set
+            {
+                this._importAllColumns = value;
+                OnPropertyChanged("importAllColumns");
+            }
+        }
         private string _tableFields;
         public string tableFields
         {
@@ -84,6 +107,9 @@ namespace Drillholes.Windows.ViewModel
             tableName = _tableName;
             tableLocation = _tableLocation;
             tableFormat = _tableFormat.ToString();
+
+            importAllColumns = "Import All Columns In " + (_tableType.ToString().ToUpper())  + " Table";
+
 
             dataGrid = new System.Data.DataTable();
 
@@ -117,6 +143,7 @@ namespace Drillholes.Windows.ViewModel
 
         public virtual void SetDataContext(DataGrid dataPreview)
         {
+
             if (dataGrid.Columns.Count > 0)
                 dataPreview.DataContext = dataGrid;
         }
@@ -164,11 +191,9 @@ namespace Drillholes.Windows.ViewModel
 
                 tableCaption = char.ToUpper(collarTableObject.tableType.ToString()[0]) +
                     collarTableObject.tableType.ToString().Substring(1);
-
-
-                FillTable(tableCaption, dataGrid); //tableType = 'Collar'
-
             }
+
+            FillTable();
 
             return true;
         }
@@ -198,41 +223,44 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public virtual void FillTable(string descendants, System.Data.DataTable dataTable)
+        public virtual void FillTable()
         {
+            dataGrid.Rows.Clear();
 
-            var elements = collarTableObject.xPreview.Descendants(descendants).  //collar
-                       Select(e => e.Elements());
+            var collarElements = collarTableObject.xPreview.Elements();
 
-
-            foreach (var rows in elements)
+            foreach(var element in collarElements)
             {
-                List<XmlNameAndValue> _namesAndValues = new List<XmlNameAndValue>();
-                foreach (var element in rows)
+                if (element.Attribute("Ignore").Value.ToUpper() == "FALSE")
                 {
+                    var rows = element.Elements();
 
-                    _namesAndValues.Add(new XmlNameAndValue { Name = element.Name.ToString(), Value = element.Value });
-                }
-
-                List<string> myValues = new List<string>();
-
-                foreach (XmlNameAndValue node in _namesAndValues)
-                {
-                    if (node.Value.ToString() == "")
+                    List<XmlNameAndValue> _namesAndValues = new List<XmlNameAndValue>();
+                    foreach (var row in rows)
                     {
-                        node.Value = "-";
+
+                        _namesAndValues.Add(new XmlNameAndValue { Name = row.Name.ToString(), Value = row.Value });
                     }
 
-                    myValues.Add(node.Value.ToString());
+                    List<string> myValues = new List<string>();
 
+                    foreach (XmlNameAndValue node in _namesAndValues)
+                    {
+                        if (node.Value.ToString() == "")
+                        {
+                            node.Value = "-";
+                        }
+
+                        myValues.Add(node.Value.ToString());
+
+                    }
+
+                    if (myValues.Count > 0)
+                        dataGrid.Rows.Add(myValues.ToArray());
                 }
-
-                if (myValues.Count > 0)
-                    dataTable.Rows.Add(myValues.ToArray());
-
             }
 
-            int noOfRecords = dataTable.Rows.Count;
+            int noOfRecords = dataGrid.Rows.Count;
 
             //white space for formatting on status bar
             string displayItems = (noOfRecords == 1 ? noOfRecords.ToString() + " " + collarTableObject.tableType +

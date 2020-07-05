@@ -6,6 +6,9 @@
         mc:Ignorable="d"
         Title="Select Drillhole Fields " Height="450" MinWidth="850" Width="Auto" ResizeMode="NoResize" SizeToContent="WidthAndHeight" >
 
+    <Window.Resources>
+
+    </Window.Resources>
     <Window.Background>
         <ImageBrush ImageSource="../Images/fault.jpg" ></ImageBrush>
     </Window.Background>
@@ -418,14 +421,22 @@
 
         <StackPanel Grid.Column="2" Grid.Row="3" Orientation="Horizontal">
 
-            <Button Name="btnTrace" Content="Trace"  Margin="10,0,0,0" FontSize="16" HorizontalAlignment="Left" 
-                VerticalAlignment="Bottom" Width="80" Height="30"  Click="btnTrace_Click" Visibility="Visible" />
+         <!--   <Button Name="btnTrace" Content="Trace"  Margin="10,0,0,0" FontSize="16" HorizontalAlignment="Left" 
+                VerticalAlignment="Bottom" Width="80" Height="30"  Click="btnTrace_Click" Visibility="Visible" />-->
 
             <Button Name="btnDesurvey" IsEnabled="true" Content="Desurvey" FontSize="16" HorizontalAlignment="Left" 
                     VerticalAlignment="Bottom" Width="90" Height="30" Margin="10,0,0,0" Click="btnDesurvey_Click" Visibility="Visible"></Button>
 
-            <Button Name="btnCreateToe" Content="Toes" FontSize="16" HorizontalAlignment="Right"
-                    VerticalAlignment="Top" Width="70" Height="30" Margin="10,0,0,0" Click="btnCreateToe_Click" Visibility="Visible"></Button>
+          <!--  <Button Name="btnCreateToe" Content="Toes" FontSize="16" HorizontalAlignment="Right"
+                    VerticalAlignment="Top" Width="70" Height="30" Margin="10,0,0,0" Click="btnCreateToe_Click" Visibility="Visible"></Button>-->
+            <ComboBox Width="Auto" Height="Auto" Margin="25,0,0,0"  HorizontalAlignment="Right" Name="lstDesurvMethod" SelectedIndex="0">
+                <ComboBoxItem>Tangential</ComboBoxItem>
+                <ComboBoxItem>Minimum Curvature</ComboBoxItem>
+                <ComboBoxItem>Radius of Curvature</ComboBoxItem>
+                <ComboBoxItem>Average Angle</ComboBoxItem>
+                <ComboBoxItem>Balanced Tangential</ComboBoxItem>
+            </ComboBox>
+            <Label Content="Method"/>
         </StackPanel>
 
 
