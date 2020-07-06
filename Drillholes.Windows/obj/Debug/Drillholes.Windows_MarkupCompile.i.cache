@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\App.xaml
-8-473886038
+9-963589885
 
-30681117120
+31900416266
 19-1435469232
-Dialogs\DrillholeDialog.xaml;Dialogs\DrillholeEdits.xaml;Dialogs\DrillholeExcelSheet.xaml;Dialogs\DrillholeImport.xaml;Dialogs\DrillholeSummaryMessages.xaml;Dialogs\DrillholeSummaryStatistics.xaml;Dialogs\GlassButton.xaml;GlassButton.xaml;
+Dialogs\DrillholeCreate.xaml;Dialogs\DrillholeDialog.xaml;Dialogs\DrillholeEdits.xaml;Dialogs\DrillholeExcelSheet.xaml;Dialogs\DrillholeImport.xaml;Dialogs\DrillholeSummaryMessages.xaml;Dialogs\DrillholeSummaryStatistics.xaml;Dialogs\GlassButton.xaml;GlassButton.xaml;
 
 False
 

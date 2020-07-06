@@ -26,7 +26,8 @@ namespace Drillholes.Windows.Dialogs
     public partial class DrillholeEdits : Window
     {
         private static DrillholeSaveEdits SaveEditMode { get; set; }
-        private DrillholeEditSession editSession { get; set; }
+
+        private EditEnvironment editEnvironment { get; set; }
         private static bool hasEdits { get; set; }
         public CollarTableObject collarObject { get; set; }
         public SurveyTableObject surveyObject { get; set; }
@@ -55,8 +56,8 @@ namespace Drillholes.Windows.Dialogs
         {
             hasEdits = false;
             SaveEditMode = DrillholeSaveEdits.Yes;
-            editSession = DrillholeEditSession.Stopped;
-
+            editEnvironment = new EditEnvironment();
+            editEnvironment.StopEditSession();
             bIgnore = false;
 
             InitializeComponent();
@@ -225,11 +226,17 @@ namespace Drillholes.Windows.Dialogs
             intervalEdits.ReshapeMessages(DrillholeTableType.interval);
 
         }
-        private void btnExit_Click(object sender, RoutedEventArgs e)
+        private async void btnExit_Click(object sender, RoutedEventArgs e)
         {
+            bool bCheck = await UnSavedEdits();
+
+            if (!bCheck)
+                return;
+
             m_instance = null;
             this.Close();
         }
+
 
         private async void btnSave_Click(object sender, RoutedEventArgs e)
         {
@@ -280,9 +287,8 @@ namespace Drillholes.Windows.Dialogs
 
             }
 
+            editEnvironment.StopEditSession();
 
-            editSession = DrillholeEditSession.Stopped;
-            hasEdits = false;
         }
 
         private void btnTD_Click(object sender, RoutedEventArgs e)
@@ -346,7 +352,7 @@ namespace Drillholes.Windows.Dialogs
                 return;
 
             //if not in editmode go straight on
-            if (DrillholeEditSession.Started == editSession) //check if in edit mode
+            if (editEnvironment.editSession == DrillholeEditSession.Started) //check if in edit mode
             {
                 bool checkRow = false;
 
@@ -477,91 +483,92 @@ namespace Drillholes.Windows.Dialogs
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            bool bCheck = await UnSavedEdits();
+
+            if (!bCheck)
+                return;
+
             m_instance = null;
-            hasEdits = false;
+
         }
 
         #region Editting Data
         private async void SaveState()
         {
-            if (hasEdits)
+            if (editEnvironment.hasEdits)
             {
                 btnSave.IsEnabled = true;
-                editSession = DrillholeEditSession.Started;
+                editEnvironment.StartEditSession();
             }
             else
             {
                 btnSave.IsEnabled = false;
-                editSession = DrillholeEditSession.Stopped;
+                editEnvironment.StopEditSession();
 
             }
         }
-        private void btnStartEdits_Click(object sender, RoutedEventArgs e)
+        private async void btnStartEdits_Click(object sender, RoutedEventArgs e)
         {
-            if (editSession == DrillholeEditSession.Started)
+
+            //btnTD.IsEnabled = true;
+            btnStartEdits.Visibility = Visibility.Hidden;
+            btnStopEdits.Visibility = Visibility.Visible;
+
+            dataEdits.IsReadOnly = false;
+            dataCollar.IsReadOnly = false;
+            editEnvironment.StartEditSession();
+
+            DataContext = collarEdits;
+        }
+
+        private async void btnStopEdits_Click(object sender, RoutedEventArgs e)
+        {
+
+            bool bCheck = await UnSavedEdits();
+
+            if (!bCheck)
+                return;
+
+
+            editEnvironment.StopEditSession();
+
+            btnSave.IsEnabled = false;
+            btnStartEdits.Visibility = Visibility.Visible;
+            btnStopEdits.Visibility = Visibility.Hidden;
+            dataEdits.IsReadOnly = true;
+            dataCollar.IsReadOnly = true;
+
+        }
+
+        private async Task<bool> UnSavedEdits()
+        {
+            if (editEnvironment.hasEdits)
             {
-                if (hasEdits)
+
+                MessageBoxResult toSaveEdits = MessageBox.Show("Save Edits?", "Edits", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+                if (MessageBoxResult.Cancel == toSaveEdits)
+                    return false;
+                else if (MessageBoxResult.Yes == toSaveEdits)
                 {
-                    MessageBoxResult toSaveEdits = MessageBox.Show("Save Edits?", "Edits", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                    SaveEdits();
 
-                    if (MessageBoxResult.Cancel == toSaveEdits)
-                        return;
-                    else if (MessageBoxResult.Yes == toSaveEdits)
-                    {
-                        SaveEdits();
-
-                        editedRows.Clear();
-                    }
-                    else
-                    {
-                        //TODO to refresh row
-                        editedRows.Clear();
-
-                    }
+                    editedRows.Clear();
+                }
+                else
+                {
+                    //TODO to refresh row
+                    editedRows.Clear();
 
                 }
-
-                editSession = DrillholeEditSession.Stopped;
-
-                btnStartEdits.Content = "Start Editing";
-                btnSave.IsEnabled = false;
-                //btnReplaceAll.IsEnabled = false;
-                btnTD.IsEnabled = false;
-                dataEdits.IsReadOnly = true;
-                dataCollar.IsReadOnly = true;
-
-                hasEdits = false;
-
-                
             }
-            else
-            {
-                btnStartEdits.Content = "Stop Editing";
-               // btnReplaceAll.IsEnabled = true;
-                btnTD.IsEnabled = true;
-                dataEdits.IsReadOnly = false;
-                dataCollar.IsReadOnly = false;
-                editSession = DrillholeEditSession.Started;
 
-                DataContext = collarEdits;
+            editEnvironment.StopEditSession();
 
-            }
+            return true;
         }
-
-
-        private void dataEdits_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
-        {
-
-
-        }
-
-        private void dataEdits_PreviewExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-
-        }
-
 
         //activated when focus leaves last cell (in edit mode)
         private async void dataEdits_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -577,7 +584,7 @@ namespace Drillholes.Windows.Dialogs
                 editedRows = new List<RowsToEdit>();
             }
 
-            int idCount = editedRows.Where(a => a.id_col.ToString() == array[0].ToString()).Count();
+            int idCount = editedRows.Where(a => a.id_col.ToString() == array[1].ToString()).Count();
 
             if (idCount == 0)
             {
@@ -589,7 +596,7 @@ namespace Drillholes.Windows.Dialogs
             else
             {
                 //if row exists return and check which values need to modified from Switch below
-                row = editedRows.Where(a => a.id_col.ToString() == array[0].ToString()).FirstOrDefault();
+                row = editedRows.Where(a => a.id_col.ToString() == array[1].ToString()).FirstOrDefault();
 
             }
 
@@ -634,9 +641,10 @@ namespace Drillholes.Windows.Dialogs
                         row.distanceTo = changeTo.Text;
                         break;
                 }
-           // }
+            // }
 
-            hasEdits = true;
+            editEnvironment.hasEdits = true;
+
             btnSave.IsEnabled = true;
 
 
@@ -727,6 +735,8 @@ namespace Drillholes.Windows.Dialogs
             }
           
         }
+
+      
     }
     #endregion
 

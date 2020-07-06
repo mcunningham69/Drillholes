@@ -108,7 +108,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        #region Messages
+          #region Messages
         public virtual async Task<bool> ValidateAllTables(bool editData)
         {
             ValidationDelegate mTables = null;
@@ -595,13 +595,13 @@ namespace Drillholes.Windows.ViewModel
                             }
                             else if (message.validationTest == DrillholeConstants.checkAzi)
                             {
+
                                 await ReformatResults(message, DrillholeConstants.SurveyRange, DrillholeConstants.checkAzi, fields, status, tableType, collarValues);
                             }
                         }
                         break;
                 }
             }
-
 
         }
 

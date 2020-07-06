@@ -61,6 +61,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dialogs\DrillholeCreate.xaml.cs">
+      <DependentUpon>DrillholeCreate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DisplaySummaryStatistics.cs" />
     <Compile Include="DisplayValidationMessages.cs" />
     <Compile Include="ViewModel\AssayStatisticsView.cs" />
@@ -80,6 +83,10 @@
     <Compile Include="ViewModel\SurveyValidationView.cs" />
     <Compile Include="ViewModel\SurveyView.cs" />
     <Compile Include="ViewModel\ViewEditModel.cs" />
+    <Page Include="Dialogs\DrillholeCreate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\DrillholeDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -184,6 +191,9 @@
     <Resource Include="Images\fault.jpg" />
     <Resource Include="Images\glencoe.jpg" />
     <Resource Include="Images\skye.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Thailand.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

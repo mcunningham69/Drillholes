@@ -39,7 +39,6 @@ namespace Drillholes.Windows.Dialogs
         private string tableAssayName { get; set; }
         private string tableIntervalLocation { get; set; }
         private string tableIntervalName { get; set; }
-        private DrillholeDesurveyEnum desurveyMethod { get; set; }
         DrillholeImportFormat collarTableFormat { get; set; }
         DrillholeImportFormat surveyTableFormat { get; set; }
         DrillholeImportFormat intervalTableFormat { get; set; }
@@ -69,8 +68,6 @@ namespace Drillholes.Windows.Dialogs
         public DrillholeImport(List<DrillholeTable> _classes)
         {
             InitializeComponent();
-
-            desurveyMethod = DrillholeDesurveyEnum.Tangential;
 
             tables = _classes;
 
@@ -574,31 +571,6 @@ namespace Drillholes.Windows.Dialogs
             this.Close();
         }
 
-        private void btnTrace_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnDesurvey_Click(object sender, RoutedEventArgs e)
-        {
-            if (_tabcontrol.SelectedIndex == 0)
-            {
-
-            }
-            else if (_tabcontrol.SelectedIndex == 1)
-            {
-            }
-            else if (_tabcontrol.SelectedIndex == 2)
-            {
-            }
-            else if (_tabcontrol.SelectedIndex == 3)
-            {
-            }
-        } 
-        private void btnCreateToe_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private void chkImport_Click(object sender, RoutedEventArgs e)
         {
@@ -843,5 +815,10 @@ namespace Drillholes.Windows.Dialogs
 
         }
 
+        private void btnCreateHole_Click(object sender, RoutedEventArgs e)
+        {
+            DrillholeCreate createHoles = new DrillholeCreate();
+            createHoles.Show();
+        }
     }
 }
