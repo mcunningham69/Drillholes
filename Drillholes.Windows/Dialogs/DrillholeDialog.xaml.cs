@@ -117,6 +117,14 @@ namespace Drillholes.Windows.Dialogs
             DrillholeTableType.interval).Select(s => s.tableName).FirstOrDefault();
         }
 
+        private void btnOther_Click(object sender, RoutedEventArgs e)
+        {
+            SelectTables(DrillholeTableType.continuous, false);
+
+            txtDistance.Text = importTables.Where(o => o.tableType ==
+            DrillholeTableType.continuous).Select(s => s.tableName).FirstOrDefault();
+        }
+
         private void chkSystem_Click(object sender, RoutedEventArgs e)
         {
             if (chkSystem.IsChecked == true)
@@ -391,6 +399,7 @@ namespace Drillholes.Windows.Dialogs
             string surveyName = "survey_ten.csv";
             string assayName = "assay_ten.csv";
             string lithoName = "litho_ten.csv";
+            string distName = "distance_ten.csv";
 
             //string path = @"C:\Projects\Source code\projectdata\panitest";
 
@@ -411,6 +420,7 @@ namespace Drillholes.Windows.Dialogs
             importTables.Add(new DrillholeTable { tableFormat = DrillholeImportFormat.text_csv, tableFormatName = strFormatName, tableLocation = surveyLoc, tableName = surveyName, tableType = DrillholeTableType.survey, isCancelled = false, isValid = true });
             importTables.Add(new DrillholeTable { tableFormat = DrillholeImportFormat.text_csv, tableFormatName = strFormatName, tableLocation = assayLoc, tableName = assayName, tableType = DrillholeTableType.assay, isCancelled = false, isValid = true });
             importTables.Add(new DrillholeTable { tableFormat = DrillholeImportFormat.text_csv, tableFormatName = strFormatName, tableLocation = lithoLoc, tableName = lithoName, tableType = DrillholeTableType.interval, isCancelled = false, isValid = true });
+            importTables.Add(new DrillholeTable { tableFormat = DrillholeImportFormat.text_csv, tableFormatName = strFormatName, tableLocation = otherLoc, tableName = distName, tableType = DrillholeTableType.continuous, isCancelled = false, isValid = true });
 
             #endregion
 
@@ -511,5 +521,6 @@ namespace Drillholes.Windows.Dialogs
             
         }
 
+       
     }
 }

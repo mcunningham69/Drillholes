@@ -39,14 +39,18 @@ namespace Drillholes.Windows.Dialogs
         private string tableAssayName { get; set; }
         private string tableIntervalLocation { get; set; }
         private string tableIntervalName { get; set; }
+        private string tableContinuousLocation { get; set; }
+        private string tableContinuousName { get; set; }
         DrillholeImportFormat collarTableFormat { get; set; }
         DrillholeImportFormat surveyTableFormat { get; set; }
         DrillholeImportFormat intervalTableFormat { get; set; }
+        DrillholeImportFormat continuousTableFormat { get; set; }
+
         DrillholeImportFormat assayTableFormat { get; set; }
 
         bool bEnableSurvey { get; set; }
         bool bEnableAssay { get; set; }
-        bool bEnableLitho { get; set; }
+        bool bEnableContinuous { get; set; }
         bool bEnableInterval { get; set; }
 
         private List<DrillholeTable> tables { get; set; }
@@ -58,6 +62,9 @@ namespace Drillholes.Windows.Dialogs
         private ViewModel.AssayView assayPreviewModel { get; set; }
 
         private ViewModel.IntervalView intervalPreviewModel { get; set; }
+
+        // private ViewModel.ContinuousView continuousPreviewModel { get; set; } continuous
+
         #endregion
 
         public DrillholeImport()
@@ -133,6 +140,21 @@ namespace Drillholes.Windows.Dialogs
                     SetModelViews(DrillholeTableType.interval);
                 }
 
+                else if (importTable.tableType == DrillholeTableType.continuous)
+                {
+                    tableContinuousLocation = _classes.Where(i => i.tableType == DrillholeTableType.continuous).Select(s => s.tableLocation).SingleOrDefault();
+                    continuousTableFormat = _classes.Where(i => i.tableType == DrillholeTableType.continuous).Select(s => s.tableFormat).SingleOrDefault();
+                    tableContinuousName = _classes.Where(i => i.tableType == DrillholeTableType.continuous).Select(s => s.tableName).SingleOrDefault();
+
+                    foreach (TabItem item in tabItems)
+                    {
+                        if (item.Header.ToString() == "Continuous")
+                            item.IsEnabled = true;
+                    }
+
+                    SetModelViews(DrillholeTableType.continuous);
+                }
+
             }
 
         }
@@ -160,6 +182,11 @@ namespace Drillholes.Windows.Dialogs
                     bEnableInterval = true;
                     break;
 
+                //case DrillholeTableType.continuous:
+                //    intervalPreviewModel = new ViewModel.ContinuousView(intervalTableFormat, DrillholeTableType.continuous, tableIntervalLocation, tableIntervalName);
+                //    bEnableContinuous = true;
+                //    break;
+
             }
         }
         private void InitialiseImportParametersForViews()
@@ -177,10 +204,14 @@ namespace Drillholes.Windows.Dialogs
             tableIntervalLocation = "";
             tableIntervalName = "";
 
+            tableContinuousLocation = "";
+            tableContinuousName = "";
+
             collarTableFormat = DrillholeImportFormat.other;
             surveyTableFormat = DrillholeImportFormat.other;
             assayTableFormat = DrillholeImportFormat.other;
             intervalTableFormat = DrillholeImportFormat.other;
+            continuousTableFormat = DrillholeImportFormat.other;
         }
 
         private async void _tabcontrol_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -264,6 +295,17 @@ namespace Drillholes.Windows.Dialogs
 
                     DataContext = intervalPreviewModel;
                     intervalPreviewModel.SetDataContext(dataPreview);
+
+                }
+                else if (_tabIndex == 4)//interval
+                {
+                    //if (continuousPreviewModel.continuousTableObject.tableData == null)
+                    //{
+                    //    await LoadContinuousTableAndFields(nLimit);
+                    //}
+
+                    //DataContext = continuousPreviewModel;
+                    //continuousPreviewModel.SetDataContext(dataPreview);
 
                 }
             }
@@ -390,6 +432,44 @@ namespace Drillholes.Windows.Dialogs
 
             return true;
         }
+
+        private async Task<bool> LoadContinuousTableAndFields(int nLimit)
+        {
+            //if (continuousPreviewModel.continuousTableObject.tableData == null)
+            //{
+            //    if ((bool)radVertical.IsChecked)
+            //        continuousPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.vertical;
+            //    else if ((bool)radSurvey.IsChecked)
+            //        continuousPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.collarsurvey;
+            //    else
+            //        continuousPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+
+            //    await continuousPreviewModel.RetrieveFieldsToMap(); //on start, holeIDName set to empty string
+            //    continuousPreviewModel.intervalTableObject.collarKey = collarPreviewModel.collarTableObject.collarKey;
+
+            //    if (bEnableSurvey)
+            //        continuousPreviewModel.surveyTableObject.surveyKey = surveyPreviewModel.surveyTableObject.surveyKey;
+
+            //    if (bEnableAssay && assayPreviewModel.assayTableObject.assayKey != "")
+            //        continuousPreviewModel.assayTableObject.assayKey = assayPreviewModel.assayTableObject.assayKey;
+
+            //    if (bEnableInterval && intervalPreviewModel.intervalTableObject.intervalKey != "")
+            //        continuousPreviewModel.intervalTableObject.intervalKey = intervalPreviewModel.intervalTableObject.intervalKey;
+
+            //    await continuousPreviewModel.PreviewDataToImport(nLimit); //50 is the limit of records to preview
+
+            //    //sets the fieldnames
+            //    await continuousPreviewModel.UpdateFieldnamesInXml(); //update XML => eventually save and open project
+            //}
+
+            //chkSkip.IsEnabled = true;
+            //chkSkip.IsChecked = continuousPreviewModel.skipTable;
+
+            //chkImport.IsChecked = continuousPreviewModel.importChecked;
+            //continuousPreviewModel.ImportAllColumns((bool)chkImport.IsChecked);
+
+            return true;
+        }
         #endregion
 
         private void SetSurveyType(bool edits)
@@ -420,6 +500,9 @@ namespace Drillholes.Windows.Dialogs
 
                     if (intervalPreviewModel.intervalTableObject != null)
                         intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.vertical;
+
+                    //if (continuousPreviewModel.continuousTableObject != null)
+                    //    continuousPreviewModel.continuousTableObject.surveyType = DrillholeSurveyType.vertical;
                 }
                 else if ((bool)radSurvey.IsChecked)
                 {
@@ -430,6 +513,9 @@ namespace Drillholes.Windows.Dialogs
 
                     if (intervalPreviewModel.intervalTableObject != null)
                         intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.collarsurvey;
+
+                    //if (continuousPreviewModel.continuousTableObject != null)
+                    //    continuousPreviewModel.continuousTableObject.surveyType = DrillholeSurveyType.collarsurvey;
                 }
                 else
                 {
@@ -441,6 +527,9 @@ namespace Drillholes.Windows.Dialogs
 
                     if (intervalPreviewModel.intervalTableObject != null)
                         intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+
+                    //if (continuousPreviewModel.continuousTableObject != null)
+                    //    continuousPreviewModel.continuousTableObject.surveyType = DrillholeSurveyType.downholesurvey;
                 }
             }
         }
@@ -532,7 +621,18 @@ namespace Drillholes.Windows.Dialogs
                 //TODO update changed field in XML
             }
 
+            else if (_tabcontrol.SelectedIndex == 4)
+            {
+                //continuousPreviewModel.UpdateFieldvalues(cboImportAs.Text, selectedValue, _searchList, (bool)chkImport.IsChecked);
+                //continuousPreviewModel.SetSecondaryKey(DrillholeConstants.holeIDName);
 
+                //DataContext = continuousPreviewModel;
+
+                ////update key 
+                //continuousPreviewModel.UpdateHoleKeyInXml();
+
+                //TODO update changed field in XML
+            }
         }
 
 
@@ -561,7 +661,11 @@ namespace Drillholes.Windows.Dialogs
                     intervalPreviewModel.importChecked = false;
                     intervalPreviewModel.ImportGenericFields(false);
                 }
-
+                else if ((bool)chkImport.IsChecked)
+                {
+                    //continuousPreviewModel.importChecked = false;
+                    //continuousPreviewModel.ImportGenericFields(false);
+                }
             }
         }
 
@@ -603,11 +707,18 @@ namespace Drillholes.Windows.Dialogs
                 assayPreviewModel.ImportGenericFields(true);
 
             }
-            if (_tabcontrol.SelectedIndex == 3)
+            else if (_tabcontrol.SelectedIndex == 3)
             {
 
                 intervalPreviewModel.ImportAllColumns((bool)chkImport.IsChecked);
                 intervalPreviewModel.ImportGenericFields(true);
+
+            }
+            else if (_tabcontrol.SelectedIndex == 4)
+            {
+
+                //continuousPreviewModel.ImportAllColumns((bool)chkImport.IsChecked);
+                //continuousPreviewModel.ImportGenericFields(true);
 
             }
 
@@ -650,7 +761,10 @@ namespace Drillholes.Windows.Dialogs
                 {
                     singletonStatistics.selectedIndex = 3;
                 }
-
+                else if (_tabcontrol.SelectedIndex == 4)
+                {
+                    singletonStatistics.selectedIndex = 4;
+                }
                 singletonStatistics.Show();
             }
             catch
@@ -702,7 +816,13 @@ namespace Drillholes.Windows.Dialogs
                 singletonMessages.selectedIndex = 3;
 
             }
+            else if (_tabIndex == 4)
+            {
+                //singletonMessages.collarObject = collarPreviewModel.collarTableObject;
+                //singletonMessages.continuousObject = continuousPreviewModel.continuousTableObject;
+                //singletonMessages.selectedIndex = 4;
 
+            }
             singletonMessages.Show();
 
         }
@@ -794,6 +914,29 @@ namespace Drillholes.Windows.Dialogs
 
                 if (assayPreviewModel.assayTableObject.tableData != null)
                     singletonEdits.assayObject = assayPreviewModel.assayTableObject;
+
+                singletonEdits.selectedIndex = 3;
+
+                singletonEdits.ShowDialog();
+
+
+            }
+            else if (_tabIndex == 4)
+            {
+                //singletonEdits.collarObject = collarPreviewModel.collarTableObject;
+                //singletonEdits.continuousObject = continuousPreviewModel.continuousTableObject;
+
+                if (collarPreviewModel.collarTableObject.surveyType == DrillholeSurveyType.downholesurvey)
+                {
+                    if (surveyPreviewModel.surveyTableObject.tableData != null)
+                        singletonEdits.surveyObject = surveyPreviewModel.surveyTableObject;
+                }
+
+                if (assayPreviewModel.assayTableObject.tableData != null)
+                    singletonEdits.assayObject = assayPreviewModel.assayTableObject;
+
+                if (intervalPreviewModel.intervalTableObject.tableData != null)
+                    singletonEdits.intervalObject = intervalPreviewModel.intervalTableObject;
 
                 singletonEdits.selectedIndex = 3;
 

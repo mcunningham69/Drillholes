@@ -125,17 +125,17 @@ namespace Drillholes.Windows.ViewModel
                     surveyTableObject.tableType.ToString().Substring(1);
 
 
-                FillTable(tableCaption, dataGrid); //tableType = 'Collar'
+                FillTable(); //tableType = 'Collar'
 
             }
 
             return true;
         }
 
-        public virtual void FillTable(string descendants, DataTable dataTable)
+        public virtual void FillTable()
         {
 
-            var elements = surveyTableObject.xPreview.Descendants(descendants).  //survey
+            var elements = surveyTableObject.xPreview.Descendants("Surveys").  //survey
                        Select(e => e.Elements());
 
 
