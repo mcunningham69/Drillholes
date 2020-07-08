@@ -33,6 +33,8 @@ namespace Drillholes.Windows.Dialogs
         public SurveyTableObject surveyObject { get; set; }
         public AssayTableObject assayObject { get; set; }
         public IntervalTableObject intervalObject { get; set; }
+        public ContinuousTableObject continuousObject { get; set; }
+
 
         public List<RowsToEdit>editedRows { get; set; }
 

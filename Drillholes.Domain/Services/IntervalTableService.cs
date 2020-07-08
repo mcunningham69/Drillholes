@@ -12,73 +12,73 @@ using AutoMapper;
 
 namespace Drillholes.Domain.Services
 {
-    public class IntervalTableService
+    public class ContinuousTableService
     {
-        private readonly IIntervalTable _interval;
+        private readonly IContinuousTable _continuous;
 
-        private IntervalTableDto intervalDto = null;
+        private ContinuousTableDto continuousDto = null;
 
-        public IntervalTableService(IIntervalTable interval)
+        public ContinuousTableService(IContinuousTable continuous)
         {
-            this._interval = interval;
+            this._continuous = continuous;
         }
 
-        public async Task<IntervalTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName)
+        public async Task<ContinuousTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName)
         {
-            intervalDto = await _interval.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName);
+            continuousDto = await _continuous.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName);
 
-            if (intervalDto.tableIsValid == false)
+            if (continuousDto.tableIsValid == false)
             {
-                throw new IntervalException("Issue with updating Interval fields");
+                throw new ContinuousException("Issue with updating fields");
             }
 
-            return mapper.Map<IntervalTableDto, IntervalTableObject>(intervalDto);
+            return mapper.Map<ContinuousTableDto, ContinuousTableObject>(continuousDto);
         }
 
-        public async Task<IntervalTableObject> GetSurveyFields(IMapper mapper, string tablePath,
+        public async Task<ContinuousTableObject> GetSurveyFields(IMapper mapper, string tablePath,
             DrillholeImportFormat tableFormat, string tableName)
         {
-            intervalDto = await _interval.RetrieveTableFieldnames(tableFormat, tablePath, tableName);
+            continuousDto = await _continuous.RetrieveTableFieldnames(tableFormat, tablePath, tableName);
 
-            if (intervalDto.tableIsValid == false)
+            if (continuousDto.tableIsValid == false)
             {
-                throw new IntervalException("Issue with Interval table");
+                throw new ContinuousException("Issue with table");
             }
 
-            return mapper.Map<IntervalTableDto, IntervalTableObject>(intervalDto);
+            return mapper.Map<ContinuousTableDto, ContinuousTableObject>(continuousDto);
 
         }
 
-        public async Task<IntervalTableObject> PreviewData(IMapper mapper, DrillholeTableType tableType, int limit)
+        public async Task<ContinuousTableObject> PreviewData(IMapper mapper, DrillholeTableType tableType, int limit)
         {
-            intervalDto = await _interval.PreviewAndImportFields(tableType, limit);
+            continuousDto = await _continuous.PreviewAndImportFields(tableType, limit);
 
-            if (intervalDto.tableIsValid == false)
+            if (continuousDto.tableIsValid == false)
             {
-                throw new IntervalException("Issue with Interval preview table");
+                throw new ContinuousException("Issue with preview table");
             }
 
-            return mapper.Map<IntervalTableDto, IntervalTableObject>(intervalDto);
+            return mapper.Map<ContinuousTableDto, ContinuousTableObject>(continuousDto);
 
         }
 
-        public async Task<IntervalTableObject> ImportAllFieldsAsGeneric(IMapper mapper, bool bImport)
+        public async Task<ContinuousTableObject> ImportAllFieldsAsGeneric(IMapper mapper, bool bImport)
         {
-            intervalDto = await _interval.ImportAllFieldsAsGeneric(bImport);
+            continuousDto = await _continuous.ImportAllFieldsAsGeneric(bImport);
 
-            if (intervalDto.tableIsValid == false)
+            if (continuousDto.tableIsValid == false)
             {
-                throw new IntervalException("Issue with importing all fields for Interval table");
+                throw new ContinuousException("Issue with importing all fields for table");
             }
 
-            return mapper.Map<IntervalTableDto, IntervalTableObject>(intervalDto);
+            return mapper.Map<ContinuousTableDto, ContinuousTableObject>(continuousDto);
         }
 
         public List<string> ReturnFields(IMapper mapper)
         {
-            mapper.Map<IntervalTableDto, IntervalTableObject>(intervalDto);
+            mapper.Map<ContinuousTableDto, ContinuousTableObject>(continuousDto);
 
-            return intervalDto.fields;
+            return continuousDto.fields;
 
         }
     }

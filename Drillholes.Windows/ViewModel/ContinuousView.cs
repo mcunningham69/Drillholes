@@ -16,10 +16,10 @@ namespace Drillholes.Windows.ViewModel
 {
     public class ContinuousView : IntervalView
     {
-        public IntervalTableObject continuousTableObject { get; set; }
+        public ContinuousTableObject continuousTableObject { get; set; }
 
-        private IntervalTableService _continuousService;
-        private IIntervalTable _continuousTable;
+        private ContinuousTableService _continuousService;
+        private IContinuousTable _continuousTable;
 
         private ImportTableFields _continuousDataFields;
         public ImportTableFields continuousDataFields
@@ -38,7 +38,7 @@ namespace Drillholes.Windows.ViewModel
         public ContinuousView(DrillholeImportFormat _tableFormat, DrillholeTableType _tableType, string _tableLocation, string _tableName)
             : base(_tableFormat, _tableType, _tableLocation, _tableName)
         {
-            continuousTableObject = new IntervalTableObject()
+            continuousTableObject = new ContinuousTableObject()
             {
                 tableFormat = _tableFormat,
                 tableType = _tableType,
@@ -60,16 +60,16 @@ namespace Drillholes.Windows.ViewModel
             else if (DrillholeImportFormat.excel_table == intervalTableObject.tableFormat)
             { }//   _collarTable = new Drillholes.ExcelDialog.CollarEngine();
             else
-                _continuousTable = new Drillholes.FileDialog.IntervalImport();
+                _continuousTable = new Drillholes.FileDialog.ContinuousImport();
 
-            var config = new MapperConfiguration(cfg => { cfg.CreateMap<IntervalTableDto, IntervalTableObject>(); });
+            var config = new MapperConfiguration(cfg => { cfg.CreateMap<ContinuousTableDto, ContinuousTableObject>(); });
 
             classMapper = config.CreateMapper();
-            var source = new IntervalTableDto();
+            var source = new ContinuousTableDto();
 
-            var dest = classMapper.Map<IntervalTableDto, IntervalTableObject>(source);
+            var dest = classMapper.Map<ContinuousTableDto, ContinuousTableObject>(source);
 
-            _continuousService = new IntervalTableService(_continuousTable);
+            _continuousService = new ContinuousTableService(_continuousTable);
 
         }
 
@@ -78,28 +78,28 @@ namespace Drillholes.Windows.ViewModel
             if (classMapper == null)
                 InitialiseTableMapping();
 
-            var intervalService = await _continuousService.GetSurveyFields(classMapper, intervalTableObject.tableLocation,
+            var continuousService = await _continuousService.GetSurveyFields(classMapper, intervalTableObject.tableLocation,
                 intervalTableObject.tableFormat, intervalTableObject.tableName);
 
             //manual map 
-            intervalTableObject.fields = intervalService.fields;
-            intervalTableObject.tableData = intervalService.tableData;
-            intervalTableObject.intervalKey = intervalService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+            continuousTableObject.fields = continuousService.fields;
+            continuousTableObject.tableData = continuousService.tableData;
+            continuousTableObject.intervalKey = continuousService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
-            intervalDataFields = intervalService.tableData;
+            continuousDataFields = continuousService.tableData;
             return true;
         }
 
-        public virtual async Task<bool> PreviewDataToImport(int limit)
+        public override async Task<bool> PreviewDataToImport(int limit)
         {
             List<string> fields = new List<string>();
 
-            if (intervalTableObject.xPreview == null)
+            if (continuousTableObject.xPreview == null)
             {
 
-                var intervalService = await _continuousService.PreviewData(classMapper, intervalTableObject.tableType, limit);
+                var continuousService = await _continuousService.PreviewData(classMapper, continuousTableObject.tableType, limit);
 
-                intervalTableObject.xPreview = intervalService.xPreview;
+                continuousTableObject.xPreview = continuousService.xPreview;
 
             }
 
@@ -114,56 +114,60 @@ namespace Drillholes.Windows.ViewModel
                 }
 
 
-                tableCaption = char.ToUpper(intervalTableObject.tableType.ToString()[0]) +
-                    intervalTableObject.tableType.ToString().Substring(1);
+                tableCaption = char.ToUpper(continuousTableObject.tableType.ToString()[0]) +
+                    continuousTableObject.tableType.ToString().Substring(1);
 
 
-                FillTable(tableCaption, dataGrid); //tableType = 'Collar'
+                FillTable(); //tableType = 'Collar'
 
             }
 
             return true;
         }
 
-        public virtual void FillTable(string descendants, DataTable dataTable)
+        public virtual void FillTable()
         {
 
-            var elements = intervalTableObject.xPreview.Descendants(descendants).  //assay
-                       Select(e => e.Elements());
+            dataGrid.Rows.Clear();
+
+            var continuousElements = continuousTableObject.xPreview.Elements();
 
 
-            foreach (var rows in elements)
+            foreach (var element in continuousElements)
             {
-                List<XmlNameAndValue> _namesAndValues = new List<XmlNameAndValue>();
-                foreach (var element in rows)
+                if (element.Attribute("Ignore").Value.ToUpper() == "FALSE")
                 {
-
-                    _namesAndValues.Add(new XmlNameAndValue { Name = element.Name.ToString(), Value = element.Value });
-                }
-
-                List<string> myValues = new List<string>();
-
-                foreach (XmlNameAndValue node in _namesAndValues)
-                {
-                    if (node.Value.ToString() == "")
+                    var rows = element.Elements();
+                    List<XmlNameAndValue> _namesAndValues = new List<XmlNameAndValue>();
+                    foreach (var row in rows)
                     {
-                        node.Value = "-";
+
+                        _namesAndValues.Add(new XmlNameAndValue { Name = row.Name.ToString(), Value = row.Value });
                     }
 
-                    myValues.Add(node.Value.ToString());
+                    List<string> myValues = new List<string>();
 
+                    foreach (XmlNameAndValue node in _namesAndValues)
+                    {
+                        if (node.Value.ToString() == "")
+                        {
+                            node.Value = "-";
+                        }
+
+                        myValues.Add(node.Value.ToString());
+
+                    }
+
+                    if (myValues.Count > 0)
+                        dataGrid.Rows.Add(myValues.ToArray());
                 }
-
-                if (myValues.Count > 0)
-                    dataTable.Rows.Add(myValues.ToArray());
-
             }
 
-            int noOfRecords = dataTable.Rows.Count;
+            int noOfRecords = dataGrid.Rows.Count;
 
             //white space for formatting on status bar
-            string displayItems = (noOfRecords == 1 ? noOfRecords.ToString() + " " + intervalTableObject.tableType +
-                "          " : noOfRecords.ToString() + " " + intervalTableObject.tableType + "s          ");
+            string displayItems = (noOfRecords == 1 ? noOfRecords.ToString() + " " + continuousTableObject.tableType +
+                "          " : noOfRecords.ToString() + " " + continuousTableObject.tableType + "s          ");
 
         }
 
@@ -171,23 +175,23 @@ namespace Drillholes.Windows.ViewModel
         {
             if (_continuousService != null)
             {
-                var intervalService = await _continuousService.ImportAllFieldsAsGeneric(classMapper, bImport);
-                intervalTableObject.tableData = intervalService.tableData;
+                var continuousService = await _continuousService.ImportAllFieldsAsGeneric(classMapper, bImport);
+                continuousTableObject.tableData = continuousService.tableData;
             }
 
         }
 
         public override async Task<bool> UpdateFieldnamesInXml()
         {
-            UpdateFieldnamesXml.UpdateFieldnamesXML(intervalTableObject.tableType, intervalTableObject.tableData,
-                intervalTableObject.collarKey, intervalTableObject.intervalKey, intervalTableObject.tableName);
+            UpdateFieldnamesXml.UpdateFieldnamesXML(continuousTableObject.tableType, continuousTableObject.tableData,
+                continuousTableObject.collarKey, continuousTableObject.intervalKey, continuousTableObject.tableName);
 
             return true;
         }
 
         public override void SetSecondaryKey(string holeKey)
         {
-            intervalTableObject.intervalKey = intervalDataFields.Where(o => o.columnImportName == holeKey).Select(p => p.columnHeader).FirstOrDefault().ToString();
+            continuousTableObject.intervalKey = continuousDataFields.Where(o => o.columnImportName == holeKey).Select(p => p.columnHeader).FirstOrDefault().ToString();
         }
 
         public override async Task<bool> UpdateHoleKeyInXml()
@@ -204,11 +208,11 @@ namespace Drillholes.Windows.ViewModel
             string _strSearch = _searchList.columnHeader;
             string _strName = _searchList.columnImportName;
 
-            var intervalService = _continuousService.UpdateFieldvalues(previousSelection, classMapper, selectedValue,
+            var continuousService = _continuousService.UpdateFieldvalues(previousSelection, classMapper, selectedValue,
                 _strSearch, _strName);
 
 
-            intervalDataFields = intervalService.Result.tableData;
+            continuousDataFields = continuousService.Result.tableData;
 
 
             if (selectedValue == DrillholeConstants.notImported)
@@ -217,7 +221,7 @@ namespace Drillholes.Windows.ViewModel
                 ImportGenericFields(bImport);
             }
 
-            intervalTableObject.surveyKey = intervalDataFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+            surveyTableObject.surveyKey = continuousDataFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
         }
 

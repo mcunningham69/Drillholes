@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Drillholes.Domain.DataObject
 {
-    public class IntervalTableObject : AssayTableObject
+    public class ContinuousTableObject : IntervalTableObject
     {
         public new SummaryIntervalStatistics SummaryStats { get; set; }
 
-        public string intervalKey { get; set; }
+        public string continuousKey { get; set; }
     }
 }

@@ -118,48 +118,52 @@ namespace Drillholes.Windows.ViewModel
                     intervalTableObject.tableType.ToString().Substring(1);
 
 
-                FillTable(tableCaption, dataGrid); //tableType = 'Collar'
+                FillTable(); //tableType = 'Collar'
 
             }
 
             return true;
         }
 
-        public virtual void FillTable(string descendants, DataTable dataTable)
+        public virtual void FillTable()
         {
 
-            var elements = intervalTableObject.xPreview.Descendants(descendants).  //assay
-                       Select(e => e.Elements());
+            dataGrid.Rows.Clear();
+
+            var intervalElements = intervalTableObject.xPreview.Elements();
 
 
-            foreach (var rows in elements)
+            foreach (var element in intervalElements)
             {
-                List<XmlNameAndValue> _namesAndValues = new List<XmlNameAndValue>();
-                foreach (var element in rows)
+                if (element.Attribute("Ignore").Value.ToUpper() == "FALSE")
                 {
-
-                    _namesAndValues.Add(new XmlNameAndValue { Name = element.Name.ToString(), Value = element.Value });
-                }
-
-                List<string> myValues = new List<string>();
-
-                foreach (XmlNameAndValue node in _namesAndValues)
-                {
-                    if (node.Value.ToString() == "")
+                    var rows = element.Elements();
+                    List<XmlNameAndValue> _namesAndValues = new List<XmlNameAndValue>();
+                    foreach (var row in rows)
                     {
-                        node.Value = "-";
+
+                        _namesAndValues.Add(new XmlNameAndValue { Name = row.Name.ToString(), Value = row.Value });
                     }
 
-                    myValues.Add(node.Value.ToString());
+                    List<string> myValues = new List<string>();
 
+                    foreach (XmlNameAndValue node in _namesAndValues)
+                    {
+                        if (node.Value.ToString() == "")
+                        {
+                            node.Value = "-";
+                        }
+
+                        myValues.Add(node.Value.ToString());
+
+                    }
+
+                    if (myValues.Count > 0)
+                        dataGrid.Rows.Add(myValues.ToArray());
                 }
-
-                if (myValues.Count > 0)
-                    dataTable.Rows.Add(myValues.ToArray());
-
             }
 
-            int noOfRecords = dataTable.Rows.Count;
+            int noOfRecords = dataGrid.Rows.Count;
 
             //white space for formatting on status bar
             string displayItems = (noOfRecords == 1 ? noOfRecords.ToString() + " " + intervalTableObject.tableType +

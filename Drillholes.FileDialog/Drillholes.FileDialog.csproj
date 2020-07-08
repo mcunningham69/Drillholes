@@ -49,6 +49,7 @@
     <Compile Include="AssayImport.cs" />
     <Compile Include="CollarImport.cs" />
     <Compile Include="DrillholeImportEngine.cs" />
+    <Compile Include="ContinuousImport.cs" />
     <Compile Include="IntervalImport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SurveyImport.cs" />

@@ -134,39 +134,46 @@ namespace Drillholes.Windows.ViewModel
 
         public virtual void FillTable()
         {
+            dataGrid.Rows.Clear();
 
-            var elements = surveyTableObject.xPreview.Descendants("Surveys").  //survey
-                       Select(e => e.Elements());
+            var surveyElements = surveyTableObject.xPreview.Elements();
 
 
-            foreach (var rows in elements)
+            foreach (var element in surveyElements)
             {
-                List<XmlNameAndValue> _namesAndValues = new List<XmlNameAndValue>();
-                foreach (var element in rows)
+
+                if (element.Attribute("Ignore").Value.ToUpper() == "FALSE")
                 {
+                    var rows = element.Elements();
 
-                    _namesAndValues.Add(new XmlNameAndValue { Name = element.Name.ToString(), Value = element.Value });
-                }
 
-                List<string> myValues = new List<string>();
 
-                foreach (XmlNameAndValue node in _namesAndValues)
-                {
-                    if (node.Value.ToString() == "")
+                    List<XmlNameAndValue> _namesAndValues = new List<XmlNameAndValue>();
+                    foreach (var row in rows)
                     {
-                        node.Value = "-";
+
+                        _namesAndValues.Add(new XmlNameAndValue { Name = row.Name.ToString(), Value = row.Value });
                     }
 
-                    myValues.Add(node.Value.ToString());
+                    List<string> myValues = new List<string>();
 
+                    foreach (XmlNameAndValue node in _namesAndValues)
+                    {
+                        if (node.Value.ToString() == "")
+                        {
+                            node.Value = "-";
+                        }
+
+                        myValues.Add(node.Value.ToString());
+
+                    }
+
+                    if (myValues.Count > 0)
+                        dataGrid.Rows.Add(myValues.ToArray());
                 }
-
-                if (myValues.Count > 0)
-                    dataTable.Rows.Add(myValues.ToArray());
-
             }
 
-            int noOfRecords = dataTable.Rows.Count;
+            int noOfRecords = dataGrid.Rows.Count;
 
             //white space for formatting on status bar
             string displayItems = (noOfRecords == 1 ? noOfRecords.ToString() + " " + surveyTableObject.tableType +
@@ -223,13 +230,5 @@ namespace Drillholes.Windows.ViewModel
             surveyTableObject.surveyKey = surveyDataFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
         }
-
-        //public override async Task<bool> SummaryStatistics()
-        //{
-        //    //if (statisticsMapper == null)
-        //    //    _surveyStatistics = await InitialiseStatisticsMapping();
-
-        //    return true;
-        //}
     }
 }

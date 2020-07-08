@@ -47,6 +47,7 @@
     <Compile Include="DataObject\IntervalDesurveyObject.cs" />
     <Compile Include="DataObject\AssayTableObject.cs" />
     <Compile Include="DataObject\AssayDesurveyObject.cs" />
+    <Compile Include="DataObject\ContinuousTableObject.cs" />
     <Compile Include="DataObject\SurveyDesurveyObject.cs" />
     <Compile Include="DataObject\CollarDesurveyObject.cs" />
     <Compile Include="DataObject\CollarTableObject.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="DTO\CollarDesurveyDto.cs" />
     <Compile Include="DTO\CollarTableDto.cs" />
     <Compile Include="DTO\IntervalDesurveyDto.cs" />
+    <Compile Include="DTO\ContinuousTableDto.cs" />
     <Compile Include="DTO\SurveyDesurveyDto.cs" />
     <Compile Include="DTO\ValidationAssayDto.cs" />
     <Compile Include="DTO\ValidationCollarDto.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="EditEnvironment.cs" />
     <Compile Include="Enum\DrillholeDesurveyEnum.cs" />
     <Compile Include="Enum\DrillholeEnums.cs" />
+    <Compile Include="Exceptions\ContinuousException.cs" />
     <Compile Include="Exceptions\AssayException.cs" />
     <Compile Include="Exceptions\IntervalStatisticsException.cs" />
     <Compile Include="Exceptions\CollarException.cs" />
@@ -105,9 +108,10 @@
     <Compile Include="Interfaces\ICollarStatistics.cs" />
     <Compile Include="Interfaces\ICollarTable.cs" />
     <Compile Include="Interfaces\ICollarValidation.cs" />
+    <Compile Include="Interfaces\IContinuousTable.cs" />
     <Compile Include="Interfaces\IDesurveyDrillhole.cs" />
     <Compile Include="Interfaces\IDrillholeTables.cs" />
-    <Compile Include="Interfaces\IInterval.cs" />
+    <Compile Include="Interfaces\IIntervalTable.cs" />
     <Compile Include="Interfaces\IIntervalEdit.cs" />
     <Compile Include="Interfaces\IIntervalStatistics.cs" />
     <Compile Include="Interfaces\IIntervalValidation.cs" />
@@ -130,6 +134,7 @@
     <Compile Include="Services\CollarStatisticsService.cs" />
     <Compile Include="Services\CollarTableService.cs" />
     <Compile Include="Services\DrillholeImportServices.cs" />
+    <Compile Include="Services\ContinuousTableService.cs" />
     <Compile Include="Services\IntervalTableService.cs" />
     <Compile Include="Services\AssayStatisticsService.cs" />
     <Compile Include="Services\IntervalValidationService.cs" />
