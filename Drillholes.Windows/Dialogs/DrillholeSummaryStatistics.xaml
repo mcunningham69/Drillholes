@@ -5,485 +5,548 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Drillholes.Windows.Dialogs"
         mc:Ignorable="d"
-        Title="Preview Drillhole Statistics" Height="Auto" Width="750" WindowStartupLocation="CenterScreen" FontSize="14" Loaded="Window_Loaded">
+        Title="Preview Drillhole Statistics" Height="750" Width="650" WindowStartupLocation="CenterScreen" FontSize="14" Loaded="Window_Loaded" Closing="Window_Closing">
 
     <Window.Background>
         <ImageBrush ImageSource="../Images/glencoe.jpg" Opacity="0.8" Stretch="UniformToFill"/>
     </Window.Background>
 
-    <Grid>
-        <Grid.Resources>
-            <ControlTemplate x:Key="validGlassButton" TargetType="{x:Type Button}">
-                <ControlTemplate.Resources>
-                    <!-- Base style that sets corner radii and stroke thickness. -->
-                    <Style x:Key="styBase" TargetType="{x:Type Rectangle}">
-                        <Setter Property="RadiusX" Value="20"/>
-                        <Setter Property="RadiusY" Value="20"/>
-                        <Setter Property="StrokeThickness" Value="5"/>
-                    </Style>
+    <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.Resources>
+                <ControlTemplate x:Key="validGlassButton" TargetType="{x:Type Button}">
+                    <ControlTemplate.Resources>
+                        <!-- Base style that sets corner radii and stroke thickness. -->
+                        <Style x:Key="styBase" TargetType="{x:Type Rectangle}">
+                            <Setter Property="RadiusX" Value="20"/>
+                            <Setter Property="RadiusY" Value="20"/>
+                            <Setter Property="StrokeThickness" Value="5"/>
+                        </Style>
 
-                    <!-- Style for "normal" status. -->
-                    <Style TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
-                        <Setter Property="Fill">
-                            <Setter.Value>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                    <GradientStop Color="DarkBlue" Offset="0"/>
-                                    <GradientStop Color="LightBlue" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="Stroke">
-                            <Setter.Value>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                    <GradientStop Color="DarkBlue" Offset="1"/>
-                                    <GradientStop Color="LightBlue" Offset="0"/>
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
+                        <!-- Style for "normal" status. -->
+                        <Style TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
+                            <Setter Property="Fill">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="DarkBlue" Offset="0"/>
+                                        <GradientStop Color="LightBlue" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Stroke">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="DarkBlue" Offset="1"/>
+                                        <GradientStop Color="LightBlue" Offset="0"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
 
-                    <!-- Style when IsDefaulted. -->
-                    <Style x:Key="styIsDefaulted" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
-                        <Setter Property="Fill">
-                            <Setter.Value>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                    <GradientStop Color="DarkBlue" Offset="0"/>
-                                    <GradientStop Color="LightBlue" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="Stroke">
-                            <Setter.Value>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                    <GradientStop Color="DarkBlue" Offset="1"/>
-                                    <GradientStop Color="Black" Offset="0"/>
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
+                        <!-- Style when IsDefaulted. -->
+                        <Style x:Key="styIsDefaulted" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
+                            <Setter Property="Fill">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="DarkBlue" Offset="0"/>
+                                        <GradientStop Color="LightBlue" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Stroke">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="DarkBlue" Offset="1"/>
+                                        <GradientStop Color="Black" Offset="0"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
 
-                    <!-- Style when disabled. -->
-                    <Style x:Key="styDisabled" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
-                        <Setter Property="Opacity" Value="0.75"/>
-                        <Setter Property="Fill">
-                            <Setter.Value>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                    <GradientStop Color="Gray" Offset="0"/>
-                                    <GradientStop Color="White" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="Stroke">
-                            <Setter.Value>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                    <GradientStop Color="Gray" Offset="1"/>
-                                    <GradientStop Color="White" Offset="0"/>
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ControlTemplate.Resources>
-                <Grid x:Name="grdMain" ClipToBounds="True" Opacity="0.5"
+                        <!-- Style when disabled. -->
+                        <Style x:Key="styDisabled" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
+                            <Setter Property="Opacity" Value="0.75"/>
+                            <Setter Property="Fill">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="Gray" Offset="0"/>
+                                        <GradientStop Color="White" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Stroke">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="Gray" Offset="1"/>
+                                        <GradientStop Color="White" Offset="0"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ControlTemplate.Resources>
+                    <Grid x:Name="grdMain" ClipToBounds="True" Opacity="0.5"
 			 Width="{TemplateBinding Width}"
 			 Height="{TemplateBinding Height}">
-                    <Rectangle x:Name="rectMain"/>
+                        <Rectangle x:Name="rectMain"/>
 
-                    <ContentPresenter
+                        <ContentPresenter
 				 VerticalAlignment="Center"
                  HorizontalAlignment="Center"/>
-                </Grid>
+                    </Grid>
 
-                <!-- Behaviors. -->
-                <ControlTemplate.Triggers>
-                    <!-- Mouse over. -->
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter TargetName="grdMain" Property="Opacity"
+                    <!-- Behaviors. -->
+                    <ControlTemplate.Triggers>
+                        <!-- Mouse over. -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="grdMain" Property="Opacity"
                      Value="0.75"/>
-                    </Trigger>
+                        </Trigger>
 
-                    <!-- Focus. -->
-                    <Trigger Property="IsFocused" Value="True">
-                        <Setter TargetName="grdMain" Property="Opacity"
+                        <!-- Focus. -->
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="grdMain" Property="Opacity"
                      Value="0.75"/>
-                    </Trigger>
+                        </Trigger>
 
-                    <!-- Defaulted. -->
-                    <Trigger Property="IsDefaulted" Value="True">
-                        <Setter TargetName="rectMain" Property="Style"
+                        <!-- Defaulted. -->
+                        <Trigger Property="IsDefaulted" Value="True">
+                            <Setter TargetName="rectMain" Property="Style"
                      Value="{StaticResource styIsDefaulted}"/>
-                    </Trigger>
+                        </Trigger>
 
-                    <!-- Pressed. This comes after Focus so it gets precedence. -->
-                    <Trigger Property="IsPressed" Value="True">
-                        <Setter TargetName="grdMain" Property="Opacity"
+                        <!-- Pressed. This comes after Focus so it gets precedence. -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="grdMain" Property="Opacity"
                      Value="1"/>
-                    </Trigger>
+                        </Trigger>
 
-                    <!-- Disabled. This comes last so it gets ultimate precedence. -->
-                    <Trigger Property="IsEnabled" Value="False">
-                        <Setter TargetName="rectMain" Property="Style"
+                        <!-- Disabled. This comes last so it gets ultimate precedence. -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="rectMain" Property="Style"
                      Value="{StaticResource styDisabled}"/>
-                    </Trigger>
-                </ControlTemplate.Triggers>
-            </ControlTemplate>
-            <Style TargetType="Button">
-                <Setter Property="Height" Value="40"/>
-                <Setter Property="Margin" Value="10"/>
-                <Setter Property="FontStyle" Value="Normal"/>
-                <Setter Property="FontSize" Value="20"/>
-                <Setter Property="FontWeight" Value="Bold"/>
-                <Setter Property="Template" Value="{StaticResource validGlassButton}"/>
-            </Style>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+                <Style TargetType="Button">
+                    <Setter Property="Height" Value="40"/>
+                    <Setter Property="Margin" Value="10"/>
+                    <Setter Property="FontStyle" Value="Normal"/>
+                    <Setter Property="FontSize" Value="20"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="Template" Value="{StaticResource validGlassButton}"/>
+                </Style>
 
-            <Style TargetType="{x:Type DataGrid}">
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="true">
-                        <Setter Property="Foreground" Value="Gray"/>
-                        <Setter Property="Cursor" Value="Hand"/>
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </Grid.Resources>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"></ColumnDefinition>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition Width="10"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="10"/>
-        </Grid.RowDefinitions>
-        <Label Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold" Content="Summary Drillhole Descriptive Statistics"/>
-        <DockPanel Grid.Column="1" Grid.Row="1">
-            <TabControl  Opacity="0.75" x:Name="ValidateTabs" Grid.Row="3"  Grid.Column="3" BorderBrush="LightCyan" BorderThickness="3" TabStripPlacement="Top" 
+                <Style TargetType="{x:Type DataGrid}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="Gray"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="10"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold" Content="Summary Drillhole Descriptive Statistics"/>
+            <DockPanel Grid.Column="1" Grid.Row="1">
+                <TabControl  Opacity="0.75" x:Name="ValidateTabs" Grid.Row="3"  Grid.Column="3" BorderBrush="LightCyan" BorderThickness="3" TabStripPlacement="Top" 
                     Height="Auto" Width="Auto" VerticalAlignment="Top" SelectionChanged="ValidatedTabs_SelectionChanged"  
                     Visibility="Visible">
 
-                <TabItem Header="Collar" IsEnabled="True">
-                    <DockPanel VerticalAlignment="Top" HorizontalAlignment="Stretch">
-                        <StackPanel>
-                            <Grid Background="White">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="10"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="5"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="15"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                    <TabItem Header="Collar" IsEnabled="True">
+                        <DockPanel VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                            <StackPanel>
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="5"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="15"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                                <TextBlock Text="Table Name: " Grid.Column="0" Grid.Row="1" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableName}"  Grid.Column="2" Grid.Row="1" />
-                                <TextBlock Text="Imported Path: " Grid.Column="0" Grid.Row="2" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableLocation}" Grid.Column="2" Grid.Row="2" />
-                                <TextBlock Text="Table Format: " Grid.Column="0" Grid.Row="3" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableFormat}" Grid.Column="2" Grid.Row="3" />
-                                <TextBlock Text="Mandatory Fields: " Grid.Column="0" Grid.Row="4" FontWeight="Bold"/>
-                                <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding Path=tableFields}" />
-                                <TextBlock Text="Number of Collars: " Grid.Column="0" Grid.Row="6" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/collarCount}" Grid.Column="2" Grid.Row="6"/>
-                                <TextBlock Text="Min. Length: " Grid.Column="0" Grid.Row="8" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinimumLength}" Grid.Column="2" Grid.Row="8"/>
-                                <TextBlock Text="Max. Length: " Grid.Column="0" Grid.Row="9" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaximumLength}" Grid.Column="2" Grid.Row="9"/>
-                                <TextBlock Text="Average Length: " Grid.Column="0" Grid.Row="10" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AverageLength}" Grid.Column="2" Grid.Row="10"/>
-                                <TextBlock Text="Total Length: " Grid.Column="0" Grid.Row="11" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/TotalLength}" Grid.Column="2" Grid.Row="11"/>
-                                <TextBlock Text="Minimum X: " Grid.Column="0" Grid.Row="13" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinimumX}" Grid.Column="2" Grid.Row="13" />
-                                <TextBlock Text="Minimum Y: " Grid.Column="0" Grid.Row="14" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinimumY}" Grid.Column="2" Grid.Row="14" />
-                                <TextBlock Text="Minimum Z: " Grid.Column="0" Grid.Row="15" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinimumZ}" Grid.Column="2" Grid.Row="15" />
-                                <TextBlock Text="Maximum X: " Grid.Column="0" Grid.Row="16" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaximumX}" Grid.Column="2" Grid.Row="16" />
-                                <TextBlock Text="Maximum Y: " Grid.Column="0" Grid.Row="17" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaximumY}" Grid.Column="2" Grid.Row="17" />
-                                <TextBlock Text="Maximum Z: " Grid.Column="0" Grid.Row="18" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaximumZ}" Grid.Column="2" Grid.Row="18" />
-                                <TextBlock Text="Extent X: " Grid.Column="0" Grid.Row="19" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/ExtentX}" Grid.Column="2" Grid.Row="19" />
-                                <TextBlock Text="Extent Y: " Grid.Column="0" Grid.Row="20" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/ExtentY}" Grid.Column="2" Grid.Row="20" />
-                                <TextBlock Text="Extent Z: " Grid.Column="0" Grid.Row="21" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/ExtentZ}" Grid.Column="2" Grid.Row="21" />
-                                <TextBlock Text="Area: " Grid.Column="0" Grid.Row="23" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AreaOfExtent}" Grid.Column="2" Grid.Row="23" />
-                                <TextBlock Text="Volume: " Grid.Column="0" Grid.Row="24" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/VolumeOfExtent}" Grid.Column="2" Grid.Row="24" />
+                                    <TextBlock Text="Table Name: " Grid.Column="0" Grid.Row="1" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableName}"  Grid.Column="2" Grid.Row="1" />
+                                    <TextBlock Text="Imported Path: " Grid.Column="0" Grid.Row="2" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableLocation}" Grid.Column="2" Grid.Row="2" />
+                                    <TextBlock Text="Table Format: " Grid.Column="0" Grid.Row="3" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableFormat}" Grid.Column="2" Grid.Row="3" />
+                                    <TextBlock Text="Mandatory Fields: " Grid.Column="0" Grid.Row="4" FontWeight="Bold"/>
+                                    <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding Path=tableFields}" />
+                                    <TextBlock Text="Number of Collars: " Grid.Column="0" Grid.Row="6" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/collarCount}" Grid.Column="2" Grid.Row="6"/>
+                                    <TextBlock Text="Min. Length: " Grid.Column="0" Grid.Row="8" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinimumLength}" Grid.Column="2" Grid.Row="8"/>
+                                    <TextBlock Text="Max. Length: " Grid.Column="0" Grid.Row="9" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaximumLength}" Grid.Column="2" Grid.Row="9"/>
+                                    <TextBlock Text="Average Length: " Grid.Column="0" Grid.Row="10" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageLength}" Grid.Column="2" Grid.Row="10"/>
+                                    <TextBlock Text="Total Length: " Grid.Column="0" Grid.Row="11" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/TotalLength}" Grid.Column="2" Grid.Row="11"/>
+                                    <TextBlock Text="Minimum X: " Grid.Column="0" Grid.Row="13" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinimumX}" Grid.Column="2" Grid.Row="13" />
+                                    <TextBlock Text="Minimum Y: " Grid.Column="0" Grid.Row="14" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinimumY}" Grid.Column="2" Grid.Row="14" />
+                                    <TextBlock Text="Minimum Z: " Grid.Column="0" Grid.Row="15" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinimumZ}" Grid.Column="2" Grid.Row="15" />
+                                    <TextBlock Text="Maximum X: " Grid.Column="0" Grid.Row="16" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaximumX}" Grid.Column="2" Grid.Row="16" />
+                                    <TextBlock Text="Maximum Y: " Grid.Column="0" Grid.Row="17" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaximumY}" Grid.Column="2" Grid.Row="17" />
+                                    <TextBlock Text="Maximum Z: " Grid.Column="0" Grid.Row="18" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaximumZ}" Grid.Column="2" Grid.Row="18" />
+                                    <TextBlock Text="Extent X: " Grid.Column="0" Grid.Row="19" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/ExtentX}" Grid.Column="2" Grid.Row="19" />
+                                    <TextBlock Text="Extent Y: " Grid.Column="0" Grid.Row="20" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/ExtentY}" Grid.Column="2" Grid.Row="20" />
+                                    <TextBlock Text="Extent Z: " Grid.Column="0" Grid.Row="21" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/ExtentZ}" Grid.Column="2" Grid.Row="21" />
+                                    <TextBlock Text="Area: " Grid.Column="0" Grid.Row="23" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AreaOfExtent}" Grid.Column="2" Grid.Row="23" />
+                                    <TextBlock Text="Volume: " Grid.Column="0" Grid.Row="24" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/VolumeOfExtent}" Grid.Column="2" Grid.Row="24" />
 
-                                <TextBlock Text="Minimum Dip: " Grid.Column="0" Grid.Row="26" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinimumDip}" Grid.Column="2" Grid.Row="26"/>
-                                <TextBlock Text="Maximum Dip: " Grid.Column="0" Grid.Row="27" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaximumDip}" Grid.Column="2" Grid.Row="27"/>
-                                <TextBlock Text="Average Dip: " Grid.Column="0" Grid.Row="28" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AverageDip}" Grid.Column="2" Grid.Row="28"/>
+                                    <TextBlock Text="Minimum Dip: " Grid.Column="0" Grid.Row="26" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinimumDip}" Grid.Column="2" Grid.Row="26"/>
+                                    <TextBlock Text="Maximum Dip: " Grid.Column="0" Grid.Row="27" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaximumDip}" Grid.Column="2" Grid.Row="27"/>
+                                    <TextBlock Text="Average Dip: " Grid.Column="0" Grid.Row="28" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageDip}" Grid.Column="2" Grid.Row="28"/>
 
-                                <TextBlock Text="Minimum Direction: " Grid.Column="0" Grid.Row="29" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinimumAzi}" Grid.Column="2" Grid.Row="29"/>
-                                <TextBlock Text="Maximum Direction: " Grid.Column="0" Grid.Row="30" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaximumAzi}" Grid.Column="2" Grid.Row="30"/>
-                                <TextBlock Text="Average Direction: " Grid.Column="0" Grid.Row="31" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AverageAzi}" Grid.Column="2" Grid.Row="31"/>
-                            </Grid>
+                                    <TextBlock Text="Minimum Direction: " Grid.Column="0" Grid.Row="29" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinimumAzi}" Grid.Column="2" Grid.Row="29"/>
+                                    <TextBlock Text="Maximum Direction: " Grid.Column="0" Grid.Row="30" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaximumAzi}" Grid.Column="2" Grid.Row="30"/>
+                                    <TextBlock Text="Average Direction: " Grid.Column="0" Grid.Row="31" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageAzi}" Grid.Column="2" Grid.Row="31"/>
+                                </Grid>
 
-                        </StackPanel>
+                            </StackPanel>
 
-                    </DockPanel>
+                        </DockPanel>
 
-                </TabItem>
-                <TabItem Header="Survey" IsEnabled="False">
-                    <DockPanel VerticalAlignment="Top" HorizontalAlignment="Stretch">
-                        <StackPanel>
-                            <Grid Background="White">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="10"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="5"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="15"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                    </TabItem>
+                    <TabItem Header="Survey" IsEnabled="False">
+                        <DockPanel VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                            <StackPanel>
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="5"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="15"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                                <TextBlock Text="Table Name: " Grid.Column="0" Grid.Row="1" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableName}"  Grid.Column="2" Grid.Row="1"/>
+                                    <TextBlock Text="Table Name: " Grid.Column="0" Grid.Row="1" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableName}"  Grid.Column="2" Grid.Row="1"/>
 
-                                <TextBlock Text="Imported Path: " Grid.Column="0" Grid.Row="2" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableLocation}" Grid.Column="2" Grid.Row="2" />
-                                <TextBlock Text="Table Format: " Grid.Column="0" Grid.Row="3" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableFormat}" Grid.Column="2" Grid.Row="3" />
-                                <TextBlock Text="Mandatory Fields: " Grid.Column="0" Grid.Row="4" FontWeight="Bold" />
-                                <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding Path=tableFields}" />
+                                    <TextBlock Text="Imported Path: " Grid.Column="0" Grid.Row="2" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableLocation}" Grid.Column="2" Grid.Row="2" />
+                                    <TextBlock Text="Table Format: " Grid.Column="0" Grid.Row="3" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableFormat}" Grid.Column="2" Grid.Row="3" />
+                                    <TextBlock Text="Mandatory Fields: " Grid.Column="0" Grid.Row="4" FontWeight="Bold" />
+                                    <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding Path=tableFields}" />
 
-                                <TextBlock Text="Number of Collars: " Grid.Column="0" Grid.Row="6" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/collarCount}" Grid.Column="2" Grid.Row="6"/>
+                                    <TextBlock Text="Number of Collars: " Grid.Column="0" Grid.Row="6" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/collarCount}" Grid.Column="2" Grid.Row="6"/>
 
-                                <TextBlock Text="Number of Surveys: " Grid.Column="0" Grid.Row="7" FontWeight="Bold"  />
-                                <TextBlock Text="{Binding Path=ShowStatistics/surveyCount}" Grid.Column="2" Grid.Row="7"/>
+                                    <TextBlock Text="Number of Surveys: " Grid.Column="0" Grid.Row="7" FontWeight="Bold"  />
+                                    <TextBlock Text="{Binding Path=ShowStatistics/surveyCount}" Grid.Column="2" Grid.Row="7"/>
 
-                                <TextBlock Text="Min. Surveys per hole: " Grid.Column="0" Grid.Row="9" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinSurveyCount}" Grid.Column="2" Grid.Row="9" />
+                                    <TextBlock Text="Min. Surveys per hole: " Grid.Column="0" Grid.Row="9" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinSurveyCount}" Grid.Column="2" Grid.Row="9" />
 
-                                <TextBlock Text="Max. Surveys per hole: " Grid.Column="0" Grid.Row="10" FontWeight="Bold" />
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaxSurveyCount}" Grid.Column="2" Grid.Row="10"/>
+                                    <TextBlock Text="Max. Surveys per hole: " Grid.Column="0" Grid.Row="10" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaxSurveyCount}" Grid.Column="2" Grid.Row="10"/>
 
-                                <TextBlock Text="Average Surveys per hole: " Grid.Column="0" Grid.Row="11" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AverageSurveyCount}" Grid.Column="2" Grid.Row="11" />
+                                    <TextBlock Text="Average Surveys per hole: " Grid.Column="0" Grid.Row="11" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageSurveyCount}" Grid.Column="2" Grid.Row="11" />
 
-                                <TextBlock Text="Min. Survey length: " Grid.Column="0" Grid.Row="13" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinSurveyLength}" Grid.Column="2" Grid.Row="13"/>
-                                <TextBlock Text="Max. Survey length: " Grid.Column="0" Grid.Row="14" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaxSurveyLength}" Grid.Column="2" Grid.Row="14"/>
-                                <TextBlock Text="Average Survey length: " Grid.Column="0" Grid.Row="15" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AverageSurveyLength}" Grid.Column="2" Grid.Row="15"/>
-                                <TextBlock Text="Minimum Dip: " Grid.Column="0" Grid.Row="17" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinimumDip}" Grid.Column="2" Grid.Row="17"/>
-                                <TextBlock Text="Maximum Dip: " Grid.Column="0" Grid.Row="18" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaximumDip}" Grid.Column="2" Grid.Row="18"/>
-                                <TextBlock Text="Average Dip: " Grid.Column="0" Grid.Row="19" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AverageDip}" Grid.Column="2" Grid.Row="19"/>
+                                    <TextBlock Text="Min. Survey length: " Grid.Column="0" Grid.Row="13" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinSurveyLength}" Grid.Column="2" Grid.Row="13"/>
+                                    <TextBlock Text="Max. Survey length: " Grid.Column="0" Grid.Row="14" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaxSurveyLength}" Grid.Column="2" Grid.Row="14"/>
+                                    <TextBlock Text="Average Survey length: " Grid.Column="0" Grid.Row="15" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageSurveyLength}" Grid.Column="2" Grid.Row="15"/>
+                                    <TextBlock Text="Minimum Dip: " Grid.Column="0" Grid.Row="17" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinimumDip}" Grid.Column="2" Grid.Row="17"/>
+                                    <TextBlock Text="Maximum Dip: " Grid.Column="0" Grid.Row="18" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaximumDip}" Grid.Column="2" Grid.Row="18"/>
+                                    <TextBlock Text="Average Dip: " Grid.Column="0" Grid.Row="19" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageDip}" Grid.Column="2" Grid.Row="19"/>
 
-                                <TextBlock Text="Minimum Direction: " Grid.Column="0" Grid.Row="21" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinDipDir}" Grid.Column="2" Grid.Row="21"/>
-                                <TextBlock Text="Maximum Direction: " Grid.Column="0" Grid.Row="22" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaxDipDir}" Grid.Column="2" Grid.Row="22"/>
-                                <TextBlock Text="Average Direction: " Grid.Column="0" Grid.Row="23" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AverageDipDir}" Grid.Column="2" Grid.Row="23"/>
-                            </Grid>
+                                    <TextBlock Text="Minimum Direction: " Grid.Column="0" Grid.Row="21" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinDipDir}" Grid.Column="2" Grid.Row="21"/>
+                                    <TextBlock Text="Maximum Direction: " Grid.Column="0" Grid.Row="22" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaxDipDir}" Grid.Column="2" Grid.Row="22"/>
+                                    <TextBlock Text="Average Direction: " Grid.Column="0" Grid.Row="23" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageDipDir}" Grid.Column="2" Grid.Row="23"/>
+                                </Grid>
 
-                        </StackPanel>
+                            </StackPanel>
 
-                    </DockPanel>
+                        </DockPanel>
 
-                </TabItem>
-                <TabItem Header="Assay" IsEnabled="False">
-                    <DockPanel Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="1" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-                        <StackPanel>
-                            <Grid Background="White">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="10"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="5"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="15"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                    </TabItem>
+                    <TabItem Header="Assay" IsEnabled="False">
+                        <DockPanel Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="1" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                            <StackPanel>
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="5"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="15"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                                <TextBlock Text="Table Name: " Grid.Column="0" Grid.Row="1" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableName}"  Grid.Column="2" Grid.Row="1" />
-                                <TextBlock Text="Imported Path: " Grid.Column="0" Grid.Row="2" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableLocation}" Grid.Column="2" Grid.Row="2" />
-                                <TextBlock Text="Table Format: " Grid.Column="0" Grid.Row="3" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableFormat}" Grid.Column="2" Grid.Row="3" />
-                                <TextBlock Text="Mandatory Fields: " Grid.Column="0" Grid.Row="4" FontWeight="Bold"/>
-                                <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding Path=tableFields}" />
-                                <TextBlock Text="Number of Collars: " Grid.Column="0" Grid.Row="6" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/collarCount}" Grid.Column="2" Grid.Row="6"/>
-                                <TextBlock Text="Number of Assays: " Grid.Column="0" Grid.Row="7" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AssayCount}" Grid.Column="2" Grid.Row="7"/>
+                                    <TextBlock Text="Table Name: " Grid.Column="0" Grid.Row="1" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableName}"  Grid.Column="2" Grid.Row="1" />
+                                    <TextBlock Text="Imported Path: " Grid.Column="0" Grid.Row="2" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableLocation}" Grid.Column="2" Grid.Row="2" />
+                                    <TextBlock Text="Table Format: " Grid.Column="0" Grid.Row="3" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableFormat}" Grid.Column="2" Grid.Row="3" />
+                                    <TextBlock Text="Mandatory Fields: " Grid.Column="0" Grid.Row="4" FontWeight="Bold"/>
+                                    <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding Path=tableFields}" />
+                                    <TextBlock Text="Number of Collars: " Grid.Column="0" Grid.Row="6" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/collarCount}" Grid.Column="2" Grid.Row="6"/>
+                                    <TextBlock Text="Number of Assays: " Grid.Column="0" Grid.Row="7" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AssayCount}" Grid.Column="2" Grid.Row="7"/>
 
-                                <TextBlock Text="Min. Assays per hole: " Grid.Column="0" Grid.Row="9" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinAssayCount}" Grid.Column="2" Grid.Row="9"/>
-                                <TextBlock Text="Max. Assays per hole: " Grid.Column="0" Grid.Row="10" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaxAssayCount}" Grid.Column="2" Grid.Row="10"/>
-                                <TextBlock Text="Average Assays per hole: " Grid.Column="0" Grid.Row="11" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AverageAssayCount}" Grid.Column="2" Grid.Row="11"/>
-                                <TextBlock Text="Min. Sample Length: " Grid.Column="0" Grid.Row="12" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinAssayLength}" Grid.Column="2" Grid.Row="12" />
-                                <TextBlock Text="Max. Sample Length: " Grid.Column="0" Grid.Row="13" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaxAssayLength}" Grid.Column="2" Grid.Row="13" />
-                                <TextBlock Text="Average Sample Length: " Grid.Column="0" Grid.Row="14" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AverageAssayLength}" Grid.Column="2" Grid.Row="14" />
-                            </Grid>
+                                    <TextBlock Text="Min. Assays per hole: " Grid.Column="0" Grid.Row="9" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinAssayCount}" Grid.Column="2" Grid.Row="9"/>
+                                    <TextBlock Text="Max. Assays per hole: " Grid.Column="0" Grid.Row="10" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaxAssayCount}" Grid.Column="2" Grid.Row="10"/>
+                                    <TextBlock Text="Average Assays per hole: " Grid.Column="0" Grid.Row="11" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageAssayCount}" Grid.Column="2" Grid.Row="11"/>
+                                    <TextBlock Text="Min. Sample Length: " Grid.Column="0" Grid.Row="12" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinAssayLength}" Grid.Column="2" Grid.Row="12" />
+                                    <TextBlock Text="Max. Sample Length: " Grid.Column="0" Grid.Row="13" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaxAssayLength}" Grid.Column="2" Grid.Row="13" />
+                                    <TextBlock Text="Average Sample Length: " Grid.Column="0" Grid.Row="14" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageAssayLength}" Grid.Column="2" Grid.Row="14" />
+                                </Grid>
 
-                        </StackPanel>
+                            </StackPanel>
 
-                    </DockPanel>
+                        </DockPanel>
 
-                </TabItem>
-                <TabItem Header="Interval" IsEnabled="False">
-                    <DockPanel Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="1" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-                        <StackPanel>
-                            <Grid Background="White">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="10"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="5"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="15"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="10"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                    </TabItem>
+                    <TabItem Header="Interval" IsEnabled="False">
+                        <DockPanel Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="1" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                            <StackPanel>
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="5"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="15"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                                <TextBlock Text="Table Name: " Grid.Column="0" Grid.Row="1" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableName}"  Grid.Column="2" Grid.Row="1" />
-                                <TextBlock Text="Imported Path: " Grid.Column="0" Grid.Row="2" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableLocation}" Grid.Column="2" Grid.Row="2" />
-                                <TextBlock Text="Table Format: " Grid.Column="0" Grid.Row="3" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=tableFormat}" Grid.Column="2" Grid.Row="3" />
-                                <TextBlock Text="Mandatory Fields: " Grid.Column="0" Grid.Row="4" FontWeight="Bold"/>
-                                <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding Path=tableFields}" />
-                                <TextBlock Text="Number of Collars: " Grid.Column="0" Grid.Row="6" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/collarCount}" Grid.Column="2" Grid.Row="6"/>
-                                <TextBlock Text="Number of Intervals: " Grid.Column="0" Grid.Row="7" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/IntervalCount}" Grid.Column="2" Grid.Row="7"/>
-                                <TextBlock Text="Min. Intervals per hole: " Grid.Column="0" Grid.Row="11" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinIntervalCount}" Grid.Column="2" Grid.Row="11"/>
-                                <TextBlock Text="Max. Intervals per hole: " Grid.Column="0" Grid.Row="12" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaxIntervalCount}" Grid.Column="2" Grid.Row="12"/>
-                                <TextBlock Text="Average Intervals per hole: " Grid.Column="0" Grid.Row="13" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AverageIntervalCount}" Grid.Column="2" Grid.Row="13"/>
-                                <TextBlock Text="Min. Interval Length: " Grid.Column="0" Grid.Row="14" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MinIntervalLength}" Grid.Column="2" Grid.Row="14" />
-                                <TextBlock Text="Max. Interval Length: " Grid.Column="0" Grid.Row="15" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/MaxIntervalLength}" Grid.Column="2" Grid.Row="15" />
-                                <TextBlock Text="Average Interval Length: " Grid.Column="0" Grid.Row="16" FontWeight="Bold"/>
-                                <TextBlock Text="{Binding Path=ShowStatistics/AverageIntervalLength}" Grid.Column="2" Grid.Row="16" />
-                            </Grid>
+                                    <TextBlock Text="Table Name: " Grid.Column="0" Grid.Row="1" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableName}"  Grid.Column="2" Grid.Row="1" />
+                                    <TextBlock Text="Imported Path: " Grid.Column="0" Grid.Row="2" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableLocation}" Grid.Column="2" Grid.Row="2" />
+                                    <TextBlock Text="Table Format: " Grid.Column="0" Grid.Row="3" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableFormat}" Grid.Column="2" Grid.Row="3" />
+                                    <TextBlock Text="Mandatory Fields: " Grid.Column="0" Grid.Row="4" FontWeight="Bold"/>
+                                    <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding Path=tableFields}" />
+                                    <TextBlock Text="Number of Collars: " Grid.Column="0" Grid.Row="6" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/collarCount}" Grid.Column="2" Grid.Row="6"/>
+                                    <TextBlock Text="Number of Intervals: " Grid.Column="0" Grid.Row="7" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/IntervalCount}" Grid.Column="2" Grid.Row="7"/>
+                                    <TextBlock Text="Min. Intervals per hole: " Grid.Column="0" Grid.Row="11" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinIntervalCount}" Grid.Column="2" Grid.Row="11"/>
+                                    <TextBlock Text="Max. Intervals per hole: " Grid.Column="0" Grid.Row="12" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaxIntervalCount}" Grid.Column="2" Grid.Row="12"/>
+                                    <TextBlock Text="Average Intervals per hole: " Grid.Column="0" Grid.Row="13" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageIntervalCount}" Grid.Column="2" Grid.Row="13"/>
+                                    <TextBlock Text="Min. Interval Length: " Grid.Column="0" Grid.Row="14" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinIntervalLength}" Grid.Column="2" Grid.Row="14" />
+                                    <TextBlock Text="Max. Interval Length: " Grid.Column="0" Grid.Row="15" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaxIntervalLength}" Grid.Column="2" Grid.Row="15" />
+                                    <TextBlock Text="Average Interval Length: " Grid.Column="0" Grid.Row="16" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageIntervalLength}" Grid.Column="2" Grid.Row="16" />
+                                </Grid>
 
-                        </StackPanel>
+                            </StackPanel>
 
-                    </DockPanel>
+                        </DockPanel>
 
-                </TabItem>
-            </TabControl>
-        </DockPanel>
+                    </TabItem>
+                    <TabItem Header="Continuous" IsEnabled="False">
+                        <DockPanel Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="1" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                            <StackPanel>
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="5"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="15"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="10"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-        <DockPanel Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
-            <Button Name="btnClose" HorizontalAlignment="Stretch" Content="Close Summary Window" Click="CloseForm"/>
-        </DockPanel>
+                                    <TextBlock Text="Table Name: " Grid.Column="0" Grid.Row="1" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableName}"  Grid.Column="2" Grid.Row="1" />
+                                    <TextBlock Text="Imported Path: " Grid.Column="0" Grid.Row="2" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableLocation}" Grid.Column="2" Grid.Row="2" />
+                                    <TextBlock Text="Table Format: " Grid.Column="0" Grid.Row="3" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=tableFormat}" Grid.Column="2" Grid.Row="3" />
+                                    <TextBlock Text="Mandatory Fields: " Grid.Column="0" Grid.Row="4" FontWeight="Bold"/>
+                                    <TextBlock Grid.Column="2" Grid.Row="4" Text="{Binding Path=tableFields}" />
+                                    <TextBlock Text="Number of Collars: " Grid.Column="0" Grid.Row="6" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/collarCount}" Grid.Column="2" Grid.Row="6"/>
+                                    <TextBlock Text="Number of Values: " Grid.Column="0" Grid.Row="7" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/ValueCount}" Grid.Column="2" Grid.Row="7"/>
+                                    <TextBlock Text="Min. Values per hole: " Grid.Column="0" Grid.Row="11" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinValueCount}" Grid.Column="2" Grid.Row="11"/>
+                                    <TextBlock Text="Max. Values per hole: " Grid.Column="0" Grid.Row="12" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaxValueCount}" Grid.Column="2" Grid.Row="12"/>
+                                    <TextBlock Text="Average Values per hole: " Grid.Column="0" Grid.Row="13" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageValueCount}" Grid.Column="2" Grid.Row="13"/>
+                                    <TextBlock Text="Min. Value Length: " Grid.Column="0" Grid.Row="14" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MinValueLength}" Grid.Column="2" Grid.Row="14" />
+                                    <TextBlock Text="Max. Value Length: " Grid.Column="0" Grid.Row="15" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/MaxValueLength}" Grid.Column="2" Grid.Row="15" />
+                                    <TextBlock Text="Average Value Length: " Grid.Column="0" Grid.Row="16" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=ShowStatistics/AverageValueLength}" Grid.Column="2" Grid.Row="16" />
+                                </Grid>
 
-    </Grid>
-    
+                            </StackPanel>
+
+                        </DockPanel>
+
+                    </TabItem>
+                </TabControl>
+            </DockPanel>
+
+            <DockPanel Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
+                <Button Name="btnClose" HorizontalAlignment="Stretch" Content="Close Summary Window" Click="CloseForm"/>
+            </DockPanel>
+
+        </Grid>
+    </ScrollViewer>
+
 </Window>

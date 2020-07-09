@@ -11,7 +11,6 @@ namespace Drillholes.Windows
 {
     public class DisplaySummaryStatistics
     {
-      //  public ObservableCollection<SummaryCollarStatistics> DisplayStatistics = new ObservableCollection<SummaryCollarStatistics>();
 
         public ObservableCollection<SummaryStatistics> DisplayStatistics = new ObservableCollection<SummaryStatistics>();
 

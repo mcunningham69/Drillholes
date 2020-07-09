@@ -28,11 +28,16 @@ namespace Drillholes.Windows.Dialogs
         private SurveyTableObject surveyObject { get; set; }
         private AssayTableObject assayObject { get; set; }
         private IntervalTableObject intervalObject { get; set; }
+        private ContinuousTableObject continuousObject { get; set; }
+
 
         private CollarStatisticsView collarStatisticsView { get; set; }
         private SurveyStatisticsView surveyStatisticsView { get; set; }
         private AssayStatisticsView assayStatisticsView { get; set; }
         private IntervalStatisticsView intervalStatisticsView { get; set; }
+        private ContinuousStatisticsView continuousStatisticsView { get; set; }
+
+
 
         private static DrillholeSummaryStatistics m_instance;
 
@@ -45,7 +50,7 @@ namespace Drillholes.Windows.Dialogs
         }
 
         public DrillholeSummaryStatistics(CollarTableObject _collarView, SurveyTableObject _surveyView,
-            AssayTableObject _assayView, IntervalTableObject _intervalView)
+            AssayTableObject _assayView, IntervalTableObject _intervalView, ContinuousTableObject _continuous)
         {
             InitializeComponent();
 
@@ -53,15 +58,16 @@ namespace Drillholes.Windows.Dialogs
             surveyObject = _surveyView;
             assayObject = _assayView;
             intervalObject = _intervalView;
+            continuousObject = _continuous;
         }
 
         public static DrillholeSummaryStatistics GetInstance(CollarTableObject _collarView, SurveyTableObject _surveyView,
-            AssayTableObject _assayView, IntervalTableObject _intervalView)
+            AssayTableObject _assayView, IntervalTableObject _intervalView, ContinuousTableObject _continuous)
         {
             if (m_instance == null)
             {
 
-                return m_instance = new DrillholeSummaryStatistics(_collarView, _surveyView, _assayView, _intervalView);
+                return m_instance = new DrillholeSummaryStatistics(_collarView, _surveyView, _assayView, _intervalView, _continuous);
             }
 
 
@@ -102,28 +108,37 @@ namespace Drillholes.Windows.Dialogs
                 DataContext = assayStatisticsView;
             else if (ValidateTabs.SelectedIndex == 3)
                 DataContext = intervalStatisticsView;
+            else if (ValidateTabs.SelectedIndex == 4)
+                DataContext = continuousStatisticsView;
         }
 
         private async void EnableTabs()
         {
             TabItem tabItem = null;
 
-            if (surveyObject != null)
+            if (surveyObject.tableData != null)
             {
                 tabItem = ValidateTabs.Items.GetItemAt(1) as TabItem;
                 tabItem.IsEnabled = true;
             }
 
-            if (assayObject != null)
+            if (assayObject.tableData != null)
             {
                 tabItem = ValidateTabs.Items.GetItemAt(2) as TabItem;
                 tabItem.IsEnabled = true;
 
             }
 
-            if (intervalObject != null)
+            if (intervalObject.tableData != null)
             {
                 tabItem = ValidateTabs.Items.GetItemAt(3) as TabItem;
+                tabItem.IsEnabled = true;
+
+            }
+
+            if (continuousObject.tableData != null)
+            {
+                tabItem = ValidateTabs.Items.GetItemAt(4) as TabItem;
                 tabItem.IsEnabled = true;
 
             }
@@ -165,6 +180,23 @@ namespace Drillholes.Windows.Dialogs
                     bCheck = await AssayStatistics();
 
                 bCheck = await IntervalStatistics();
+            }
+            else if (selectedIndex == 4)
+            {
+                bCheck = await CollarStatistics();
+
+                if (surveyObject.tableData != null)
+                {
+                    bCheck = await SurveyStatistics();
+                }
+
+                if (assayObject.tableData != null)
+                    bCheck = await AssayStatistics();
+
+                if (intervalObject.tableData != null)
+                    bCheck = await IntervalStatistics();
+
+                bCheck = await ContinuousStatistics();
             }
         }
 
@@ -245,6 +277,32 @@ namespace Drillholes.Windows.Dialogs
             DataContext = intervalStatisticsView;
 
             return true;
+        }
+
+        private async Task<bool> ContinuousStatistics()
+        {
+            string tableName = continuousObject.tableName;
+            string tableLocation = continuousObject.tableLocation;
+            string tableFormat = "continuous";
+            DrillholeSurveyType surveyType = continuousObject.surveyType;
+
+            XElement xPreview = continuousObject.xPreview;
+            ImportTableFields fields = continuousObject.tableData;
+
+            continuousStatisticsView = new ContinuousStatisticsView(tableName, tableLocation, tableFormat,
+                fields, surveyType, xPreview);
+
+            await continuousStatisticsView.SummaryStatistics();
+
+            DataContext = continuousStatisticsView;
+
+            return true;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            m_instance = null;
+
         }
     }
 }

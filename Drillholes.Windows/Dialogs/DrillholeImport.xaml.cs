@@ -742,7 +742,7 @@ namespace Drillholes.Windows.Dialogs
             try
             {
                 singletonStatistics = DrillholeSummaryStatistics.GetInstance(collarPreviewModel.collarTableObject,
-                    surveyPreviewModel.surveyTableObject, assayPreviewModel.assayTableObject, intervalPreviewModel.intervalTableObject);
+                    surveyPreviewModel.surveyTableObject, assayPreviewModel.assayTableObject, intervalPreviewModel.intervalTableObject, continuousPreviewModel.continuousTableObject);
 
                 if (_tabcontrol.SelectedIndex == 0)
                 {

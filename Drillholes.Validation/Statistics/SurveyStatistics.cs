@@ -75,7 +75,6 @@ namespace Drillholes.Validation.Statistics
 
                 SurvCount.Add(distances.Count());
 
-                int distCount = 0;
                 double previousValue = 0.0;
                 double currentValue = 0.0;
                 double value = 0.0;
@@ -139,6 +138,7 @@ namespace Drillholes.Validation.Statistics
 
             }
 
+            surveyTableDto.collarCount = holes.Count();
             surveyTableDto.MinSurveyLength = _survLength.Min();
             surveyTableDto.MaxSurveyLength = _survLength.Max();
             surveyTableDto.AverageSurveyLength = _survLength.Average();

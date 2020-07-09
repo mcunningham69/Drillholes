@@ -80,7 +80,7 @@ namespace Drillholes.Validation.Statistics
                 }
             }
 
-            assayTableDto.collarCount = AssayCount.Count();
+            assayTableDto.collarCount = holes.Count();
             assayTableDto.MinAssayCount = AssayCount.Min();
             assayTableDto.MaxAssayCount = AssayCount.Max();
             assayTableDto.AverageAssayCount = Math.Round(AssayCount.Average(), 1);

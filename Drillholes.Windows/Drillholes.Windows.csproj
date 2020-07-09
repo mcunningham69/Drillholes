@@ -66,6 +66,7 @@
     </Compile>
     <Compile Include="DisplaySummaryStatistics.cs" />
     <Compile Include="DisplayValidationMessages.cs" />
+    <Compile Include="ViewModel\ContinuousStatisticsView.cs" />
     <Compile Include="ViewModel\AssayStatisticsView.cs" />
     <Compile Include="ViewModel\AssayValidationView.cs" />
     <Compile Include="ViewModel\AssayView.cs" />
