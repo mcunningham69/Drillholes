@@ -641,9 +641,6 @@ namespace Drillholes.Validation.TestMessage
             var surveyElements = surveyValues.Elements();
 
             string holeName = "";
-            string dipName = "";
-            string aziName = "";
-            string distName = "";
 
             bool bTest = false;
 

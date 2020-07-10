@@ -82,6 +82,7 @@
     <Compile Include="ViewModel\IntervalEditView.cs" />
     <Compile Include="ViewModel\SurveyEditView.cs" />
     <Compile Include="ViewModel\SurveyStatisticsView.cs" />
+    <Compile Include="ViewModel\ContinuousValidationView.cs" />
     <Compile Include="ViewModel\SurveyValidationView.cs" />
     <Compile Include="ViewModel\SurveyView.cs" />
     <Compile Include="ViewModel\ViewEditModel.cs" />

@@ -9,4 +9,8 @@ namespace Drillholes.Domain.DataObject
     public class ValidationSurvey : ValidationCollar
     {
     }
+
+    public class ValidationContinuous : ValidationSurvey
+    {
+    }
 }

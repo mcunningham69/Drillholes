@@ -61,6 +61,9 @@ namespace Drillholes.Domain
         public int id_ass { get; set; }
         public int id_int { get; set; }
 
+        public int id_con { get; set; }
+
+
         private string _holeid = string.Empty;
         public string holeid
         {

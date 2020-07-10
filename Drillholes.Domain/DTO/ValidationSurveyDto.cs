@@ -9,4 +9,8 @@ namespace Drillholes.Domain.DTO
     public class ValidationSurveyDto : ValidationCollarDto
     {
     }
+
+    public class ValidationContinuousDto : ValidationSurveyDto
+    {
+    }
 }

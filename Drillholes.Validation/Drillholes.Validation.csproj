@@ -51,6 +51,7 @@
     <Compile Include="TestMessage\AssayValidation.cs" />
     <Compile Include="TestMessage\CollarValidation.cs" />
     <Compile Include="TestMessage\IntervalValidation.cs" />
+    <Compile Include="TestMessage\ContinuousValidation.cs" />
     <Compile Include="TestMessage\SurveyValidation.cs" />
   </ItemGroup>
   <ItemGroup>

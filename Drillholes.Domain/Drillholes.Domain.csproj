@@ -106,6 +106,7 @@
     <Compile Include="Interfaces\IAssayEdit.cs" />
     <Compile Include="Interfaces\IAssayStatistics.cs" />
     <Compile Include="Interfaces\IAssayTable.cs" />
+    <Compile Include="Interfaces\IContinuousValidation.cs" />
     <Compile Include="Interfaces\IAssayValidation.cs" />
     <Compile Include="Interfaces\ICollarEdit.cs" />
     <Compile Include="Interfaces\ICollarStatistics.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="Services\SurveyEditServices.cs" />
     <Compile Include="Services\SurveyStatisticsService.cs" />
     <Compile Include="Services\SurveyTableService.cs" />
+    <Compile Include="Services\ContinuousValidationService.cs" />
     <Compile Include="Services\SurveyValidationService.cs" />
     <Compile Include="SummaryStatistics.cs" />
     <Compile Include="UpdateFieldnamesXml.cs" />
