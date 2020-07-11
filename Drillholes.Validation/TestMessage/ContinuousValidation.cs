@@ -216,8 +216,8 @@ namespace Drillholes.Validation.TestMessage
 
                     CheckNumericValues(surveyValues, check, fieldID, fieldName, holeName);
 
-                    counter++;
                 }
+                counter++;
             }
 
             return continuousValidationDto;

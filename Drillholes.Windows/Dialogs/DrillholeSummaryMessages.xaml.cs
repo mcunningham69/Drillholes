@@ -33,6 +33,8 @@ namespace Drillholes.Windows.Dialogs
         private SurveyValidationView surveyMessagesView { get; set; }
         private AssayValidationView assayMessagesView { get; set; }
         private IntervalValidationView intervalMessagesView { get; set; }
+        private ContinuousValidationView continuousMessagesView { get; set; }
+
 
         public int selectedIndex { get; set; }
 
@@ -71,14 +73,6 @@ namespace Drillholes.Windows.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //if (selectedIndex == 0)
-            //    DataContext = collarMessagesView;
-            //else if (selectedIndex == 1)
-            //    DataContext = surveyMessagesView;
-            //else if (selectedIndex == 2)
-            //    DataContext = assayMessagesView;
-            //else if (selectedIndex == 3)
-            //    DataContext = intervalMessagesView;
 
             DisplayMessages();
         }
@@ -125,6 +119,17 @@ namespace Drillholes.Windows.Dialogs
                 await intervalMessagesView.ValidateAllTables(false);
 
                 DataContext = intervalMessagesView;
+
+            }
+            else if (selectedIndex == 4)
+            {
+                continuousMessagesView = new ContinuousValidationView(DrillholeTableType.continuous, continuousObject.xPreview);
+                continuousMessagesView.importContinuousFields = continuousObject.tableData;
+                continuousMessagesView.importCollarFields = collarObject.tableData;
+                continuousMessagesView.xmlCollarData = collarObject.xPreview;
+                await continuousMessagesView.ValidateAllTables(false);
+
+                DataContext = continuousMessagesView;
 
             }
         }

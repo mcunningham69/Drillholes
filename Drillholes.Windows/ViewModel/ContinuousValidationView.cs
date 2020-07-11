@@ -69,7 +69,7 @@ namespace Drillholes.Windows.ViewModel
             if (_continuousValidateValues == null)
                 _continuousValidateValues = new ContinuousValidation();
 
-            var config = new MapperConfiguration(cfg => { cfg.CreateMap<ValidationContinuousDto, ValidationContinuous>(); });
+             var config = new MapperConfiguration(cfg => { cfg.CreateMap<ValidationContinuousDto, ValidationContinuous>(); });
 
             mapper = config.CreateMapper();
 
@@ -266,13 +266,13 @@ namespace Drillholes.Windows.ViewModel
 
             ImportTableField holeField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single();
             ImportTableField tdField = importCollarFields.Where(o => o.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Single();
-            ImportTableField scontinuousHoleField = importContinuousFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single();
+            ImportTableField continuousHoleField = importContinuousFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single();
             ImportTableField distanceField = importContinuousFields.Where(o => o.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Single();
 
             List<ImportTableField> tempFields = new List<ImportTableField>();
             tempFields.Add(holeField);
             tempFields.Add(tdField);
-            tempFields.Add(scontinuousHoleField);
+            tempFields.Add(continuousHoleField);
             tempFields.Add(distanceField);
 
             List<ValidationMessage> continuousFieldTest = new List<ValidationMessage>();
@@ -287,9 +287,9 @@ namespace Drillholes.Windows.ViewModel
                 tableFields = tempFields
             });
 
-            ValidationMessages surveyTests = new ValidationMessages { testType = DrillholeConstants.HoleLength, testMessage = continuousFieldTest };
+            ValidationMessages continuousTests = new ValidationMessages { testType = DrillholeConstants.HoleLength, testMessage = continuousFieldTest };
 
-            var validationCheck = await _continuousValidationService.CheckMaxDepth(mapper, surveyTests, drillholeTableData);
+            var validationCheck = await _continuousValidationService.CheckMaxDepth(mapper, continuousTests, drillholeTableData);
 
             DisplayMessages.DisplayResults.Add(validationCheck.testMessages);
 
@@ -580,7 +580,7 @@ namespace Drillholes.Windows.ViewModel
                                     id_con = counter,
                                     testType = _TestType,
                                     validationTest = validation,
-                                    TableType = DrillholeTableType.survey,
+                                    TableType = DrillholeTableType.continuous,
                                     ErrorType = status,
                                     Description = tooltip
                                 });
@@ -593,7 +593,7 @@ namespace Drillholes.Windows.ViewModel
                                     id_con = Convert.ToInt32(value),
                                     testType = _TestType,
                                     validationTest = validation,
-                                    TableType = DrillholeTableType.survey,
+                                    TableType = DrillholeTableType.continuous,
                                     ErrorType = status,
                                     Description = tooltip
                                 });
@@ -623,7 +623,7 @@ namespace Drillholes.Windows.ViewModel
                                             id_con = result,
                                             testType = _TestType,
                                             validationTest = validation,
-                                            TableType = DrillholeTableType.survey,
+                                            TableType = DrillholeTableType.continuous,
                                             ErrorType = status,
                                             Description = message.ValidationStatus.Where(e => e.ErrorType == status && e.id == Convert.ToInt32(result)).Select(p => p.Description).FirstOrDefault()
                                         });

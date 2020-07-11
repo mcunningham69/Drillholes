@@ -50,6 +50,8 @@ namespace Drillholes.Windows.Dialogs
         private IntervalValidationView intervalEdits { get; set; }
         private IntervalEditView intervalEdit { get; set; }
 
+        private ContinuousValidationView continuousEdits { get; set; }
+        private ContinuousEditView continuousEdit { get; set; }
         private bool bIgnore { get; set; }
         public int selectedIndex { get; set; }
 
@@ -90,34 +92,22 @@ namespace Drillholes.Windows.Dialogs
             if (selectedIndex == 0)
             {
                 ValidateCollar();
-
-
-             //   DataContext = collarEdits;
-
-
             }
             else if (selectedIndex == 1)
             {
                 ValidateSurvey(true);
-
-                DataContext = surveyEdits;
-
             }
             else if (selectedIndex == 2)
             {
-
                 ValidateAssay();
-
-                DataContext = assayEdits;
-
             }
             else if (selectedIndex == 3)
             {
-
                 ValidateInterval();
-
-                DataContext = intervalEdits;
-
+            }
+            else if (selectedIndex == 4)
+            {
+                ValidateContinuous();
             }
         }
 
@@ -145,6 +135,9 @@ namespace Drillholes.Windows.Dialogs
             await surveyEdits.ValidateAllTables(true);
 
             surveyEdits.ReshapeMessages(DrillholeTableType.survey);
+
+            DataContext = surveyEdits;
+
         }
 
         private async void ValidateAssay()
@@ -174,6 +167,8 @@ namespace Drillholes.Windows.Dialogs
 
             assayEdits.ReshapeMessages(DrillholeTableType.assay);
 
+            DataContext = assayEdits;
+
         }
 
         private async void ValidateInterval()
@@ -193,11 +188,9 @@ namespace Drillholes.Windows.Dialogs
                     {
                         ValidateAssay();
                         intervalEdits.EditDrillholeData = assayEdits.EditDrillholeData;
-
                     }
                     else
                         intervalEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
-
                 }
                 else
                 {
@@ -205,20 +198,15 @@ namespace Drillholes.Windows.Dialogs
                     {
                         ValidateAssay();
                         intervalEdits.EditDrillholeData = assayEdits.EditDrillholeData;
-
                     }
                     else
                         intervalEdits.EditDrillholeData = collarEdits.EditDrillholeData;
-
                 }
-
-
             }
             else if (assayObject != null)
                 intervalEdits.EditDrillholeData = assayEdits.EditDrillholeData;
             else
                 intervalEdits.EditDrillholeData = collarEdits.EditDrillholeData;
-
 
             intervalEdits.importIntervalFields = intervalObject.tableData;
             intervalEdits.importCollarFields = collarObject.tableData;
@@ -227,7 +215,80 @@ namespace Drillholes.Windows.Dialogs
 
             intervalEdits.ReshapeMessages(DrillholeTableType.interval);
 
+            DataContext = intervalEdits;
         }
+
+        private async void ValidateContinuous()
+        {
+            ValidateCollar();
+
+            continuousEdits = new ContinuousValidationView(DrillholeTableType.continuous, continuousObject.xPreview);
+
+            if (continuousObject.surveyType == DrillholeSurveyType.downholesurvey)
+            {
+                if (surveyObject != null)
+                {
+                    ValidateSurvey(false);
+                    continuousEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
+
+                    if (assayObject != null)
+                    {
+                        ValidateAssay();
+                        continuousEdits.EditDrillholeData = assayEdits.EditDrillholeData;
+
+                        if (intervalObject != null)
+                        {
+                            ValidateInterval();
+                            continuousEdits.EditDrillholeData = intervalEdits.EditDrillholeData;
+                        }
+                        else
+                            continuousEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
+                    }
+                    else
+                        continuousEdits.EditDrillholeData = surveyEdits.EditDrillholeData;
+
+                }
+                else
+                {
+                    if (assayObject != null)
+                    {
+                        ValidateAssay();
+                        continuousEdits.EditDrillholeData = assayEdits.EditDrillholeData;
+
+                        if (intervalObject != null)
+                            continuousEdits.EditDrillholeData = intervalEdits.EditDrillholeData;
+                    }
+                    else if (intervalObject != null)
+                    {
+                        continuousEdits.EditDrillholeData = intervalEdits.EditDrillholeData;
+                    }
+                    else
+                        continuousEdits.EditDrillholeData = collarEdits.EditDrillholeData;
+                }
+            }
+            else if (assayObject != null)
+            {
+                continuousEdits.EditDrillholeData = assayEdits.EditDrillholeData;
+                if (intervalObject != null)
+                    continuousEdits.EditDrillholeData = intervalEdits.EditDrillholeData;
+
+            }
+            else if (intervalObject != null)
+                continuousEdits.EditDrillholeData = intervalEdits.EditDrillholeData;
+            else
+                continuousEdits.EditDrillholeData = collarEdits.EditDrillholeData;
+
+            continuousEdits.importContinuousFields = continuousObject.tableData;
+            continuousEdits.importCollarFields = collarObject.tableData;
+            continuousEdits.xmlCollarData = collarObject.xPreview;
+            await continuousEdits.ValidateAllTables(true);
+
+            continuousEdits.ReshapeMessages(DrillholeTableType.continuous);
+
+            DataContext = continuousEdits;
+        }
+
+
         private async void btnExit_Click(object sender, RoutedEventArgs e)
         {
             bool bCheck = await UnSavedEdits();
@@ -285,6 +346,13 @@ namespace Drillholes.Windows.Dialogs
                         intervalEdit = new IntervalEditView(intervalObject.xPreview, intervalObject.tableData);
 
                     await intervalEdit.SaveEdits(editedRows, bIgnore);
+                    break;
+
+                case 4:
+                    if (continuousEdit == null)
+                        continuousEdit = new ContinuousEditView(continuousObject.xPreview, continuousObject.tableData);
+
+                    await continuousEdit.SaveEdits(editedRows, bIgnore);
                     break;
 
             }
@@ -403,6 +471,7 @@ namespace Drillholes.Windows.Dialogs
             DataTable surveyTable = null;
             DataTable assayTable = null;
             DataTable intervalTable = null;
+            DataTable continuousTable = null;
 
             string holeID = _edits[0].holeid;
             string testType = _edits[0].testType;
@@ -436,8 +505,7 @@ namespace Drillholes.Windows.Dialogs
                 collarEdits.SetDataContext(dataCollar, previewTable);
                 surveyEdits.SetDataContext(dataEdits, surveyTable);
 
-                dataCollar.Visibility = Visibility.Visible;
-                lblPreview.Visibility = Visibility.Hidden;
+                DataEditsVisibility();
             }
             else if (_edits[0].TableType == DrillholeTableType.assay)
             {
@@ -452,8 +520,7 @@ namespace Drillholes.Windows.Dialogs
                 collarEdits.SetDataContext(dataCollar, previewTable);
                 assayEdits.SetDataContext(dataEdits, assayTable);
 
-                dataCollar.Visibility = Visibility.Visible;
-                lblPreview.Visibility = Visibility.Hidden;
+                DataEditsVisibility();
             }
 
             else if (_edits[0].TableType == DrillholeTableType.interval)
@@ -469,9 +536,25 @@ namespace Drillholes.Windows.Dialogs
 
                 collarEdits.SetDataContext(dataCollar, previewTable);
 
-                dataCollar.Visibility = Visibility.Visible;
-                lblPreview.Visibility = Visibility.Hidden;
+                DataEditsVisibility();
             }
+            else if (_edits[0].TableType == DrillholeTableType.continuous)
+            {
+                continuousTable = await continuousEdits.PopulateGridValues(_edits, DrillholeTableType.continuous, false); //TODO override
+                continuousEdits.SetDataContext(dataEdits, continuousTable);
+
+                _edits.Clear();
+
+                //Get CollarRow
+                _edits.Add(collarEdits.CollarRow(holeID, testType).Result);
+                previewTable = await collarEdits.PopulateGridValues(_edits, DrillholeTableType.collar, true);
+
+                collarEdits.SetDataContext(dataCollar, previewTable);
+                DataEditsVisibility();
+
+
+            }
+
             foreach (var column in dataEdits.Columns)
             {
                 string name = column.Header.ToString();
@@ -483,6 +566,14 @@ namespace Drillholes.Windows.Dialogs
                 }
 
             }
+        }
+
+        private void DataEditsVisibility()
+        {
+            dataCollar.Visibility = Visibility.Visible;
+            lblPreview.Visibility = Visibility.Hidden;
+            dataEdits.Visibility = Visibility.Visible;
+            lblEdits.Visibility = Visibility.Hidden;
         }
 
         private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

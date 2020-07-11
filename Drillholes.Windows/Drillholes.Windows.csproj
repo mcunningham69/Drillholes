@@ -75,6 +75,7 @@
     <Compile Include="ViewModel\CollarStatisticsView.cs" />
     <Compile Include="ViewModel\CollarValidationView.cs" />
     <Compile Include="ViewModel\CollarView.cs" />
+    <Compile Include="ViewModel\ContinuousEditView.cs" />
     <Compile Include="ViewModel\IntervalStatisticsView.cs" />
     <Compile Include="ViewModel\IntervalValidationView.cs" />
     <Compile Include="ViewModel\ContinuousView.cs" />

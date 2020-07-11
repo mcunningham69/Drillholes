@@ -116,6 +116,7 @@
     <Compile Include="Interfaces\IContinuousTable.cs" />
     <Compile Include="Interfaces\IDesurveyDrillhole.cs" />
     <Compile Include="Interfaces\IDrillholeTables.cs" />
+    <Compile Include="Interfaces\IContinuousEdit.cs" />
     <Compile Include="Interfaces\IIntervalTable.cs" />
     <Compile Include="Interfaces\IIntervalEdit.cs" />
     <Compile Include="Interfaces\IIntervalStatistics.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Services\CollarEditServices.cs" />
     <Compile Include="Services\CollarValidationService.cs" />
     <Compile Include="Services\DesurveyServices.cs" />
+    <Compile Include="Services\ContinuousEditServices.cs" />
     <Compile Include="Services\IntervalEditServices.cs" />
     <Compile Include="Services\ContinuousStatisticsService.cs" />
     <Compile Include="Services\IntervalStatisticsService.cs" />

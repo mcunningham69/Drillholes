@@ -878,6 +878,8 @@ namespace Drillholes.Windows.Dialogs
                     singletonEdits.intervalObject = intervalPreviewModel.intervalTableObject;
 
                 singletonEdits.selectedIndex = 1;
+                singletonEdits.ShowDialog();
+
 
             }
             else if (_tabIndex == 2)
@@ -937,7 +939,7 @@ namespace Drillholes.Windows.Dialogs
                 if (intervalPreviewModel.intervalTableObject.tableData != null)
                     singletonEdits.intervalObject = intervalPreviewModel.intervalTableObject;
 
-                singletonEdits.selectedIndex = 3;
+                singletonEdits.selectedIndex = 4;
 
                 singletonEdits.ShowDialog();
 
