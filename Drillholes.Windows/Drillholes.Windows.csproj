@@ -43,6 +43,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Controls.Ribbon" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -64,8 +65,29 @@
     <Compile Include="Dialogs\DrillholeCreate.xaml.cs">
       <DependentUpon>DrillholeCreate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\DrillholeDialogPage.xaml.cs">
+      <DependentUpon>DrillholeDialogPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DrillholeEditsPage.xaml.cs">
+      <DependentUpon>DrillholeEditsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DrillholeImportPage.xaml.cs">
+      <DependentUpon>DrillholeImportPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DrillholeStartup.xaml.cs">
+      <DependentUpon>DrillholeStartup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DrillholeSummaryMessagesPage.xaml.cs">
+      <DependentUpon>DrillholeSummaryMessagesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DrillholeSummaryStatisticsPage.xaml.cs">
+      <DependentUpon>DrillholeSummaryStatisticsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DisplaySummaryStatistics.cs" />
     <Compile Include="DisplayValidationMessages.cs" />
+    <Compile Include="Pages\StartPage.xaml.cs">
+      <DependentUpon>StartPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\ContinuousStatisticsView.cs" />
     <Compile Include="ViewModel\AssayStatisticsView.cs" />
     <Compile Include="ViewModel\AssayValidationView.cs" />
@@ -87,6 +109,7 @@
     <Compile Include="ViewModel\SurveyValidationView.cs" />
     <Compile Include="ViewModel\SurveyView.cs" />
     <Compile Include="ViewModel\ViewEditModel.cs" />
+    <Compile Include="XmlDefaultPath.cs" />
     <Page Include="Dialogs\DrillholeCreate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -102,7 +125,15 @@
     <Compile Include="Dialogs\DrillholeDialog.xaml.cs">
       <DependentUpon>DrillholeDialog.xaml</DependentUpon>
     </Compile>
+    <Page Include="Dialogs\DrillholeDialogPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\DrillholeEdits.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DrillholeEditsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -114,11 +145,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\DrillholeImportPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DrillholeStartup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\DrillholeSummaryMessages.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\DrillholeSummaryMessagesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\DrillholeSummaryStatistics.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DrillholeSummaryStatisticsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -127,6 +174,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="GlassButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\StartPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -190,6 +241,10 @@
       <Project>{52df4f61-0e6a-43f8-b20c-ac161d1cd52b}</Project>
       <Name>Drillholes.Validation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Drillholes.XML\Drillholes.XML.csproj">
+      <Project>{1feba962-2034-4274-a3db-5ea76793d081}</Project>
+      <Name>Drillholes.XML</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\fault.jpg" />
@@ -198,6 +253,29 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Thailand.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\lomondhills.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Cut.png" />
+    <Resource Include="Images\FormatPainter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Clipboard.png" />
+    <Resource Include="Images\Copy.png" />
+    <Resource Include="Images\Help.png" />
+    <Resource Include="Images\Paste.png" />
+    <Resource Include="Images\Star.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\New.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Open.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,8 +1,8 @@
 ﻿<Application x:Class="Drillholes.Windows.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="Dialogs/DrillholeDialog.xaml">
-    
+         StartupUri="Dialogs/DrillholeStartup.xaml">
+
     <Application.Resources>
          
     </Application.Resources>

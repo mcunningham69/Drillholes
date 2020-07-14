@@ -9,6 +9,7 @@ using Drillholes.Domain.DataObject;
 using Drillholes.Domain.Services;
 using Drillholes.Domain.Interfaces;
 using Drillholes.Domain.DTO;
+using Drillholes.XML;
 using AutoMapper;
 using System.Data;
 

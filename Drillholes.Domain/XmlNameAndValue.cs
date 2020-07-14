@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Drillholes.Domain
 {
-    public class XmlNameAndValue
-    {
-        public string Name { get; set; }
-        public string Value { get; set; }
-    }
+    //public class XmlNameAndValue
+    //{
+    //    public string Name { get; set; }
+    //    public string Value { get; set; }
+    //}
 }

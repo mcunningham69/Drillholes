@@ -117,6 +117,7 @@
     <Compile Include="Interfaces\IDesurveyDrillhole.cs" />
     <Compile Include="Interfaces\IDrillholeTables.cs" />
     <Compile Include="Interfaces\IContinuousEdit.cs" />
+    <Compile Include="Interfaces\IDrillholeXML.cs" />
     <Compile Include="Interfaces\IIntervalTable.cs" />
     <Compile Include="Interfaces\IIntervalEdit.cs" />
     <Compile Include="Interfaces\IIntervalStatistics.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Services\SurveyTableService.cs" />
     <Compile Include="Services\ContinuousValidationService.cs" />
     <Compile Include="Services\SurveyValidationService.cs" />
+    <Compile Include="Services\XmlService.cs" />
     <Compile Include="SummaryStatistics.cs" />
     <Compile Include="UpdateFieldnamesXml.cs" />
     <Compile Include="ValidationMessages.cs" />

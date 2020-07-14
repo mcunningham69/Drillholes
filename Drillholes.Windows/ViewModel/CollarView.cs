@@ -10,6 +10,7 @@ using Drillholes.Domain.DataObject;
 using Drillholes.Domain.Services;
 using Drillholes.Domain.Interfaces;
 using Drillholes.Domain.DTO;
+using Drillholes.XML;
 using AutoMapper;
 using System.Xml.Linq;
 using System.Data;
@@ -91,6 +92,11 @@ namespace Drillholes.Windows.ViewModel
             }
         }
 
+        public XmlService _xmlService;
+        public IDrillholeXML _xml;
+
+        public string fullPathnameFields { get; set; }
+        public string fullPathnameData { get; set; }
 
         public CollarView(DrillholeImportFormat _tableFormat, DrillholeTableType _tableType, string _tableLocation,
             string _tableName)
@@ -110,11 +116,25 @@ namespace Drillholes.Windows.ViewModel
 
             importAllColumns = "Import All Columns In " + (_tableType.ToString().ToUpper())  + " Table";
 
-
             dataGrid = new System.Data.DataTable();
+
+            XmlSetUP();
 
         }
 
+        public void XmlSetUP()
+        {
+            //create XML temp table
+            if (_xml == null)
+                _xml = new Drillholes.XML.XmlController();
+
+            if (_xmlService == null)
+                _xmlService = new XmlService(_xml);
+
+            fullPathnameFields = XmlDefaultPath.GetFullPathAndFilename("DrillholesFields");
+            fullPathnameData = XmlDefaultPath.GetFullPathAndFilename("DrillholesData");
+
+        }
         //TODO move out of here
         public virtual void InitialiseTableMapping()
         {
@@ -175,6 +195,9 @@ namespace Drillholes.Windows.ViewModel
                 var collarService = await _collarService.PreviewData(classMapper, collarTableObject.tableType, limit);
 
                 collarTableObject.xPreview = collarService.xPreview;
+
+                await _xmlService.DrillholeData(fullPathnameData, collarService.xPreview, DrillholeTableType.collar);
+
 
             }
 

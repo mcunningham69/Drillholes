@@ -11,6 +11,7 @@ using Drillholes.Domain.Services;
 using Drillholes.Domain.Interfaces;
 using AutoMapper;
 using System.Data;
+using Drillholes.XML;
 
 namespace Drillholes.Windows.ViewModel
 {

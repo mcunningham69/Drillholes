@@ -1,0 +1,260 @@
+﻿<Page x:Class="Drillholes.Windows.Dialogs.DrillholeEditsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:Drillholes.Domain;assembly=Drillholes.Domain"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Fix Errors and Review Warnings" Height="450" Width="800" >
+
+    <Page.Background>
+        <LinearGradientBrush  EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="White" Offset="0.47"/>
+            <GradientStop Color="LightBlue" Offset="0.811"/>
+            <GradientStop Color="White" Offset="0.107"/>
+            <GradientStop Color="SkyBlue" Offset="0.019"/>
+        </LinearGradientBrush>
+    </Page.Background>
+    
+    <Grid>
+        <Grid.Resources>
+            <ControlTemplate x:Key="temGlassButton" TargetType="{x:Type Button}">
+                <ControlTemplate.Resources>
+                    <!-- Base style that sets corner radii and stroke thickness. -->
+                    <Style x:Key="styBase" TargetType="{x:Type Rectangle}">
+                        <Setter Property="RadiusX" Value="20"/>
+                        <Setter Property="RadiusY" Value="20"/>
+                        <Setter Property="StrokeThickness" Value="5"/>
+                    </Style>
+
+                    <!-- Style for "normal" status. -->
+                    <Style TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
+                        <Setter Property="Fill">
+                            <Setter.Value>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="DarkRed" Offset="0"/>
+                                    <GradientStop Color="LightPink" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Stroke">
+                            <Setter.Value>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="DarkRed" Offset="0"/>
+                                    <GradientStop Color="LightPink" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <!-- Style when IsDefaulted. -->
+                    <Style x:Key="styIsDefaulted" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
+                        <Setter Property="Fill">
+                            <Setter.Value>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="DarkRed" Offset="0"/>
+                                    <GradientStop Color="LightPink" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Stroke">
+                            <Setter.Value>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="DarkRed" Offset="1"/>
+                                    <GradientStop Color="Black" Offset="0"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <!-- Style when disabled. -->
+                    <Style x:Key="styDisabled" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
+                        <Setter Property="Opacity" Value="0.75"/>
+                        <Setter Property="Fill">
+                            <Setter.Value>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="Gray" Offset="0"/>
+                                    <GradientStop Color="White" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Stroke">
+                            <Setter.Value>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="Gray" Offset="1"/>
+                                    <GradientStop Color="White" Offset="0"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ControlTemplate.Resources>
+                <Grid x:Name="grdMain" ClipToBounds="True" Opacity="0.5"
+			 Width="{TemplateBinding Width}"
+			 Height="{TemplateBinding Height}">
+                    <Rectangle x:Name="rectMain"/>
+
+                    <ContentPresenter
+				 VerticalAlignment="Center"
+                 HorizontalAlignment="Center"/>
+                </Grid>
+
+                <!-- Behaviors. -->
+                <ControlTemplate.Triggers>
+                    <!-- Mouse over. -->
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="grdMain" Property="Opacity"
+                     Value="0.75"/>
+                    </Trigger>
+
+                    <!-- Focus. -->
+                    <Trigger Property="IsFocused" Value="True">
+                        <Setter TargetName="grdMain" Property="Opacity"
+                     Value="0.75"/>
+                    </Trigger>
+
+                    <!-- Defaulted. -->
+                    <Trigger Property="IsDefaulted" Value="True">
+                        <Setter TargetName="rectMain" Property="Style"
+                     Value="{StaticResource styIsDefaulted}"/>
+                    </Trigger>
+
+                    <!-- Pressed. This comes after Focus so it gets precedence. -->
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter TargetName="grdMain" Property="Opacity"
+                     Value="1"/>
+                    </Trigger>
+
+                    <!-- Disabled. This comes last so it gets ultimate precedence. -->
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter TargetName="rectMain" Property="Style"
+                     Value="{StaticResource styDisabled}"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+
+            <Style TargetType="Button">
+                <Setter Property="Width" Value="110"/>
+                <Setter Property="Margin" Value="10"/>
+                <Setter Property="FontStyle" Value="Normal"/>
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="Template" Value="{StaticResource temGlassButton}"/>
+            </Style>
+
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="5"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="5"/>
+        </Grid.RowDefinitions>
+
+        <TreeView Grid.RowSpan="2" Grid.Column="1" Grid.Row="2" Name="tvEdit" ItemsSource="{Binding EditDrillholeData}" SelectedItemChanged="tvEdit_SelectedItemChanged" SourceUpdated="tvEdit_SourceUpdated" >
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding GroupedHoles}" DataType="{x:Type local:ReshapedDataToEdit}">
+                    <Label Content="{Binding ErrorType}"/>
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding GroupedTables}" DataType="{x:Type local:GroupByHoles}">
+                            <Label Content="{Binding holeid}"/>
+                            <HierarchicalDataTemplate.ItemTemplate>
+                                <HierarchicalDataTemplate ItemsSource="{Binding GroupedTests}" DataType="{x:Type local:GroupByTable}">
+                                    <Label Content="{Binding TableType}"/>
+                                    <HierarchicalDataTemplate.ItemTemplate>
+                                        <HierarchicalDataTemplate ItemsSource="{Binding TestFields}" DataType="{x:Type local:GroupByTest}">
+                                            <Label Content="{Binding MainTest}"/>
+                                            <HierarchicalDataTemplate.ItemTemplate>
+                                                <HierarchicalDataTemplate ItemsSource="{Binding TableData}" DataType="{x:Type local:GroupByTestField}">
+                                                    <Label Content="{Binding TestField}"/>
+                                                    <HierarchicalDataTemplate.ItemTemplate>
+                                                        <DataTemplate DataType="{x:Type local:RowsToEdit}">
+                                                            <Label Content="{Binding Description}"/>
+                                                        </DataTemplate>
+                                                    </HierarchicalDataTemplate.ItemTemplate>
+                                                </HierarchicalDataTemplate>
+                                            </HierarchicalDataTemplate.ItemTemplate>
+                                        </HierarchicalDataTemplate>
+                                    </HierarchicalDataTemplate.ItemTemplate>
+                                </HierarchicalDataTemplate>
+                            </HierarchicalDataTemplate.ItemTemplate>
+                        </HierarchicalDataTemplate>
+                    </HierarchicalDataTemplate.ItemTemplate>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+
+        </TreeView>
+
+        <DockPanel Grid.Column="1" Grid.Row="2" Visibility="Hidden">
+            <Label Content="Group by: " VerticalAlignment="Top" Background="White" FontWeight="Bold"/>
+            <ComboBox IsSynchronizedWithCurrentItem="true" Name="cboErrors" ItemsSource="{Binding EditDrillholeData}" VerticalAlignment="Top" SelectedIndex="0" FontWeight="Bold" DisplayMemberPath="ErrorType">
+
+            </ComboBox>
+
+            <ListView Name="lstByHole" IsSynchronizedWithCurrentItem="true" ItemsSource="{Binding Path=EditDrillholeData/GroupedHoles}" DisplayMemberPath="holeid" >
+
+            </ListView>
+
+        </DockPanel>
+
+        <GridSplitter Grid.Row="2" Grid.Column="2" Width="2" Background="Transparent" ResizeBehavior="PreviousAndNext"/>
+        <Label Content="Fix Errors and Review Warnings" Grid.Column="1" Grid.ColumnSpan="4" Grid.Row="1" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+        <DataGrid ItemsSource="{Binding}" Name="dataEdits" Opacity="1" Grid.Column="3" Grid.Row="2" 
+                  VerticalAlignment="Stretch" BorderBrush="Blue" AutoGenerateColumns="True" 
+                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" 
+                  IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
+                  Visibility="Hidden"
+                  ToolTip="{Binding Path=EditDrillholeData/GroupedHoles/GroupedTables/GroupedTests/TestFields/TableData/ToolTip}" 
+                  AutoGeneratingColumn="dataEdits_AutoGeneratingColumn" CellEditEnding="dataEdits_CellEditEnding">
+        </DataGrid>
+
+        <DataGrid ItemsSource="{Binding}" Name="dataCollar" Grid.Column="3" Grid.Row="3" VerticalAlignment="Stretch" 
+                  Visibility="Hidden" AutoGenerateColumns="True" CanUserAddRows="False" IsSynchronizedWithCurrentItem="true" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Ignore" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Label Name="lblPreview" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" 
+               VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="3" FontSize="36" FontStyle="Italic" FontWeight="Bold" Content="PREVIEW TABLE"></Label>
+
+        <Label Name="lblEdits" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" 
+               VerticalContentAlignment="Center" Grid.Column="3" Grid.Row="2" FontSize="36" FontStyle="Italic" FontWeight="Bold" Content="EDIT ROWS"></Label>
+
+        <Border Grid.Column="3" Grid.Row="2" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" ></Border>
+        <Border Grid.Column="3" Grid.Row="3" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" ></Border>
+
+
+        <!--<ToolBar Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" FontSize="14">-->
+        <!--<StackPanel Orientation="Horizontal">-->
+
+        <Button Name="btnStartEdits" Grid.Column="1" Grid.Row="4" FontSize="14" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Start Editing" Click="btnStartEdits_Click"/>
+        <Button Name="btnStopEdits" Grid.Column="1" Grid.Row="4" FontSize="14" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Stop Editing" Click="btnStopEdits_Click" Visibility="Hidden"/>
+
+        <Button Name="btnSave" Grid.Column="1" Grid.Row="4" FontSize="14" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Save Edits" Click="btnSave_Click" IsEnabled="False"/>
+        <Button Name="btnTD" Grid.Column="3" Grid.Row="4" FontSize="14" Width="125" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Fix Max Depths" Click="btnTD_Click" IsEnabled="False"/>
+        <!--<Button Name="btnReplaceAll" FontSize="14" Width="150" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Find and Replace" Click="btnTD_Click" IsEnabled="False"/>-->
+        <Expander Grid.Column="3" Grid.Row="4" Header="Find and Replace" HorizontalAlignment="Center">
+            <StackPanel >
+                <TextBox ToolTip="Find"></TextBox>
+                <TextBox ToolTip="Repace"></TextBox>
+                <Button Content="Go" FontSize="14" Width="25" Height="25" IsEnabled="False"/>
+            </StackPanel>
+
+        </Expander>
+
+        <!--</StackPanel>-->
+        <!--</ToolBar>-->
+
+
+    </Grid>
+</Page>
