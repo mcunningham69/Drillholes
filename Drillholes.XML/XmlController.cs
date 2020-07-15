@@ -2,21 +2,43 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Drillholes.Domain.DataObject;
 using Drillholes.Domain.Enum;
 using Drillholes.Domain.Interfaces;
+using Drillholes.Domain;
 
 namespace Drillholes.XML
 {
     public class XmlController : IDrillholeXML
     {
-        public async Task<XElement> DrillholeData(string fileName, XElement xPreview, DrillholeTableType tableType)
-        {
-            XmlFactory factory = new XmlFactory(DrillholesXmlEnum.DrillholeInputData);
+        XmlFactory factory = null;
 
-            return await factory.CreateXML(fileName, xPreview, tableType);
+        public async Task<XElement> DrillholeData(string fileName, XElement xPreview, DrillholeTableType tableType, string xmlNodeName, string rootName)
+        {
+            XDocument xmlFile = null;
+            XElement elements = null;
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeInputData);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeInputData);
+
+            if (!File.Exists(fileName))
+                elements = await factory.CreateXML(fileName, xPreview, tableType, rootName);
+            else
+            {
+                xmlFile = await factory.OpenXML(fileName);
+
+                if (xmlFile == null)
+                    elements = await factory.CreateXML(fileName, xPreview, tableType, rootName);
+                else
+                    elements = await factory.UpdateXML(fileName, xPreview, xmlFile, tableType, xmlNodeName, rootName);
+            }
+
+            return await factory.CreateXML(fileName, xPreview, tableType, rootName);
         }
 
         public Task<XElement> DrillholeDesurvey()
@@ -29,17 +51,64 @@ namespace Drillholes.XML
             throw new NotImplementedException();
         }
 
-        public Task<XElement> FieldParameters()
+        public async Task<bool> DrillholeFieldParameters(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName)
         {
-            throw new NotImplementedException();
+            XDocument xmlFile = null;
+            XElement elements = null;
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeFields);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeFields);
+
+            if (!File.Exists(fileName))
+                elements = await factory.CreateXML(fileName, fields, tableType, rootName);
+            else
+            {
+                xmlFile = await factory.OpenXML(fileName);
+
+                if (xmlFile == null)
+                    elements = await factory.CreateXML(fileName, fields, tableType, rootName);
+                else
+                    elements = await factory.UpdateXML(fileName, fields, xmlFile, tableType, "", rootName);
+            }
+
+            //todo check if XElement null and throw exception
+            elements = await factory.CreateXML(fileName, fields, tableType, rootName);
+
+            if (elements != null)
+                return true;
+            else
+                return false;
         }
 
  
 
-        public async Task<XElement> TableParameters(string fileName, List<DrillholeTable> importTables)
+        public async Task<XElement> TableParameters(string fileName, List<DrillholeTable> importTables, string rootName)
         {
-            XmlFactory factory = new XmlFactory(DrillholesXmlEnum.DrillholeTableParameters);
-            XElement elements = await factory.CreateXML(fileName, importTables);
+            XDocument xmlFile = null;
+            XElement elements = null;
+
+            DrillholeTableType tableType = DrillholeTableType.other;
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeTableParameters);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeTableParameters);
+
+          //  File.Delete(fileName);
+
+            if (!File.Exists(fileName))
+                elements = await factory.CreateXML(fileName, importTables, tableType, rootName);
+            else
+            {
+                xmlFile = await factory.OpenXML(fileName);
+
+                if (xmlFile == null)
+                    elements = await factory.CreateXML(fileName, importTables, tableType, rootName);
+                else
+                    elements = await factory.UpdateXML(fileName, importTables, xmlFile, tableType, "", rootName);
+            }
 
             return elements;
         }

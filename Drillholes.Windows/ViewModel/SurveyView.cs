@@ -109,6 +109,9 @@ namespace Drillholes.Windows.ViewModel
 
                 surveyTableObject.xPreview = surveyService.xPreview;
 
+                await _xmlService.DrillholeData(fullPathnameData, surveyService.xPreview, DrillholeTableType.survey, DrillholeConstants._Survey + "s", rootNameData);
+
+
             }
 
             fields = _surveyService.ReturnFields(classMapper);

@@ -9,7 +9,7 @@ namespace Drillholes.Windows
 {
     public static class XmlDefaultPath
     {
-        public static string GetFullPathAndFilename(string _rootName)
+        public static string GetFullPathAndFilename(string _rootName, string tableName)
         {
             string rootName = _rootName;
             string fullPathAndName = "";
@@ -22,34 +22,39 @@ namespace Drillholes.Windows
             xmlPath = xmlPath = xmlPath + "\\";
             string searchName = "_" + rootName + ".xml";
 
-            //Order by XML type abd date, with most recent at top
-            var xmlFiles = new DirectoryInfo(xmlPath).GetFiles().Where(x => x.Extension == ".xml").OrderBy(t => t.CreationTime).Reverse();
+            IEnumerable<FileInfo> xmlFiles = null;
 
-            if (xmlFiles == null)
-                return null;
-
-            foreach (var file in xmlFiles)
+            if (tableName == "")
             {
-                string name = file.Name; //get the name of file
+                //Order by XML type abd date, with most recent at top
+                xmlFiles = new DirectoryInfo(xmlPath).GetFiles().Where(x => x.Extension == ".xml").OrderBy(t => t.CreationTime).Reverse();
 
-                int length = searchName.Length;  //length of seachName
+                if (xmlFiles == null)
+                    return null;
 
-                if (length < name.Length) //filename has to be longer than searchname
+                foreach (var file in xmlFiles)
                 {
+                    string name = file.Name; //get the name of file
 
-                    if (name.Contains(searchName)) //if name contains searchName then load XML file
+                    int length = searchName.Length;  //length of seachName
+
+                    if (length < name.Length) //filename has to be longer than searchname
                     {
-                        fullPathAndName = file.FullName;
-                        break;
-                    }
-                    else
-                    {
-                        fullPathAndName = xmlPath + DateTime.Now.ToFileTime().ToString() + searchName;
+
+                        if (name.Contains(searchName)) //if name contains searchName then load XML file
+                        {
+                            fullPathAndName = file.FullName;
+                            break;
+                        }
+                        else
+                        {
+                            return xmlPath + DateTime.Now.ToFileTime().ToString() + searchName;
+                        }
                     }
                 }
             }
 
-            return fullPathAndName;
+            return xmlPath + tableName + "_" + rootName + ".xml";
         }
     }
 }

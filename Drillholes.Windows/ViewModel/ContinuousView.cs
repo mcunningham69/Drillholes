@@ -102,6 +102,9 @@ namespace Drillholes.Windows.ViewModel
 
                 continuousTableObject.xPreview = continuousService.xPreview;
 
+                await _xmlService.DrillholeData(fullPathnameData, continuousService.xPreview, DrillholeTableType.continuous, DrillholeConstants._Continuous, rootNameData);
+
+
             }
 
             fields = _continuousService.ReturnFields(classMapper);

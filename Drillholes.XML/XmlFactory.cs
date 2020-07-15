@@ -1,4 +1,5 @@
-﻿using Drillholes.Domain.DataObject;
+﻿using Drillholes.Domain;
+using Drillholes.Domain.DataObject;
 using Drillholes.Domain.Enum;
 using System;
 using System.Collections.Generic;
@@ -23,19 +24,19 @@ namespace Drillholes.XML
             _xml =  XmlManagement.xmlType(xmlMode);
         }
 
-        public async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType)
+        public async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
         {
-            return _xml.CreateXML(fullXmlName, xmlValues, tableType).Result;
+            return _xml.CreateXML(fullXmlName, xmlValues, tableType, rootName).Result;
         }
 
-        public async Task<XElement> CreateXML(string fullXmlName, object xmlValues)
-        {
-            return _xml.CreateXML(fullXmlName, xmlValues).Result;
-        }
 
-        public async Task<XElement> OpenXML(string fullXmlName)
+        public async Task<XDocument> OpenXML(string fullXmlName)
         {
             return _xml.OpenXML(fullXmlName).Result;
+        }
+        public async Task<XElement> UpdateXML(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        {
+            return _xml.UpdateXML(fullXmlName, xmlValues, xmlData, tableType, xmlNodeTableNam, rootName).Result;
         }
     }
 
@@ -48,7 +49,7 @@ namespace Drillholes.XML
                 case DrillholesXmlEnum.DrillholeTableParameters:
                     return new XmlTableParameters();
                 case DrillholesXmlEnum.DrillholeFields:
-                    return null;
+                    return new XmlTableFields();
                 case DrillholesXmlEnum.DrillholeInputData:
                     return new XmlTableInputdata();
                 case DrillholesXmlEnum.DrillholeDesurveyData:
@@ -60,24 +61,18 @@ namespace Drillholes.XML
             return null;
         }
 
-        public abstract Task<XElement> CreateXML(string fullXmlName, object xmlValues);
-        public abstract Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType);
-        public abstract Task<XElement> OpenXML(string fullXmlName);
+        public abstract Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName);
+        public abstract Task<XDocument> OpenXML(string fullXmlName);
         public abstract void SaveXML(XDocument xmlFile, string fullXmlName);
-        public abstract Task<XElement> UpdateXML(string fullXmlName, object xmlValues);
+        public abstract Task<XElement> UpdateXML(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName);
 
     }
 
     public class XmlTableParameters : XmlManagement
     {
-        public override Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType)
-        {
-            throw new NotImplementedException();
-        }
-        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues)
-        {
-            string rootName = "DrillholeTable";
 
+        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
+        {
             var tableValues = (List<DrillholeTable>)xmlValues;
 
             XElement tableParameters = null;
@@ -108,9 +103,9 @@ namespace Drillholes.XML
             return xmlFile.Element(rootName);
         }
 
-        public override async Task<XElement> OpenXML(string fullXmlName)
+        public override async Task<XDocument> OpenXML(string fullXmlName)
         {
-            return XDocument.Load(fullXmlName).Element("DrillholeTable");
+            return XDocument.Load(fullXmlName);
         }
 
         public override async void SaveXML(XDocument xmlFile, string fullXmlName)
@@ -118,9 +113,43 @@ namespace Drillholes.XML
             xmlFile.Save(fullXmlName);
         }
 
-        public override async Task<XElement> UpdateXML(string fullXmlName, object xmlValues)
+        public override async Task<XElement> UpdateXML(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
         {
-            throw new NotImplementedException();
+            var tableValues = (List<DrillholeTable>)xmlValues;
+
+            XElement tableParameters = null;
+
+            var elements = xmlData.Descendants(rootName).Elements();
+
+            foreach (var table in tableValues)
+            {
+                var updateValues = elements.Where(e => e.Attribute("Value").Value == table.tableType.ToString());
+
+                List<XElement> nodes = new List<XElement>();
+                nodes.Add(new XElement("TableName", table.tableName));
+                nodes.Add(new XElement("TableFormat", table.tableFormat.ToString()));
+                nodes.Add(new XElement("TableLocation", table.tableLocation));
+                nodes.Add(new XElement("Cancelled", table.isCancelled.ToString()));
+                nodes.Add(new XElement("Valid", table.isValid.ToString()));
+
+                if (updateValues != null)
+                    updateValues.Remove();
+
+                tableParameters = new XElement("TableType", new XAttribute("Value", table.tableType.ToString()));
+                tableParameters.Add(nodes);
+
+                xmlData.Root.Add(tableParameters);
+
+            }
+
+            //change modified time
+            var modified = xmlData.Descendants(rootName).Select(m => m.Attribute("Modified")).FirstOrDefault();
+            if (modified != null)
+                modified.Value = DateTime.Now.ToString();
+
+            SaveXML(xmlData, fullXmlName);
+
+            return xmlData.Element(rootName);
         }
 
        
@@ -128,15 +157,9 @@ namespace Drillholes.XML
 
     public class XmlTableInputdata : XmlManagement
     {
-        public override Task<XElement> CreateXML(string fullXmlName, object xmlValues)
-        {
-            throw new NotImplementedException();
-        }
 
-        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType)
+        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
         {
-            string rootName = "DrillholeData";
-
             var tableValues = (XElement)xmlValues;
 
             XElement tableParameters = null;
@@ -156,9 +179,9 @@ namespace Drillholes.XML
             return xmlFile.Element(rootName);
         }
 
-        public override async Task<XElement> OpenXML(string fullXmlName)
+        public override async Task<XDocument> OpenXML(string fullXmlName)
         {
-            return XDocument.Load(fullXmlName).Element("DrillholeData");
+            return XDocument.Load(fullXmlName);
         }
 
         public override void SaveXML(XDocument xmlFile, string fullXmlName)
@@ -166,9 +189,131 @@ namespace Drillholes.XML
             xmlFile.Save(fullXmlName);
         }
 
-        public override Task<XElement> UpdateXML(string fullXmlName, object xmlValues)
+
+
+        public override async Task<XElement> UpdateXML(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
         {
-            throw new NotImplementedException();
+            var tableValues = (XElement)xmlValues;
+
+            XElement tableParameters = null;
+
+            var elements = xmlData.Descendants(rootName).Elements();
+
+           // var updateValues = elements.Select(e => e.Element(xmlNodeTableNam)).FirstOrDefault();
+            var updateValues = elements.Where(e => e.Attribute("Value").Value == tableType.ToString());
+
+
+            if (updateValues.Any())
+            {
+               // var updateValues = elements.Select(e => e.Element(xmlNodeTableNam));
+                updateValues.Remove();
+
+            }
+
+
+            //insert if null
+
+            tableParameters = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
+            tableParameters.Add(tableValues);
+
+            xmlData.Root.Add(tableParameters);
+
+            //change modified time
+            var modified = xmlData.Descendants(rootName).Select(m => m.Attribute("Modified")).FirstOrDefault();
+            if (modified != null)
+                modified.Value = DateTime.Now.ToString();
+
+            SaveXML(xmlData, fullXmlName);
+
+            return xmlData.Element(rootName);
+        }
+    }
+
+    public class XmlTableFields : XmlManagement
+    {
+        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
+        {
+            var tableFields = (ImportTableFields)xmlValues;
+
+            XElement tableParameters = null;
+
+            XDocument xmlFile = new XDocument(
+                new XDeclaration("1.0", null, null),
+                new XProcessingInstruction("order", "alpha ascending"),
+                new XElement(rootName, new XAttribute("Modified", DateTime.Now)));
+
+            foreach (var field in tableFields)
+            {
+                List<XElement> nodes = new List<XElement>();
+                nodes.Add(new XElement("ColumnHeader", field.columnHeader));
+                nodes.Add(new XElement("ColumnImportAs", field.columnImportAs));
+                nodes.Add(new XElement("ColumnImportName", field.columnImportName));
+                nodes.Add(new XElement("FieldType", field.fieldType));
+                nodes.Add(new XElement("GenericType", field.genericType));
+                nodes.Add(new XElement("GroupName", field.groupName));
+                nodes.Add(new XElement("FieldType", field.keys)); //?
+
+                tableParameters = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
+                tableParameters.Add(nodes);
+
+            }
+
+            xmlFile.Root.Add(tableParameters);
+
+            SaveXML(xmlFile, fullXmlName);
+
+            return xmlFile.Element(rootName);
+        }
+
+        public override async Task<XDocument> OpenXML(string fullXmlName)
+        {
+            return XDocument.Load(fullXmlName);
+        }
+
+        public override async void SaveXML(XDocument xmlFile, string fullXmlName)
+        {
+            xmlFile.Save(fullXmlName);
+        }
+
+        public override async Task<XElement> UpdateXML(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        {
+            var tableValues = (ImportTableFields)xmlValues;
+
+            XElement tableParameters = null;
+
+            var elements = xmlData.Descendants(rootName).Elements();
+
+            foreach (var field in tableValues)
+            {
+                var updateValues = elements.Where(e => e.Attribute("Value").Value == tableType.ToString());
+
+                List<XElement> nodes = new List<XElement>();
+                nodes.Add(new XElement("ColumnHeader", field.columnHeader));
+                nodes.Add(new XElement("ColumnImportAs", field.columnImportAs));
+                nodes.Add(new XElement("ColumnImportName", field.columnImportName));
+                nodes.Add(new XElement("FieldType", field.fieldType));
+                nodes.Add(new XElement("GenericType", field.genericType));
+                nodes.Add(new XElement("GroupName", field.groupName));
+                nodes.Add(new XElement("FieldType", field.keys)); //?
+
+                if (updateValues != null)
+                    updateValues.Remove();
+
+                tableParameters = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
+                tableParameters.Add(nodes);
+
+                xmlData.Root.Add(tableParameters);
+
+            }
+
+            //change modified time
+            var modified = xmlData.Descendants(rootName).Select(m => m.Attribute("Modified")).FirstOrDefault();
+            if (modified != null)
+                modified.Value = DateTime.Now.ToString();
+
+            SaveXML(xmlData, fullXmlName);
+
+            return xmlData.Element(rootName);
         }
     }
 }

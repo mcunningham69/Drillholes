@@ -30,6 +30,8 @@ namespace Drillholes.Windows.Dialogs
         private IDrillholeTables _drillholeTables;
         private XmlService _xmlService;
         private IDrillholeXML _xml;
+        private string rootName = "DrillholeTables";
+        private string fullName { get; set; }
 
         IMapper mapper = null;
         bool bDebug = true;
@@ -57,6 +59,12 @@ namespace Drillholes.Windows.Dialogs
 
             if (bDebug)
                 txtCollar.Text = "Collar";
+
+            fullName = "";
+
+            _xml = new Drillholes.XML.XmlController();
+
+            _xmlService = new XmlService(_xml);
 
             InitaliseDrillholeImportMap();
         }
@@ -91,55 +99,79 @@ namespace Drillholes.Windows.Dialogs
 
 
 
-        private void btnCollar_Click(object sender, RoutedEventArgs e)
+        private async void btnCollar_Click(object sender, RoutedEventArgs e)
         {
             SelectTables(DrillholeTableType.collar, false);
 
-            txtCollar.Text = importTables.Where(o => o.tableType ==
+            string collar = importTables.Where(o => o.tableType ==
             DrillholeTableType.collar).Select(s => s.tableName).FirstOrDefault();
+
+            if (collar != "")
+            {
+                await ManageXml();
+
+                txtCollar.Text = collar;
+            }
         }
 
-        private void btnSurvey_Click(object sender, RoutedEventArgs e)
+        private async void btnSurvey_Click(object sender, RoutedEventArgs e)
         {
             SelectTables(DrillholeTableType.survey, false);
 
-            txtSurvey.Text = importTables.Where(o => o.tableType ==
+            string survey = importTables.Where(o => o.tableType ==
             DrillholeTableType.survey).Select(s => s.tableName).FirstOrDefault();
+
+            if (survey != "")
+            {
+                await ManageXml();
+
+                txtSurvey.Text = survey;
+            }
         }
 
-        private void btnAssay_Click(object sender, RoutedEventArgs e)
+        private async void btnAssay_Click(object sender, RoutedEventArgs e)
         {
             SelectTables(DrillholeTableType.assay, false);
 
-            txtAssay.Text = importTables.Where(o => o.tableType ==
+            string assay = importTables.Where(o => o.tableType ==
             DrillholeTableType.assay).Select(s => s.tableName).FirstOrDefault();
+
+            if (assay != "")
+            {
+                await ManageXml();
+
+                txtAssay.Text = assay;
+            }
         }
 
-        private void btnInterval_Click(object sender, RoutedEventArgs e)
+        private async void btnInterval_Click(object sender, RoutedEventArgs e)
         {
             SelectTables(DrillholeTableType.interval, false);
 
-            txtLitho.Text = importTables.Where(o => o.tableType ==
+            string interval = importTables.Where(o => o.tableType ==
             DrillholeTableType.interval).Select(s => s.tableName).FirstOrDefault();
+
+            if (interval != "")
+            {
+                await ManageXml();
+
+                txtLitho.Text = interval;
+            }
         }
 
-        private void btnOther_Click(object sender, RoutedEventArgs e)
+        private async void btnOther_Click(object sender, RoutedEventArgs e)
         {
             SelectTables(DrillholeTableType.continuous, false);
 
-            txtDistance.Text = importTables.Where(o => o.tableType ==
+            string continuous = importTables.Where(o => o.tableType ==
             DrillholeTableType.continuous).Select(s => s.tableName).FirstOrDefault();
-        }
 
-        private void btnHelp_Click(object sender, RoutedEventArgs e)
-        {
+            if (continuous != "")
+            {
+                await ManageXml();
 
-        }
-
-        private void btnClose_Click(object sender, RoutedEventArgs e)
-        {
-            CloseApplication();
-
+                txtDistance.Text = continuous;
+            }
         }
 
         private void CloseApplication()
@@ -206,14 +238,7 @@ namespace Drillholes.Windows.Dialogs
 
             try
             {
-                //get pathname
-                string fullName = XmlDefaultPath.GetFullPathAndFilename("DrillholeTables");
-
-                //create XML temp table
-                _xml = new Drillholes.XML.XmlController();
-
-                _xmlService = new XmlService(_xml);
-                await _xmlService.TableParameters(fullName, importTables);
+                await ManageXml();
 
                 NavigationService.Navigate(new DrillholeImportPage(importTables));
 
@@ -255,6 +280,24 @@ namespace Drillholes.Windows.Dialogs
 
 
             return ManageImportClassesFromDialog(importService, value);
+        }
+
+        private async Task<bool>  ManageXml()
+        {
+            //get pathname
+            if (fullName == "")
+                fullName = XmlDefaultPath.GetFullPathAndFilename(rootName,"alltables");
+
+            //create XML temp table
+            if (_xml == null)
+                _xml = new Drillholes.XML.XmlController();
+
+            if (_xmlService == null)
+                _xmlService = new XmlService(_xml);
+
+            await _xmlService.TableParameters(fullName, importTables, rootName);
+
+            return true;
         }
 
         private bool ManageImportClassesFromDialog(DrillholeTable _importClass, DrillholeTableType value)

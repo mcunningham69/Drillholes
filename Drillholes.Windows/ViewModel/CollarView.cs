@@ -98,6 +98,9 @@ namespace Drillholes.Windows.ViewModel
         public string fullPathnameFields { get; set; }
         public string fullPathnameData { get; set; }
 
+        public string rootNameFields = "DrillholeFields";
+        public string rootNameData = "DrillholeData";
+
         public CollarView(DrillholeImportFormat _tableFormat, DrillholeTableType _tableType, string _tableLocation,
             string _tableName)
         {
@@ -118,11 +121,11 @@ namespace Drillholes.Windows.ViewModel
 
             dataGrid = new System.Data.DataTable();
 
-            XmlSetUP();
+            XmlSetUP(_tableType.ToString());
 
         }
 
-        public void XmlSetUP()
+        public void XmlSetUP(string tableType)
         {
             //create XML temp table
             if (_xml == null)
@@ -131,8 +134,8 @@ namespace Drillholes.Windows.ViewModel
             if (_xmlService == null)
                 _xmlService = new XmlService(_xml);
 
-            fullPathnameFields = XmlDefaultPath.GetFullPathAndFilename("DrillholesFields");
-            fullPathnameData = XmlDefaultPath.GetFullPathAndFilename("DrillholesData");
+            fullPathnameFields = XmlDefaultPath.GetFullPathAndFilename(rootNameFields, tableType);
+            fullPathnameData = XmlDefaultPath.GetFullPathAndFilename(rootNameData, tableType);
 
         }
         //TODO move out of here
@@ -196,7 +199,7 @@ namespace Drillholes.Windows.ViewModel
 
                 collarTableObject.xPreview = collarService.xPreview;
 
-                await _xmlService.DrillholeData(fullPathnameData, collarService.xPreview, DrillholeTableType.collar);
+                await _xmlService.DrillholeData(fullPathnameData, collarService.xPreview, DrillholeTableType.collar, DrillholeConstants._Collar + "s", rootNameData);
 
 
             }

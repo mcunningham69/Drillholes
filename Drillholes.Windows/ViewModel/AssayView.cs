@@ -99,6 +99,9 @@ namespace Drillholes.Windows.ViewModel
 
                 assayTableObject.xPreview = assayService.xPreview;
 
+                await _xmlService.DrillholeData(fullPathnameData, assayService.xPreview, DrillholeTableType.assay, DrillholeConstants._Assay + "s", rootNameData);
+
+
             }
 
             fields = _assayService.ReturnFields(classMapper);

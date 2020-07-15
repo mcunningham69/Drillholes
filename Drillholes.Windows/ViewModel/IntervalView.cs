@@ -102,6 +102,9 @@ namespace Drillholes.Windows.ViewModel
 
                 intervalTableObject.xPreview = intervalService.xPreview;
 
+                await _xmlService.DrillholeData(fullPathnameData, intervalService.xPreview, DrillholeTableType.interval, DrillholeConstants._Interval + "s", rootNameData);
+
+
             }
 
             fields = _intervalService.ReturnFields(classMapper);

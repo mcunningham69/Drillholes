@@ -11,11 +11,11 @@ namespace Drillholes.Domain.Interfaces
 {
     public interface IDrillholeXML
     {
-        Task<XElement> TableParameters(string fileName, List<DrillholeTable> importTables);
+        Task<XElement> TableParameters(string fileName, List<DrillholeTable> importTables, string rootName);
 
-        Task<XElement> FieldParameters();
+        Task<bool> DrillholeFieldParameters(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName);
 
-        Task<XElement> DrillholeData(string fileName, XElement xPreview, DrillholeTableType tableType);
+        Task<XElement> DrillholeData(string fileName, XElement xPreview, DrillholeTableType tableType, string xmlNodeName, string rootName);
 
         Task<XElement> DrillholePreferences();
         Task<XElement> DrillholeDesurvey();

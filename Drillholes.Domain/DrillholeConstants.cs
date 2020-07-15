@@ -109,6 +109,7 @@ namespace Drillholes.Domain
         public const string _Assay = "Assay";
         public const string _Interval = "Interval";
         public const string _Other = "Other";
+        public const string _Continuous = "Continuous";
 
         public const string excel = "Excel Table";
         public const string text = "Text File";

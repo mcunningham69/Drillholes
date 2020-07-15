@@ -34,7 +34,8 @@ namespace Drillholes.Domain.Enum
         survey,
         assay,
         interval,
-        continuous
+        continuous,
+        other
     }
 
     public enum DrillholeInterfaceType
