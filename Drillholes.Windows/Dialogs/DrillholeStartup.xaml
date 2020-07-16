@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Drillhole Session" Height="Auto" MinHeight="700" MinWidth="100" Width="Auto" MaxWidth="1100">
     <RibbonWindow.Background>
-        <ImageBrush ImageSource="../Images/lomondhills.jpg" Stretch="UniformToFill" ></ImageBrush>
+        <ImageBrush ImageSource="../Images/Largo.jpg" Stretch="UniformToFill" ></ImageBrush>
     </RibbonWindow.Background>
     
     <Grid>
