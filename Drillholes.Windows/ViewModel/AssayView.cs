@@ -85,6 +85,10 @@ namespace Drillholes.Windows.ViewModel
             assayTableObject.assayKey = assayService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
             assayDataFields = assayService.tableData;
+
+            if (assayDataFields != null)
+                await _xmlService.DrillholeFields(fullPathnameFields, assayService.tableData, DrillholeTableType.assay, rootNameFields);
+
             return true;
         }
 
@@ -201,7 +205,7 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public override void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
+        public override async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
            bool bImport)
         {
 
@@ -214,6 +218,8 @@ namespace Drillholes.Windows.ViewModel
 
             assayDataFields = assayService.Result.tableData;
 
+            if (assayDataFields != null)
+                await _xmlService.DrillholeFields(fullPathnameFields, assayDataFields, DrillholeTableType.assay, rootNameFields);
 
             if (selectedValue == DrillholeConstants.notImported)
             {

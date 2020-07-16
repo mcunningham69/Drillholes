@@ -88,6 +88,10 @@ namespace Drillholes.Windows.ViewModel
             continuousTableObject.intervalKey = continuousService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
             continuousDataFields = continuousService.tableData;
+
+            if (continuousDataFields != null)
+                await _xmlService.DrillholeFields(fullPathnameFields, continuousService.tableData, DrillholeTableType.continuous, rootNameFields);
+
             return true;
         }
 
@@ -205,7 +209,7 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public override void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
+        public override async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
            bool bImport)
         {
 
@@ -217,6 +221,9 @@ namespace Drillholes.Windows.ViewModel
 
 
             continuousDataFields = continuousService.Result.tableData;
+
+            if (continuousDataFields != null)
+                await _xmlService.DrillholeFields(fullPathnameFields, continuousDataFields, DrillholeTableType.continuous, rootNameFields);
 
 
             if (selectedValue == DrillholeConstants.notImported)

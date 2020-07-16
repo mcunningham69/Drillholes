@@ -95,6 +95,10 @@ namespace Drillholes.Windows.ViewModel
             surveyTableObject.surveyKey = surveyService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
             surveyDataFields = surveyService.tableData;
+
+            if (surveyDataFields != null)
+                await _xmlService.DrillholeFields(fullPathnameFields, surveyService.tableData, DrillholeTableType.survey, rootNameFields);
+
             return true;
         }
 
@@ -215,7 +219,7 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public override void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
+        public override async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
            bool bImport)
         {
             string _strSearch = _searchList.columnHeader;
@@ -225,6 +229,9 @@ namespace Drillholes.Windows.ViewModel
                 _strSearch, _strName);
 
             surveyDataFields = surveyService.Result.tableData;
+
+            if (surveyDataFields != null)
+                await _xmlService.DrillholeFields(fullPathnameFields, surveyDataFields, DrillholeTableType.survey, rootNameFields);
 
             if (selectedValue == DrillholeConstants.notImported)
             {

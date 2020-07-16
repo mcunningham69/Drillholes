@@ -35,7 +35,7 @@ namespace Drillholes.XML
                 if (xmlFile == null)
                     elements = await factory.CreateXML(fileName, xPreview, tableType, rootName);
                 else
-                    elements = await factory.UpdateXML(fileName, xPreview, xmlFile, tableType, xmlNodeName, rootName);
+                    elements = await factory.ReplaceXmlNode(fileName, xPreview, xmlFile, tableType, xmlNodeName, rootName);
             }
 
             return await factory.CreateXML(fileName, xPreview, tableType, rootName);
@@ -70,7 +70,7 @@ namespace Drillholes.XML
                 if (xmlFile == null)
                     elements = await factory.CreateXML(fileName, fields, tableType, rootName);
                 else
-                    elements = await factory.UpdateXML(fileName, fields, xmlFile, tableType, "", rootName);
+                    elements = await factory.ReplaceXmlNode(fileName, fields, xmlFile, tableType, "", rootName);
             }
 
             //todo check if XElement null and throw exception
@@ -107,7 +107,7 @@ namespace Drillholes.XML
                 if (xmlFile == null)
                     elements = await factory.CreateXML(fileName, importTables, tableType, rootName);
                 else
-                    elements = await factory.UpdateXML(fileName, importTables, xmlFile, tableType, "", rootName);
+                    elements = await factory.ReplaceXmlNode(fileName, importTables, xmlFile, tableType, "", rootName);
             }
 
             return elements;

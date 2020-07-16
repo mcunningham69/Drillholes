@@ -88,6 +88,10 @@ namespace Drillholes.Windows.ViewModel
             intervalTableObject.intervalKey = intervalService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
             intervalDataFields = intervalService.tableData;
+
+            if (intervalDataFields != null)
+                await _xmlService.DrillholeFields(fullPathnameFields, intervalService.tableData, DrillholeTableType.interval, rootNameFields);
+
             return true;
         }
 
@@ -205,7 +209,7 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public override void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
+        public override async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
            bool bImport)
         {
 
@@ -218,6 +222,8 @@ namespace Drillholes.Windows.ViewModel
 
             intervalDataFields = intervalService.Result.tableData;
 
+            if (intervalDataFields != null)
+                await _xmlService.DrillholeFields(fullPathnameFields, intervalDataFields, DrillholeTableType.interval, rootNameFields);
 
             if (selectedValue == DrillholeConstants.notImported)
             {

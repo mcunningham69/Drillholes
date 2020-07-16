@@ -185,6 +185,10 @@ namespace Drillholes.Windows.ViewModel
             collarTableObject.collarKey = collarService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
             collarDataFields = collarService.tableData;
+
+            if (collarDataFields != null)
+                await _xmlService.DrillholeFields(fullPathnameFields, collarService.tableData, DrillholeTableType.collar, rootNameFields) ;
+
             return true;
         }
 
@@ -224,7 +228,7 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public virtual void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
+        public virtual async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
             bool bImport)
         {
 
@@ -237,6 +241,8 @@ namespace Drillholes.Windows.ViewModel
 
             collarDataFields = collarService.Result.tableData;
 
+            if (collarDataFields != null)
+                await _xmlService.DrillholeFields(fullPathnameFields, collarDataFields, DrillholeTableType.collar, rootNameFields);
 
             if (selectedValue == DrillholeConstants.notImported)
             {

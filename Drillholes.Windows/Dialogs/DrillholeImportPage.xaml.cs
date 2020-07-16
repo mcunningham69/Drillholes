@@ -634,7 +634,6 @@ namespace Drillholes.Windows.Dialogs
 
             ComboBox cboImportAs = sender as ComboBox;
 
-
             try
             {
                 if (cboImportAs.Text == "" || cboImportAs.Text == null)
