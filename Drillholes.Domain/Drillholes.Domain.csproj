@@ -66,6 +66,7 @@
     <Compile Include="DataObject\ValidationSurvey.cs" />
     <Compile Include="DesurveyDrillhole.cs" />
     <Compile Include="DrillholeConstants.cs" />
+    <Compile Include="DrillholePreferences.cs" />
     <Compile Include="DTO\AssayDesurveyDto.cs" />
     <Compile Include="DTO\AssayTableDto.cs" />
     <Compile Include="DTO\CollarDesurveyDto.cs" />

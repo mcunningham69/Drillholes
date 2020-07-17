@@ -17,7 +17,8 @@ namespace Drillholes.Domain.Interfaces
 
         Task<XElement> DrillholeData(string fileName, XElement xPreview, DrillholeTableType tableType, string xmlNodeName, string rootName);
 
-        Task<XElement> DrillholePreferences();
+        Task<bool> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName);
+        Task<bool> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName);
         Task<XElement> DrillholeDesurvey();
     }
 }

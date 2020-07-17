@@ -9,6 +9,7 @@ using Drillholes.Domain.DataObject;
 using Drillholes.Domain.Enum;
 using Drillholes.Domain.Interfaces;
 using Drillholes.Domain;
+using System.Net.NetworkInformation;
 
 namespace Drillholes.XML
 {
@@ -46,9 +47,61 @@ namespace Drillholes.XML
             throw new NotImplementedException();
         }
 
-        public Task<XElement> DrillholePreferences()
+        public async Task<bool> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName)
         {
-            throw new NotImplementedException();
+            XDocument xmlFile = null;
+            XElement elements = null;
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholePreferences);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholePreferences);
+
+            if (!File.Exists(fileName))
+                elements = await factory.CreateXML(fileName, preferences, DrillholeTableType.other, rootName);
+            else
+            {
+                xmlFile = await factory.OpenXML(fileName);
+
+                if (xmlFile == null)
+                    elements = await factory.CreateXML(fileName, preferences, DrillholeTableType.other, rootName);
+                else
+                {
+                    elements = await factory.ReplaceXmlNode(fileName, preferences, xmlFile, DrillholeTableType.other, "", rootName);
+                }
+
+            }
+
+            if (elements != null)
+                return true;
+            else
+                return false;
+
+        }
+
+        public async Task<bool> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName)
+        {
+            XDocument xmlFile = null;
+            XElement elements = null;
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholePreferences);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholePreferences);
+
+            xmlFile = await factory.OpenXML(fileName);
+
+            if (xmlFile != null)
+            {
+
+                elements = await factory.UpdateXmlNode(fileName, xmlName, xmlValue, xmlFile, DrillholeTableType.other, rootName);
+            }
+
+            if (elements != null)
+                return true;
+            else
+                return false;
+
         }
 
         public async Task<bool> DrillholeFieldParameters(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName)
@@ -112,5 +165,7 @@ namespace Drillholes.XML
 
             return elements;
         }
+
+       
     }
 }

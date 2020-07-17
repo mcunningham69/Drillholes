@@ -39,5 +39,19 @@ namespace Drillholes.Domain.Services
 
             return xml;
         }
+
+        public async Task<bool> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName)
+        {
+            var xml = await _xml.DrillholePreferences(fileName, preferences, rootName);
+
+            return xml;
+        }
+
+        public async Task<bool> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName)
+        {
+            var xml = await _xml.DrillholePreferences(fileName, xmlName, xmlValue, rootName);
+
+            return xml;
+        }
     }
 }

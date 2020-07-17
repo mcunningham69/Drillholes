@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Microsoft.VisualBasic;
 
 namespace Drillholes.XML
 {
@@ -38,6 +39,10 @@ namespace Drillholes.XML
         {
             return _xml.ReplaceXmlNode(fullXmlName, xmlValues, xmlData, tableType, xmlNodeTableNam, rootName).Result;
         }
+        public async Task<XElement> UpdateXmlNode(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
+        {
+            return _xml.UpdateXmlNodes(fullXmlName, xmlName, xmlChange, xmlData, tableType, rootName).Result;
+        }
     }
 
     public abstract class XmlManagement
@@ -55,7 +60,7 @@ namespace Drillholes.XML
                 case DrillholesXmlEnum.DrillholeDesurveyData:
                     return null;
                 case DrillholesXmlEnum.DrillholePreferences:
-                    return null;
+                    return new XmlDrillholePreferences();
             }
 
             return null;
@@ -66,7 +71,7 @@ namespace Drillholes.XML
         public abstract void SaveXML(XDocument xmlFile, string fullXmlName);
         public abstract Task<XElement> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName);
 
-        public abstract Task<XElement> UpdateXmlNodes(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string rootName);
+        public abstract Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName);
 
 
     }
@@ -154,7 +159,7 @@ namespace Drillholes.XML
             return xmlData.Element(rootName);
         }
 
-        public override Task<XElement> UpdateXmlNodes(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string rootName)
+        public override Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
         {
             //TODO
             throw new NotImplementedException();
@@ -232,7 +237,7 @@ namespace Drillholes.XML
             return xmlData.Element(rootName);
         }
 
-        public override Task<XElement> UpdateXmlNodes(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string rootName)
+        public override Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
         {
             //TODO
             throw new NotImplementedException();
@@ -335,15 +340,131 @@ namespace Drillholes.XML
             return xmlData.Element(rootName);
         }
 
-        public override async Task<XElement> UpdateXmlNodes(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string rootName)
+        public override async Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
         {
-            var tableFields = (List<ImportTableField>)xmlValues;
+            throw new NotImplementedException();
+
+        }
+    }
+
+    public class XmlDrillholePreferences : XmlManagement
+    {
+        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
+        {
+            var preferences = (DrillholePreferences)xmlValues;
 
             XElement tableParameters = null;
-            xmlData.Root.Add(tableParameters);
+
+            XDocument xmlFile = new XDocument(
+                new XDeclaration("1.0", null, null),
+                new XProcessingInstruction("order", "alpha ascending"),
+                new XElement(rootName, new XAttribute("Modified", DateTime.Now)));
+
+            tableParameters = new XElement("Preferences", new XAttribute("Value", "exists"));
+
+            List<XElement> nodes = new List<XElement>();
+            nodes.Add(new XElement("NegativeDip", preferences.NegativeDip));
+            nodes.Add(new XElement("ImportAllColumns", preferences.ImportAllColumns));
+            nodes.Add(new XElement("IgnoreInvalidValues", preferences.IgnoreInvalidValues));
+            nodes.Add(new XElement("LowerDetection", preferences.LowerDetection));
+            nodes.Add(new XElement("SurveyType", preferences.surveyType.ToString()));
+            nodes.Add(new XElement("DipTolerance", preferences.DipTolerance.ToString())); //?
+            nodes.Add(new XElement("AziTolerance", preferences.AzimuthTolerance.ToString())); //?
+            nodes.Add(new XElement("DefaultValue", preferences.DefaultValue.ToString())); //?
+            nodes.Add(new XElement("ImportAllColumns", preferences.ImportAllColumns));
+            nodes.Add(new XElement("ImportSurveyOnly", preferences.ImportSurveyOnly));
+            nodes.Add(new XElement("ImportAssayOnly", preferences.ImportAssayOnly));
+            nodes.Add(new XElement("ImportGeologyOnly", preferences.ImportGeologyOnly));
+            nodes.Add(new XElement("ImportContinuousOnly", preferences.ImportContinuousOnly));
+            nodes.Add(new XElement("NullifyZeroAssays", preferences.NullifyZeroAssays));
+            nodes.Add(new XElement("GeologyBase", preferences.GeologyBase));
+            nodes.Add(new XElement("CreateCollar", preferences.CreateCollar));
+            nodes.Add(new XElement("CreateToe", preferences.CreateToe));
+
+            tableParameters.Add(nodes);
+
+            xmlFile.Root.Add(tableParameters);
+
+            SaveXML(xmlFile, fullXmlName);
+
+            return xmlFile.Element(rootName);
+        }
+
+        public override async Task<XDocument> OpenXML(string fullXmlName)
+        {
+            return XDocument.Load(fullXmlName);
+        }
+
+        public override async Task<XElement> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        {
+            var preferences = (DrillholePreferences)xmlValues;
+
+            XElement tableParameters = null;
+
+            tableParameters = new XElement("Preferences", new XAttribute("Value", "exists"));
 
             var elements = xmlData.Descendants(rootName).Elements();
 
+            var updateValues = elements.Where(e => e.Attribute("Value").Value == "exists");
+
+            List<XElement> nodes = new List<XElement>();
+            nodes.Add(new XElement("NegativeDip", preferences.NegativeDip));
+            nodes.Add(new XElement("ImportAllColumns", preferences.ImportAllColumns));
+            nodes.Add(new XElement("IgnoreInvalidValues", preferences.IgnoreInvalidValues));
+            nodes.Add(new XElement("LowerDetection", preferences.LowerDetection));
+            nodes.Add(new XElement("SurveyType", preferences.surveyType.ToString()));
+            nodes.Add(new XElement("DipTolerance", preferences.DipTolerance.ToString())); //?
+            nodes.Add(new XElement("AziTolerance", preferences.AzimuthTolerance.ToString())); //?
+            nodes.Add(new XElement("DefaultValue", preferences.DefaultValue.ToString())); //?
+            nodes.Add(new XElement("ImportAllColumns", preferences.ImportAllColumns));
+            nodes.Add(new XElement("ImportSurveyOnly", preferences.ImportSurveyOnly));
+            nodes.Add(new XElement("ImportAssayOnly", preferences.ImportAssayOnly));
+            nodes.Add(new XElement("ImportGeologyOnly", preferences.ImportGeologyOnly));
+            nodes.Add(new XElement("ImportContinuousOnly", preferences.ImportContinuousOnly));
+            nodes.Add(new XElement("NullifyZeroAssays", preferences.NullifyZeroAssays));
+            nodes.Add(new XElement("GeologyBase", preferences.GeologyBase));
+            nodes.Add(new XElement("CreateCollar", preferences.CreateCollar));
+            nodes.Add(new XElement("CreateToe", preferences.CreateToe));
+
+
+            if (updateValues.Any())
+                updateValues.Remove();
+
+            tableParameters.Add(nodes);
+
+            xmlData.Root.Add(tableParameters);
+
+            //change modified time
+            var modified = xmlData.Descendants(rootName).Select(m => m.Attribute("Modified")).FirstOrDefault();
+            if (modified != null)
+                modified.Value = DateTime.Now.ToString();
+
+            SaveXML(xmlData, fullXmlName);
+
+            return xmlData.Element(rootName);
+        }
+
+        public override void SaveXML(XDocument xmlFile, string fullXmlName)
+        {
+            xmlFile.Save(fullXmlName);
+        }
+
+        public override async Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
+        {
+            string strValue = "";
+            bool bValue = true;
+
+            var elements = xmlData.Descendants(rootName).Elements();
+            var updateValues = elements.Select(e => e.Element(xmlName)).SingleOrDefault();
+
+            if (Information.IsNumeric(xmlChange))
+            {
+                updateValues.Value = xmlChange.ToString();
+            }
+            else
+            {
+                updateValues.Value = xmlChange.ToString();
+            }
 
             //change modified time
             var modified = xmlData.Descendants(rootName).Select(m => m.Attribute("Modified")).FirstOrDefault();
