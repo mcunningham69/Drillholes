@@ -22,6 +22,7 @@ using Microsoft.VisualBasic;
 using System.Reflection;
 using Drillholes.Domain;
 using Microsoft.Win32;
+using System.Xml.Linq;
 
 namespace Drillholes.Windows.Dialogs
 {
@@ -52,7 +53,7 @@ namespace Drillholes.Windows.Dialogs
 
         private async Task<bool> ManageXmlPreferences()
         {
-            DrillholePreferences preferences = await SetPreferences();
+            DrillholePreferences preferences = await SetPreferencesToXml();
 
             if (!savedProject)
             {
@@ -112,6 +113,8 @@ namespace Drillholes.Windows.Dialogs
             OpenDrillholeSession();
             frameMain.Source = new Uri("DrillholeImportPage.xaml", UriKind.Relative);
             txtStart.Visibility = Visibility.Collapsed;
+
+            var source = frameMain.Source;
 
         }
 
@@ -185,11 +188,11 @@ namespace Drillholes.Windows.Dialogs
 
                 savedProject = true;
 
+                SetEnvironmentFromXml(rootName);
             }
-
             else
                 return;
-       
+
         }
 
         private async void SaveDrillholeSession()
@@ -267,7 +270,7 @@ namespace Drillholes.Windows.Dialogs
         }
 
         #region Preferences
-        private async Task<DrillholePreferences> SetPreferences()
+        private async Task<DrillholePreferences> SetPreferencesToXml()
         {
             DrillholePreferences preferences = new DrillholePreferences()
             {
@@ -324,6 +327,72 @@ namespace Drillholes.Windows.Dialogs
             return preferences;
         }
 
+        private async void SetEnvironmentFromXml(string rootName)
+        {
+            fullName = XmlDefaultPath.GetProjectPathAndFilename(rootName, "alltables", projectSession, projectLocation);
+        
+            //create XML temp table
+            if (_xml == null)
+                _xml = new Drillholes.XML.XmlController();
+
+            if (_xmlService == null)
+                _xmlService = new XmlService(_xml);
+
+            XDocument xmlPreferences = await _xmlService.DrillholePreferences(fullName, null, rootName);
+
+            var elements = xmlPreferences.Descendants(rootName).Elements();
+
+            var updateValues = elements.Where(p => p.Attribute("Value").Value == "exists");
+
+            foreach(var value in updateValues)
+            {
+                var dip = value.Element("NegativeDip").Value;
+                
+                chkDip.IsChecked = Convert.ToBoolean(dip);
+                chkImport.IsChecked = Convert.ToBoolean(value.Element("ImportAllColumns").Value);
+                chkIgnore.IsChecked = Convert.ToBoolean(value.Element("IgnoreInvalidValues").Value);
+                chkDetection.IsChecked = Convert.ToBoolean(value.Element("LowerDetection").Value);
+                chkImportDeviation.IsChecked = Convert.ToBoolean(value.Element("ImportSurveyOnly").Value);
+                chkImportAssays.IsChecked = Convert.ToBoolean(value.Element("ImportAssayOnly").Value);
+                chkImportGeology.IsChecked = Convert.ToBoolean(value.Element("ImportGeologyOnly").Value);
+                chkImportContinuous.IsChecked = Convert.ToBoolean(value.Element("ImportContinuousOnly").Value);
+                chkZeroAssays.IsChecked = Convert.ToBoolean(value.Element("NullifyZeroAssays").Value);
+                chkCollar.IsChecked = Convert.ToBoolean(value.Element("CreateCollar").Value);
+                chkToe.IsChecked = Convert.ToBoolean(value.Element("CreateToe").Value);
+
+                var geologybase = value.Element("GeologyBase").Value;
+
+                if (Convert.ToBoolean(geologybase))
+                    radBottom.IsChecked = true;
+                else
+                    radTop.IsChecked = true;
+
+                var surveyType = value.Element("SurveyType").Value;
+
+                if (surveyType == DrillholeSurveyType.collarsurvey.ToString())
+                {
+                    radCollarSurvey.IsChecked = true;
+                }
+                else if (surveyType == DrillholeSurveyType.downholesurvey.ToString())
+                {
+                    radDownhole.IsChecked = true;
+                }
+                else if (surveyType == DrillholeSurveyType.vertical.ToString())
+                {
+                    radVertical.IsChecked = true;
+                }
+
+                var defaultValue = value.Element("DefaultValue").Value;
+                var dipTol = value.Element("DipTolerance").Value;
+                var aziTol = value.Element("AziTolerance").Value;
+
+                txtAziTol.Text = aziTol.ToString();
+                txtDipTol.Text = dipTol.ToString();
+                txtDefault.Text = defaultValue.ToString();
+
+            }
+
+        }
         private void chkDip_Click(object sender, RoutedEventArgs e)
         {
             xmlName = "NegativeDip";

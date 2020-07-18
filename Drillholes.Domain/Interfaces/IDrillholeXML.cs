@@ -13,12 +13,12 @@ namespace Drillholes.Domain.Interfaces
     {
         Task<XElement> TableParameters(string fileName, List<DrillholeTable> importTables, string rootName);
 
-        Task<bool> DrillholeFieldParameters(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName);
+        Task<XDocument> DrillholeFieldParameters(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName);
 
         Task<XElement> DrillholeData(string fileName, XElement xPreview, DrillholeTableType tableType, string xmlNodeName, string rootName);
 
-        Task<bool> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName);
-        Task<bool> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName);
+        Task<XDocument> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName);
+        Task<XDocument> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName);
 
         Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties xmlValues, string rootName);
 

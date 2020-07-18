@@ -47,7 +47,7 @@ namespace Drillholes.XML
             throw new NotImplementedException();
         }
 
-        public async Task<bool> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName)
+        public async Task<XDocument> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName)
         {
             XDocument xmlFile = null;
             XElement elements = null;
@@ -67,19 +67,19 @@ namespace Drillholes.XML
                     elements = await factory.CreateXML(fileName, preferences, DrillholeTableType.other, rootName);
                 else
                 {
-                    elements = await factory.ReplaceXmlNode(fileName, preferences, xmlFile, DrillholeTableType.other, "", rootName);
+                    if (preferences != null)
+                        elements = await factory.ReplaceXmlNode(fileName, preferences, xmlFile, DrillholeTableType.other, "", rootName);
                 }
 
             }
 
             if (elements != null)
-                return true;
-            else
-                return false;
+                xmlFile = await factory.OpenXML(fileName);
 
+            return xmlFile;
         }
 
-        public async Task<bool> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName)
+        public async Task<XDocument> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName)
         {
             XDocument xmlFile = null;
             XElement elements = null;
@@ -98,13 +98,13 @@ namespace Drillholes.XML
             }
 
             if (elements != null)
-                return true;
-            else
-                return false;
+                xmlFile = await factory.OpenXML(fileName);
+
+            return xmlFile;
 
         }
 
-        public async Task<bool> DrillholeFieldParameters(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName)
+        public async Task<XDocument> DrillholeFieldParameters(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName)
         {
             XDocument xmlFile = null;
             XElement elements = null;
@@ -130,9 +130,9 @@ namespace Drillholes.XML
             elements = await factory.CreateXML(fileName, fields, tableType, rootName);
 
             if (elements != null)
-                return true;
-            else
-                return false;
+                xmlFile = await factory.OpenXML(fileName);
+
+            return xmlFile;
         }
 
 

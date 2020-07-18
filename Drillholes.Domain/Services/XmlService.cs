@@ -33,14 +33,14 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
-        public async Task<bool> DrillholeFields(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName)
+        public async Task<XDocument> DrillholeFields(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName)
         {
             var xml =  await _xml.DrillholeFieldParameters(fileName, fields, tableType, rootName);
 
             return xml;
         }
 
-        public async Task<bool> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName)
+        public async Task<XDocument> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName)
         {
             var xml = await _xml.DrillholePreferences(fileName, preferences, rootName);
 
@@ -54,7 +54,7 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
-        public async Task<bool> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName)
+        public async Task<XDocument> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName)
         {
             var xml = await _xml.DrillholePreferences(fileName, xmlName, xmlValue, rootName);
 
