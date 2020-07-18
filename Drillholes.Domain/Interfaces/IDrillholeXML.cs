@@ -19,6 +19,9 @@ namespace Drillholes.Domain.Interfaces
 
         Task<bool> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName);
         Task<bool> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName);
+
+        Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties xmlValues, string rootName);
+
         Task<XElement> DrillholeDesurvey();
     }
 }

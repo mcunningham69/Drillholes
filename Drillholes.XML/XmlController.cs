@@ -135,7 +135,7 @@ namespace Drillholes.XML
                 return false;
         }
 
- 
+
 
         public async Task<XElement> TableParameters(string fileName, List<DrillholeTable> importTables, string rootName)
         {
@@ -149,7 +149,7 @@ namespace Drillholes.XML
             else
                 factory.SetXmlType(DrillholesXmlEnum.DrillholeTableParameters);
 
-          //  File.Delete(fileName);
+            //  File.Delete(fileName);
 
             if (!File.Exists(fileName))
                 elements = await factory.CreateXML(fileName, importTables, tableType, rootName);
@@ -166,6 +166,35 @@ namespace Drillholes.XML
             return elements;
         }
 
-       
+        public async Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties xmlValues, string rootName)
+        {
+            XDocument xmlFile = null;
+            XElement elements = null;
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeProject);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeProject);
+
+            if (!File.Exists(xmlValues.ProjectFile))
+            {
+                elements = await factory.CreateXML(xmlValues.ProjectFile, xmlValues, DrillholeTableType.other, rootName);
+            }
+            else
+            {
+                xmlFile = await factory.OpenXML(xmlValues.ProjectName);
+
+
+                if (xmlFile == null)
+                {
+                    elements = await factory.CreateXML(xmlValues.ProjectFile, xmlValues, DrillholeTableType.other, rootName);
+                }
+            }
+
+            if (elements != null)
+                xmlFile = await factory.OpenXML(xmlValues.ProjectFile);
+
+            return xmlFile;
+        }
     }
 }

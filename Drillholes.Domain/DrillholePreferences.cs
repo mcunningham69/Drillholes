@@ -9,7 +9,6 @@ namespace Drillholes.Domain
 {
     public class DrillholePreferences
     {
-
         public bool NegativeDip { get; set; }
         public bool ImportAllColumns { get; set; }
         public bool IgnoreInvalidValues { get; set; }
@@ -27,6 +26,13 @@ namespace Drillholes.Domain
         public bool CreateCollar { get; set; }
         public bool CreateToe { get; set; }
 
+    }
 
+    public class DrillholeProjectProperties
+    {
+        public string ProjectName { get; set; }
+        public string ProjectParentFolder { get; set; }
+        public string ProjectFolder { get; set; }
+        public string ProjectFile { get; set; }
     }
 }

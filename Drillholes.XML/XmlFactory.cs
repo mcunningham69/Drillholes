@@ -22,7 +22,7 @@ namespace Drillholes.XML
 
         public void SetXmlType(DrillholesXmlEnum xmlMode)
         {
-            _xml =  XmlManagement.xmlType(xmlMode);
+            _xml = XmlManagement.xmlType(xmlMode);
         }
 
         public async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
@@ -61,6 +61,8 @@ namespace Drillholes.XML
                     return null;
                 case DrillholesXmlEnum.DrillholePreferences:
                     return new XmlDrillholePreferences();
+                case DrillholesXmlEnum.DrillholeProject:
+                    return new XmlSavedSession();
             }
 
             return null;
@@ -97,7 +99,7 @@ namespace Drillholes.XML
                 nodes.Add(new XElement("TableLocation", table.tableLocation));
                 nodes.Add(new XElement("Cancelled", table.isCancelled.ToString()));
                 nodes.Add(new XElement("Valid", table.isValid.ToString()));
-                
+
                 tableParameters = new XElement("TableType", new XAttribute("Value", table.tableType.ToString()));
                 tableParameters.Add(nodes);
 
@@ -263,7 +265,7 @@ namespace Drillholes.XML
             foreach (var field in tableFields)
             {
                 List<XElement> nodes = new List<XElement>();
-             //   nodes.Add(new XElement("ColumnHeader", field.columnHeader));
+                //   nodes.Add(new XElement("ColumnHeader", field.columnHeader));
                 nodes.Add(new XElement("ColumnImportAs", field.columnImportAs));
                 nodes.Add(new XElement("ColumnImportName", field.columnImportName));
                 nodes.Add(new XElement("FieldType", field.fieldType));
@@ -475,5 +477,60 @@ namespace Drillholes.XML
 
             return xmlData.Element(rootName);
         }
+
     }
+
+    public class XmlSavedSession : XmlManagement
+    {
+        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
+        {
+            //xmlValues will be project name
+            var projectProp = (DrillholeProjectProperties)xmlValues;
+
+            XDocument xmlFile = new XDocument(
+            new XDeclaration("1.0", null, null),
+            new XProcessingInstruction("order", "alpha ascending"),
+            new XElement(rootName, new XAttribute("Modified", DateTime.Now)));
+
+            XElement tableParameters = null;
+            tableParameters = new XElement("Project", new XAttribute("Name", projectProp.ProjectName));
+
+            List<XElement> nodes = new List<XElement>();
+            nodes.Add(new XElement("ProjectParent", projectProp.ProjectParentFolder));
+            nodes.Add(new XElement("ProjectFolder", projectProp.ProjectFolder));
+            nodes.Add(new XElement("ProjectFile", projectProp.ProjectFile));
+
+            tableParameters.Add(nodes);
+
+
+            xmlFile.Root.Add(tableParameters);
+
+            SaveXML(xmlFile, fullXmlName);
+
+            return xmlFile.Element(rootName);
+
+        }
+
+        public override async Task<XDocument> OpenXML(string fullXmlName)
+        {
+            return XDocument.Load(fullXmlName);
+        }
+
+        public override Task<XElement> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SaveXML(XDocument xmlFile, string fullXmlName)
+        {
+            xmlFile.Save(fullXmlName);
+        }
+
+        public override Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
 }

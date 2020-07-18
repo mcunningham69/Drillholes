@@ -12,6 +12,7 @@ namespace Drillholes.XML
         DrillholePreferences,
         DrillholeFields,
         DrillholeInputData,
-        DrillholeDesurveyData
+        DrillholeDesurveyData,
+        DrillholeProject
     }
 }

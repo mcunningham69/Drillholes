@@ -21,6 +21,7 @@ using Drillholes.Domain.Enum;
 using Microsoft.VisualBasic;
 using System.Reflection;
 using Drillholes.Domain;
+using Microsoft.Win32;
 
 namespace Drillholes.Windows.Dialogs
 {
@@ -36,22 +37,34 @@ namespace Drillholes.Windows.Dialogs
         private string xmlName { get; set; }
         private bool[] survey { get; set; }
         private bool[] geology { get; set; }
-
+        private bool savedProject { get; set; }
+        private string projectSession { get; set; }
+        private string projectLocation { get; set; }
         public DrillholeStartup()
         {
             InitializeComponent();
 
             survey = new bool[3];
             geology = new bool[2];
+            savedProject = false;
+            projectSession = "";
         }
 
-        private async Task<bool> ManageXml()
+        private async Task<bool> ManageXmlPreferences()
         {
             DrillholePreferences preferences = await SetPreferences();
 
-            //get pathname
-            if (fullName == "" || fullName == null)
-                fullName = XmlDefaultPath.GetFullPathAndFilename(rootName, "alltables");
+            if (!savedProject)
+            {
+                //get pathname
+                if (fullName == "" || fullName == null)
+                    fullName = XmlDefaultPath.GetFullPathAndFilename(rootName, "alltables");
+            }
+            else
+            {
+
+                    fullName = XmlDefaultPath.GetProjectPathAndFilename(rootName, "alltables", projectSession, projectLocation );
+            }
 
             //create XML temp table
             if (_xml == null)
@@ -61,6 +74,13 @@ namespace Drillholes.Windows.Dialogs
                 _xmlService = new XmlService(_xml);
 
             await _xmlService.DrillholePreferences(fullName, preferences, rootName);
+
+            return true;
+        }
+
+        private async Task<bool> ManageXmlProperties(DrillholeProjectProperties properties)
+        {
+            await _xmlService.DrillholeProjectProperties(properties, "DrillholeProject");
 
             return true;
         }
@@ -89,6 +109,7 @@ namespace Drillholes.Windows.Dialogs
 
         private void Open_Session(object sender, RoutedEventArgs e)
         {
+            OpenDrillholeSession();
             frameMain.Source = new Uri("DrillholeImportPage.xaml", UriKind.Relative);
             txtStart.Visibility = Visibility.Collapsed;
 
@@ -132,14 +153,120 @@ namespace Drillholes.Windows.Dialogs
 
         private void Save_Session(object sender, RoutedEventArgs e)
         {
+           // SaveDrillholeSession();
+        }
 
+        private void Save_SessionAs(object sender, RoutedEventArgs e)
+        {
+            SaveDrillholeSession();
         }
 
         private async void RibbonWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await ManageXml();
+            await ManageXmlPreferences();
         }
 
+        private async void OpenDrillholeSession()
+        {
+            string strHeader = "Open Drillhole Session";
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Drillhole Session (*.dh)|*.dh|All files (*.*)|*.*";
+            openFileDialog.Title = strHeader;
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                FileInfo info = new FileInfo(openFileDialog.FileName);
+                projectLocation = info.DirectoryName;
+                string sessionName = info.Name;
+                string extension = info.Extension;
+
+                projectSession = sessionName.Substring(0, sessionName.Length - 3);
+
+                savedProject = true;
+
+            }
+
+            else
+                return;
+       
+        }
+
+        private async void SaveDrillholeSession()
+        {
+            string strHeader = "Save Drillhole Session";
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Drillhole Session (*.dh)|*.dh|All files (*.*)|*.*";
+            saveFileDialog.FilterIndex = 1;
+            saveFileDialog.CreatePrompt = false;
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.AddExtension = false;
+
+            if(saveFileDialog.ShowDialog() == true)
+            {
+                FileInfo info = new FileInfo(saveFileDialog.FileName);
+                projectLocation = info.DirectoryName;
+                string sessionName = info.Name;
+                string extension = info.Extension;
+
+                //check if file exists
+                if (info.Exists)
+                {
+                    MessageBoxResult fileExists = MessageBox.Show("File '" + sessionName + "' already exists. Overwrite existing file?", "Save File", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+                    if (MessageBoxResult.Cancel == fileExists)
+                        return;
+                    else if (MessageBoxResult.No == fileExists)
+                        return;
+                }
+
+                //strip off extension
+                projectSession = sessionName.Substring(0, sessionName.Length - 3);
+
+                //check if existing directory
+                DirectoryInfo dirInfo = new DirectoryInfo(projectLocation);
+
+                var directories = dirInfo.EnumerateDirectories();
+
+                var query = directories.Where(d => d.Name == projectSession).Count();
+
+                if (query > 0)
+                {
+                    MessageBox.Show("A project directory of the same name '" + projectSession + "' already exists. Please select a diffrent session name.", "Project Directory", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    return;
+                }
+                else //make project directory to store xml files
+                {
+                    dirInfo.CreateSubdirectory(projectSession);
+                }
+
+                savedProject = true;
+
+                await ManageXmlPreferences();
+
+                DrillholeProjectProperties properties = new DrillholeProjectProperties()
+                {
+                    ProjectName = projectSession,
+                    ProjectParentFolder = projectLocation,
+                    ProjectFolder = projectLocation + "\\" + projectSession,
+                    ProjectFile = projectLocation + "\\" + sessionName
+                };
+
+                await ManageXmlProperties(properties);
+
+            };
+
+            //Create directory
+        }
+
+        private void SaveProjectFile()
+        {
+
+        }
+
+        #region Preferences
         private async Task<DrillholePreferences> SetPreferences()
         {
             DrillholePreferences preferences = new DrillholePreferences()
@@ -245,7 +372,7 @@ namespace Drillholes.Windows.Dialogs
             else if ((bool)radVertical.IsChecked)
                 survey[2] = true;
 
-            UpdateXmlPreferences(survey);
+            UpdateXmlSurveyPreferences(survey);
 
         }
 
@@ -319,7 +446,7 @@ namespace Drillholes.Windows.Dialogs
                 geology[1] = true;
             }
 
-            UpdateXmlPreferences(geology);
+            UpdateXmlGeologyContactPreferences(geology);
 
         }
 
@@ -349,60 +476,135 @@ namespace Drillholes.Windows.Dialogs
 
         }
 
-        private void UpdateXmlPreferences(bool bValue)
+        private async void UpdateXmlPreferences(bool bValue)
         {
-            TODO
+            await _xmlService.DrillholePreferences(fullName, xmlName, bValue, rootName);
         }
 
-        private void UpdateXmlPreferences(bool[] bValue)
+        private async void UpdateXmlSurveyPreferences(bool[] bValue)
         {
+            
+            if (bValue[0])
+            {
+                await _xmlService.DrillholePreferences(fullName, xmlName, DrillholeSurveyType.downholesurvey, rootName);
+
+            }
+            else if (bValue[1])
+            {
+                await _xmlService.DrillholePreferences(fullName, xmlName, DrillholeSurveyType.collarsurvey, rootName);
+
+            }
+            else
+            {
+                await _xmlService.DrillholePreferences(fullName, xmlName, DrillholeSurveyType.vertical, rootName);
+
+            }
 
         }
 
-        private void UpdateXmlPreferences(string xmlValue)
+        private async void UpdateXmlGeologyContactPreferences(bool[] bValue)
         {
 
+            if (bValue[0])
+            {
+                await _xmlService.DrillholePreferences(fullName, xmlName, true, rootName);
+
+            }
+            else if (bValue[1])
+            {
+                await _xmlService.DrillholePreferences(fullName, xmlName, false, rootName);
+
+            }
+
+        }
+        private async void UpdateXmlPreferences(string xmlValue)
+        {
+            await _xmlService.DrillholePreferences(fullName, xmlName, xmlValue, rootName);
         }
 
         private void txtDipTol_LostFocus(object sender, RoutedEventArgs e)
         {
             if (Information.IsNothing(txtDipTol.Text))
+            {
                 MessageBox.Show("Please enter a valid number between 0 and 90", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            else if (Information.IsNumeric(txtDipTol.Text))
+                return;
+            }
+            else if (!Information.IsNumeric(txtDipTol.Text))
+            {
                 MessageBox.Show("Please enter a valid number between 0 and 90", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             double range = Convert.ToDouble(txtDipTol.Text);
             if (range < 0)
+            {
                 MessageBox.Show("Cannot be less than zero. Please enter a valid number between 0 and 90", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             else if (range > 90)
+            {
                 MessageBox.Show("Cannot be greater than 90. Please enter a valid number between 0 and 90", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            xmlName = "DipTolerance";
+
+            UpdateXmlPreferences(txtDipTol.Text);
 
         }
 
         private void txtAziTol_LostFocus(object sender, RoutedEventArgs e)
         {
             if (Information.IsNothing(txtAziTol.Text))
+            {
                 MessageBox.Show("Please enter a valid number between 0 and 360", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            else if (Information.IsNumeric(txtAziTol.Text))
+                return;
+            }
+            else if (!Information.IsNumeric(txtAziTol.Text))
+            {
                 MessageBox.Show("Please enter a valid number between 0 and 360", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             double range = Convert.ToDouble(txtAziTol.Text);
             if (range < 0)
+            {
                 MessageBox.Show("Cannot be less than zero. Please enter a valid number between 0 and 360", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             else if (range > 360)
+            {
                 MessageBox.Show("Cannot be greater than 360. Please enter a valid number between 0 and 360", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
+            xmlName = "AziTolerance";
+
+            UpdateXmlPreferences(txtAziTol.Text);
         }
 
         private void txtDefault_LostFocus(object sender, RoutedEventArgs e)
         {
             if (Information.IsNothing(txtDefault.Text))
+            {
                 MessageBox.Show("Please enter a valid number", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            else if (Information.IsNumeric(txtDefault.Text))
+                return;
+            }
+            else if (!Information.IsNumeric(txtDefault.Text))
+            {
                 MessageBox.Show("Please enter a valid number", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
+            xmlName = "DefaultValue";
 
+            UpdateXmlPreferences(txtDefault.Text);
         }
+
+        #endregion
+
+
+
     }
 
 

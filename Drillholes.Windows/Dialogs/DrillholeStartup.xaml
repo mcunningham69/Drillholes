@@ -190,6 +190,8 @@
                     <RibbonButton QuickAccessToolBarId="new" SmallImageSource="../Images/New.png" Label="New Session" KeyTip="N" Click="New_Session"/>
                     <RibbonButton QuickAccessToolBarId="open" SmallImageSource="../Images/Open.png" Label="Open Session" KeyTip="O" Click="Open_Session"/>
                     <RibbonButton QuickAccessToolBarId="save" SmallImageSource="../Images/Save.png" Label="Save Session" KeyTip="S" Click="Save_Session"/>
+                    <RibbonButton QuickAccessToolBarId="saveas" SmallImageSource="../Images/Save.png" Label="Save Session As" KeyTip="S" Click="Save_SessionAs"/>
+
                 </RibbonGroup>
 
                 <RibbonGroup Header="Clipboard" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="clip">
