@@ -34,5 +34,23 @@ namespace Drillholes.Domain
         public string ProjectParentFolder { get; set; }
         public string ProjectFolder { get; set; }
         public string ProjectFile { get; set; }
+        public string DrillholeTables { get; set; }
+        public string DrillholePreferences { get; set; }
+        public string DrillholeData { get; set; }
+        public string DrillholeDesurvey { get; set; }
+        public string DrillholeFields { get; set; } 
+
+        public DrillholeProjectProperties()
+        {
+            ProjectFile = "";
+            ProjectFolder = "";
+            ProjectName = "";
+            ProjectParentFolder = "";
+            DrillholeTables = "";
+            DrillholePreferences = "";
+            DrillholeData = "";
+            DrillholeDesurvey = "";
+            DrillholeFields = "";
+        }
     }
 }

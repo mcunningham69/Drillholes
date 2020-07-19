@@ -8,6 +8,15 @@ namespace Drillholes.Domain
 {
     public static class DrillholeConstants
     {
+        //XML
+        public const string drillholeTable = "DrillholeTables";
+        public const string drillholeProject = "DrillholeProject";
+        public const string drillholeFields = "DrillholeFields";
+        public const string drillholePref = "DrillholePreferences";
+        public const string drillholeData = "DrillholeData";
+        public const string drillholeDesurv = "DrillholeDesurv";
+
+
         //validation tests
         public const string checkHole = "Check 'HoleID' field";
         public const string checkX = "Check 'X' field";

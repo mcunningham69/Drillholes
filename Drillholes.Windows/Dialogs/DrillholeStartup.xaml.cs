@@ -23,6 +23,8 @@ using System.Reflection;
 using Drillholes.Domain;
 using Microsoft.Win32;
 using System.Xml.Linq;
+using System.Windows.Navigation;
+using Drillholes.Domain.DataObject;
 
 namespace Drillholes.Windows.Dialogs
 {
@@ -33,7 +35,7 @@ namespace Drillholes.Windows.Dialogs
     {
         private XmlService _xmlService;
         private IDrillholeXML _xml;
-        private string rootName = "DrillholePreferences";
+       // private string rootName = "DrillholePreferences";
         private string fullName { get; set; }
         private string xmlName { get; set; }
         private bool[] survey { get; set; }
@@ -41,6 +43,8 @@ namespace Drillholes.Windows.Dialogs
         private bool savedProject { get; set; }
         private string projectSession { get; set; }
         private string projectLocation { get; set; }
+        private string projectFile { get; set; }
+        private DrillholeDialogPage dialogPage { get; set; }
         public DrillholeStartup()
         {
             InitializeComponent();
@@ -49,6 +53,7 @@ namespace Drillholes.Windows.Dialogs
             geology = new bool[2];
             savedProject = false;
             projectSession = "";
+            dialogPage = new DrillholeDialogPage();
         }
 
         private async Task<bool> ManageXmlPreferences()
@@ -59,12 +64,11 @@ namespace Drillholes.Windows.Dialogs
             {
                 //get pathname
                 if (fullName == "" || fullName == null)
-                    fullName = XmlDefaultPath.GetFullPathAndFilename(rootName, "alltables");
+                    fullName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "alltables");
             }
             else
             {
-
-                    fullName = XmlDefaultPath.GetProjectPathAndFilename(rootName, "alltables", projectSession, projectLocation );
+                fullName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", projectSession, projectLocation);
             }
 
             //create XML temp table
@@ -74,144 +78,53 @@ namespace Drillholes.Windows.Dialogs
             if (_xmlService == null)
                 _xmlService = new XmlService(_xml);
 
-            await _xmlService.DrillholePreferences(fullName, preferences, rootName);
+            await _xmlService.DrillholePreferences(fullName, preferences, DrillholeConstants.drillholePref);
 
             return true;
         }
 
         private async Task<bool> ManageXmlProperties(DrillholeProjectProperties properties)
         {
-            await _xmlService.DrillholeProjectProperties(properties, "DrillholeProject");
+            await _xmlService.DrillholeProjectProperties(properties, DrillholeConstants.drillholeProject);
 
             return true;
         }
 
-        private void ExitForm(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        private void HelpDocumentation(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Not yet implemented");
-        }
-
-        private void New_Session(object sender, RoutedEventArgs e)
-        {
-           // string path = XmlDefaultPath.GetFullPathAndFilename();
-
-            
-                frameMain.Source = new Uri("DrillholeDialogPage.xaml", UriKind.Relative);
-                txtStart.Visibility = Visibility.Collapsed;
-            
-
-            
-        }
-
-        private void Open_Session(object sender, RoutedEventArgs e)
-        {
-            OpenDrillholeSession();
-            frameMain.Source = new Uri("DrillholeImportPage.xaml", UriKind.Relative);
-            txtStart.Visibility = Visibility.Collapsed;
-
-            var source = frameMain.Source;
-
-        }
-
-        private void ribbonHome_GotFocus(object sender, RoutedEventArgs e)
-        {
-           
-        }
-
-        private void ribbonSettings_GotFocus(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
-        private void Ribbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var ribbon = sender as Ribbon;
-
-            if (ribbon.SelectedIndex == 0)
-            {
-                stkLabel.Visibility = Visibility.Visible;
-                frameMain.Visibility = Visibility.Visible;
-
-                stkCheckbox.Visibility = Visibility.Hidden;
-                stkCollarToe.Visibility = Visibility.Hidden;
-                stkGeology.Visibility = Visibility.Hidden;
-                stkTolerance.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                stkLabel.Visibility = Visibility.Hidden;
-                frameMain.Visibility = Visibility.Hidden;
-
-                stkCheckbox.Visibility = Visibility.Visible;
-                stkCollarToe.Visibility = Visibility.Visible;
-                stkGeology.Visibility = Visibility.Visible;
-                stkTolerance.Visibility = Visibility.Visible;
-            }
-        }
-
+        #region Save Session
         private void Save_Session(object sender, RoutedEventArgs e)
         {
-           // SaveDrillholeSession();
+            // SaveDrillholeSession();
         }
-
-        private void Save_SessionAs(object sender, RoutedEventArgs e)
+        private async void Save_SessionAs(object sender, RoutedEventArgs e)
         {
             SaveDrillholeSession();
-        }
 
-        private async void RibbonWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            await ManageXmlPreferences();
-        }
+            if (projectFile == "" || projectFile == null)
+                projectFile = await CheckProjectFile();
 
-        private async void OpenDrillholeSession()
-        {
-            string strHeader = "Open Drillhole Session";
-
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Drillhole Session (*.dh)|*.dh|All files (*.*)|*.*";
-            openFileDialog.Title = strHeader;
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                FileInfo info = new FileInfo(openFileDialog.FileName);
-                projectLocation = info.DirectoryName;
-                string sessionName = info.Name;
-                string extension = info.Extension;
-
-                projectSession = sessionName.Substring(0, sessionName.Length - 3);
-
-                savedProject = true;
-
-                SetEnvironmentFromXml(rootName);
-            }
-            else
-                return;
+            frameMain.Navigate(new DrillholeDialogPage(true, projectFile, projectSession, projectLocation));
 
         }
-
         private async void SaveDrillholeSession()
         {
             string strHeader = "Save Drillhole Session";
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Title = strHeader;
             saveFileDialog.Filter = "Drillhole Session (*.dh)|*.dh|All files (*.*)|*.*";
             saveFileDialog.FilterIndex = 1;
             saveFileDialog.CreatePrompt = false;
             saveFileDialog.RestoreDirectory = true;
             saveFileDialog.AddExtension = false;
 
-            if(saveFileDialog.ShowDialog() == true)
+            if (saveFileDialog.ShowDialog() == true)
             {
                 FileInfo info = new FileInfo(saveFileDialog.FileName);
                 projectLocation = info.DirectoryName;
                 string sessionName = info.Name;
                 string extension = info.Extension;
+
+                projectFile = projectLocation + "\\" + sessionName;
 
                 //check if file exists
                 if (info.Exists)
@@ -254,8 +167,13 @@ namespace Drillholes.Windows.Dialogs
                     ProjectName = projectSession,
                     ProjectParentFolder = projectLocation,
                     ProjectFolder = projectLocation + "\\" + projectSession,
-                    ProjectFile = projectLocation + "\\" + sessionName
+                    ProjectFile = projectFile
                 };
+
+                dialogPage.savedSession = true;
+                dialogPage.xmlProjectFile = properties.ProjectFile;
+                dialogPage.projectSession = properties.ProjectName;
+                dialogPage.projectLocation = properties.ProjectFolder;
 
                 await ManageXmlProperties(properties);
 
@@ -268,6 +186,192 @@ namespace Drillholes.Windows.Dialogs
         {
 
         }
+        #endregion
+
+        #region Open Session
+        private async void Open_Session(object sender, RoutedEventArgs e)
+        {
+            bool bOpen = await OpenDrillholeSession();
+
+            if (!bOpen)
+                return;
+
+            projectFile = await CheckProjectFile();
+
+            if (projectFile != "")
+            {
+                string filename = await CheckForDrillholeTableXml(projectFile);
+
+                if (filename == "")
+                {
+                    dialogPage.savedSession = true;
+                    dialogPage.xmlProjectFile = projectFile;
+                    dialogPage.projectSession = projectSession;
+                    dialogPage.projectLocation = projectLocation;
+
+                    frameMain.Navigate(dialogPage);
+                    return;
+                }
+                
+
+                //if table properties stored then proceed
+                List<DrillholeTable> _classes = new List<DrillholeTable>();
+
+                await RetrieveDrillholeTableParameters(filename);
+
+                //Populate DrillholeDialog tables from XML
+                frameMain.Navigate(new DrillholeImportPage(_classes, true, projectFile));
+
+            }
+            else
+            {
+                frameMain.Navigate(new DrillholeDialogPage(true, projectFile, projectSession, projectLocation));
+
+            }
+
+        }
+
+        private async Task<string> CheckProjectFile()
+        {
+            //create XML temp table
+            if (_xml == null)
+                _xml = new Drillholes.XML.XmlController();
+
+            if (_xmlService == null)
+                _xmlService = new XmlService(_xml);
+
+            if (File.Exists(projectLocation + "\\" + projectSession + ".dh"))
+            {
+                return projectLocation + "\\" + projectSession + ".dh";
+
+            }
+
+            return "";
+
+        }
+
+        private async Task<string> CheckForDrillholeTableXml(string projectFile)
+        {
+            XDocument xmlPreferences = await _xmlService.DrillholePreferences(projectFile, null, DrillholeConstants.drillholeProject);
+
+            var elements = xmlPreferences.Descendants(DrillholeConstants.drillholeProject).Elements();
+
+            
+                var check = elements.Where(a => a.Element(DrillholeConstants.drillholeTable).Value != "").Count();
+
+                if (check > 0)
+                    return elements.Select(a => a.Element(DrillholeConstants.drillholeTable)).SingleOrDefault().Value;
+            
+            return "";
+        }
+
+        private async Task<List<DrillholeTable>> RetrieveDrillholeTableParameters(string projectFile)
+        {
+            List<DrillholeTable> tables = new List<DrillholeTable>();
+
+            if (_xml == null)
+                _xml = new Drillholes.XML.XmlController();
+
+            if (_xmlService == null)
+                _xmlService = new XmlService(_xml);
+
+            tables = await _xmlService.DrillholeProjectProperties(projectFile, "", DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable);
+            return tables;
+        }
+
+        private async Task<bool> OpenDrillholeSession()
+        {
+            string strHeader = "Open Drillhole Session";
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Drillhole Session (*.dh)|*.dh|All files (*.*)|*.*";
+            openFileDialog.Title = strHeader;
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                FileInfo info = new FileInfo(openFileDialog.FileName);
+                projectLocation = info.DirectoryName;
+                string sessionName = info.Name;
+                string extension = info.Extension;
+
+                projectSession = sessionName.Substring(0, sessionName.Length - 3);
+
+                savedProject = true;
+
+                SetEnvironmentFromXml(DrillholeConstants.drillholePref);
+            }
+            else
+                return false;
+
+            return true;
+
+        }
+        #endregion
+        private void ExitForm(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void HelpDocumentation(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Not yet implemented");
+        }
+
+        private void New_Session(object sender, RoutedEventArgs e)
+        {
+
+            frameMain.Navigate(new DrillholeDialogPage(false, "", "", ""));
+        }
+
+      
+        private void ribbonHome_GotFocus(object sender, RoutedEventArgs e)
+        {
+           
+        }
+
+        private void ribbonSettings_GotFocus(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void Ribbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var ribbon = sender as Ribbon;
+
+            if (ribbon.SelectedIndex == 0)
+            {
+                stkLabel.Visibility = Visibility.Visible;
+                frameMain.Visibility = Visibility.Visible;
+
+                stkCheckbox.Visibility = Visibility.Hidden;
+                stkCollarToe.Visibility = Visibility.Hidden;
+                stkGeology.Visibility = Visibility.Hidden;
+                stkTolerance.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                stkLabel.Visibility = Visibility.Hidden;
+                frameMain.Visibility = Visibility.Hidden;
+
+                stkCheckbox.Visibility = Visibility.Visible;
+                stkCollarToe.Visibility = Visibility.Visible;
+                stkGeology.Visibility = Visibility.Visible;
+                stkTolerance.Visibility = Visibility.Visible;
+            }
+        }
+
+
+
+
+        private async void RibbonWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            await ManageXmlPreferences();
+        }
+
+
+
+
+
 
         #region Preferences
         private async Task<DrillholePreferences> SetPreferencesToXml()
@@ -338,7 +442,7 @@ namespace Drillholes.Windows.Dialogs
             if (_xmlService == null)
                 _xmlService = new XmlService(_xml);
 
-            XDocument xmlPreferences = await _xmlService.DrillholePreferences(fullName, null, rootName);
+            XDocument xmlPreferences = await _xmlService.DrillholePreferences(fullName, null, DrillholeConstants.drillholePref);
 
             var elements = xmlPreferences.Descendants(rootName).Elements();
 
@@ -547,7 +651,7 @@ namespace Drillholes.Windows.Dialogs
 
         private async void UpdateXmlPreferences(bool bValue)
         {
-            await _xmlService.DrillholePreferences(fullName, xmlName, bValue, rootName);
+            await _xmlService.DrillholePreferences(fullName, xmlName, bValue, DrillholeConstants.drillholePref);
         }
 
         private async void UpdateXmlSurveyPreferences(bool[] bValue)
@@ -555,17 +659,17 @@ namespace Drillholes.Windows.Dialogs
             
             if (bValue[0])
             {
-                await _xmlService.DrillholePreferences(fullName, xmlName, DrillholeSurveyType.downholesurvey, rootName);
+                await _xmlService.DrillholePreferences(fullName, xmlName, DrillholeSurveyType.downholesurvey, DrillholeConstants.drillholePref);
 
             }
             else if (bValue[1])
             {
-                await _xmlService.DrillholePreferences(fullName, xmlName, DrillholeSurveyType.collarsurvey, rootName);
+                await _xmlService.DrillholePreferences(fullName, xmlName, DrillholeSurveyType.collarsurvey, DrillholeConstants.drillholePref);
 
             }
             else
             {
-                await _xmlService.DrillholePreferences(fullName, xmlName, DrillholeSurveyType.vertical, rootName);
+                await _xmlService.DrillholePreferences(fullName, xmlName, DrillholeSurveyType.vertical, DrillholeConstants.drillholePref);
 
             }
 
@@ -576,19 +680,19 @@ namespace Drillholes.Windows.Dialogs
 
             if (bValue[0])
             {
-                await _xmlService.DrillholePreferences(fullName, xmlName, true, rootName);
+                await _xmlService.DrillholePreferences(fullName, xmlName, true, DrillholeConstants.drillholePref);
 
             }
             else if (bValue[1])
             {
-                await _xmlService.DrillholePreferences(fullName, xmlName, false, rootName);
+                await _xmlService.DrillholePreferences(fullName, xmlName, false, DrillholeConstants.drillholePref);
 
             }
 
         }
         private async void UpdateXmlPreferences(string xmlValue)
         {
-            await _xmlService.DrillholePreferences(fullName, xmlName, xmlValue, rootName);
+            await _xmlService.DrillholePreferences(fullName, xmlName, xmlValue, DrillholeConstants.drillholePref);
         }
 
         private void txtDipTol_LostFocus(object sender, RoutedEventArgs e)

@@ -30,7 +30,12 @@ namespace Drillholes.Windows.Dialogs
         private IDrillholeTables _drillholeTables;
         private XmlService _xmlService;
         private IDrillholeXML _xml;
-        private string rootName = "DrillholeTables";
+        // private string rootName = "DrillholeTables";
+        public string xmlProjectFile { get; set; }
+
+        public bool savedSession { get; set; }
+        public string projectSession { get; set; }
+        public string projectLocation { get; set; }
         private string fullName { get; set; }
 
         IMapper mapper = null;
@@ -41,6 +46,20 @@ namespace Drillholes.Windows.Dialogs
             InitializeComponent();
             bArc = false;
             Startup();
+            savedSession = false;
+            xmlProjectFile = "";
+
+        }
+
+        public DrillholeDialogPage(bool _savedSession, string _xmlProjectFile, string _projectSession, string _projectLocation)
+        {
+            InitializeComponent();
+            bArc = false;
+            Startup();
+            savedSession = _savedSession;
+            xmlProjectFile = _xmlProjectFile;
+            projectLocation = _projectLocation;
+            projectSession = _projectSession;
         }
 
         private void Startup()
@@ -240,7 +259,7 @@ namespace Drillholes.Windows.Dialogs
             {
                 await ManageXml();
 
-                NavigationService.Navigate(new DrillholeImportPage(importTables));
+                NavigationService.Navigate(new DrillholeImportPage(importTables,savedSession,xmlProjectFile));
 
             }
             catch (ImportFormatException ex)
@@ -261,21 +280,15 @@ namespace Drillholes.Windows.Dialogs
             if (bMulti == false)
             {
                 importService = _importService.SelectTables(value, mapper);
-
             }
             else
             {
                 importService = _importService.SelectIntervalTables(value, mapper);
-
-
             }
-
 
             if (importService.isCancelled)
             {
-
                 return false;
-
             }
 
 
@@ -284,9 +297,20 @@ namespace Drillholes.Windows.Dialogs
 
         private async Task<bool>  ManageXml()
         {
-            //get pathname
-            if (fullName == "")
-                fullName = XmlDefaultPath.GetFullPathAndFilename(rootName,"alltables");
+            if (savedSession && xmlProjectFile != "")
+            {
+                //Read XML
+
+                //Add new entry and save
+                fullName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeTable, "alltables", projectSession, projectLocation);
+
+            }
+            else
+            {
+                //get pathname
+                if (fullName == "")
+                    fullName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeTable, "alltables");
+            }
 
             //create XML temp table
             if (_xml == null)
@@ -295,7 +319,9 @@ namespace Drillholes.Windows.Dialogs
             if (_xmlService == null)
                 _xmlService = new XmlService(_xml);
 
-            await _xmlService.TableParameters(fullName, importTables, rootName);
+            await _xmlService.TableParameters(fullName, importTables, DrillholeConstants.drillholeTable);
+
+            await _xmlService.DrillholeProjectProperties(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeProject);
 
             return true;
         }

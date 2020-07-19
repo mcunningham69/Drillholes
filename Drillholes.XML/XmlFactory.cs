@@ -31,11 +31,11 @@ namespace Drillholes.XML
         }
 
 
-        public async Task<XDocument> OpenXML(string fullXmlName)
+        public async Task<object> OpenXML(string fullXmlName)
         {
             return _xml.OpenXML(fullXmlName).Result;
         }
-        public async Task<XElement> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
         {
             return _xml.ReplaceXmlNode(fullXmlName, xmlValues, xmlData, tableType, xmlNodeTableNam, rootName).Result;
         }
@@ -69,9 +69,9 @@ namespace Drillholes.XML
         }
 
         public abstract Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName);
-        public abstract Task<XDocument> OpenXML(string fullXmlName);
+        public abstract Task<object> OpenXML(string fullXmlName);
         public abstract void SaveXML(XDocument xmlFile, string fullXmlName);
-        public abstract Task<XElement> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName);
+        public abstract Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName);
 
         public abstract Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName);
 
@@ -112,7 +112,7 @@ namespace Drillholes.XML
             return xmlFile.Element(rootName);
         }
 
-        public override async Task<XDocument> OpenXML(string fullXmlName)
+        public override async Task<object> OpenXML(string fullXmlName)
         {
             return XDocument.Load(fullXmlName);
         }
@@ -122,7 +122,7 @@ namespace Drillholes.XML
             xmlFile.Save(fullXmlName);
         }
 
-        public override async Task<XElement> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
         {
             var tableValues = (List<DrillholeTable>)xmlValues;
 
@@ -192,7 +192,7 @@ namespace Drillholes.XML
             return xmlFile.Element(rootName);
         }
 
-        public override async Task<XDocument> OpenXML(string fullXmlName)
+        public override async Task<object> OpenXML(string fullXmlName)
         {
             return XDocument.Load(fullXmlName);
         }
@@ -204,7 +204,7 @@ namespace Drillholes.XML
 
 
 
-        public override async Task<XElement> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
         {
             var tableValues = (XElement)xmlValues;
 
@@ -287,7 +287,7 @@ namespace Drillholes.XML
             return xmlFile.Element(rootName);
         }
 
-        public override async Task<XDocument> OpenXML(string fullXmlName)
+        public override async Task<object> OpenXML(string fullXmlName)
         {
             return XDocument.Load(fullXmlName);
         }
@@ -297,7 +297,7 @@ namespace Drillholes.XML
             xmlFile.Save(fullXmlName);
         }
 
-        public override async Task<XElement> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
         {
             var tableFields = (ImportTableFields)xmlValues;
 
@@ -392,12 +392,12 @@ namespace Drillholes.XML
             return xmlFile.Element(rootName);
         }
 
-        public override async Task<XDocument> OpenXML(string fullXmlName)
+        public override async Task<object> OpenXML(string fullXmlName)
         {
             return XDocument.Load(fullXmlName);
         }
 
-        public override async Task<XElement> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
         {
             var preferences = (DrillholePreferences)xmlValues;
 
@@ -499,6 +499,11 @@ namespace Drillholes.XML
             nodes.Add(new XElement("ProjectParent", projectProp.ProjectParentFolder));
             nodes.Add(new XElement("ProjectFolder", projectProp.ProjectFolder));
             nodes.Add(new XElement("ProjectFile", projectProp.ProjectFile));
+            nodes.Add(new XElement(DrillholeConstants.drillholeData, projectProp.DrillholeData));
+            nodes.Add(new XElement(DrillholeConstants.drillholeFields, projectProp.DrillholeFields));
+            nodes.Add(new XElement(DrillholeConstants.drillholePref, projectProp.DrillholePreferences));
+            nodes.Add(new XElement(DrillholeConstants.drillholeTable, projectProp.DrillholeTables));
+            nodes.Add(new XElement(DrillholeConstants.drillholeDesurv, projectProp.DrillholeDesurvey));
 
             tableParameters.Add(nodes);
 
@@ -511,12 +516,14 @@ namespace Drillholes.XML
 
         }
 
-        public override async Task<XDocument> OpenXML(string fullXmlName)
+        public override async Task<object> OpenXML(string fullXmlName)
         {
-            return XDocument.Load(fullXmlName);
+               return XDocument.Load(fullXmlName);
         }
 
-        public override Task<XElement> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+     
+
+        public override Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
         {
             throw new NotImplementedException();
         }

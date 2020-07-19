@@ -47,9 +47,16 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
-        public async Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties prop, string rootName)
+        public async Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties prop, string drillholeProject, string drillholeRoot)
         {
-            var xml = await _xml.DrillholeProjectProperties(prop, rootName);
+            var xml = await _xml.DrillholeProjectProperties(prop, drillholeProject, drillholeRoot);
+
+            return xml;
+        }
+
+        public async Task<List<DrillholeTable>> DrillholeProjectProperties(string projectFile, string filename, string rootName)
+        {
+            var xml = await _xml.DrillholeProjectProperties(projectFile, filename, rootName);
 
             return xml;
         }

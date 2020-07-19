@@ -56,7 +56,8 @@ namespace Drillholes.Windows.Dialogs
 
         private ViewModel.ContinuousView continuousPreviewModel { get; set; }
 
-
+        private bool savedSession { get; set; }
+        private string xmlProjectFile { get; set; }
 
         #endregion
 
@@ -66,13 +67,16 @@ namespace Drillholes.Windows.Dialogs
             InitializeComponent();
         }
 
-        public DrillholeImportPage(List<DrillholeTable> _classes)
+        public DrillholeImportPage(List<DrillholeTable> _classes, bool _savedSession, string _xmlProjectFile)
         {
             InitializeComponent();
 
             tables = _classes;
 
             var tabItems = _tabcontrol.Items;
+
+            if (_classes == null)
+                return;
 
             foreach (var importTable in _classes)
             {
