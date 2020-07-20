@@ -321,7 +321,7 @@ namespace Drillholes.Windows.Dialogs
 
             await _xmlService.TableParameters(fullName, importTables, DrillholeConstants.drillholeTable);
 
-            await _xmlService.DrillholeProjectProperties(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeProject);
+            await _xmlService.DrillholeProjectProperties(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable);
 
             return true;
         }

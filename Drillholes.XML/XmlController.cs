@@ -10,6 +10,7 @@ using Drillholes.Domain.Enum;
 using Drillholes.Domain.Interfaces;
 using Drillholes.Domain;
 using System.Net.NetworkInformation;
+using System.Windows.Markup;
 
 namespace Drillholes.XML
 {
@@ -101,6 +102,34 @@ namespace Drillholes.XML
                 xmlFile = await factory.OpenXML(fileName) as XDocument;
 
             return xmlFile;
+
+        }
+
+        public async void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot)
+        {
+            XDocument xmlFile = null;
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholePreferences);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholePreferences);
+
+            if (File.Exists(projectFile))
+            {
+                xmlFile = await factory.OpenXML(projectFile) as XDocument;
+                var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
+
+                var check = elements.Select(e => e.Element(DrillholeConstants.drillholePref).Value).SingleOrDefault();
+
+                if (check == "")  //saved session at dialog page
+                {
+                    var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholePref)).SingleOrDefault();
+                    updateValues.Value = drillholePreferencesFile;
+                }
+
+                xmlFile.Save(projectFile);
+
+            }
 
         }
 
@@ -198,10 +227,10 @@ namespace Drillholes.XML
             return xmlFile;
         }
 
-        public async Task<List<DrillholeTable>> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string drillholeProject, string drillholeRootname)
+        public async Task<object> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname)
         {
             XDocument xmlFile = null;
-            List<DrillholeTable> tables = null;
+            List<DrillholeTable> tables = new List<DrillholeTable>();
 
             if (factory == null)
                 factory = new XmlFactory(DrillholesXmlEnum.DrillholeProject);
@@ -211,33 +240,72 @@ namespace Drillholes.XML
             if (File.Exists(projectFile))
             {
                 xmlFile = await factory.OpenXML(projectFile) as XDocument;
-                var elements = xmlFile.Descendants(drillholeProject).Elements();
+                var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
 
-                var check = elements.Select(e => e.Element(DrillholeConstants.drillholeTable).Value).SingleOrDefault();
+                string[] values = new string[3];
 
-                if (check == "")  //saved session at dialog page
+                values[0] = elements.Select(e => e.Element(DrillholeConstants.drillholeTable).Value).SingleOrDefault(); //check for drillhole table
+                values[1] = elements.Select(e => e.Element(DrillholeConstants.drillholeFields).Value).SingleOrDefault(); //check for drillhole fields
+                values[2] = elements.Select(e => e.Element(DrillholeConstants.drillholeData).Value).SingleOrDefault(); //check for drillhole table
+
+                //TODO
+
+
+
+
+
+                //var check = elements.Select(e => e.Element(DrillholeConstants.drillholeTable).Value).SingleOrDefault();
+
+                if (values[1] != "" && values[2] != "")  //saved session at dialog page
                 {
                     var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeTable)).SingleOrDefault();
-                    updateValues.Value = projectFile;
+                    updateValues.Value = drillholeTableFile;
 
                     xmlFile.Save(projectFile);
                 }
-                else //saved session where tables already selected for import
+                else if (values[0] != "") //saved session where tables already selected for import
                 {
+                    factory.SetXmlType(DrillholesXmlEnum.DrillholeTableParameters);
+                    XDocument drillholeTableParameters = await factory.OpenXML(values[0]) as XDocument;
 
-                    tables = await factory.ReplaceXmlNode(drillholeTableFile,null,xmlFile,DrillholeTableType.other,"",drillholeRootname) as List<DrillholeTable>
+                    var tableElements = drillholeTableParameters.Descendants(drillholeRootname).Elements();
 
+                    var properties = tableElements.Select(f => f.Attribute("Value"));
 
-
-
-
+                    foreach (var property in properties)
+                    {
+                        switch (property.Value)
+                        {
+                            case "collar":
+                                var collar = await ReturnTableProperties(property.Parent, DrillholeTableType.collar);
+                                tables.Add(collar);
+                                break;
+                            case "survey":
+                                var survey = await ReturnTableProperties(property.Parent, DrillholeTableType.survey);
+                                tables.Add(survey);
+                                break;
+                            case "assay":
+                                var assay = await ReturnTableProperties(property.Parent, DrillholeTableType.assay);
+                                tables.Add(assay);
+                                break;
+                            case "interval":
+                                var interval = await ReturnTableProperties(property.Parent, DrillholeTableType.interval);
+                                tables.Add(interval);
+                                break;
+                            case "continuous":
+                                var continuous = await ReturnTableProperties(property.Parent, DrillholeTableType.continuous);
+                                tables.Add(continuous);
+                                break;
+                        }
+                    }
                 }
+                else  //saved session at dialog page
+                {
+                    var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeTable)).SingleOrDefault();
+                    updateValues.Value = drillholeTableFile;
 
-
-
-               
-
-
+                    xmlFile.Save(projectFile);
+                }
             }
             else
                 return null;
@@ -245,5 +313,45 @@ namespace Drillholes.XML
 
             return tables;
         }
+
+         
+        private async Task<DrillholeTable> ReturnTableProperties(XElement elements, DrillholeTableType tableType)
+        {
+            var query = elements.Element("TableFormat").Value;
+
+            DrillholeImportFormat importFormat = DrillholeImportFormat.other;
+
+            if (query == "egdb_table")
+                importFormat = DrillholeImportFormat.egdb_table;
+            else if (query == "excel_table")
+                importFormat = DrillholeImportFormat.excel_table;
+            else if (query == "fgdb_table")
+                importFormat = DrillholeImportFormat.fgdb_table;
+            else if (query == "pgdb_table")
+                importFormat = DrillholeImportFormat.pgdb_table;
+            else if (query == "text_csv")
+                importFormat = DrillholeImportFormat.text_csv;
+            else if (query == "text_txt")
+                importFormat = DrillholeImportFormat.text_txt;
+
+
+            var table = new DrillholeTable(true)
+            {
+                tableFormat = importFormat,
+                tableLocation = elements.Element("TableLocation").Value,
+                tableName = elements.Element("TableName").Value,
+                tableFormatName = elements.Element("TableFormat").Value,
+                tableType = tableType
+            };
+
+            
+            return table;
+        }
+
+
+
+
+
+
     }
 }

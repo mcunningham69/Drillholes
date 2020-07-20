@@ -87,6 +87,10 @@ namespace Drillholes.Windows.Dialogs
         {
             await _xmlService.DrillholeProjectProperties(properties, DrillholeConstants.drillholeProject);
 
+            //update preferences file
+            if (savedProject)
+                _xmlService.DrillholePreferences(projectFile, fullName, DrillholeConstants.drillholeProject);
+
             return true;
         }
 
@@ -217,7 +221,7 @@ namespace Drillholes.Windows.Dialogs
                 //if table properties stored then proceed
                 List<DrillholeTable> _classes = new List<DrillholeTable>();
 
-                await RetrieveDrillholeTableParameters(filename);
+                _classes = await RetrieveDrillholeTableParameters(projectFile, filename);
 
                 //Populate DrillholeDialog tables from XML
                 frameMain.Navigate(new DrillholeImportPage(_classes, true, projectFile));
@@ -252,7 +256,9 @@ namespace Drillholes.Windows.Dialogs
 
         private async Task<string> CheckForDrillholeTableXml(string projectFile)
         {
-            XDocument xmlPreferences = await _xmlService.DrillholePreferences(projectFile, null, DrillholeConstants.drillholeProject);
+            DrillholePreferences preferences = null;
+
+            XDocument xmlPreferences = await _xmlService.DrillholePreferences(projectFile, preferences, DrillholeConstants.drillholeProject);
 
             var elements = xmlPreferences.Descendants(DrillholeConstants.drillholeProject).Elements();
 
@@ -265,7 +271,7 @@ namespace Drillholes.Windows.Dialogs
             return "";
         }
 
-        private async Task<List<DrillholeTable>> RetrieveDrillholeTableParameters(string projectFile)
+        private async Task<List<DrillholeTable>> RetrieveDrillholeTableParameters(string projectFile, string drillholeTableFile)
         {
             List<DrillholeTable> tables = new List<DrillholeTable>();
 
@@ -275,7 +281,7 @@ namespace Drillholes.Windows.Dialogs
             if (_xmlService == null)
                 _xmlService = new XmlService(_xml);
 
-            tables = await _xmlService.DrillholeProjectProperties(projectFile, "", DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable);
+            tables = await _xmlService.DrillholeProjectProperties(projectFile, drillholeTableFile, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable);
             return tables;
         }
 
@@ -442,7 +448,9 @@ namespace Drillholes.Windows.Dialogs
             if (_xmlService == null)
                 _xmlService = new XmlService(_xml);
 
-            XDocument xmlPreferences = await _xmlService.DrillholePreferences(fullName, null, DrillholeConstants.drillholePref);
+            DrillholePreferences preferences = null;
+
+            XDocument xmlPreferences = await _xmlService.DrillholePreferences(fullName, preferences, DrillholeConstants.drillholePref);
 
             var elements = xmlPreferences.Descendants(rootName).Elements();
 

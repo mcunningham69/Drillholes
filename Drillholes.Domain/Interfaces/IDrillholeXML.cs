@@ -22,8 +22,9 @@ namespace Drillholes.Domain.Interfaces
 
         Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties xmlValues, string rootName);
 
-        Task<List<DrillholeTable>> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string drillholeProject, string drillholeRootname);
+        Task<object> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname);
 
+        void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot);
 
         Task<XElement> DrillholeDesurvey();
     }

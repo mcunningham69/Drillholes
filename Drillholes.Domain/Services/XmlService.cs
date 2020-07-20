@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,23 +41,25 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
+
+
+        public async Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties prop, string rootName)
+        {
+            var xml = await _xml.DrillholeProjectProperties(prop, rootName);
+
+            return xml;
+        }
+
+        public async Task<List<DrillholeTable>> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string projectRoot,  string rootName)
+        {
+            var xml = await _xml.DrillholeProjectProperties(projectFile, drillholeTableFile, projectRoot, rootName) as List<DrillholeTable>;
+
+            return xml;
+        }
+
         public async Task<XDocument> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName)
         {
             var xml = await _xml.DrillholePreferences(fileName, preferences, rootName);
-
-            return xml;
-        }
-
-        public async Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties prop, string drillholeProject, string drillholeRoot)
-        {
-            var xml = await _xml.DrillholeProjectProperties(prop, drillholeProject, drillholeRoot);
-
-            return xml;
-        }
-
-        public async Task<List<DrillholeTable>> DrillholeProjectProperties(string projectFile, string filename, string rootName)
-        {
-            var xml = await _xml.DrillholeProjectProperties(projectFile, filename, rootName);
 
             return xml;
         }
@@ -66,6 +69,12 @@ namespace Drillholes.Domain.Services
             var xml = await _xml.DrillholePreferences(fileName, xmlName, xmlValue, rootName);
 
             return xml;
+        }
+
+        public async void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeRootName)
+        {
+             _xml.DrillholePreferences(projectFile, drillholePreferencesFile, drillholeRootName);
+
         }
     }
 }
