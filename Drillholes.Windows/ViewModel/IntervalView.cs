@@ -36,8 +36,8 @@ namespace Drillholes.Windows.ViewModel
             }
         }
 
-        public IntervalView(DrillholeImportFormat _tableFormat, DrillholeTableType _tableType, string _tableLocation, string _tableName)
-            : base(_tableFormat, _tableType, _tableLocation, _tableName)
+        public IntervalView(DrillholeImportFormat _tableFormat, DrillholeTableType _tableType, string _tableLocation, string _tableName, bool _savedSession, string _sessionName, string _projectLocation)
+            : base(_tableFormat, _tableType, _tableLocation, _tableName, _savedSession, _sessionName, _projectLocation)
         {
             intervalTableObject = new IntervalTableObject()
             {
@@ -47,6 +47,10 @@ namespace Drillholes.Windows.ViewModel
                 tableName = _tableName,
                 surveyType = DrillholeSurveyType.downholesurvey //default
             };
+
+            savedSession = _savedSession;
+            sessionName = _sessionName;
+            projectLocation = _projectLocation;
         }
 
 

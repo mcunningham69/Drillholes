@@ -224,7 +224,7 @@ namespace Drillholes.Windows.Dialogs
                 _classes = await RetrieveDrillholeTableParameters(projectFile, filename);
 
                 //Populate DrillholeDialog tables from XML
-                frameMain.Navigate(new DrillholeImportPage(_classes, true, projectFile));
+                frameMain.Navigate(new DrillholeImportPage(_classes, true, projectFile, projectSession, projectLocation));
 
             }
             else
@@ -281,7 +281,7 @@ namespace Drillholes.Windows.Dialogs
             if (_xmlService == null)
                 _xmlService = new XmlService(_xml);
 
-            tables = await _xmlService.DrillholeProjectProperties(projectFile, drillholeTableFile, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable);
+            tables = await _xmlService.DrillholeProjectProperties(projectFile, drillholeTableFile, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable, DrillholeTableType.other);
             return tables;
         }
 

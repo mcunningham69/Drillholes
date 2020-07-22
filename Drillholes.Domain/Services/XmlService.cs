@@ -50,9 +50,9 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
-        public async Task<List<DrillholeTable>> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string projectRoot,  string rootName)
+        public async Task<List<DrillholeTable>> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string projectRoot,  string rootName, DrillholeTableType tableType)
         {
-            var xml = await _xml.DrillholeProjectProperties(projectFile, drillholeTableFile, projectRoot, rootName) as List<DrillholeTable>;
+            var xml = await _xml.DrillholeProjectProperties(projectFile, drillholeTableFile, projectRoot, rootName, tableType) as List<DrillholeTable>;
 
             return xml;
         }

@@ -259,7 +259,7 @@ namespace Drillholes.Windows.Dialogs
             {
                 await ManageXml();
 
-                NavigationService.Navigate(new DrillholeImportPage(importTables,savedSession,xmlProjectFile));
+                NavigationService.Navigate(new DrillholeImportPage(importTables,savedSession,xmlProjectFile, projectSession, projectLocation));
 
             }
             catch (ImportFormatException ex)
@@ -319,9 +319,11 @@ namespace Drillholes.Windows.Dialogs
             if (_xmlService == null)
                 _xmlService = new XmlService(_xml);
 
+            //Creates the alltables XML table
             await _xmlService.TableParameters(fullName, importTables, DrillholeConstants.drillholeTable);
 
-            await _xmlService.DrillholeProjectProperties(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable);
+            //updates the path to alltables in the .dh file
+            await _xmlService.DrillholeProjectProperties(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable, DrillholeTableType.other);
 
             return true;
         }

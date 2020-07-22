@@ -15,6 +15,7 @@ using AutoMapper;
 using System.Xml.Linq;
 using System.Data;
 using System.Windows.Controls;
+using Microsoft.Office.Interop.Excel;
 
 namespace Drillholes.Windows.ViewModel
 {
@@ -101,8 +102,13 @@ namespace Drillholes.Windows.ViewModel
         public string rootNameFields = "DrillholeFields";
         public string rootNameData = "DrillholeData";
 
+        public bool savedSession { get; set; }
+
+        public string sessionName { get; set; }
+        public string projectLocation { get; set; }
+
         public CollarView(DrillholeImportFormat _tableFormat, DrillholeTableType _tableType, string _tableLocation,
-            string _tableName)
+            string _tableName, bool _savedSession, string _sessionName, string _projectLocation)
         {
             collarTableObject = new CollarTableObject()
             {
@@ -121,6 +127,10 @@ namespace Drillholes.Windows.ViewModel
 
             dataGrid = new System.Data.DataTable();
 
+            savedSession = _savedSession;
+            sessionName = _sessionName;
+            projectLocation = _projectLocation;
+
             XmlSetUP(_tableType.ToString());
 
         }
@@ -134,8 +144,16 @@ namespace Drillholes.Windows.ViewModel
             if (_xmlService == null)
                 _xmlService = new XmlService(_xml);
 
-            fullPathnameFields = XmlDefaultPath.GetFullPathAndFilename(rootNameFields, tableType);
-            fullPathnameData = XmlDefaultPath.GetFullPathAndFilename(rootNameData, tableType);
+            if (!savedSession)
+            {
+                fullPathnameFields = XmlDefaultPath.GetFullPathAndFilename(rootNameFields, tableType);
+                fullPathnameData = XmlDefaultPath.GetFullPathAndFilename(rootNameData, tableType);
+            }
+            else
+            {
+                fullPathnameFields = XmlDefaultPath.GetProjectPathAndFilename(rootNameFields, tableType, sessionName, projectLocation) ;
+                fullPathnameData = XmlDefaultPath.GetProjectPathAndFilename(rootNameData, tableType, sessionName, projectLocation);
+            }
 
         }
         //TODO move out of here
@@ -187,7 +205,12 @@ namespace Drillholes.Windows.ViewModel
             collarDataFields = collarService.tableData;
 
             if (collarDataFields != null)
-                await _xmlService.DrillholeFields(fullPathnameFields, collarService.tableData, DrillholeTableType.collar, rootNameFields) ;
+            {
+                await _xmlService.DrillholeFields(fullPathnameFields, collarService.tableData, DrillholeTableType.collar, rootNameFields);
+
+                await _xmlService.DrillholeProjectProperties(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, collarTableObject.tableType);
+
+            }
 
             return true;
         }

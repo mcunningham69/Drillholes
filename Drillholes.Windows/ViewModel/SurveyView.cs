@@ -40,8 +40,8 @@ namespace Drillholes.Windows.ViewModel
             }
         }
 
-        public SurveyView(DrillholeImportFormat _tableFormat, DrillholeTableType _tableType, string _tableLocation, string _tableName) 
-            : base(_tableFormat, _tableType, _tableLocation, _tableName)
+        public SurveyView(DrillholeImportFormat _tableFormat, DrillholeTableType _tableType, string _tableLocation, string _tableName, bool _savedSession, string _sessionName, string _projectLocation) 
+            : base(_tableFormat, _tableType, _tableLocation, _tableName, _savedSession, _sessionName, _projectLocation)
         {
             surveyTableObject = new SurveyTableObject()
             {
@@ -55,6 +55,10 @@ namespace Drillholes.Windows.ViewModel
             tableName = _tableName;
             tableLocation = _tableLocation;
             tableFormat = _tableFormat.ToString();
+
+            savedSession = _savedSession;
+            sessionName = _sessionName;
+            projectLocation = _projectLocation;
         }
 
         public override void InitialiseTableMapping()

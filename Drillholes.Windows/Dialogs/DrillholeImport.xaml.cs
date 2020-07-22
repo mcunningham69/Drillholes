@@ -21,7 +21,7 @@ namespace Drillholes.Windows.Dialogs
     /// <summary>
     /// Interaction logic for DrillholeImport.xaml
     /// </summary>
-    public partial class DrillholeImport : Window
+  /*  public partial class DrillholeImport : Window
     {
         //TODO Delegate/Event to refresh data preview after edits performed
 
@@ -63,9 +63,13 @@ namespace Drillholes.Windows.Dialogs
 
         private ViewModel.IntervalView intervalPreviewModel { get; set; }
 
-        private ViewModel.ContinuousView continuousPreviewModel { get; set; } 
+        private ViewModel.ContinuousView continuousPreviewModel { get; set; }
 
         #endregion
+
+        public bool savedSession { get; set; }
+        public string projectSession { get; set; }
+        public string projectLocation { get; set; }
 
         public DrillholeImport()
         {
@@ -165,7 +169,7 @@ namespace Drillholes.Windows.Dialogs
             {
                 case DrillholeTableType.collar:
                     {
-                        collarPreviewModel = new ViewModel.CollarView(collarTableFormat, DrillholeTableType.collar, tableCollarLocation, tableCollarName);
+                        collarPreviewModel = new ViewModel.CollarView(collarTableFormat, DrillholeTableType.collar, tableCollarLocation, tableCollarName, savedSession);
                         break;
                     }
                 case DrillholeTableType.survey:
@@ -965,4 +969,5 @@ namespace Drillholes.Windows.Dialogs
             createHoles.Show();
         }
     }
+  */
 }

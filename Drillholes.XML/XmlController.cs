@@ -227,7 +227,7 @@ namespace Drillholes.XML
             return xmlFile;
         }
 
-        public async Task<object> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname)
+        public async Task<object> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType)
         {
             XDocument xmlFile = null;
             List<DrillholeTable> tables = new List<DrillholeTable>();
@@ -256,10 +256,28 @@ namespace Drillholes.XML
 
                 //var check = elements.Select(e => e.Element(DrillholeConstants.drillholeTable).Value).SingleOrDefault();
 
-                if (values[1] != "" && values[2] != "")  //saved session at dialog page
+                if (values[1] != "" )  //saved session at dialog page
                 {
-                    var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeTable)).SingleOrDefault();
-                    updateValues.Value = drillholeTableFile;
+                    // var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeTable)).SingleOrDefault();
+
+                    var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeFields));
+
+                    var tableValueToUpdate = updateValues.Select(e => e.Element(tableType.ToString())).FirstOrDefault();
+
+                    tableValueToUpdate.Value = drillholeTableFile;
+                   // updateValues.Value = drillholeTableFile;
+
+                    xmlFile.Save(projectFile);
+                }
+                else if (values[2] != "")  //saved session at dialog page
+                {
+                    // var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeTable)).SingleOrDefault();
+
+                    var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeData));
+
+                    var tableValueToUpdate = updateValues.Select(e => e.Element(tableType.ToString())).FirstOrDefault();
+
+                    tableValueToUpdate.Value = drillholeTableFile;
 
                     xmlFile.Save(projectFile);
                 }

@@ -7,7 +7,7 @@
         d:DesignHeight="470" d:DesignWidth="550"
         Title="Import Drillhole Data" Height="Auto" MaxHeight="490" Width="550" AllowDrop="True" Background="AliceBlue" WindowStyle="SingleBorderWindow" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
 
-    <Window.Resources>
+    <!--<Window.Resources>
 
         <Style TargetType="TextBox">
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -124,5 +124,5 @@
         <Button x:Name="btnOther" Grid.Column="2" Grid.Row="11" Width="70" Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Continuous" IsEnabled="True" Click="btnOther_Click"/>
 
         <Rectangle Height="1" Fill="DarkGray" Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-    </Grid>
+    </Grid>-->
 </Window>

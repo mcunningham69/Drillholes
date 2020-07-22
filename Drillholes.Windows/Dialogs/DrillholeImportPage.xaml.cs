@@ -56,7 +56,10 @@ namespace Drillholes.Windows.Dialogs
 
         private ViewModel.ContinuousView continuousPreviewModel { get; set; }
 
-        private bool savedSession { get; set; }
+        public bool savedSession { get; set; }
+        private string projectSession { get; set; }
+        private string projectLocation { get; set; }
+
         private string xmlProjectFile { get; set; }
 
         #endregion
@@ -67,11 +70,15 @@ namespace Drillholes.Windows.Dialogs
             InitializeComponent();
         }
 
-        public DrillholeImportPage(List<DrillholeTable> _classes, bool _savedSession, string _xmlProjectFile)
+        public DrillholeImportPage(List<DrillholeTable> _classes, bool _savedSession, string _xmlProjectFile, string _projectSession, string _projectLocation)
         {
             InitializeComponent();
 
             tables = _classes;
+            savedSession = _savedSession;
+            xmlProjectFile = _xmlProjectFile;
+            projectSession = _projectSession;
+            projectLocation = _projectLocation;
 
             var tabItems = _tabcontrol.Items;
 
@@ -165,25 +172,25 @@ namespace Drillholes.Windows.Dialogs
             {
                 case DrillholeTableType.collar:
                     {
-                        collarPreviewModel = new ViewModel.CollarView(collarTableFormat, DrillholeTableType.collar, tableCollarLocation, tableCollarName);
+                        collarPreviewModel = new ViewModel.CollarView(collarTableFormat, DrillholeTableType.collar, tableCollarLocation, tableCollarName, savedSession, projectSession,projectLocation);
                         break;
                     }
                 case DrillholeTableType.survey:
-                    surveyPreviewModel = new ViewModel.SurveyView(surveyTableFormat, DrillholeTableType.survey, tableSurveyLocation, tableSurveyName);
+                    surveyPreviewModel = new ViewModel.SurveyView(surveyTableFormat, DrillholeTableType.survey, tableSurveyLocation, tableSurveyName, savedSession, projectSession, projectLocation);
                     bEnableSurvey = true;
                     break;
                 case DrillholeTableType.assay:
-                    assayPreviewModel = new ViewModel.AssayView(assayTableFormat, DrillholeTableType.assay, tableAssayLocation, tableAssayName);
+                    assayPreviewModel = new ViewModel.AssayView(assayTableFormat, DrillholeTableType.assay, tableAssayLocation, tableAssayName, savedSession, projectSession, projectLocation);
                     bEnableAssay = true;
 
                     break;
                 case DrillholeTableType.interval:
-                    intervalPreviewModel = new ViewModel.IntervalView(intervalTableFormat, DrillholeTableType.interval, tableIntervalLocation, tableIntervalName);
+                    intervalPreviewModel = new ViewModel.IntervalView(intervalTableFormat, DrillholeTableType.interval, tableIntervalLocation, tableIntervalName, savedSession, projectSession, projectLocation);
                     bEnableInterval = true;
                     break;
 
                 case DrillholeTableType.continuous:
-                    continuousPreviewModel = new ViewModel.ContinuousView(continuousTableFormat, DrillholeTableType.continuous, tableContinuousLocation, tableContinuousName);
+                    continuousPreviewModel = new ViewModel.ContinuousView(continuousTableFormat, DrillholeTableType.continuous, tableContinuousLocation, tableContinuousName, savedSession, projectSession, projectLocation);
                     bEnableContinuous = true;
                     break;
 

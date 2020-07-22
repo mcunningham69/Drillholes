@@ -22,7 +22,7 @@ namespace Drillholes.Domain.Interfaces
 
         Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties xmlValues, string rootName);
 
-        Task<object> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname);
+        Task<object> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType);
 
         void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot);
 

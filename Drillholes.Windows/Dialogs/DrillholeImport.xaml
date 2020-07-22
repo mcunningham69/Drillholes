@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="Select Drillhole Fields " Height="450" MinWidth="850" Width="Auto" ResizeMode="NoResize" SizeToContent="WidthAndHeight" >
 
-    <Window.Resources>
+    <!--<Window.Resources>
 
     </Window.Resources>
     <Window.Background>
@@ -36,14 +36,14 @@
         <Grid.Resources>
             <ControlTemplate x:Key="temGlassButton" TargetType="{x:Type Button}">
                 <ControlTemplate.Resources>
-                    <!-- Base style that sets corner radii and stroke thickness. -->
+                    --><!-- Base style that sets corner radii and stroke thickness. --><!--
                     <Style x:Key="styBase" TargetType="{x:Type Rectangle}">
                         <Setter Property="RadiusX" Value="20"/>
                         <Setter Property="RadiusY" Value="20"/>
                         <Setter Property="StrokeThickness" Value="5"/>
                     </Style>
 
-                    <!-- Style for "normal" status. -->
+                    --><!-- Style for "normal" status. --><!--
                     <Style TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
                         <Setter Property="Fill">
                             <Setter.Value>
@@ -63,7 +63,7 @@
                         </Setter>
                     </Style>
 
-                    <!-- Style when IsDefaulted. -->
+                    --><!-- Style when IsDefaulted. --><!--
                     <Style x:Key="styIsDefaulted" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
                         <Setter Property="Fill">
                             <Setter.Value>
@@ -83,7 +83,7 @@
                         </Setter>
                     </Style>
 
-                    <!-- Style when disabled. -->
+                    --><!-- Style when disabled. --><!--
                     <Style x:Key="styDisabled" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
                         <Setter Property="Opacity" Value="0.75"/>
                         <Setter Property="Fill">
@@ -114,33 +114,33 @@
                  HorizontalAlignment="Center"/>
                 </Grid>
 
-                <!-- Behaviors. -->
+                --><!-- Behaviors. --><!--
                 <ControlTemplate.Triggers>
-                    <!-- Mouse over. -->
+                    --><!-- Mouse over. --><!--
                     <Trigger Property="IsMouseOver" Value="True">
                         <Setter TargetName="grdMain" Property="Opacity"
                      Value="0.75"/>
                     </Trigger>
 
-                    <!-- Focus. -->
+                    --><!-- Focus. --><!--
                     <Trigger Property="IsFocused" Value="True">
                         <Setter TargetName="grdMain" Property="Opacity"
                      Value="0.75"/>
                     </Trigger>
 
-                    <!-- Defaulted. -->
+                    --><!-- Defaulted. --><!--
                     <Trigger Property="IsDefaulted" Value="True">
                         <Setter TargetName="rectMain" Property="Style"
                      Value="{StaticResource styIsDefaulted}"/>
                     </Trigger>
 
-                    <!-- Pressed. This comes after Focus so it gets precedence. -->
+                    --><!-- Pressed. This comes after Focus so it gets precedence. --><!--
                     <Trigger Property="IsPressed" Value="True">
                         <Setter TargetName="grdMain" Property="Opacity"
                      Value="1"/>
                     </Trigger>
 
-                    <!-- Disabled. This comes last so it gets ultimate precedence. -->
+                    --><!-- Disabled. This comes last so it gets ultimate precedence. --><!--
                     <Trigger Property="IsEnabled" Value="False">
                         <Setter TargetName="rectMain" Property="Style"
                      Value="{StaticResource styDisabled}"/>
@@ -482,14 +482,14 @@
 
         <StackPanel Grid.Column="2" Grid.Row="3" Orientation="Horizontal">
 
-         <!--   <Button Name="btnTrace" Content="Trace"  Margin="10,0,0,0" FontSize="16" HorizontalAlignment="Left" 
-                VerticalAlignment="Bottom" Width="80" Height="30"  Click="btnTrace_Click" Visibility="Visible" />-->
+         --><!--   <Button Name="btnTrace" Content="Trace"  Margin="10,0,0,0" FontSize="16" HorizontalAlignment="Left" 
+                VerticalAlignment="Bottom" Width="80" Height="30"  Click="btnTrace_Click" Visibility="Visible" />--><!--
 
             <Button Name="btnDesurvey" IsEnabled="true" Content="Create Drillhole Trace" FontSize="16" HorizontalAlignment="Left" 
                     VerticalAlignment="Bottom" Width="200" Height="30" Margin="10,0,0,0" Click="btnCreateHole_Click" Visibility="Visible"></Button>
 
-          <!--  <Button Name="btnCreateToe" Content="Toes" FontSize="16" HorizontalAlignment="Right"
-                    VerticalAlignment="Top" Width="70" Height="30" Margin="10,0,0,0" Click="btnCreateToe_Click" Visibility="Visible"></Button>-->
+          --><!--  <Button Name="btnCreateToe" Content="Toes" FontSize="16" HorizontalAlignment="Right"
+                    VerticalAlignment="Top" Width="70" Height="30" Margin="10,0,0,0" Click="btnCreateToe_Click" Visibility="Visible"></Button>--><!--
             
         </StackPanel>
 
@@ -507,14 +507,14 @@
             <Grid.Resources>
                 <ControlTemplate x:Key="validGlassButton" TargetType="{x:Type Button}">
                     <ControlTemplate.Resources>
-                        <!-- Base style that sets corner radii and stroke thickness. -->
+                        --><!-- Base style that sets corner radii and stroke thickness. --><!--
                         <Style x:Key="styBase" TargetType="{x:Type Rectangle}">
                             <Setter Property="RadiusX" Value="20"/>
                             <Setter Property="RadiusY" Value="20"/>
                             <Setter Property="StrokeThickness" Value="5"/>
                         </Style>
 
-                        <!-- Style for "normal" status. -->
+                        --><!-- Style for "normal" status. --><!--
                         <Style TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
                             <Setter Property="Fill">
                                 <Setter.Value>
@@ -534,7 +534,7 @@
                             </Setter>
                         </Style>
 
-                        <!-- Style when IsDefaulted. -->
+                        --><!-- Style when IsDefaulted. --><!--
                         <Style x:Key="styIsDefaulted" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
                             <Setter Property="Fill">
                                 <Setter.Value>
@@ -554,7 +554,7 @@
                             </Setter>
                         </Style>
 
-                        <!-- Style when disabled. -->
+                        --><!-- Style when disabled. --><!--
                         <Style x:Key="styDisabled" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource styBase}">
                             <Setter Property="Opacity" Value="0.75"/>
                             <Setter Property="Fill">
@@ -585,33 +585,33 @@
                  HorizontalAlignment="Center"/>
                     </Grid>
 
-                    <!-- Behaviors. -->
+                    --><!-- Behaviors. --><!--
                     <ControlTemplate.Triggers>
-                        <!-- Mouse over. -->
+                        --><!-- Mouse over. --><!--
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="grdMain" Property="Opacity"
                      Value="0.75"/>
                         </Trigger>
 
-                        <!-- Focus. -->
+                        --><!-- Focus. --><!--
                         <Trigger Property="IsFocused" Value="True">
                             <Setter TargetName="grdMain" Property="Opacity"
                      Value="0.75"/>
                         </Trigger>
 
-                        <!-- Defaulted. -->
+                        --><!-- Defaulted. --><!--
                         <Trigger Property="IsDefaulted" Value="True">
                             <Setter TargetName="rectMain" Property="Style"
                      Value="{StaticResource styIsDefaulted}"/>
                         </Trigger>
 
-                        <!-- Pressed. This comes after Focus so it gets precedence. -->
+                        --><!-- Pressed. This comes after Focus so it gets precedence. --><!--
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="grdMain" Property="Opacity"
                      Value="1"/>
                         </Trigger>
 
-                        <!-- Disabled. This comes last so it gets ultimate precedence. -->
+                        --><!-- Disabled. This comes last so it gets ultimate precedence. --><!--
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="rectMain" Property="Style"
                      Value="{StaticResource styDisabled}"/>
@@ -637,7 +637,7 @@
 
             </Grid.RowDefinitions>
 
-         <!--   <ComboBox Name="cboPoints" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1" Width="Auto"  Margin="10,0,0,0" IsEnabled="{Binding ElementName=chkPoints, Path=IsChecked}" 
+         --><!--   <ComboBox Name="cboPoints" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1" Width="Auto"  Margin="10,0,0,0" IsEnabled="{Binding ElementName=chkPoints, Path=IsChecked}" 
                       SelectedIndex="0"
                       ItemsSource="{Binding Path=collarLayers}" SelectionChanged="cboPoints_SelectionChanged" Visibility="Hidden"/>
 
@@ -648,7 +648,7 @@
             <CheckBox Name="chkPoints"  HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.Column="0" Grid.Row="0" Content="Save Points To:" Margin="10,0,0,0" Click="chkPoints_Click" Visibility="Hidden"/>
 
             <CheckBox Name="chkLines" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Grid.Row="0" Content="Save Lines To:" Margin="10,0,0,0" Click="chkLines_Click" Visibility="Hidden" IsEnabled="True"/>
-            -->
+            --><!--
             <CheckBox Grid.Column="2"  Grid.Row="0" Name="chkSkip" Content="Skip Table" IsChecked="False" Margin="0,0,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Click="chkSkip_Click" Visibility="Hidden"></CheckBox>
             <StackPanel Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" >
                 <Button Name="btnStatistics" Content="Show Statistics" VerticalAlignment="Center" Height="25" Width="125" FontSize="14" Visibility="Visible" Click="btnStatistics_Click"></Button>
@@ -714,5 +714,5 @@
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>
-    </Grid>
+    </Grid>-->
 </Window>

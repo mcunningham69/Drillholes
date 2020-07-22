@@ -492,6 +492,14 @@ namespace Drillholes.XML
             new XProcessingInstruction("order", "alpha ascending"),
             new XElement(rootName, new XAttribute("Modified", DateTime.Now)));
 
+            List<XElement> tableTypeNodes = new List<XElement>();
+
+            tableTypeNodes.Add(new XElement(DrillholeTableType.collar.ToString(), ""));
+            tableTypeNodes.Add(new XElement(DrillholeTableType.survey.ToString(), ""));
+            tableTypeNodes.Add(new XElement(DrillholeTableType.assay.ToString(), ""));
+            tableTypeNodes.Add(new XElement(DrillholeTableType.interval.ToString(), ""));
+            tableTypeNodes.Add(new XElement(DrillholeTableType.continuous.ToString(), ""));
+
             XElement tableParameters = null;
             tableParameters = new XElement("Project", new XAttribute("Name", projectProp.ProjectName));
 
@@ -504,6 +512,13 @@ namespace Drillholes.XML
             nodes.Add(new XElement(DrillholeConstants.drillholePref, projectProp.DrillholePreferences));
             nodes.Add(new XElement(DrillholeConstants.drillholeTable, projectProp.DrillholeTables));
             nodes.Add(new XElement(DrillholeConstants.drillholeDesurv, projectProp.DrillholeDesurvey));
+
+
+            var tableDataNode = nodes.Select(a => a.Element(DrillholeConstants.drillholeData)).FirstOrDefault();
+            nodes[3].Add(tableTypeNodes);
+            nodes[4].Add(tableTypeNodes);
+
+
 
             tableParameters.Add(nodes);
 
