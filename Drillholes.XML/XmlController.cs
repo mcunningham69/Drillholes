@@ -107,8 +107,6 @@ namespace Drillholes.XML
 
         public async void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot)
         {
-            XDocument xmlFile = null;
-
             if (factory == null)
                 factory = new XmlFactory(DrillholesXmlEnum.DrillholePreferences);
             else
@@ -116,22 +114,12 @@ namespace Drillholes.XML
 
             if (File.Exists(projectFile))
             {
-                xmlFile = await factory.OpenXML(projectFile) as XDocument;
-                var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
-
-                var check = elements.Select(e => e.Element(DrillholeConstants.drillholePref).Value).SingleOrDefault();
-
-                if (check == "")  //saved session at dialog page
-                {
-                    var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholePref)).SingleOrDefault();
-                    updateValues.Value = drillholePreferencesFile;
-                }
-
-                xmlFile.Save(projectFile);
+                factory.UpdateProjectFile(projectFile, drillholePreferencesFile, drillholeProjectRoot);
 
             }
 
         }
+
 
         public async Task<XDocument> DrillholeFieldParameters(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName)
         {
@@ -165,6 +153,20 @@ namespace Drillholes.XML
         }
 
 
+
+        public async void TableParameters(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot)
+        {
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeTableParameters);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeTableParameters);
+
+            if (File.Exists(projectFile))
+            {
+                factory.UpdateProjectFile(projectFile, drillholePreferencesFile, drillholeProjectRoot);
+
+            }
+        }
 
         public async Task<XElement> TableParameters(string fileName, List<DrillholeTable> importTables, string rootName)
         {
@@ -320,7 +322,7 @@ namespace Drillholes.XML
                 else  //saved session at dialog page
                 {
                     var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeTable)).SingleOrDefault();
-                    updateValues.Value = drillholeTableFile;
+                    updateValues.Value = drillholeTableFile;  //ADD TO XMLFACTORY
 
                     xmlFile.Save(projectFile);
                 }

@@ -323,7 +323,8 @@ namespace Drillholes.Windows.Dialogs
             await _xmlService.TableParameters(fullName, importTables, DrillholeConstants.drillholeTable);
 
             //updates the path to alltables in the .dh file
-            await _xmlService.DrillholeProjectProperties(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable, DrillholeTableType.other);
+            // await _xmlService.DrillholeProjectProperties(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable, DrillholeTableType.other);
+            _xmlService.TableParameters(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeTable);
 
             return true;
         }

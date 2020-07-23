@@ -57,6 +57,11 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
+        public async void TableParameters(string projectFile, string drillholeFile, string drillholeRoot)
+        {
+             _xml.TableParameters(projectFile, drillholeFile, drillholeRoot);
+
+        }
         public async Task<XDocument> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName)
         {
             var xml = await _xml.DrillholePreferences(fileName, preferences, rootName);

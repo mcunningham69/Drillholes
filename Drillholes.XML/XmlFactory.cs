@@ -43,6 +43,12 @@ namespace Drillholes.XML
         {
             return _xml.UpdateXmlNodes(fullXmlName, xmlName, xmlChange, xmlData, tableType, rootName).Result;
         }
+
+        public async void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot)
+        {
+            _xml.UpdateProjectFile(projectFile, drillholeFile, drillholeRoot);
+        }
+
     }
 
     public abstract class XmlManagement
@@ -75,6 +81,7 @@ namespace Drillholes.XML
 
         public abstract Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName);
 
+        public abstract void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot);
 
     }
 
@@ -166,6 +173,22 @@ namespace Drillholes.XML
             //TODO
             throw new NotImplementedException();
         }
+
+        public override async void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot)
+        {
+            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
+            var elements = xmlFile.Descendants(drillholeRoot).Elements();
+
+            var check = elements.Select(e => e.Element(DrillholeConstants.drillholeTable).Value).SingleOrDefault();
+
+            if (check == "")  //saved session at dialog page
+            {
+                var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeTable)).SingleOrDefault();
+                updateValues.Value = drillholeFile;
+            }
+
+            SaveXML(xmlFile, projectFile);
+        }
     }
 
     public class XmlTableInputdata : XmlManagement
@@ -242,6 +265,11 @@ namespace Drillholes.XML
         public override Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
         {
             //TODO
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot)
+        {
             throw new NotImplementedException();
         }
     }
@@ -347,6 +375,11 @@ namespace Drillholes.XML
             throw new NotImplementedException();
 
         }
+
+        public override void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class XmlDrillholePreferences : XmlManagement
@@ -451,6 +484,22 @@ namespace Drillholes.XML
             xmlFile.Save(fullXmlName);
         }
 
+        public override async void UpdateProjectFile(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot)
+        {
+            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
+            var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
+
+            var check = elements.Select(e => e.Element(DrillholeConstants.drillholePref).Value).SingleOrDefault();
+
+            if (check == "")  //saved session at dialog page
+            {
+                var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholePref)).SingleOrDefault();
+                updateValues.Value = drillholePreferencesFile;
+            }
+
+            SaveXML(xmlFile, projectFile);
+        }
+
         public override async Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
         {
             string strValue = "";
@@ -546,6 +595,11 @@ namespace Drillholes.XML
         public override void SaveXML(XDocument xmlFile, string fullXmlName)
         {
             xmlFile.Save(fullXmlName);
+        }
+
+        public override void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot)
+        {
+            throw new NotImplementedException();
         }
 
         public override Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
