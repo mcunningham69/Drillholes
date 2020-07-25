@@ -43,6 +43,22 @@ namespace Drillholes.XML
             return await factory.CreateXML(fileName, xPreview, tableType, rootName);
         }
 
+        public async void DrillholeData(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType)
+        {
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeInputData);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeInputData);
+
+            if (File.Exists(projectFile))
+            {
+                factory.UpdateProjectFile(projectFile, drillholePreferencesFile, drillholeProjectRoot, tableType);
+
+            }
+
+        }
+
+
         public Task<XElement> DrillholeDesurvey()
         {
             throw new NotImplementedException();
@@ -105,7 +121,7 @@ namespace Drillholes.XML
 
         }
 
-        public async void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot)
+        public async void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType)
         {
             if (factory == null)
                 factory = new XmlFactory(DrillholesXmlEnum.DrillholePreferences);
@@ -114,7 +130,7 @@ namespace Drillholes.XML
 
             if (File.Exists(projectFile))
             {
-                factory.UpdateProjectFile(projectFile, drillholePreferencesFile, drillholeProjectRoot);
+                factory.UpdateProjectFile(projectFile, drillholePreferencesFile, drillholeProjectRoot, tableType);
 
             }
 
@@ -154,7 +170,7 @@ namespace Drillholes.XML
 
 
 
-        public async void TableParameters(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot)
+        public async void TableParameters(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType)
         {
             if (factory == null)
                 factory = new XmlFactory(DrillholesXmlEnum.DrillholeTableParameters);
@@ -163,7 +179,7 @@ namespace Drillholes.XML
 
             if (File.Exists(projectFile))
             {
-                factory.UpdateProjectFile(projectFile, drillholePreferencesFile, drillholeProjectRoot);
+                factory.UpdateProjectFile(projectFile, drillholePreferencesFile, drillholeProjectRoot, tableType);
 
             }
         }
@@ -368,10 +384,18 @@ namespace Drillholes.XML
             return table;
         }
 
+        public void DrillholeFieldParameters(string projectFile, string drillholeFieldsFile, string drillholeProjectRoot, DrillholeTableType tableType)
+        {
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeFields);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeFields);
 
+            if (File.Exists(projectFile))
+            {
+                factory.UpdateProjectFile(projectFile, drillholeFieldsFile, drillholeProjectRoot, tableType);
 
-
-
-
+            }
+        }
     }
 }

@@ -85,11 +85,12 @@ namespace Drillholes.Windows.Dialogs
 
         private async Task<bool> ManageXmlProperties(DrillholeProjectProperties properties)
         {
+            //creates .dh project file
             await _xmlService.DrillholeProjectProperties(properties, DrillholeConstants.drillholeProject);
 
-            //update preferences file
+            //update project file with path to preferences file
             if (savedProject)
-                _xmlService.DrillholePreferences(projectFile, fullName, DrillholeConstants.drillholeProject);
+                _xmlService.DrillholePreferences(projectFile, fullName, DrillholeConstants.drillholeProject, DrillholeTableType.other);
 
             return true;
         }

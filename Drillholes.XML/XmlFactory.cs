@@ -44,9 +44,9 @@ namespace Drillholes.XML
             return _xml.UpdateXmlNodes(fullXmlName, xmlName, xmlChange, xmlData, tableType, rootName).Result;
         }
 
-        public async void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot)
+        public async void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot, DrillholeTableType tableType)
         {
-            _xml.UpdateProjectFile(projectFile, drillholeFile, drillholeRoot);
+            _xml.UpdateProjectFile(projectFile, drillholeFile, drillholeRoot, tableType);
         }
 
     }
@@ -81,7 +81,7 @@ namespace Drillholes.XML
 
         public abstract Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName);
 
-        public abstract void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot);
+        public abstract void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot, DrillholeTableType tableType);
 
     }
 
@@ -174,10 +174,10 @@ namespace Drillholes.XML
             throw new NotImplementedException();
         }
 
-        public override async void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot)
+        public override async void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeProjectRoot, DrillholeTableType tableType)
         {
             XDocument xmlFile = await OpenXML(projectFile) as XDocument;
-            var elements = xmlFile.Descendants(drillholeRoot).Elements();
+            var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
 
             var check = elements.Select(e => e.Element(DrillholeConstants.drillholeTable).Value).SingleOrDefault();
 
@@ -268,9 +268,22 @@ namespace Drillholes.XML
             throw new NotImplementedException();
         }
 
-        public override void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot)
+        public override async void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot, DrillholeTableType tableType)
         {
-            throw new NotImplementedException();
+            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
+            var elements = xmlFile.Descendants(drillholeRoot).Elements();
+
+            var check = elements.Select(e => e.Element(DrillholeConstants.drillholeData).Value).SingleOrDefault();
+
+            if (check == "")  //saved session at dialog page
+            {
+                var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeData)).Select(f => f.Element(tableType.ToString())).FirstOrDefault();
+
+                updateValues.Value = drillholeFile;
+
+            }
+
+            SaveXML(xmlFile, projectFile);
         }
     }
 
@@ -376,9 +389,22 @@ namespace Drillholes.XML
 
         }
 
-        public override void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot)
+        public override async void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeProjectRoot, DrillholeTableType tableType)
         {
-            throw new NotImplementedException();
+            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
+            var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
+
+            var check = elements.Select(e => e.Element(DrillholeConstants.drillholeFields).Value).SingleOrDefault();
+
+            if (check == "")  //saved session at dialog page
+            {
+                var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeFields)).Select(f => f.Element(tableType.ToString())).FirstOrDefault();
+
+                updateValues.Value = drillholeFile;
+
+            }
+
+            SaveXML(xmlFile, projectFile);
         }
     }
 
@@ -484,7 +510,7 @@ namespace Drillholes.XML
             xmlFile.Save(fullXmlName);
         }
 
-        public override async void UpdateProjectFile(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot)
+        public override async void UpdateProjectFile(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType)
         {
             XDocument xmlFile = await OpenXML(projectFile) as XDocument;
             var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
@@ -597,7 +623,7 @@ namespace Drillholes.XML
             xmlFile.Save(fullXmlName);
         }
 
-        public override void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot)
+        public override void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot, DrillholeTableType tableType)
         {
             throw new NotImplementedException();
         }

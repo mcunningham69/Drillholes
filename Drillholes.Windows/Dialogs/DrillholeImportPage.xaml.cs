@@ -375,7 +375,7 @@ namespace Drillholes.Windows.Dialogs
             await collarPreviewModel.PreviewDataToImport(nLimit); //50 is the limit of records to preview
 
             //sets the fieldnames
-            await collarPreviewModel.UpdateFieldnamesInXml();
+         //   await collarPreviewModel.UpdateFieldnamesInXml();
 
             chkSkip.IsEnabled = false;
             chkSkip.IsChecked = false;

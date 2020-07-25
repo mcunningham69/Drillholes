@@ -12,16 +12,19 @@ namespace Drillholes.Domain.Interfaces
     public interface IDrillholeXML
     {
         Task<XElement> TableParameters(string fileName, List<DrillholeTable> importTables, string rootName);
-        void TableParameters(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot);
+        void TableParameters(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType);
 
         Task<XDocument> DrillholeFieldParameters(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName);
+        void DrillholeFieldParameters(string projectFile, string drillholeFieldsFile, string drillholeProjectRoot, DrillholeTableType tableType);
+
 
         Task<XElement> DrillholeData(string fileName, XElement xPreview, DrillholeTableType tableType, string xmlNodeName, string rootName);
+        void DrillholeData(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType);
 
         Task<XDocument> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName);
         Task<XDocument> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName);
 
-        void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot);
+        void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType);
 
         Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties xmlValues, string rootName);
 

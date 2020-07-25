@@ -206,9 +206,11 @@ namespace Drillholes.Windows.ViewModel
 
             if (collarDataFields != null)
             {
+
+                //create tableFields table
                 await _xmlService.DrillholeFields(fullPathnameFields, collarService.tableData, DrillholeTableType.collar, rootNameFields);
 
-                await _xmlService.DrillholeProjectProperties(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, collarTableObject.tableType);
+                _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, collarTableObject.tableType);
 
             }
 
@@ -228,6 +230,7 @@ namespace Drillholes.Windows.ViewModel
 
                 await _xmlService.DrillholeData(fullPathnameData, collarService.xPreview, DrillholeTableType.collar, DrillholeConstants._Collar + "s", rootNameData);
 
+                 _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, collarTableObject.tableType);
 
             }
 

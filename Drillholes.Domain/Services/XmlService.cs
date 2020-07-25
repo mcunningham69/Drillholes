@@ -34,6 +34,12 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
+        public async void DrillholeData(string projectFile, string drillholeFile, string drillholeRoot, DrillholeTableType tableType)
+        {
+            _xml.DrillholeData(projectFile, drillholeFile, drillholeRoot, tableType);
+
+        }
+
         public async Task<XDocument> DrillholeFields(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName)
         {
             var xml =  await _xml.DrillholeFieldParameters(fileName, fields, tableType, rootName);
@@ -41,6 +47,11 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
+        public async void DrillholeFields(string projectFile, string drillholeFile, string drillholeRoot, DrillholeTableType tableType)
+        {
+            _xml.DrillholeFieldParameters(projectFile, drillholeFile, drillholeRoot, tableType);
+
+        }
 
 
         public async Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties prop, string rootName)
@@ -57,9 +68,9 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
-        public async void TableParameters(string projectFile, string drillholeFile, string drillholeRoot)
+        public async void TableParameters(string projectFile, string drillholeFile, string drillholeRoot,DrillholeTableType tableType)
         {
-             _xml.TableParameters(projectFile, drillholeFile, drillholeRoot);
+             _xml.TableParameters(projectFile, drillholeFile, drillholeRoot, tableType);
 
         }
         public async Task<XDocument> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName)
@@ -76,9 +87,9 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
-        public async void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeRootName)
+        public async void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeRootName, DrillholeTableType tableType)
         {
-             _xml.DrillholePreferences(projectFile, drillholePreferencesFile, drillholeRootName);
+             _xml.DrillholePreferences(projectFile, drillholePreferencesFile, drillholeRootName, tableType);
 
         }
     }
