@@ -44,17 +44,17 @@ namespace Drillholes.Windows.Dialogs
         bool bEnableContinuous { get; set; }
         bool bEnableInterval { get; set; }
 
-        private List<DrillholeTable> tables { get; set; }
+        public List<DrillholeTable> tables { get; set; }
 
         #region Setup Views
-        private ViewModel.CollarView collarPreviewModel { get; set; }
-        private ViewModel.SurveyView surveyPreviewModel { get; set; }
+        public ViewModel.CollarView collarPreviewModel { get; set; }
+        public ViewModel.SurveyView surveyPreviewModel { get; set; }
 
-        private ViewModel.AssayView assayPreviewModel { get; set; }
+        public ViewModel.AssayView assayPreviewModel { get; set; }
 
-        private ViewModel.IntervalView intervalPreviewModel { get; set; }
+        public ViewModel.IntervalView intervalPreviewModel { get; set; }
 
-        private ViewModel.ContinuousView continuousPreviewModel { get; set; }
+        public ViewModel.ContinuousView continuousPreviewModel { get; set; }
 
         public bool savedSession { get; set; }
         private string projectSession { get; set; }

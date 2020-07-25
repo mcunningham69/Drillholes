@@ -38,6 +38,12 @@ namespace Drillholes.Windows.Dialogs
         public string projectLocation { get; set; }
         private string fullName { get; set; }
 
+        public string collarVal { get; set; }
+        public string surveyVal { get; set; }
+        public string assayVal { get; set; }
+        public string intervalVal { get; set; }
+        public string contVal { get; set; }
+
         IMapper mapper = null;
         bool bDebug = true;
 
@@ -60,6 +66,37 @@ namespace Drillholes.Windows.Dialogs
             xmlProjectFile = _xmlProjectFile;
             projectLocation = _projectLocation;
             projectSession = _projectSession;
+
+            collarVal = "";
+            surveyVal = "";
+            assayVal = "";
+            intervalVal = "";
+            contVal = "";
+        }
+
+        public DrillholeDialogPage(bool _savedSession, string _xmlProjectFile, string _projectSession, string _projectLocation, string _collar,
+            string _survey, string _assay, string _interval, string _continuous)
+        {
+            InitializeComponent();
+            bArc = false;
+            Startup();
+            savedSession = _savedSession;
+            xmlProjectFile = _xmlProjectFile;
+            projectLocation = _projectLocation;
+            projectSession = _projectSession;
+
+            //TODO set up event handler
+            collarVal = _collar;
+            surveyVal = _survey;
+            assayVal = _assay;
+            intervalVal = _interval;
+            contVal = _continuous;
+
+            txtCollar.Text = collarVal;
+            txtSurvey.Text = surveyVal;
+            txtAssay.Text = assayVal;
+            txtLitho.Text = intervalVal;
+            txtDistance.Text = contVal;
         }
 
         private void Startup()
@@ -130,6 +167,7 @@ namespace Drillholes.Windows.Dialogs
                 await ManageXml();
 
                 txtCollar.Text = collar;
+                collarVal = collar;
             }
         }
 
@@ -145,6 +183,7 @@ namespace Drillholes.Windows.Dialogs
                 await ManageXml();
 
                 txtSurvey.Text = survey;
+                surveyVal = "";
             }
         }
 
@@ -160,6 +199,7 @@ namespace Drillholes.Windows.Dialogs
                 await ManageXml();
 
                 txtAssay.Text = assay;
+                assayVal = assay;
             }
         }
 
@@ -175,6 +215,7 @@ namespace Drillholes.Windows.Dialogs
                 await ManageXml();
 
                 txtLitho.Text = interval;
+                intervalVal = interval;
             }
         }
 
@@ -190,6 +231,7 @@ namespace Drillholes.Windows.Dialogs
                 await ManageXml();
 
                 txtDistance.Text = continuous;
+                contVal = continuous;
             }
         }
 

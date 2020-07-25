@@ -95,6 +95,107 @@ namespace Drillholes.Windows.Dialogs
             return true;
         }
 
+        private async Task<bool> ManageXmlTableParameters(DrillholeImportPage page)
+        {
+            //get collar name for fields
+            string fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.collar.ToString(), projectSession, projectLocation);
+
+            //Create table fields for collar and entry into .dh file
+            await CreateTableFieldForImportDialogPage(fullPathname, DrillholeTableType.collar, page.collarPreviewModel.collarDataFields, "DrillholeFields");
+
+            fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.collar.ToString(), projectSession, projectLocation);
+            await CreateTableDataForImportDialogPage(fullPathname, page.collarPreviewModel.collarTableObject.xPreview, DrillholeTableType.collar, "DrillholeData");
+
+            if (page.surveyPreviewModel != null)
+            {
+                if (page.surveyPreviewModel.surveyDataFields != null)
+                {
+                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.survey.ToString(), projectSession, projectLocation);
+                    await CreateTableFieldForImportDialogPage(fullPathname, DrillholeTableType.survey, page.surveyPreviewModel.surveyDataFields, "DrillholeFields");
+
+                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.survey.ToString(), projectSession, projectLocation);
+                    await CreateTableDataForImportDialogPage(fullPathname, page.surveyPreviewModel.surveyTableObject.xPreview, DrillholeTableType.survey, "DrillholeData");
+                }
+            }
+
+            if (page.assayPreviewModel != null)
+            {
+                if (page.assayPreviewModel.assayDataFields != null)
+                {
+                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.assay.ToString(), projectSession, projectLocation);
+                    await CreateTableFieldForImportDialogPage(fullPathname, DrillholeTableType.assay, page.assayPreviewModel.assayDataFields, "DrillholeFields");
+
+                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.assay.ToString(), projectSession, projectLocation);
+                    await CreateTableDataForImportDialogPage(fullPathname, page.assayPreviewModel.assayTableObject.xPreview, DrillholeTableType.assay, "DrillholeData");
+                }
+            }
+            if (page.intervalPreviewModel != null)
+            {
+                if (page.intervalPreviewModel.intervalDataFields != null)
+                {
+                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.interval.ToString(), projectSession, projectLocation);
+                    await CreateTableFieldForImportDialogPage(fullPathname, DrillholeTableType.interval, page.intervalPreviewModel.intervalDataFields, "DrillholeFields");
+
+                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.interval.ToString(), projectSession, projectLocation);
+                    await CreateTableDataForImportDialogPage(fullPathname, page.intervalPreviewModel.intervalTableObject.xPreview, DrillholeTableType.interval, "DrillholeData");
+                }
+            }
+
+            if (page.continuousPreviewModel != null)
+            {
+                if (page.continuousPreviewModel.continuousDataFields != null)
+                {
+                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.continuous.ToString(), projectSession, projectLocation);
+                    await CreateTableFieldForImportDialogPage(fullPathname, DrillholeTableType.continuous, page.continuousPreviewModel.continuousDataFields, "DrillholeFields");
+
+                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.continuous.ToString(), projectSession, projectLocation);
+                    await CreateTableDataForImportDialogPage(fullPathname, page.continuousPreviewModel.continuousTableObject.xPreview, DrillholeTableType.continuous, "DrillholeData");
+                }
+            }
+
+            return true;
+        }
+
+        private async Task<bool> CreateTableFieldForImportDialogPage(string fullPathname, DrillholeTableType tableType, ImportTableFields importFields, string rootName)
+        {
+            await _xmlService.DrillholeFields(fullPathname, importFields, tableType, rootName);
+
+            _xmlService.DrillholeFields(projectLocation + "\\" + projectSession + ".dh", fullPathname, DrillholeConstants.drillholeProject, tableType);
+
+            return true;
+        }
+
+        private async Task<bool> CreateTableDataForImportDialogPage(string fullPathname, XElement xPreview, DrillholeTableType tableType, string rootName)
+        {
+            string xmlNodeName = "";
+            if (tableType == DrillholeTableType.collar)
+            {
+                xmlNodeName = "Collars";
+            }
+            else if (tableType == DrillholeTableType.survey)
+            {
+                xmlNodeName = "Surveys";
+            }
+            else if (tableType == DrillholeTableType.assay)
+            {
+                xmlNodeName = "Assays";
+            }
+            else if (tableType == DrillholeTableType.interval)
+            {
+                xmlNodeName = "Intervals";
+            }
+            else if (tableType == DrillholeTableType.continuous)
+            {
+                xmlNodeName = "Continuous";
+            }
+
+            await _xmlService.DrillholeData(fullPathname, xPreview, tableType, xmlNodeName, rootName);
+
+            _xmlService.DrillholeData(projectLocation + "\\" + projectSession + ".dh", fullPathname, DrillholeConstants.drillholeProject, tableType);
+
+            return true;
+        }
+
         #region Save Session
         private void Save_Session(object sender, RoutedEventArgs e)
         {
@@ -102,15 +203,66 @@ namespace Drillholes.Windows.Dialogs
         }
         private async void Save_SessionAs(object sender, RoutedEventArgs e)
         {
-            SaveDrillholeSession();
 
-            if (projectFile == "" || projectFile == null)
-                projectFile = await CheckProjectFile();
+            bool saved = await SaveDrillholeSession();
 
-            frameMain.Navigate(new DrillholeDialogPage(true, projectFile, projectSession, projectLocation));
+            if (!saved)
+                return;
+
+            await ManageXmlPreferences();
+
+            var whichPage = frameMain.Content as Page;
+
+                DrillholeProjectProperties properties = new DrillholeProjectProperties()
+                {
+                    ProjectName = projectSession,
+                    ProjectParentFolder = projectLocation,
+                    ProjectFolder = projectLocation + "\\" + projectSession,
+                    ProjectFile = projectFile
+                };
+
+                dialogPage.savedSession = true;
+                dialogPage.xmlProjectFile = properties.ProjectFile;
+                dialogPage.projectSession = properties.ProjectName;
+                dialogPage.projectLocation = properties.ProjectFolder;
+
+                await ManageXmlProperties(properties);
+
+                if (projectFile == "" || projectFile == null)
+                    projectFile = await CheckProjectFile();
+
+            if (whichPage.Title == "Import Drillhole Data")
+            {
+                var pageDialog = frameMain.Content as DrillholeDialogPage;
+                pageDialog.savedSession = true;
+                pageDialog.projectSession = projectSession;
+                pageDialog.projectLocation = projectLocation;
+                pageDialog.xmlProjectFile = projectFile;
+
+            }
+
+            else if (whichPage.Title == "Select Drillhole Fields")
+            {
+                //create Table properties
+                var pageImport = frameMain.Content as DrillholeImportPage;
+
+                pageImport.savedSession = true;
+
+                await ManageXmlTableParameters(pageImport);
+
+            }
+            else
+            {
+
+            }
+            
+
+
+
+            
 
         }
-        private async void SaveDrillholeSession()
+        private async Task<bool> SaveDrillholeSession()
         {
             string strHeader = "Save Drillhole Session";
 
@@ -137,9 +289,9 @@ namespace Drillholes.Windows.Dialogs
                     MessageBoxResult fileExists = MessageBox.Show("File '" + sessionName + "' already exists. Overwrite existing file?", "Save File", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
                     if (MessageBoxResult.Cancel == fileExists)
-                        return;
+                        return false;
                     else if (MessageBoxResult.No == fileExists)
-                        return;
+                        return false;
                 }
 
                 //strip off extension
@@ -156,7 +308,7 @@ namespace Drillholes.Windows.Dialogs
                 {
                     MessageBox.Show("A project directory of the same name '" + projectSession + "' already exists. Please select a diffrent session name.", "Project Directory", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    return;
+                    return false;
                 }
                 else //make project directory to store xml files
                 {
@@ -165,26 +317,11 @@ namespace Drillholes.Windows.Dialogs
 
                 savedProject = true;
 
-                await ManageXmlPreferences();
-
-                DrillholeProjectProperties properties = new DrillholeProjectProperties()
-                {
-                    ProjectName = projectSession,
-                    ProjectParentFolder = projectLocation,
-                    ProjectFolder = projectLocation + "\\" + projectSession,
-                    ProjectFile = projectFile
-                };
-
-                dialogPage.savedSession = true;
-                dialogPage.xmlProjectFile = properties.ProjectFile;
-                dialogPage.projectSession = properties.ProjectName;
-                dialogPage.projectLocation = properties.ProjectFolder;
-
-                await ManageXmlProperties(properties);
+                return true;
 
             };
 
-            //Create directory
+            return false;
         }
 
         private void SaveProjectFile()

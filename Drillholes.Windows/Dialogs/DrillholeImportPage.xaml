@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Drillholes.Windows.Dialogs"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-        Title="Select Drillhole Fields " Height="450" MinWidth="950" Width="Auto" FlowDirection="LeftToRight" >
+        Title="Select Drillhole Fields" Height="450" MinWidth="950" Width="Auto" FlowDirection="LeftToRight" >
 
     <Page.Background>
         <ImageBrush ImageSource="../Images/fault.jpg" ></ImageBrush>

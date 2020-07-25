@@ -48,9 +48,19 @@ namespace Drillholes.Windows.ViewModel
                 surveyType = DrillholeSurveyType.downholesurvey //default
             };
 
+            tableName = _tableName;
+            tableLocation = _tableLocation;
+            tableFormat = _tableFormat.ToString();
+
+            importAllColumns = "Import All Columns In " + (_tableType.ToString().ToUpper()) + " Table";
+
+            dataGrid = new System.Data.DataTable();
+
             savedSession = _savedSession;
             sessionName = _sessionName;
             projectLocation = _projectLocation;
+            XmlSetUP(_tableType.ToString());
+
         }
 
 
@@ -94,7 +104,13 @@ namespace Drillholes.Windows.ViewModel
             continuousDataFields = continuousService.tableData;
 
             if (continuousDataFields != null)
+            {
+                //create tableFields table
                 await _xmlService.DrillholeFields(fullPathnameFields, continuousService.tableData, DrillholeTableType.continuous, rootNameFields);
+
+                if (savedSession)
+                    _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, continuousTableObject.tableType);
+            }
 
             return true;
         }
@@ -110,7 +126,11 @@ namespace Drillholes.Windows.ViewModel
 
                 continuousTableObject.xPreview = continuousService.xPreview;
 
-                await _xmlService.DrillholeData(fullPathnameData, continuousService.xPreview, DrillholeTableType.continuous, DrillholeConstants._Continuous, rootNameData);
+
+                await _xmlService.DrillholeData(fullPathnameData, continuousService.xPreview, DrillholeTableType.continuous, DrillholeConstants._Continuous + "s", rootNameData);
+
+                if (savedSession)
+                    _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, continuousTableObject.tableType);
 
 
             }
