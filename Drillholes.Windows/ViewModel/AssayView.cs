@@ -85,55 +85,77 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public override async Task<bool> RetrieveFieldsToMap()
+        public override async Task<bool> RetrieveFieldsToMap(bool bOpen)
         {
             if (classMapper == null)
                 InitialiseTableMapping();
 
-            var assayService = await _assayService.GetSurveyFields(classMapper, assayTableObject.tableLocation,
-                assayTableObject.tableFormat, assayTableObject.tableName);
-
-            //manual map 
-            assayTableObject.fields = assayService.fields;
-            assayTableObject.tableData = assayService.tableData;
-            assayTableObject.assayKey = assayService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
-
-            assayDataFields = assayService.tableData;
-
-            if (assayDataFields != null)
+            if (bOpen)
             {
+                var assayObject = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, assayTableObject.tableType) as AssayTableObject;
+                assayTableObject.tableData = assayObject.tableData;
+                assayTableObject.fields = assayObject.fields;
+                assayTableObject.collarKey = assayObject.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
-                //create tableFields table
-                await _xmlService.DrillholeFields(fullPathnameFields, assayService.tableData, DrillholeTableType.assay, rootNameFields);
+                assayTableObject.tableIsValid = true;
 
-                if(savedSession)
-                    _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, assayTableObject.tableType);
+                assayDataFields = assayTableObject.tableData;
 
+            }
+            else
+            {
+                var assayService = await _assayService.GetSurveyFields(classMapper, assayTableObject.tableLocation,
+                    assayTableObject.tableFormat, assayTableObject.tableName);
+
+                //manual map 
+                assayTableObject.fields = assayService.fields;
+                assayTableObject.tableData = assayService.tableData;
+                assayTableObject.assayKey = assayService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+
+                assayDataFields = assayService.tableData;
+
+                if (assayDataFields != null)
+                {
+
+                    //create tableFields table
+                    await _xmlService.DrillholeFields(fullPathnameFields, assayService.tableData, DrillholeTableType.assay, rootNameFields);
+
+                    if (savedSession)
+                        _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, assayTableObject.tableType);
+
+                }
             }
 
             return true;
         }
 
-        public virtual async Task<bool> PreviewDataToImport(int limit)
+        public override async Task<bool> PreviewDataToImport(int limit, bool bOpen)
         {
             List<string> fields = new List<string>();
 
-            if (assayTableObject.xPreview == null)
+            if (bOpen)
             {
-
-                var assayService = await _assayService.PreviewData(classMapper, assayTableObject.tableType, limit);
-
-                assayTableObject.xPreview = assayService.xPreview;
-
-                await _xmlService.DrillholeData(fullPathnameData, assayService.xPreview, DrillholeTableType.assay, DrillholeConstants._Assay + "s", rootNameData);
-
-                if (savedSession)
-                    _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, assayTableObject.tableType);
-
+                var assayObject = await _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, assayTableObject.tableType);
+                assayTableObject.xPreview = assayObject;
 
             }
+            else
+            {
+                if (assayTableObject.xPreview == null)
+                {
 
-            fields = _assayService.ReturnFields(classMapper);
+                    var assayService = await _assayService.PreviewData(classMapper, assayTableObject.tableType, limit);
+
+                    assayTableObject.xPreview = assayService.xPreview;
+
+                    await _xmlService.DrillholeData(fullPathnameData, assayService.xPreview, DrillholeTableType.assay, DrillholeConstants._Assay + "s", rootNameData);
+
+                    if (savedSession)
+                        _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, assayTableObject.tableType);
+                }
+            }
+
+            fields = assayTableObject.fields;
 
             if (dataGrid.Columns.Count != fields.Count())
             {

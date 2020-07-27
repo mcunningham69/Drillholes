@@ -11,6 +11,7 @@ using Drillholes.Domain.Interfaces;
 using Drillholes.Domain;
 using System.Net.NetworkInformation;
 using System.Windows.Markup;
+using System.Net;
 
 namespace Drillholes.XML
 {
@@ -18,6 +19,7 @@ namespace Drillholes.XML
     {
         XmlFactory factory = null;
 
+        #region Data
         public async Task<XElement> DrillholeData(string fileName, XElement xPreview, DrillholeTableType tableType, string xmlNodeName, string rootName)
         {
             XDocument xmlFile = null;
@@ -57,13 +59,14 @@ namespace Drillholes.XML
             }
 
         }
-
+        #endregion
 
         public Task<XElement> DrillholeDesurvey()
         {
             throw new NotImplementedException();
         }
 
+        #region Preferences
         public async Task<XDocument> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName)
         {
             XDocument xmlFile = null;
@@ -135,8 +138,9 @@ namespace Drillholes.XML
             }
 
         }
+        #endregion
 
-
+        #region Fields
         public async Task<XDocument> DrillholeFieldParameters(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName)
         {
             XDocument xmlFile = null;
@@ -168,6 +172,45 @@ namespace Drillholes.XML
             return xmlFile;
         }
 
+        public async Task<CollarTableObject> DrillholeFieldParameters(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType)
+        {
+            ImportTableFields fields = new ImportTableFields();
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeFields);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeFields);
+
+            if (File.Exists(projectFile))
+            {
+                var query = await factory.ReturnValuesFromXML(projectFile, drillholeTableFile, drillholeProjectRoot, drillholeRootname, tableType);
+
+                if (query != null)
+                    fields = query as ImportTableFields;
+            }
+
+            var names = fields.Select(a => a.columnHeader);
+
+            List<string> fieldNames = new List<string>();
+
+            foreach (string field in names)
+            {
+                fieldNames.Add(field);
+            }
+
+            CollarTableObject collarObject = new CollarTableObject()
+            {
+                isValid = true,
+                fields = fieldNames,
+                tableType = DrillholeTableType.collar,
+                hasEdits = false,
+                isCancelled = false,
+                tableData = fields
+            };
+
+            return collarObject;
+        }
+        #endregion
 
 
         public async void TableParameters(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType)
@@ -274,7 +317,7 @@ namespace Drillholes.XML
 
                 //var check = elements.Select(e => e.Element(DrillholeConstants.drillholeTable).Value).SingleOrDefault();
 
-                if (values[1] != "" )  //saved session at dialog page
+                if (values[1] != "")  //saved session at dialog page
                 {
                     // var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeTable)).SingleOrDefault();
 
@@ -283,7 +326,7 @@ namespace Drillholes.XML
                     var tableValueToUpdate = updateValues.Select(e => e.Element(tableType.ToString())).FirstOrDefault();
 
                     tableValueToUpdate.Value = drillholeTableFile;
-                   // updateValues.Value = drillholeTableFile;
+                    // updateValues.Value = drillholeTableFile;
 
                     xmlFile.Save(projectFile);
                 }
@@ -350,7 +393,7 @@ namespace Drillholes.XML
             return tables;
         }
 
-         
+
         private async Task<DrillholeTable> ReturnTableProperties(XElement elements, DrillholeTableType tableType)
         {
             var query = elements.Element("TableFormat").Value;
@@ -380,7 +423,7 @@ namespace Drillholes.XML
                 tableType = tableType
             };
 
-            
+
             return table;
         }
 
@@ -396,6 +439,46 @@ namespace Drillholes.XML
                 factory.UpdateProjectFile(projectFile, drillholeFieldsFile, drillholeProjectRoot, tableType);
 
             }
+        }
+
+        public async Task<List<DrillholeTable>> TableParameters(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType)
+        {
+            List<DrillholeTable> tables = new List<DrillholeTable>();
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeTableParameters);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeTableParameters);
+
+            if (File.Exists(projectFile))
+            {
+                var query = await factory.ReturnValuesFromXML(projectFile, drillholeTableFile, drillholeProjectRoot, drillholeRootname, tableType);
+
+                if (query != null)
+                    tables = query as List<DrillholeTable>;
+            }
+
+            return tables;
+        }
+
+        public async Task<XElement> DrillholeData(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType)
+        {
+            XElement xPreview = null; 
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeInputData);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeInputData);
+
+            if (File.Exists(projectFile))
+            {
+                var query = await factory.ReturnValuesFromXML(projectFile, drillholeTableFile, drillholeProjectRoot, drillholeRootname, tableType);
+
+                if (query != null)
+                    xPreview = query as XElement;
+            }
+
+            return xPreview;
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.VisualBasic;
+using System.Text.RegularExpressions;
 
 namespace Drillholes.XML
 {
@@ -49,6 +50,12 @@ namespace Drillholes.XML
             _xml.UpdateProjectFile(projectFile, drillholeFile, drillholeRoot, tableType);
         }
 
+        public async Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType)
+        {
+            return await _xml.ReturnValuesFromXML(projectFile, drillholeFile, drillholeProjectRoot, drillholeRoot, tableType);
+        }
+
+
     }
 
     public abstract class XmlManagement
@@ -82,6 +89,8 @@ namespace Drillholes.XML
         public abstract Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName);
 
         public abstract void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot, DrillholeTableType tableType);
+        public abstract Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType);
+
 
     }
 
@@ -189,6 +198,86 @@ namespace Drillholes.XML
 
             SaveXML(xmlFile, projectFile);
         }
+
+        public override async Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType)
+        {
+            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
+            var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
+
+            List<DrillholeTable> tables = new List<DrillholeTable>();
+
+            string drillholeTables = elements.Select(e => e.Element(DrillholeConstants.drillholeTable).Value).SingleOrDefault(); //check for drillhole table
+
+            if (drillholeTables == "")
+                return null;
+
+            XDocument tableProperties = await OpenXML(drillholeTables) as XDocument;
+
+                var tableElements = tableProperties.Descendants(drillholeRoot).Elements();
+
+                var properties = tableElements.Select(f => f.Attribute("Value"));
+
+                foreach (var property in properties)
+                {
+                    switch (property.Value)
+                    {
+                        case "collar":
+                            var collar = await ReturnTableProperties(property.Parent, DrillholeTableType.collar);
+                            tables.Add(collar);
+                            break;
+                        case "survey":
+                            var survey = await ReturnTableProperties(property.Parent, DrillholeTableType.survey);
+                            tables.Add(survey);
+                            break;
+                        case "assay":
+                            var assay = await ReturnTableProperties(property.Parent, DrillholeTableType.assay);
+                            tables.Add(assay);
+                            break;
+                        case "interval":
+                            var interval = await ReturnTableProperties(property.Parent, DrillholeTableType.interval);
+                            tables.Add(interval);
+                            break;
+                        case "continuous":
+                            var continuous = await ReturnTableProperties(property.Parent, DrillholeTableType.continuous);
+                            tables.Add(continuous);
+                            break;
+                    }
+                }
+
+            return tables;
+        }
+
+        private async Task<DrillholeTable> ReturnTableProperties(XElement elements, DrillholeTableType tableType)
+        {
+            var query = elements.Element("TableFormat").Value;
+
+            DrillholeImportFormat importFormat = DrillholeImportFormat.other;
+
+            if (query == "egdb_table")
+                importFormat = DrillholeImportFormat.egdb_table;
+            else if (query == "excel_table")
+                importFormat = DrillholeImportFormat.excel_table;
+            else if (query == "fgdb_table")
+                importFormat = DrillholeImportFormat.fgdb_table;
+            else if (query == "pgdb_table")
+                importFormat = DrillholeImportFormat.pgdb_table;
+            else if (query == "text_csv")
+                importFormat = DrillholeImportFormat.text_csv;
+            else if (query == "text_txt")
+                importFormat = DrillholeImportFormat.text_txt;
+
+            var table = new DrillholeTable(true)
+            {
+                tableFormat = importFormat,
+                tableLocation = elements.Element("TableLocation").Value,
+                tableName = elements.Element("TableName").Value,
+                tableFormatName = elements.Element("TableFormat").Value,
+                tableType = tableType
+            };
+
+
+            return table;
+        }
     }
 
     public class XmlTableInputdata : XmlManagement
@@ -273,17 +362,49 @@ namespace Drillholes.XML
             XDocument xmlFile = await OpenXML(projectFile) as XDocument;
             var elements = xmlFile.Descendants(drillholeRoot).Elements();
 
-            var check = elements.Select(e => e.Element(DrillholeConstants.drillholeData).Value).SingleOrDefault();
+            //var check = elements.Select(e => e.Element(DrillholeConstants.drillholeData).Value).SingleOrDefault();
 
-            if (check == "")  //saved session at dialog page
-            {
+            //if (check == "")  //saved session at dialog page
+            //{
                 var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeData)).Select(f => f.Element(tableType.ToString())).FirstOrDefault();
 
                 updateValues.Value = drillholeFile;
 
-            }
+            //}
 
             SaveXML(xmlFile, projectFile);
+        }
+
+        public override async Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType)
+        {
+            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
+            var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
+
+            var drillholeFieldValues = elements.Select(e => e.Element(drillholeRoot)).Nodes().ToList(); //return all the tables and check below for the table type to then open the table fields table.
+
+            string drillholeData = "";
+
+
+            foreach (XElement drillholeValue in drillholeFieldValues)
+            {
+                if (drillholeValue.Name == tableType.ToString())
+                {
+                    drillholeData = drillholeValue.Value;
+                    break;
+                }
+            }
+
+
+            if (drillholeData == "")
+                return null;
+
+            XDocument tableProperties = await OpenXML(drillholeData) as XDocument;
+
+            var tableElements = tableProperties.Descendants("TableType").Elements().FirstOrDefault();
+
+
+
+            return tableElements;
         }
     }
 
@@ -312,7 +433,7 @@ namespace Drillholes.XML
                 nodes.Add(new XElement("FieldType", field.fieldType));
                 nodes.Add(new XElement("GenericType", field.genericType));
                 nodes.Add(new XElement("GroupName", field.groupName));
-                nodes.Add(new XElement("FieldType", field.keys)); //?
+                nodes.Add(new XElement("FieldKeys", field.keys)); //?
 
                 fieldName = new XElement("ColumnHeader", new XAttribute("Name", field.columnHeader));
                 fieldName.Add(nodes);
@@ -394,17 +515,105 @@ namespace Drillholes.XML
             XDocument xmlFile = await OpenXML(projectFile) as XDocument;
             var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
 
-            var check = elements.Select(e => e.Element(DrillholeConstants.drillholeFields).Value).SingleOrDefault();
+            var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeFields)).Select(f => f.Element(tableType.ToString())).FirstOrDefault();
 
-            if (check == "")  //saved session at dialog page
-            {
-                var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeFields)).Select(f => f.Element(tableType.ToString())).FirstOrDefault();
-
-                updateValues.Value = drillholeFile;
-
-            }
+            updateValues.Value = drillholeFile;
 
             SaveXML(xmlFile, projectFile);
+        }
+
+        public override async Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType)
+        {
+            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
+            var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
+
+            ImportTableFields fields = new ImportTableFields();
+
+            var drillholeFieldValues = elements.Select(e => e.Element(drillholeRoot)).Nodes().ToList(); //return all the tables and check below for the table type to then open the table fields table.
+
+            string drillholeFields = "";
+
+            
+            foreach(XElement drillholeValue in drillholeFieldValues)
+            {
+                if (drillholeValue.Name == tableType.ToString())
+                {
+                    drillholeFields = drillholeValue.Value;
+                    break;
+                }
+            }
+
+
+            if (drillholeFields == "")
+                return null;
+
+            XDocument tableProperties = await OpenXML(drillholeFields) as XDocument;
+
+            var tableElements = tableProperties.Descendants(drillholeRoot).Elements().Nodes();
+
+            ImportTableField field = null;
+            foreach(XElement query in tableElements)
+            {
+
+                field = new ImportTableField();
+
+                field.columnHeader = query.FirstAttribute.Value;
+
+                var columnImportAs = query.FirstNode as XElement;
+                field.columnImportAs = columnImportAs.Value;
+
+                var columnImportName = columnImportAs.NextNode as XElement;
+                field.columnImportName = columnImportName.Value;
+
+                var fieldType = columnImportName.NextNode as XElement;
+                field.fieldType = fieldType.Value;
+
+                var genericType = fieldType.NextNode as XElement;
+                field.genericType = Convert.ToBoolean(genericType.Value);
+
+                var groupName = genericType.NextNode as XElement;
+                field.groupName = groupName.Value;
+
+                var fieldKeys = groupName.NextNode as XElement;
+
+                var keystring = fieldKeys.Value.ToString();
+
+                if (keystring.Contains("True"))
+                {
+                    string leftKey = "";
+                    string rightKey = "";
+
+                    if (keystring.Substring(1, 1) == "T")
+                    {
+                        leftKey = keystring.Substring(1, 4);
+                        rightKey = keystring.Substring(7, 5);
+                    }
+                    else if (keystring.Substring(8, 1) == "T")
+                    {
+                        leftKey = keystring.Substring(1, 5);
+                        rightKey = keystring.Substring(8, 4);
+                    }
+                    else
+                    {
+                        leftKey = keystring.Substring(1, 5);
+                        rightKey = keystring.Substring(8, 5);
+                    }
+
+                    bool bLeft = Convert.ToBoolean(leftKey);
+                    bool bRight = Convert.ToBoolean(rightKey);
+
+                    field.keys = new KeyValuePair<bool, bool>(bLeft, bRight);
+                }
+                else
+                {
+                    //default
+                    field.keys = new KeyValuePair<bool, bool>(false, false);
+                }
+
+                fields.Add(field);
+            }
+
+            return fields;
         }
     }
 
@@ -503,6 +712,11 @@ namespace Drillholes.XML
             SaveXML(xmlData, fullXmlName);
 
             return xmlData.Element(rootName);
+        }
+
+        public override Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeRoot, string drillholeProjectRoot, DrillholeTableType tableType)
+        {
+            throw new NotImplementedException();
         }
 
         public override void SaveXML(XDocument xmlFile, string fullXmlName)
@@ -614,6 +828,11 @@ namespace Drillholes.XML
      
 
         public override Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeRoot, string drillholeProjectRoot, DrillholeTableType tableType)
         {
             throw new NotImplementedException();
         }

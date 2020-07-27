@@ -92,54 +92,79 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public override async Task<bool> RetrieveFieldsToMap()
+        public override async Task<bool> RetrieveFieldsToMap(bool bOpen)
         {
             if (classMapper == null)
                 InitialiseTableMapping();
 
-            var surveyService = await _surveyService.GetSurveyFields(classMapper, surveyTableObject.tableLocation, 
-                surveyTableObject.tableFormat, surveyTableObject.tableName);
-
-            //manual map 
-            surveyTableObject.fields = surveyService.fields;
-            surveyTableObject.tableData = surveyService.tableData;
-            surveyTableObject.surveyKey = surveyService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
-
-            surveyDataFields = surveyService.tableData;
-
-            if (surveyDataFields != null)
+            if (bOpen)
             {
+                var surveyObject = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, surveyTableObject.tableType) as SurveyTableObject;
+                surveyTableObject.tableData = surveyObject.tableData;
+                surveyTableObject.fields = surveyObject.fields;
+                surveyTableObject.collarKey = surveyObject.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
-                //create tableFields table
-                await _xmlService.DrillholeFields(fullPathnameFields, surveyService.tableData, DrillholeTableType.survey, rootNameFields);
+                surveyTableObject.tableIsValid = true;
 
-                if (savedSession)
-                    _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, surveyTableObject.tableType);
-
+                surveyDataFields = surveyTableObject.tableData;
             }
 
+            else
+            {
+                var surveyService = await _surveyService.GetSurveyFields(classMapper, surveyTableObject.tableLocation,
+                    surveyTableObject.tableFormat, surveyTableObject.tableName);
+
+                //manual map 
+                surveyTableObject.fields = surveyService.fields;
+                surveyTableObject.tableData = surveyService.tableData;
+                surveyTableObject.surveyKey = surveyService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+
+                surveyTableObject.isValid = true;
+
+                surveyDataFields = surveyService.tableData;
+
+                if (surveyDataFields != null)
+                {
+
+                    //create tableFields table
+                    await _xmlService.DrillholeFields(fullPathnameFields, surveyService.tableData, DrillholeTableType.survey, rootNameFields);
+
+                    if (savedSession)
+                        _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, surveyTableObject.tableType);
+
+                }
+            }
             return true;
         }
 
-        public virtual async Task<bool> PreviewDataToImport(int limit)
+        public override async Task<bool> PreviewDataToImport(int limit, bool bOpen)
         {
             List<string> fields = new List<string>();
 
-            if (surveyTableObject.xPreview == null)
+            if (bOpen)
             {
-
-                var surveyService = await _surveyService.PreviewData(classMapper, surveyTableObject.tableType, limit);
-
-                surveyTableObject.xPreview = surveyService.xPreview;
-
-                await _xmlService.DrillholeData(fullPathnameData, surveyService.xPreview, DrillholeTableType.survey, DrillholeConstants._Survey + "s", rootNameData);
-
-                if (savedSession)
-                    _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, surveyTableObject.tableType);
+                var surveyObject = await _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, surveyTableObject.tableType);
+                surveyTableObject.xPreview = surveyObject;
 
             }
 
-            fields = _surveyService.ReturnFields(classMapper);
+            else
+            {
+                if (surveyTableObject.xPreview == null)
+                {
+
+                    var surveyService = await _surveyService.PreviewData(classMapper, surveyTableObject.tableType, limit);
+
+                    surveyTableObject.xPreview = surveyService.xPreview;
+
+                    await _xmlService.DrillholeData(fullPathnameData, surveyService.xPreview, DrillholeTableType.survey, DrillholeConstants._Survey + "s", rootNameData);
+
+                    if (savedSession)
+                        _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, surveyTableObject.tableType);
+                }
+            }
+
+            fields = surveyTableObject.fields;
 
             if (dataGrid.Columns.Count != fields.Count())
             {
@@ -161,7 +186,7 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
-        public virtual void FillTable()
+        public override async void FillTable()
         {
             dataGrid.Rows.Clear();
 

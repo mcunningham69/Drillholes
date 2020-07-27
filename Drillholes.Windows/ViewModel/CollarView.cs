@@ -156,6 +156,21 @@ namespace Drillholes.Windows.ViewModel
             }
 
         }
+
+        public async Task<bool> UpdateXmlPreferences(string fullName, string xmlName, bool valueToChange)
+        {
+            await _xmlService.DrillholePreferences(fullName, xmlName, valueToChange, DrillholeConstants.drillholePref);
+
+            return true;
+        }
+
+        public async Task<bool> UpdateXmlPreferences(string fullName, string xmlName, string valueToChange)
+        {
+            await _xmlService.DrillholePreferences(fullName, xmlName, valueToChange, DrillholeConstants.drillholePref);
+
+            return true;
+        }
+
         //TODO move out of here
         public virtual void InitialiseTableMapping()
         {
@@ -189,52 +204,86 @@ namespace Drillholes.Windows.ViewModel
                 dataPreview.DataContext = dataGrid;
         }
 
-        public virtual async Task<bool> RetrieveFieldsToMap()
+        public virtual async Task<bool> RetrieveFieldsToMap(bool bOpen)
         {
             if (classMapper == null)
                 InitialiseTableMapping();
 
-            var collarService = await _collarService.GetCollarFields(classMapper, collarTableObject.tableFormat,
-                collarTableObject.tableLocation, collarTableObject.tableName);
 
-            //manual map 
-            collarTableObject.fields = collarService.fields;
-            collarTableObject.tableData = collarService.tableData;
-            collarTableObject.collarKey = collarService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
-
-            collarDataFields = collarService.tableData;
-
-            if (collarDataFields != null)
+            if (bOpen)
             {
-                //create tableFields table
-                await _xmlService.DrillholeFields(fullPathnameFields, collarService.tableData, DrillholeTableType.collar, rootNameFields);
+                var collarObject = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, collarTableObject.tableType) as CollarTableObject;
+                collarTableObject.tableData = collarObject.tableData;
+                collarTableObject.fields = collarObject.fields;
+                collarTableObject.collarKey = collarObject.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
-                if (savedSession)
-                    _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, collarTableObject.tableType);
+                collarTableObject.tableIsValid = true;
+
+                collarDataFields = collarTableObject.tableData;
+
             }
+            else
+            {
+                var collarService = await _collarService.GetCollarFields(classMapper, collarTableObject.tableFormat,
+                    collarTableObject.tableLocation, collarTableObject.tableName);
+
+                //manual map 
+                collarTableObject.fields = collarService.fields;
+                collarTableObject.tableData = collarService.tableData;
+                collarTableObject.collarKey = collarService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+
+                collarDataFields = collarService.tableData;
+
+                if (collarDataFields != null)
+                {
+                    //create tableFields table
+                    await _xmlService.DrillholeFields(fullPathnameFields, collarService.tableData, DrillholeTableType.collar, rootNameFields);
+
+                    if (savedSession)
+                    {
+                        _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, collarTableObject.tableType);
+                    }
+                }
+            }
+
+
 
             return true;
         }
 
-        public virtual async Task<bool> PreviewDataToImport(int limit)
+        public virtual async Task<bool> PreviewDataToImport(int limit, bool bOpen)
         {
+            if (classMapper == null)
+                InitialiseTableMapping();
+
             List<string> fields = new List<string>();
 
-            if (collarTableObject.xPreview == null)
+            if (bOpen)
             {
+                var collarObject = await _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, collarTableObject.tableType);
+                collarTableObject.xPreview = collarObject;
 
-                var collarService = await _collarService.PreviewData(classMapper, collarTableObject.tableType, limit);
+            }
+            else
+            {
+                if (collarTableObject.xPreview == null)
+                {
 
-                collarTableObject.xPreview = collarService.xPreview;
+                    var collarService = await _collarService.PreviewData(classMapper, collarTableObject.tableType, limit);
 
-                await _xmlService.DrillholeData(fullPathnameData, collarService.xPreview, DrillholeTableType.collar, DrillholeConstants._Collar + "s", rootNameData);
+                    collarTableObject.xPreview = collarService.xPreview;
 
-                if (savedSession)
-                    _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, collarTableObject.tableType);
+                    await _xmlService.DrillholeData(fullPathnameData, collarService.xPreview, DrillholeTableType.collar, DrillholeConstants._Collar + "s", rootNameData);
+
+                    if (savedSession)
+                        _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, collarTableObject.tableType);
+
+                }
+
 
             }
 
-            fields = _collarService.ReturnFields(classMapper);
+            fields = collarTableObject.fields;
 
             if (dataGrid.Columns.Count != fields.Count())
             {
@@ -281,7 +330,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public virtual void FillTable()
+        public virtual async void FillTable()
         {
             dataGrid.Rows.Clear();
 

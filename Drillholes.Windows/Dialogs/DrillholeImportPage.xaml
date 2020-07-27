@@ -467,6 +467,10 @@
                                             <TextBlock HorizontalAlignment="Left" Text="{Binding Path=columnImportAs}" FontSize="14" Foreground="Blue"/>
                                             <ComboBoxItem Content="Hole ID" Foreground="DarkGreen"/>
                                             <ComboBoxItem Content="Distance" Foreground="DarkGreen"/>
+                                            <Separator />
+                                            <ComboBoxItem Content="a" Foreground="DarkBlue" FontFamily="Symbol" />
+                                            <ComboBoxItem Content="b" Foreground="DarkBlue" FontFamily="Symbol"/>
+                                            <ComboBoxItem Content="g" Foreground="DarkBlue" FontFamily="Symbol"/>
                                             <Separator/>
                                             <ComboBoxItem Content="Numeric" Foreground="DarkOrange"/>
                                             <ComboBoxItem Content ="Text" Foreground="DarkOrange"/>

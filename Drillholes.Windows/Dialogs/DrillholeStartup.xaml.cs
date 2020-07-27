@@ -97,8 +97,15 @@ namespace Drillholes.Windows.Dialogs
 
         private async Task<bool> ManageXmlTableParameters(DrillholeImportPage page)
         {
+            //Create table with paths and parameters
+
+            string fullPathname = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeTable, "alltables", projectSession, projectLocation);
+            await _xmlService.TableParameters(fullPathname, page.tables, DrillholeConstants.drillholeTable);
+            _xmlService.TableParameters(projectLocation + "\\" + projectSession + ".dh", fullPathname, DrillholeConstants.drillholeProject, DrillholeTableType.other);
+
+
             //get collar name for fields
-            string fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.collar.ToString(), projectSession, projectLocation);
+            fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.collar.ToString(), projectSession, projectLocation);
 
             //Create table fields for collar and entry into .dh file
             await CreateTableFieldForImportDialogPage(fullPathname, DrillholeTableType.collar, page.collarPreviewModel.collarDataFields, "DrillholeFields");
@@ -250,6 +257,10 @@ namespace Drillholes.Windows.Dialogs
 
                 await ManageXmlTableParameters(pageImport);
 
+                //update settings
+                await SynchroniseSettings(true, pageImport);
+
+                await ManageXmlPreferences();
             }
             else
             {
@@ -262,6 +273,7 @@ namespace Drillholes.Windows.Dialogs
             
 
         }
+
         private async Task<bool> SaveDrillholeSession()
         {
             string strHeader = "Save Drillhole Session";
@@ -324,6 +336,7 @@ namespace Drillholes.Windows.Dialogs
             return false;
         }
 
+
         private void SaveProjectFile()
         {
 
@@ -354,21 +367,40 @@ namespace Drillholes.Windows.Dialogs
                     frameMain.Navigate(dialogPage);
                     return;
                 }
-                
 
                 //if table properties stored then proceed
                 List<DrillholeTable> _classes = new List<DrillholeTable>();
 
                 _classes = await RetrieveDrillholeTableParameters(projectFile, filename);
 
-                //Populate DrillholeDialog tables from XML
-                frameMain.Navigate(new DrillholeImportPage(_classes, true, projectFile, projectSession, projectLocation));
+                var checkPage = frameMain.Content as Page;
+                if (checkPage.Title == "Import Drillhole Data")
+                {
+                    if (_classes != null)
+                    {
+                        DrillholeImportPage newPage = new DrillholeImportPage(_classes, true, projectFile, projectSession, projectLocation);
+                        newPage.openSession = true;
 
+                        frameMain.Navigate(newPage);
+                    }
+                    else
+                    {
+                        var dialogImport = frameMain.Content as DrillholeDialogPage;
+                        dialogImport.savedSession = true;
+                        dialogPage.xmlProjectFile = projectFile;
+                        dialogPage.projectSession = projectSession;
+                        dialogPage.projectLocation = projectLocation;
+                    }
+                }
+                
             }
             else
             {
-                frameMain.Navigate(new DrillholeDialogPage(true, projectFile, projectSession, projectLocation));
-
+                var dialogImport = frameMain.Content as DrillholeDialogPage;
+                dialogImport.savedSession = true;
+                dialogPage.xmlProjectFile = projectFile;
+                dialogPage.projectSession = projectSession;
+                dialogPage.projectLocation = projectLocation;
             }
 
         }
@@ -398,15 +430,20 @@ namespace Drillholes.Windows.Dialogs
 
             XDocument xmlPreferences = await _xmlService.DrillholePreferences(projectFile, preferences, DrillholeConstants.drillholeProject);
 
+            
             var elements = xmlPreferences.Descendants(DrillholeConstants.drillholeProject).Elements();
 
             
                 var check = elements.Where(a => a.Element(DrillholeConstants.drillholeTable).Value != "").Count();
 
-                if (check > 0)
-                    return elements.Select(a => a.Element(DrillholeConstants.drillholeTable)).SingleOrDefault().Value;
+            string checkName = "";
+
+            if (check > 0)
+                {
+                 checkName = elements.Select(a => a.Element(DrillholeConstants.drillholeTable)).SingleOrDefault().Value;
+            }
             
-            return "";
+            return checkName;
         }
 
         private async Task<List<DrillholeTable>> RetrieveDrillholeTableParameters(string projectFile, string drillholeTableFile)
@@ -419,7 +456,8 @@ namespace Drillholes.Windows.Dialogs
             if (_xmlService == null)
                 _xmlService = new XmlService(_xml);
 
-            tables = await _xmlService.DrillholeProjectProperties(projectFile, drillholeTableFile, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable, DrillholeTableType.other);
+            tables = await _xmlService.TableParameters(projectFile, drillholeTableFile, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable, DrillholeTableType.other);
+
             return tables;
         }
 
@@ -456,6 +494,28 @@ namespace Drillholes.Windows.Dialogs
             this.Close();
         }
 
+        private async Task<bool> SynchroniseSettings(bool pageToSetting, DrillholeImportPage pageImport)
+        {
+            if (pageToSetting)
+            {
+                this.radDownhole.IsChecked = pageImport.radDhole.IsChecked;
+                this.radVertical.IsChecked = pageImport.radVertical.IsChecked;
+                this.radCollarSurvey.IsChecked = pageImport.radSurvey.IsChecked;
+                this.chkImport.IsChecked = pageImport.chkImport.IsChecked;
+
+
+            }
+            else
+            {
+                pageImport.radDhole.IsChecked = this.radDownhole.IsChecked;
+                pageImport.radVertical.IsChecked = this.radVertical.IsChecked;
+                pageImport.radSurvey.IsChecked = this.radCollarSurvey.IsChecked;
+                pageImport.chkImport.IsChecked = this.chkImport.IsChecked;
+
+            }
+
+            return true;
+        }
         private void HelpDocumentation(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Not yet implemented");
@@ -478,9 +538,17 @@ namespace Drillholes.Windows.Dialogs
             
         }
 
-        private void Ribbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void Ribbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var ribbon = sender as Ribbon;
+            var whichPage = frameMain.Content as Page;
+
+            DrillholeImportPage importPage = null;
+
+            if (whichPage.Title == "Select Drillhole Fields" )
+            {
+                importPage = frameMain.Content as DrillholeImportPage;
+            }
 
             if (ribbon.SelectedIndex == 0)
             {
@@ -491,6 +559,14 @@ namespace Drillholes.Windows.Dialogs
                 stkCollarToe.Visibility = Visibility.Hidden;
                 stkGeology.Visibility = Visibility.Hidden;
                 stkTolerance.Visibility = Visibility.Hidden;
+
+                //check if import page then automatically reload preferences and refresh interface if required
+                if (importPage != null)
+                {
+                    await SynchroniseSettings(false, importPage);
+                    await ManageXmlPreferences();
+                }
+
             }
             else
             {
@@ -501,6 +577,9 @@ namespace Drillholes.Windows.Dialogs
                 stkCollarToe.Visibility = Visibility.Visible;
                 stkGeology.Visibility = Visibility.Visible;
                 stkTolerance.Visibility = Visibility.Visible;
+
+                //set interface from XML
+                SetEnvironmentFromXml("DrillholePreferences");
             }
         }
 

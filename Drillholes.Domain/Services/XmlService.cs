@@ -40,12 +40,31 @@ namespace Drillholes.Domain.Services
 
         }
 
-        public async Task<XDocument> DrillholeFields(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName)
+        public async Task<XElement> DrillholeData(string projectFile, string drillholeTableFile, string projectRoot, string rootName, DrillholeTableType tableType)
         {
-            var xml =  await _xml.DrillholeFieldParameters(fileName, fields, tableType, rootName);
+            var xml = await _xml.DrillholeData(projectFile, drillholeTableFile, projectRoot, rootName, tableType) as XElement;
 
             return xml;
         }
+
+        public async Task<XDocument> DrillholeFields(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName)
+        {
+            XDocument xml = null;
+
+
+                xml = await _xml.DrillholeFieldParameters(fileName, fields, tableType, rootName);
+            
+            return xml;
+        }
+
+        public async Task<CollarTableObject> DrillholeFields(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType)
+        {
+
+            var xml = await _xml.DrillholeFieldParameters(projectFile, drillholeFile,drillholeProjectRoot, drillholeRoot, tableType);
+
+            return xml;
+        }
+
 
         public async void DrillholeFields(string projectFile, string drillholeFile, string drillholeRoot, DrillholeTableType tableType)
         {
@@ -61,12 +80,13 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
-        public async Task<List<DrillholeTable>> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string projectRoot,  string rootName, DrillholeTableType tableType)
+        public async Task<List<DrillholeTable>> TableParameters(string projectFile, string drillholeTableFile, string projectRoot,  string rootName, DrillholeTableType tableType)
         {
-            var xml = await _xml.DrillholeProjectProperties(projectFile, drillholeTableFile, projectRoot, rootName, tableType) as List<DrillholeTable>;
+            var xml = await _xml.TableParameters(projectFile, drillholeTableFile, projectRoot, rootName, tableType) as List<DrillholeTable>;
 
             return xml;
         }
+
 
         public async void TableParameters(string projectFile, string drillholeFile, string drillholeRoot,DrillholeTableType tableType)
         {

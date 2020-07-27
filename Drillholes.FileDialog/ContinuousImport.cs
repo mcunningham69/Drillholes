@@ -390,9 +390,27 @@ namespace Drillholes.FileDialog
                             DrillholeConstants.GroupOtherFields, true, "Double", new KeyValuePair<bool, bool>(false, false));
                         break;
                     }
-                case DrillholeConstants._grade:
+                //case DrillholeConstants._grade:
+                //    {
+                //        ReturnFormatAndUpdateFields.UpdateOptionalFields(DrillholeConstants._grade, queryUpdate, continuousTableDto.tableData,
+                //            DrillholeConstants.GroupOtherFields, true, "Double", new KeyValuePair<bool, bool>(false, false));
+                //        break;
+                //    }
+                case DrillholeConstants._alpha:
                     {
-                        ReturnFormatAndUpdateFields.UpdateOptionalFields(DrillholeConstants._grade, queryUpdate, continuousTableDto.tableData,
+                        ReturnFormatAndUpdateFields.UpdateOptionalFields("Alpha", queryUpdate, continuousTableDto.tableData,
+                            DrillholeConstants.GroupOtherFields, true, "Double", new KeyValuePair<bool, bool>(false, false));
+                        break;
+                    }
+                case DrillholeConstants._beta:
+                    {
+                        ReturnFormatAndUpdateFields.UpdateOptionalFields("Beta", queryUpdate, continuousTableDto.tableData,
+                            DrillholeConstants.GroupOtherFields, true, "Double", new KeyValuePair<bool, bool>(false, false));
+                        break;
+                    }
+                case DrillholeConstants._gamma:
+                    {
+                        ReturnFormatAndUpdateFields.UpdateOptionalFields("Gamma", queryUpdate, continuousTableDto.tableData,
                             DrillholeConstants.GroupOtherFields, true, "Double", new KeyValuePair<bool, bool>(false, false));
                         break;
                     }
