@@ -286,8 +286,14 @@ namespace Drillholes.FileDialog
             return collarFields;
         }
 
-        public async Task<CollarTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName)
+        public async Task<CollarTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName, ImportTableFields collarTableFields)
         {
+            if (collarTableDto == null)
+                collarTableDto = new CollarTableDto()
+                { 
+                    tableData = collarTableFields
+                };
+
             //Return row to be updated
             ImportTableField queryUpdate = (from column in collarTableDto.tableData
                                             where column.columnHeader == searchColumn
@@ -451,6 +457,8 @@ namespace Drillholes.FileDialog
                     }
 
             }
+
+            collarTableDto.tableIsValid = true;
 
             return collarTableDto;
         }

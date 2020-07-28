@@ -23,9 +23,9 @@ namespace Drillholes.Domain.Services
             this._continuous = continuous;
         }
 
-        public async Task<ContinuousTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName)
+        public async Task<ContinuousTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName, ImportTableFields continuousTableFields)
         {
-            continuousDto = await _continuous.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName);
+            continuousDto = await _continuous.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName, continuousTableFields);
 
             if (continuousDto.tableIsValid == false)
             {

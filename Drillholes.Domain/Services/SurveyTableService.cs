@@ -23,9 +23,9 @@ namespace Drillholes.Domain.Services
             this._survey = survey;
         }
 
-        public async Task<SurveyTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName)
+        public async Task<SurveyTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName, ImportTableFields surveyTableFields)
         {
-            surveyDto = await _survey.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName);
+            surveyDto = await _survey.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName, surveyTableFields);
 
             if (surveyDto.tableIsValid == false)
             {

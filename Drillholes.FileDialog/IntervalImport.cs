@@ -351,8 +351,14 @@ namespace Drillholes.FileDialog
             return intervalTableDto;
         }
 
-        public async Task<IntervalTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName)
+        public async Task<IntervalTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName, ImportTableFields intervalTableFields)
         {
+            if (intervalTableDto == null)
+                intervalTableDto = new IntervalTableDto()
+                {
+                    tableData = intervalTableFields
+                };
+
             //Return row to be updated
             ImportTableField queryUpdate = (from column in intervalTableDto.tableData
                                             where column.columnHeader == searchColumn
@@ -430,6 +436,9 @@ namespace Drillholes.FileDialog
                     //    }
 
             }
+
+            intervalTableDto.tableIsValid = true;
+
 
             return intervalTableDto;
         }

@@ -568,7 +568,7 @@ namespace Drillholes.Windows.Dialogs
                 }
 
             }
-            else
+            else  //FIX
             {
                 stkLabel.Visibility = Visibility.Hidden;
                 frameMain.Visibility = Visibility.Hidden;
@@ -578,8 +578,14 @@ namespace Drillholes.Windows.Dialogs
                 stkGeology.Visibility = Visibility.Visible;
                 stkTolerance.Visibility = Visibility.Visible;
 
+                if (importPage != null)
+                await SynchroniseSettings(false, importPage);
+
+                await ManageXmlPreferences();
+
                 //set interface from XML
-                SetEnvironmentFromXml("DrillholePreferences");
+                if (savedProject)
+                    SetEnvironmentFromXml("DrillholePreferences");
             }
         }
 

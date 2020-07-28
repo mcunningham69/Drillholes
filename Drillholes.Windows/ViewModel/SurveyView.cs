@@ -99,10 +99,22 @@ namespace Drillholes.Windows.ViewModel
 
             if (bOpen)
             {
-                var surveyObject = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, surveyTableObject.tableType) as SurveyTableObject;
-                surveyTableObject.tableData = surveyObject.tableData;
-                surveyTableObject.fields = surveyObject.fields;
-                surveyTableObject.collarKey = surveyObject.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+                var surveyFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, surveyTableObject.tableType) as ImportTableFields;
+
+                surveyTableObject.tableData = surveyFields;
+
+                var names = surveyFields.Select(a => a.columnHeader);
+
+                List<string> fieldNames = new List<string>();
+
+                foreach (string field in names)
+                {
+                    fieldNames.Add(field);
+                }
+
+                surveyTableObject.fields = fieldNames;
+
+                surveyTableObject.collarKey = surveyFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
                 surveyTableObject.tableIsValid = true;
 
@@ -268,11 +280,14 @@ namespace Drillholes.Windows.ViewModel
         public override async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
            bool bImport)
         {
+            if (_surveyService == null)
+                InitialiseTableMapping();
+
             string _strSearch = _searchList.columnHeader;
             string _strName = _searchList.columnImportName;
 
             var surveyService = _surveyService.UpdateFieldvalues(previousSelection, classMapper, selectedValue,
-                _strSearch, _strName);
+                _strSearch, _strName, surveyTableObject.tableData);
 
             surveyDataFields = surveyService.Result.tableData;
 

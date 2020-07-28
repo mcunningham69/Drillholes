@@ -95,10 +95,21 @@ namespace Drillholes.Windows.ViewModel
 
             if (bOpen)
             {
-                var continuousObject = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, continuousTableObject.tableType) as ContinuousTableObject;
-                continuousTableObject.tableData = continuousObject.tableData;
-                continuousTableObject.fields = continuousObject.fields;
-                continuousTableObject.collarKey = continuousObject.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+                var continuousFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, continuousTableObject.tableType) as ImportTableFields;
+                continuousTableObject.tableData = continuousFields;
+
+                var names = continuousFields.Select(a => a.columnHeader);
+
+                List<string> fieldNames = new List<string>();
+
+                foreach (string field in names)
+                {
+                    fieldNames.Add(field);
+                }
+
+                continuousTableObject.fields = fieldNames;
+
+                continuousTableObject.collarKey = continuousFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
                 continuousTableObject.tableIsValid = true;
 
@@ -260,12 +271,14 @@ namespace Drillholes.Windows.ViewModel
         public override async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
            bool bImport)
         {
+            if (_continuousService == null)
+                InitialiseTableMapping();
 
             string _strSearch = _searchList.columnHeader;
             string _strName = _searchList.columnImportName;
 
             var continuousService = _continuousService.UpdateFieldvalues(previousSelection, classMapper, selectedValue,
-                _strSearch, _strName);
+                _strSearch, _strName, continuousTableObject.tableData);
 
 
             continuousDataFields = continuousService.Result.tableData;

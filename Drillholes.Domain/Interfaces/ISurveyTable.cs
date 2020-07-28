@@ -13,7 +13,7 @@ namespace Drillholes.Domain.Interfaces
         Task<SurveyTableDto> PreviewAndImportFields(DrillholeTableType tableType, int limit);
         Task<SurveyTableDto> RetrieveTableFieldnames(DrillholeImportFormat tableFormat, string tableLocation, string tableName);
         Task<SurveyTableDto> ImportAllFieldsAsGeneric(bool bImport);
-        Task<SurveyTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName);
+        Task<SurveyTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName, ImportTableFields surveyTableFields);
 
         Task<SurveyTableDto> RetrieveTemplateFieldnames();
     }

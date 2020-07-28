@@ -14,7 +14,7 @@ namespace Drillholes.Domain.Interfaces
         Task<IntervalTableDto> RetrieveTableFieldnames(DrillholeImportFormat tableFormat, string tableLocation, string tableName);
 
         Task<IntervalTableDto> ImportAllFieldsAsGeneric(bool bImport);
-        Task<IntervalTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName);
+        Task<IntervalTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName, ImportTableFields intervalTableFields);
 
     }
 }

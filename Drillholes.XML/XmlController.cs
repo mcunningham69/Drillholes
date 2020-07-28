@@ -172,7 +172,9 @@ namespace Drillholes.XML
             return xmlFile;
         }
 
-        public async Task<CollarTableObject> DrillholeFieldParameters(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType)
+
+        //CHANGE TO OBJECT AND DO SWITCH FOR TABLETYPE
+        public async Task<ImportTableFields> DrillholeFieldParameters(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType)
         {
             ImportTableFields fields = new ImportTableFields();
 
@@ -189,26 +191,7 @@ namespace Drillholes.XML
                     fields = query as ImportTableFields;
             }
 
-            var names = fields.Select(a => a.columnHeader);
-
-            List<string> fieldNames = new List<string>();
-
-            foreach (string field in names)
-            {
-                fieldNames.Add(field);
-            }
-
-            CollarTableObject collarObject = new CollarTableObject()
-            {
-                isValid = true,
-                fields = fieldNames,
-                tableType = DrillholeTableType.collar,
-                hasEdits = false,
-                isCancelled = false,
-                tableData = fields
-            };
-
-            return collarObject;
+            return fields;
         }
         #endregion
 

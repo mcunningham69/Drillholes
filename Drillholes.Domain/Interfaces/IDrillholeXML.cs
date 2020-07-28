@@ -14,7 +14,7 @@ namespace Drillholes.Domain.Interfaces
         Task<XElement> TableParameters(string fileName, List<DrillholeTable> importTables, string rootName);
         void TableParameters(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType);
         Task<List<DrillholeTable>> TableParameters(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType);
-        Task<CollarTableObject> DrillholeFieldParameters(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType);
+        Task<ImportTableFields> DrillholeFieldParameters(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType);
         Task<XDocument> DrillholeFieldParameters(string fileName, ImportTableFields fields, DrillholeTableType tableType, string rootName);
         void DrillholeFieldParameters(string projectFile, string drillholeFieldsFile, string drillholeProjectRoot, DrillholeTableType tableType);
 

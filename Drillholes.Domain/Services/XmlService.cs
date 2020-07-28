@@ -57,7 +57,7 @@ namespace Drillholes.Domain.Services
             return xml;
         }
 
-        public async Task<CollarTableObject> DrillholeFields(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType)
+        public async Task<ImportTableFields> DrillholeFields(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType)
         {
 
             var xml = await _xml.DrillholeFieldParameters(projectFile, drillholeFile,drillholeProjectRoot, drillholeRoot, tableType);

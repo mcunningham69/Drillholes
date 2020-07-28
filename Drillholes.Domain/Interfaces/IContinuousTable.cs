@@ -14,6 +14,6 @@ namespace Drillholes.Domain.Interfaces
         Task<ContinuousTableDto> RetrieveTableFieldnames(DrillholeImportFormat tableFormat, string tableLocation, string tableName);
 
         Task<ContinuousTableDto> ImportAllFieldsAsGeneric(bool bImport);
-        Task<ContinuousTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName);
+        Task<ContinuousTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName, ImportTableFields continuousTableFields);
     }
 }

@@ -23,9 +23,9 @@ namespace Drillholes.Domain.Services
             this._interval = interval;
         }
 
-        public async Task<IntervalTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName)
+        public async Task<IntervalTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName, ImportTableFields intervalTableFields)
         {
-            intervalDto = await _interval.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName);
+            intervalDto = await _interval.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName, intervalTableFields);
 
             if (intervalDto.tableIsValid == false)
             {

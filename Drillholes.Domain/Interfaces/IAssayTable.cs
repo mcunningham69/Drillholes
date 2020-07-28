@@ -14,7 +14,7 @@ namespace Drillholes.Domain.Interfaces
         Task<AssayTableDto> RetrieveTableFieldnames(DrillholeImportFormat tableFormat, string tableLocation, string tableName);
 
         Task<AssayTableDto> ImportAllFieldsAsGeneric(bool bImport);
-        Task<AssayTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName);
+        Task<AssayTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName, ImportTableFields assayTableFields);
 
     }
 }

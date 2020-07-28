@@ -92,10 +92,21 @@ namespace Drillholes.Windows.ViewModel
 
             if (bOpen)
             {
-                var assayObject = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, assayTableObject.tableType) as AssayTableObject;
-                assayTableObject.tableData = assayObject.tableData;
-                assayTableObject.fields = assayObject.fields;
-                assayTableObject.collarKey = assayObject.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+                var assayFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, assayTableObject.tableType) as ImportTableFields;
+                assayTableObject.tableData = assayFields;
+
+                var names = assayFields.Select(a => a.columnHeader);
+
+                List<string> fieldNames = new List<string>();
+
+                foreach (string field in names)
+                {
+                    fieldNames.Add(field);
+                }
+
+                assayTableObject.fields = fieldNames;
+
+                assayTableObject.collarKey = assayFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
                 assayTableObject.tableIsValid = true;
 
@@ -255,12 +266,14 @@ namespace Drillholes.Windows.ViewModel
         public override async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
            bool bImport)
         {
+            if (_assayService == null)
+                InitialiseTableMapping();
 
             string _strSearch = _searchList.columnHeader;
             string _strName = _searchList.columnImportName;
 
             var assayService = _assayService.UpdateFieldvalues(previousSelection, classMapper, selectedValue,
-                _strSearch, _strName);
+                _strSearch, _strName, assayTableObject.tableData);
 
 
             assayDataFields = assayService.Result.tableData;

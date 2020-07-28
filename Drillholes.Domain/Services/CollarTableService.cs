@@ -71,9 +71,9 @@ namespace Drillholes.Domain.Services
             return mapper.Map<CollarTableDto, CollarTableObject>(collarDto);
         }
 
-        public async Task<CollarTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName)
+        public async Task<CollarTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName, ImportTableFields collarTableFields)
         {
-            collarDto = await _collar.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName);
+            collarDto = await _collar.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName, collarTableFields);
 
             if (collarDto.tableIsValid == false)
             {

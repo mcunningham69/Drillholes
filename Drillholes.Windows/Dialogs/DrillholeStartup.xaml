@@ -278,6 +278,8 @@
 
             <Label Content="No Data Value:"/>
             <TextBox HorizontalAlignment="Left" Name="txtDefault" Text="-99" Width="150" LostFocus="txtDefault_LostFocus"/>
+            <!--<RadioButton Name="radTop" Content="Geology Top" Margin="5,5,5,5" Click="radTop_Click"/>
+            <RadioButton Name="radBottom" Content="Geology Bottom" IsChecked="True" Margin="5,0,5,5" Click="radBottom_Click"/>-->
         </StackPanel>
 
         <StackPanel x:Name="stkCheckbox" Grid.Column="2" Grid.Row="2" Margin="15,0,50,5" Visibility="Hidden">
@@ -286,6 +288,8 @@
             <CheckBox Name="chkImportGeology" Content="Import holes only with geology" Margin="5,5,5,5" Click="chkImportGeology_Click"/>
             <CheckBox Name="chkImportContinuous" Content="Import holes only with continuous values" Margin="5,5,5,5" Click="chkImportContinuous_Click"/>
             <CheckBox Name="chkZeroAssays" Content="Ignore zero assays" Margin="5,5,5,5" Click="chkZeroAssays_Click"/>
+            <!--<CheckBox Name="chkCollar" Content="Create Collar" Margin="5,5,5,5" Click="chkCollar_Click"/>
+            <CheckBox Name="chkToe" Content="Create Toe" Margin="5,0,5,5" Click="chkToe_Click"/>-->
         </StackPanel>
 
         <StackPanel Name="stkGeology" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="1" Margin="15,20,50,0" Visibility="Hidden">

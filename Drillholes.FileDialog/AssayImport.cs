@@ -352,8 +352,14 @@ namespace Drillholes.FileDialog
             return assayTableDto;
         }
 
-        public async Task<AssayTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName)
+        public async Task<AssayTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName, ImportTableFields assayTableFields)
         {
+            if (assayTableDto == null)
+                assayTableDto = new AssayTableDto()
+                {
+                    tableData = assayTableFields
+                };
+
             //Return row to be updated
             ImportTableField queryUpdate = (from column in assayTableDto.tableData
                                             where column.columnHeader == searchColumn
@@ -437,6 +443,9 @@ namespace Drillholes.FileDialog
                     //    }
 
             }
+
+            assayTableDto.tableIsValid = true;
+
 
             return assayTableDto;
         }

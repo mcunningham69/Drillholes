@@ -492,12 +492,10 @@
         </TabControl>
 
 
-        <Button x:Name="btnCancel" Grid.Column="1" Grid.Row="3"  Width="80" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Cancel" Click="btnCancel_Click" Margin="0,0,0,0" Grid.ColumnSpan="2"/>
+        <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal" Grid.ColumnSpan="2">
 
-        <StackPanel Grid.Column="2" Grid.Row="3" Orientation="Horizontal">
-
-            <Button Name="btnDesurvey" IsEnabled="true" Content="Create Drillhole Trace" FontSize="16" HorizontalAlignment="Left" 
-                    VerticalAlignment="Bottom" Width="200" Height="30" Margin="10,0,0,0" Click="btnCreateHole_Click" Visibility="Visible"></Button>
+            <Button Name="btnDesurvey" IsEnabled="true" Content="Create Drillhole Trace" FontSize="16" HorizontalAlignment="Center" 
+                    VerticalAlignment="Bottom" Width="350" Height="30" Click="btnCreateHole_Click" Visibility="Visible"></Button>
 
         </StackPanel>
 

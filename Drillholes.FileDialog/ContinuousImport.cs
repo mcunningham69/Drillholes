@@ -325,8 +325,14 @@ namespace Drillholes.FileDialog
             return continuousTableDto;
         }
 
-        public async Task<ContinuousTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName)
+        public async Task<ContinuousTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName, ImportTableFields continuousTableFields)
         {
+            if (continuousTableDto == null)
+                continuousTableDto = new ContinuousTableDto()
+                {
+                    tableData = continuousTableFields
+                };
+
             //Return row to be updated
             ImportTableField queryUpdate = (from column in continuousTableDto.tableData
                                             where column.columnHeader == searchColumn
@@ -431,6 +437,8 @@ namespace Drillholes.FileDialog
                     }
 
             }
+
+            continuousTableDto.tableIsValid = true;
 
             return continuousTableDto;
         }

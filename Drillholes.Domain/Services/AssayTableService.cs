@@ -23,9 +23,9 @@ namespace Drillholes.Domain.Services
             this._assay = assay;
         }
 
-        public async Task<AssayTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName)
+        public async Task<AssayTableObject> UpdateFieldvalues(string previousSelection, IMapper mapper, string changeTo, string searchColumn, string strOldName, ImportTableFields assayTableFields)
         {
-            assayDto = await _assay.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName);
+            assayDto = await _assay.UpdateImportParameters(previousSelection, changeTo, searchColumn, strOldName, assayTableFields);
 
             if (assayDto.tableIsValid == false)
             {

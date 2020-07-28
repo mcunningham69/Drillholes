@@ -305,8 +305,14 @@ namespace Drillholes.FileDialog
             return surveyFields;
         }
 
-        public async Task<SurveyTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName)
+        public async Task<SurveyTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName, ImportTableFields surveyTableFields)
         {
+            if (surveyTableDto == null)
+                surveyTableDto = new SurveyTableDto()
+                {
+                    tableData = surveyTableFields
+                };
+
             //Return row to be updated
             ImportTableField queryUpdate = (from column in surveyTableDto.tableData
                                             where column.columnHeader == searchColumn
@@ -420,6 +426,8 @@ namespace Drillholes.FileDialog
                         throw new TableTypeException("There is a problem with changing field type for Survey table");
                     }
             }
+
+            surveyTableDto.tableIsValid = true;
 
             return surveyTableDto;
         }

@@ -256,7 +256,7 @@
         </DockPanel>
 
         <DockPanel Grid.Column="1" Grid.Row="4" >
-            <Button Name="btnClose" Content="Close Form" HorizontalAlignment="Left" Width="120" />
+            <Button Name="btnClose" Content="Return" HorizontalAlignment="Left" Width="120" />
             <Button Name="btnFixErrors" Content="Fix Errors" HorizontalAlignment="Left" Width="150" Click="btnFixErrors_Click" Visibility="Hidden"/>
         </DockPanel>
     </Grid>

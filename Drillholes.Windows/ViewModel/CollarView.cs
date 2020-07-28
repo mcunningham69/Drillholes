@@ -212,10 +212,22 @@ namespace Drillholes.Windows.ViewModel
 
             if (bOpen)
             {
-                var collarObject = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, collarTableObject.tableType) as CollarTableObject;
-                collarTableObject.tableData = collarObject.tableData;
-                collarTableObject.fields = collarObject.fields;
-                collarTableObject.collarKey = collarObject.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+                var collarFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, collarTableObject.tableType) as ImportTableFields;
+                collarTableObject.tableData = collarFields;
+
+                var names = collarFields.Select(a => a.columnHeader);
+
+                List<string> fieldNames = new List<string>();
+
+                foreach (string field in names)
+                {
+                    fieldNames.Add(field);
+                }
+
+                collarTableObject.fields = fieldNames;
+
+
+                collarTableObject.collarKey = collarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
                 collarTableObject.tableIsValid = true;
 
@@ -306,12 +318,14 @@ namespace Drillholes.Windows.ViewModel
         public virtual async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
             bool bImport)
         {
+            if (_collarService == null)
+                InitialiseTableMapping();
 
             string _strSearch = _searchList.columnHeader;
             string _strName = _searchList.columnImportName;
 
             var collarService = _collarService.UpdateFieldvalues(previousSelection, classMapper, selectedValue,
-                _strSearch, _strName);
+                _strSearch, _strName, collarTableObject.tableData);
 
 
             collarDataFields = collarService.Result.tableData;

@@ -96,14 +96,25 @@ namespace Drillholes.Windows.ViewModel
 
             if (bOpen)
             {
-                var intervalObject = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, intervalTableObject.tableType) as IntervalTableObject;
-                intervalTableObject.tableData = intervalObject.tableData;
-                intervalTableObject.fields = intervalObject.fields;
-                intervalTableObject.collarKey = intervalObject.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+                var intervalFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, intervalTableObject.tableType) as ImportTableFields;
+                intervalTableObject.tableData = intervalFields;
 
-                collarTableObject.tableIsValid = true;
+                var names = intervalFields.Select(a => a.columnHeader);
 
-                collarDataFields = collarTableObject.tableData;
+                List<string> fieldNames = new List<string>();
+
+                foreach (string field in names)
+                {
+                    fieldNames.Add(field);
+                }
+
+                intervalTableObject.fields = fieldNames;
+
+                intervalTableObject.collarKey = intervalFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+
+                intervalTableObject.tableIsValid = true;
+
+                intervalDataFields = intervalTableObject.tableData;
 
             }
             else
@@ -257,12 +268,14 @@ namespace Drillholes.Windows.ViewModel
         public override async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
            bool bImport)
         {
+            if (_intervalService == null)
+                InitialiseTableMapping();
 
             string _strSearch = _searchList.columnHeader;
             string _strName = _searchList.columnImportName;
 
             var intervalService = _intervalService.UpdateFieldvalues(previousSelection, classMapper, selectedValue,
-                _strSearch, _strName);
+                _strSearch, _strName, intervalTableObject.tableData);
 
 
             intervalDataFields = intervalService.Result.tableData;

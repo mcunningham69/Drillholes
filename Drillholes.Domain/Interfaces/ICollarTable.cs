@@ -14,7 +14,7 @@ namespace Drillholes.Domain.Interfaces
         Task<CollarTableDto> PreviewAndImportFields( DrillholeTableType tableType,int limit);
         Task<CollarTableDto> RetrieveTableFieldnames(DrillholeImportFormat tableFormat, string tableLocation, string tableName);
         Task<CollarTableDto> ImportAllFieldsAsGeneric(bool bImport);
-        Task<CollarTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName);
+        Task<CollarTableDto> UpdateImportParameters(string previousSelection, string changeTo, string searchColumn, string strOldName, ImportTableFields collarTableFields);
 
     }
 }
