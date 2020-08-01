@@ -25,6 +25,8 @@ namespace Drillholes.Domain.Interfaces
         Task<XDocument> DrillholePreferences(string fileName, DrillholePreferences preferences, string rootName);
         Task<XDocument> DrillholePreferences(string fileName, string xmlName, object xmlValue, string rootName);
 
+        Task<DrillholePreferences> DrillholePreferences(string drillholeTableFile, string drillholeRootname);
+
         void DrillholePreferences(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType);
 
         Task<XDocument> DrillholeProjectProperties(DrillholeProjectProperties xmlValues, string rootName);

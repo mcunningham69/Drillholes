@@ -41,8 +41,11 @@ namespace Drillholes.FileDialog
 
         public async Task<SurveyTableDto> PreviewAndImportFields(DrillholeTableType tableType, int limit)
         {
-            if (surveyTableDto.tableIsValid)
-            {
+            if (surveyTableDto == null)
+                surveyTableDto = new SurveyTableDto();
+
+          // if (surveyTableDto.tableIsValid)
+          //  {
                 switch (surveyTableDto.tableFormat)
                 {
 
@@ -68,7 +71,7 @@ namespace Drillholes.FileDialog
                     default:
                         throw new SurveyException("Generic error with previewing Survey table");
                 }
-            }
+           // }
 
             return surveyTableDto;
         }

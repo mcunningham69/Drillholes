@@ -157,6 +157,32 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
+        public async Task<DrillholePreferences> ReadXmlPreferences()
+        {
+            //create XML temp table
+            if (_xml == null)
+                _xml = new Drillholes.XML.XmlController();
+
+            if (_xmlService == null)
+                _xmlService = new XmlService(_xml);
+
+            string fullPathnamePreferences = "";
+
+            if (!savedSession)
+            {
+                fullPathnamePreferences = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "alltables");
+            }
+            else 
+            {
+                fullPathnamePreferences = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", sessionName, projectLocation);
+            }
+
+            DrillholePreferences preferences = await _xmlService.ReadDrillholePreferences(fullPathnamePreferences, DrillholeConstants.drillholePref);
+
+
+            return preferences;
+        }
+
         public async Task<bool> UpdateXmlPreferences(string fullName, string xmlName, bool valueToChange)
         {
             await _xmlService.DrillholePreferences(fullName, xmlName, valueToChange, DrillholeConstants.drillholePref);
@@ -212,26 +238,28 @@ namespace Drillholes.Windows.ViewModel
 
             if (bOpen)
             {
-                var collarFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, collarTableObject.tableType) as ImportTableFields;
-                collarTableObject.tableData = collarFields;
+                RetrieveFieldsForOpenSession();
 
-                var names = collarFields.Select(a => a.columnHeader);
+                //var collarFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, collarTableObject.tableType) as ImportTableFields;
+                //collarTableObject.tableData = collarFields;
 
-                List<string> fieldNames = new List<string>();
+                //var names = collarFields.Select(a => a.columnHeader);
 
-                foreach (string field in names)
-                {
-                    fieldNames.Add(field);
-                }
+                //List<string> fieldNames = new List<string>();
 
-                collarTableObject.fields = fieldNames;
+                //foreach (string field in names)
+                //{
+                //    fieldNames.Add(field);
+                //}
+
+                //collarTableObject.fields = fieldNames;
 
 
-                collarTableObject.collarKey = collarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+                //collarTableObject.collarKey = collarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
 
-                collarTableObject.tableIsValid = true;
+                //collarTableObject.tableIsValid = true;
 
-                collarDataFields = collarTableObject.tableData;
+                //collarDataFields = collarTableObject.tableData;
 
             }
             else
@@ -261,6 +289,33 @@ namespace Drillholes.Windows.ViewModel
 
 
             return true;
+        }
+
+        public virtual async Task<bool>RetrieveFieldsForOpenSession()
+        {
+            var collarFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, collarTableObject.tableType) as ImportTableFields;
+            collarTableObject.tableData = collarFields;
+
+            var names = collarFields.Select(a => a.columnHeader);
+
+            List<string> fieldNames = new List<string>();
+
+            foreach (string field in names)
+            {
+                fieldNames.Add(field);
+            }
+
+            collarTableObject.fields = fieldNames;
+
+
+            collarTableObject.collarKey = collarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+
+            collarTableObject.tableIsValid = true;
+
+            collarDataFields = collarTableObject.tableData;
+
+            return true;
+
         }
 
         public virtual async Task<bool> PreviewDataToImport(int limit, bool bOpen)
@@ -316,7 +371,7 @@ namespace Drillholes.Windows.ViewModel
         }
 
         public virtual async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
-            bool bImport)
+            bool bImport, bool bOpen)
         {
             if (_collarService == null)
                 InitialiseTableMapping();
@@ -336,7 +391,7 @@ namespace Drillholes.Windows.ViewModel
             if (selectedValue == DrillholeConstants.notImported)
             {
 
-                ImportGenericFields(bImport);
+                ImportGenericFields(bImport, bOpen);
             }
 
             if (selectedValue == "Hole ID")
@@ -400,13 +455,21 @@ namespace Drillholes.Windows.ViewModel
             skipTable = bSkip;
         }
 
-        public virtual async void ImportGenericFields(bool bImport)
+        public virtual async void ImportGenericFields(bool bImport, bool bOpen)
+            
         {
-            if (_collarService != null)
+            if (bOpen)
+                await RetrieveFieldsForOpenSession();
+            else 
             {
-                var collarService = await _collarService.ImportAllFieldsAsGeneric(classMapper, bImport);
-                collarTableObject.tableData = collarService.tableData;
+                if (_collarService != null)
+                {
+                    var collarService = await _collarService.ImportAllFieldsAsGeneric(classMapper, bImport);
+                    collarTableObject.tableData = collarService.tableData;
+                }
             }
+
+           
 
         }
 

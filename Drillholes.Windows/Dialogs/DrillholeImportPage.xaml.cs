@@ -197,20 +197,31 @@ namespace Drillholes.Windows.Dialogs
 
             }
         }
-        private async void SetSurveyType(bool edits)
+
+        private async void SynchroniseWithXml(string surveyType)
         {
             string fullPathName = "";
             if (savedSession)
             {
                 fullPathName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", projectSession, projectLocation);
             }
+            else
+            {
+                fullPathName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "allTables");
+            }
 
+                await collarPreviewModel.UpdateXmlPreferences(fullPathName, "SurveyType", surveyType);
+        }
+
+        private async void SetSurveyType(bool edits)
+        {
+            
             if (edits)
             {
                 if ((bool)radVertical.IsChecked)
                 {
                     surveyType = DrillholeSurveyType.vertical;
-
+                    
                 }
                 else if ((bool)radSurvey.IsChecked)
                 {
@@ -222,60 +233,60 @@ namespace Drillholes.Windows.Dialogs
                     surveyType = DrillholeSurveyType.downholesurvey;
 
                 }
+
             }
             else
             {
                 if ((bool)radVertical.IsChecked)
                 {
-                    if (savedSession)
-                        await collarPreviewModel.UpdateXmlPreferences(fullPathName, "SurveyType", DrillholeSurveyType.vertical.ToString());
-
-                    collarPreviewModel.collarTableObject.surveyType = DrillholeSurveyType.vertical;
+                    surveyType = DrillholeSurveyType.vertical;
+                    collarPreviewModel.collarTableObject.surveyType = surveyType;
 
                     if (assayPreviewModel.assayTableObject != null)
-                        assayPreviewModel.assayTableObject.surveyType = DrillholeSurveyType.vertical;
+                        assayPreviewModel.assayTableObject.surveyType = surveyType;
 
                     if (intervalPreviewModel.intervalTableObject != null)
-                        intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.vertical;
+                        intervalPreviewModel.intervalTableObject.surveyType = surveyType;
 
                     if (continuousPreviewModel.continuousTableObject != null)
-                        continuousPreviewModel.continuousTableObject.surveyType = DrillholeSurveyType.vertical;
+                        continuousPreviewModel.continuousTableObject.surveyType = surveyType;
                 }
                 else if ((bool)radSurvey.IsChecked)
                 {
-                    if (savedSession)
-                        await collarPreviewModel.UpdateXmlPreferences(fullPathName, "SurveyType", DrillholeSurveyType.collarsurvey.ToString());
+                    surveyType = DrillholeSurveyType.collarsurvey;
 
-                    collarPreviewModel.collarTableObject.surveyType = DrillholeSurveyType.collarsurvey;
+                    collarPreviewModel.collarTableObject.surveyType = surveyType;
 
                     if (assayPreviewModel.assayTableObject != null)
-                        assayPreviewModel.assayTableObject.surveyType = DrillholeSurveyType.collarsurvey;
+                        assayPreviewModel.assayTableObject.surveyType = surveyType;
 
                     if (intervalPreviewModel.intervalTableObject != null)
-                        intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.collarsurvey;
+                        intervalPreviewModel.intervalTableObject.surveyType = surveyType;
 
                     if (continuousPreviewModel.continuousTableObject != null)
-                        continuousPreviewModel.continuousTableObject.surveyType = DrillholeSurveyType.collarsurvey;
+                        continuousPreviewModel.continuousTableObject.surveyType = surveyType;
                 }
                 else
                 {
-                    if (savedSession)
-                        await collarPreviewModel.UpdateXmlPreferences(fullPathName, "SurveyType", DrillholeSurveyType.downholesurvey.ToString());
+                    surveyType = DrillholeSurveyType.downholesurvey;
 
-                    collarPreviewModel.collarTableObject.surveyType = DrillholeSurveyType.downholesurvey;
-                    surveyPreviewModel.surveyTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+                    collarPreviewModel.collarTableObject.surveyType = surveyType;
+                    surveyPreviewModel.surveyTableObject.surveyType = surveyType;
 
                     if (assayPreviewModel.assayTableObject != null)
-                        assayPreviewModel.assayTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+                        assayPreviewModel.assayTableObject.surveyType = surveyType;
 
                     if (intervalPreviewModel.intervalTableObject != null)
-                        intervalPreviewModel.intervalTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+                        intervalPreviewModel.intervalTableObject.surveyType = surveyType;
 
                     if (continuousPreviewModel.continuousTableObject != null)
-                        continuousPreviewModel.continuousTableObject.surveyType = DrillholeSurveyType.downholesurvey;
+                        continuousPreviewModel.continuousTableObject.surveyType = surveyType;
                 }
             }
-           
+
+            SynchroniseWithXml(surveyType.ToString());
+
+
         }
 
         private async void _tabcontrol_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -389,6 +400,9 @@ namespace Drillholes.Windows.Dialogs
         #region Load Tables
         private async Task<bool> LoadCollarTableAndFields(int nLimit)
         {
+            //returns preferences on first read
+            CheckPreferencesFromXml();
+
 
             await collarPreviewModel.RetrieveFieldsToMap(openSession); //on start, holeIDName set to empty string
 
@@ -537,6 +551,34 @@ namespace Drillholes.Windows.Dialogs
         }
         #endregion
 
+        private async void CheckPreferencesFromXml()
+        {
+            DrillholePreferences readPreferences = await collarPreviewModel.ReadXmlPreferences();
+
+            this.chkImport.IsChecked = true;
+                
+                //readPreferences.ImportAllColumns;
+
+            if (readPreferences.surveyType == DrillholeSurveyType.collarsurvey)
+            {
+                //this.radDhole.IsChecked = false;
+                //this.radVertical.IsChecked = false;
+                this.radSurvey.IsChecked = true;
+            }
+            else if (readPreferences.surveyType == DrillholeSurveyType.vertical)
+            {
+               //this.radDhole.IsChecked = false;
+                this.radVertical.IsChecked = true;
+                //this.radSurvey.IsChecked = true;
+            }
+            else
+            {
+                this.radDhole.IsChecked = true;
+            }
+
+           
+
+        }
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
 
@@ -563,23 +605,21 @@ namespace Drillholes.Windows.Dialogs
             string fullPathName = "";
             if (savedSession)
                 fullPathName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", projectSession, projectLocation);
+            else
+                fullPathName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "allTables");
 
             if (_tabcontrol.SelectedIndex == 0)
             {
                 collarPreviewModel.ImportAllColumns((bool)chkImport.IsChecked);
-                collarPreviewModel.ImportGenericFields(true);
+                collarPreviewModel.ImportGenericFields(true, openSession);
 
-                if (savedSession)
-                    await collarPreviewModel.UpdateXmlPreferences(fullPathName, "ImportAllColumns", (bool)chkImport.IsChecked);
             }
 
             else if (_tabcontrol.SelectedIndex == 1)
             {
                 surveyPreviewModel.ImportAllColumns((bool)chkImport.IsChecked);
-                surveyPreviewModel.ImportGenericFields(true);
+                surveyPreviewModel.ImportGenericFields(true, openSession);
 
-                if (savedSession)
-                    await surveyPreviewModel.UpdateXmlPreferences(fullPathName, "ImportAllColumns", (bool)chkImport.IsChecked);
 
             }
 
@@ -587,10 +627,8 @@ namespace Drillholes.Windows.Dialogs
             {
 
                 assayPreviewModel.ImportAllColumns((bool)chkImport.IsChecked);
-                assayPreviewModel.ImportGenericFields(true);
+                assayPreviewModel.ImportGenericFields(true, openSession);
 
-                if (savedSession)
-                    await assayPreviewModel.UpdateXmlPreferences(fullPathName, "ImportAllColumns", (bool)chkImport.IsChecked);
 
 
             }
@@ -598,27 +636,27 @@ namespace Drillholes.Windows.Dialogs
             {
 
                 intervalPreviewModel.ImportAllColumns((bool)chkImport.IsChecked);
-                intervalPreviewModel.ImportGenericFields(true);
+                intervalPreviewModel.ImportGenericFields(true, openSession);
 
-                if (savedSession)
-                    await intervalPreviewModel.UpdateXmlPreferences(fullPathName, "ImportAllColumns", (bool)chkImport.IsChecked);
+                    
 
             }
             else if (_tabcontrol.SelectedIndex == 4)
             {
 
                 continuousPreviewModel.ImportAllColumns((bool)chkImport.IsChecked);
-                continuousPreviewModel.ImportGenericFields(true);
+                continuousPreviewModel.ImportGenericFields(true, openSession);
 
-                if (savedSession)
-                    await continuousPreviewModel.UpdateXmlPreferences(fullPathName, "ImportAllColumns", (bool)chkImport.IsChecked);
 
             }
+
+            await intervalPreviewModel.UpdateXmlPreferences(fullPathName, "ImportAllColumns", (bool)chkImport.IsChecked);
 
         }
 
         private void radSurvey_Click(object sender, RoutedEventArgs e)
         {
+            
             SetSurveyType(false);
 
         }
@@ -720,7 +758,7 @@ namespace Drillholes.Windows.Dialogs
 
             if (_tabcontrol.SelectedIndex == 0)
             {
-                collarPreviewModel.UpdateFieldvalues(cboImportAs.Text, selectedValue, _searchList, (bool)chkImport.IsChecked);
+                collarPreviewModel.UpdateFieldvalues(cboImportAs.Text, selectedValue, _searchList, (bool)chkImport.IsChecked, openSession);
                 collarPreviewModel.SetPrimaryKey(DrillholeConstants.holeIDName);
 
                 DataContext = collarPreviewModel;
@@ -733,7 +771,7 @@ namespace Drillholes.Windows.Dialogs
 
             else if (_tabcontrol.SelectedIndex == 1)
             {
-                surveyPreviewModel.UpdateFieldvalues(cboImportAs.Text, selectedValue, _searchList, (bool)chkImport.IsChecked);
+                surveyPreviewModel.UpdateFieldvalues(cboImportAs.Text, selectedValue, _searchList, (bool)chkImport.IsChecked, openSession);
                 surveyPreviewModel.SetSecondaryKey(DrillholeConstants.holeIDName);
 
                 surveyPreviewModel.SetDataContext(dataPreview);
@@ -746,7 +784,7 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (_tabcontrol.SelectedIndex == 2)
             {
-                assayPreviewModel.UpdateFieldvalues(cboImportAs.Text, selectedValue, _searchList, (bool)chkImport.IsChecked);
+                assayPreviewModel.UpdateFieldvalues(cboImportAs.Text, selectedValue, _searchList, (bool)chkImport.IsChecked, openSession);
 
                 assayPreviewModel.SetSecondaryKey(DrillholeConstants.holeIDName);
 
@@ -760,7 +798,7 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (_tabcontrol.SelectedIndex == 3)
             {
-                intervalPreviewModel.UpdateFieldvalues(cboImportAs.Text, selectedValue, _searchList, (bool)chkImport.IsChecked);
+                intervalPreviewModel.UpdateFieldvalues(cboImportAs.Text, selectedValue, _searchList, (bool)chkImport.IsChecked, openSession);
                 intervalPreviewModel.SetSecondaryKey(DrillholeConstants.holeIDName);
 
                 DataContext = intervalPreviewModel;
@@ -773,7 +811,7 @@ namespace Drillholes.Windows.Dialogs
 
             else if (_tabcontrol.SelectedIndex == 4)
             {
-                continuousPreviewModel.UpdateFieldvalues(cboImportAs.Text, selectedValue, _searchList, (bool)chkImport.IsChecked);
+                continuousPreviewModel.UpdateFieldvalues(cboImportAs.Text, selectedValue, _searchList, (bool)chkImport.IsChecked, openSession);
                 continuousPreviewModel.SetSecondaryKey(DrillholeConstants.holeIDName);
 
                 DataContext = continuousPreviewModel;
@@ -792,28 +830,28 @@ namespace Drillholes.Windows.Dialogs
                 if ((bool)chkImport.IsChecked)
                 {
                     collarPreviewModel.importChecked = false;
-                    collarPreviewModel.ImportGenericFields(false);
+                    collarPreviewModel.ImportGenericFields(false, openSession);
                 }
 
                 else if ((bool)chkImport.IsChecked)
                 {
                     surveyPreviewModel.importChecked = false;
-                    surveyPreviewModel.ImportGenericFields(false);
+                    surveyPreviewModel.ImportGenericFields(false, openSession);
                 }
                 else if ((bool)chkImport.IsChecked)
                 {
                     assayPreviewModel.importChecked = false;
-                    assayPreviewModel.ImportGenericFields(false);
+                    assayPreviewModel.ImportGenericFields(false, openSession);
                 }
                 else if ((bool)chkImport.IsChecked)
                 {
                     intervalPreviewModel.importChecked = false;
-                    intervalPreviewModel.ImportGenericFields(false);
+                    intervalPreviewModel.ImportGenericFields(false, openSession);
                 }
                 else if ((bool)chkImport.IsChecked)
                 {
                     continuousPreviewModel.importChecked = false;
-                    continuousPreviewModel.ImportGenericFields(false);
+                    continuousPreviewModel.ImportGenericFields(false, openSession);
                 }
             }
         }

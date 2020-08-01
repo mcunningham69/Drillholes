@@ -138,6 +138,33 @@ namespace Drillholes.XML
             }
 
         }
+
+        public async Task<DrillholePreferences> DrillholePreferences(string drillholeTableFile, string drillholeRootname)
+        {
+            DrillholePreferences readPreferences = new DrillholePreferences();
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholePreferences);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholePreferences);
+
+            if (File.Exists(drillholeTableFile))
+            {
+                object query = await factory.ReturnValuesFromXML("", drillholeTableFile, "", drillholeRootname, DrillholeTableType.other);
+
+                var type = query.GetType();
+
+                List<object> queryObj = query as List<object>;
+
+                readPreferences = queryObj[0] as DrillholePreferences;
+
+                
+            }
+
+            return readPreferences;
+        }
+
+
         #endregion
 
         #region Fields
@@ -189,6 +216,14 @@ namespace Drillholes.XML
 
                 if (query != null)
                     fields = query as ImportTableFields;
+                //else 
+                //{
+                //    XElement elements = await factory.CreateXML(drillholeTableFile, fields, tableType, drillholeRootname);
+
+                //    query = await factory.ReturnValuesFromXML(projectFile, drillholeTableFile, drillholeProjectRoot, drillholeRootname, tableType);
+                //    if (query != null)
+                //        fields = query as ImportTableFields;
+                //}
             }
 
             return fields;

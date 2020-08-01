@@ -539,6 +539,8 @@ namespace Drillholes.XML
                 if (drillholeValue.Name == tableType.ToString())
                 {
                     drillholeFields = drillholeValue.Value;
+
+                    
                     break;
                 }
             }
@@ -650,6 +652,9 @@ namespace Drillholes.XML
             nodes.Add(new XElement("GeologyBase", preferences.GeologyBase));
             nodes.Add(new XElement("CreateCollar", preferences.CreateCollar));
             nodes.Add(new XElement("CreateToe", preferences.CreateToe));
+            nodes.Add(new XElement("TopCore", preferences.TopCore));
+            nodes.Add(new XElement("BottomCore", preferences.BottomCore));
+            nodes.Add(new XElement("CalculateStructures", preferences.CalculateStructures));
 
             tableParameters.Add(nodes);
 
@@ -695,7 +700,9 @@ namespace Drillholes.XML
             nodes.Add(new XElement("GeologyBase", preferences.GeologyBase));
             nodes.Add(new XElement("CreateCollar", preferences.CreateCollar));
             nodes.Add(new XElement("CreateToe", preferences.CreateToe));
-
+            nodes.Add(new XElement("TopCore", preferences.TopCore));
+            nodes.Add(new XElement("BottomCore", preferences.BottomCore));
+            nodes.Add(new XElement("CalculateStructures", preferences.CalculateStructures));
 
             if (updateValues.Any())
                 updateValues.Remove();
@@ -714,9 +721,46 @@ namespace Drillholes.XML
             return xmlData.Element(rootName);
         }
 
-        public override Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeRoot, string drillholeProjectRoot, DrillholeTableType tableType)
+        public override async Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeRoot, string drillholeProjectRoot, DrillholeTableType tableType)
         {
-            throw new NotImplementedException();
+            XDocument xmlFile = await OpenXML(drillholeFile) as XDocument;
+
+            var elements = xmlFile.Descendants(drillholeProjectRoot).Elements().ToList();
+
+            var importColumns = elements.Select(n => n.Element("ImportAllColumns").Value).SingleOrDefault();
+            var surveyType = elements.Select(n => n.Element("SurveyType").Value).SingleOrDefault();
+
+            bool bImport = false;
+
+            if (importColumns != null)
+            {
+                if (importColumns.ToString() != "")
+                    bImport = Convert.ToBoolean(importColumns);
+
+            }
+
+            DrillholeSurveyType survType = DrillholeSurveyType.downholesurvey; //default
+
+            if (surveyType == DrillholeSurveyType.vertical.ToString())
+            {
+                survType = DrillholeSurveyType.vertical;
+            }
+            else if (surveyType == DrillholeSurveyType.collarsurvey.ToString())
+            {
+                survType = DrillholeSurveyType.collarsurvey;
+            }
+
+            DrillholePreferences readPreferences = new DrillholePreferences()
+            {
+                surveyType = survType,
+                ImportAllColumns = bImport
+            };
+
+
+            List<object> myObjects = new List<object>();
+            myObjects.Add(readPreferences);
+
+            return myObjects;
         }
 
         public override void SaveXML(XDocument xmlFile, string fullXmlName)

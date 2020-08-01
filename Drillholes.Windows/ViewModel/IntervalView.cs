@@ -235,12 +235,17 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public override async void ImportGenericFields(bool bImport)
+        public override async void ImportGenericFields(bool bImport, bool bOpen)
         {
-            if (_intervalService != null)
+            if (bOpen)
+                await RetrieveFieldsForOpenSession();
+            else
             {
-                var intervalService = await _intervalService.ImportAllFieldsAsGeneric(classMapper, bImport);
-                intervalTableObject.tableData = intervalService.tableData;
+                if (_intervalService != null)
+                {
+                    var intervalService = await _intervalService.ImportAllFieldsAsGeneric(classMapper, bImport);
+                    intervalTableObject.tableData = intervalService.tableData;
+                }
             }
 
         }
@@ -266,7 +271,7 @@ namespace Drillholes.Windows.ViewModel
         }
 
         public override async void UpdateFieldvalues(string previousSelection, string selectedValue, ImportTableField _searchList,
-           bool bImport)
+           bool bImport, bool bOpen)
         {
             if (_intervalService == null)
                 InitialiseTableMapping();
@@ -286,7 +291,7 @@ namespace Drillholes.Windows.ViewModel
             if (selectedValue == DrillholeConstants.notImported)
             {
 
-                ImportGenericFields(bImport);
+                ImportGenericFields(bImport, bOpen);
             }
 
             intervalTableObject.surveyKey = intervalDataFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();

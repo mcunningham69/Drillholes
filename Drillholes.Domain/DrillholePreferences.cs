@@ -25,6 +25,10 @@ namespace Drillholes.Domain
         public bool GeologyBase { get; set; }
         public bool CreateCollar { get; set; }
         public bool CreateToe { get; set; }
+        public bool BottomCore { get; set; }
+        public bool TopCore { get; set; }
+        public bool CalculateStructures { get; set; }
+
 
     }
 

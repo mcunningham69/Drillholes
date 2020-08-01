@@ -185,7 +185,8 @@
                     <RibbonButton QuickAccessToolBarId="copy" SmallImageSource="../Images/Copy.png" Label="Copy" KeyTip="C"/>
                 </RibbonQuickAccessToolBar>
             </Ribbon.QuickAccessToolBar>
-            <RibbonTab Name="ribbonHome" Header="Home" KeyTip="H" GotFocus="ribbonHome_GotFocus">
+
+            <RibbonTab Name="ribbonHome" Header="Home" KeyTip="H">
                 <RibbonGroup Header="Drillholes" QuickAccessToolBarId="holes">
                     <RibbonButton QuickAccessToolBarId="new" SmallImageSource="../Images/New.png" Label="New Session" KeyTip="N" Click="New_Session"/>
                     <RibbonButton QuickAccessToolBarId="open" SmallImageSource="../Images/Open.png" Label="Open Session" KeyTip="O" Click="Open_Session"/>
@@ -236,71 +237,74 @@
                     </RibbonComboBox>
                 </RibbonGroup>
             </RibbonTab>
-            
-            <RibbonTab Name="ribbonSettings" Header="Environment" KeyTip="D" GotFocus="ribbonSettings_GotFocus">
+
+            <RibbonTab Name="ribbonSettings" Header="Environment" KeyTip="D">
                 <RibbonGroup Header="Settings" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
                     <RibbonCheckBox Name="chkDip" QuickAccessToolBarId="nd" SmallImageSource="../Images/Help.png" Label="Negative Dip (down)" IsChecked="True" Click="chkDip_Click"/>
                     <RibbonCheckBox Name="chkImport" QuickAccessToolBarId="ic" SmallImageSource="../Images/Help.png" Label="Import All Columns" Click="chkImport_Click"/>
                     <RibbonCheckBox Name="chkIgnore" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Ignore Invalid Values" Click="chkIgnore_Click"/>
                     <RibbonCheckBox Name="chkDetection" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Half Lower Detection" IsChecked="True" Click="chkDetection_Click"/>
                 </RibbonGroup>
-               
+
                 <RibbonGroup Header="Survey" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
                     <RibbonRadioButton Name="radDownhole" QuickAccessToolBarId="dh"  Label="Downhole"  IsChecked="True" Click="radDownhole_Click"/>
                     <RibbonRadioButton Name="radCollarSurvey" QuickAccessToolBarId="cs"  Label="Collar Survey" IsChecked="False" Click="radCollarSurvey_Click"/>
                     <RibbonRadioButton Name="radVertical" QuickAccessToolBarId="vh"  Label="Vertical" IsChecked="False" Click="radVertical_Click"/>
-                    
+                </RibbonGroup>
+                <RibbonGroup Header="Oriented Core" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="ori">
+                    <RibbonRadioButton Name="radTopCore" QuickAccessToolBarId="topc" Label="Top Core" Click="radTopCore_Click" />
+                    <RibbonRadioButton Name="radBotCore" QuickAccessToolBarId="botc" IsChecked="True" Label="Bottom Core" Click="radBottomCore_Click"/>
+                    <RibbonCheckBox Name="chkAlphaBeta" QuickAccessToolBarId="ab" IsChecked="True" SmallImageSource="../Images/Help.png" Label="Calculate Structures" Click="chkAlphaBeta_Click" />
                 </RibbonGroup>
                 <RibbonGroup Header="Information" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
                     <RibbonButton Name="btnHelp" QuickAccessToolBarId="help" SmallImageSource="../Images/Help.png" Label="Help..." />
                 </RibbonGroup>
             </RibbonTab>
-            
-
-            
 
         </Ribbon>
 
         <StackPanel x:Name="stkLabel" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Visibility="Visible">
 
-            <Frame Name="frameMain" Source="DrillholeDialogPage.xaml" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Width="Auto"  Visibility="Visible">
+            <Frame Name="frameMain" Source="DrillholeDialogPage.xaml" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Width="Auto"  Visibility="Hidden">
 
             </Frame>
 
         </StackPanel>
 
-        <StackPanel x:Name="stkTolerance" Grid.Column="1" Grid.Row="2" Margin="15,0,50,5" Visibility="Hidden">
+        <StackPanel x:Name="stkTolerance" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="2" Margin="15,0,50,5" Visibility="Visible">
         <Label Content="Dip Tolerance:"/>
             <TextBox HorizontalAlignment="Left" Name="txtDipTol" Text="5" Width="150" LostFocus="txtDipTol_LostFocus" />
 
             <Label Content="Azimuth Tolerance:"/>
             <TextBox HorizontalAlignment="Left" Name="txtAziTol" Text="10" Width="150" LostFocus="txtAziTol_LostFocus"/>
-
             <Label Content="No Data Value:"/>
-            <TextBox HorizontalAlignment="Left" Name="txtDefault" Text="-99" Width="150" LostFocus="txtDefault_LostFocus"/>
-            <!--<RadioButton Name="radTop" Content="Geology Top" Margin="5,5,5,5" Click="radTop_Click"/>
-            <RadioButton Name="radBottom" Content="Geology Bottom" IsChecked="True" Margin="5,0,5,5" Click="radBottom_Click"/>-->
-        </StackPanel>
+            <TextBox HorizontalAlignment="Left" Name="txtDefault" Text="-99" Margin="0,0,0,50" Width="150" LostFocus="txtDefault_LostFocus"/>
+            <Separator Width="Auto" Margin="0,0,0,0"></Separator>
 
-        <StackPanel x:Name="stkCheckbox" Grid.Column="2" Grid.Row="2" Margin="15,0,50,5" Visibility="Hidden">
-            <CheckBox Name="chkImportDeviation" Content="Import holes only with deviation" Margin="5,5,5,5" Click="chkImportDeviation_Click"/>
-            <CheckBox Name="chkImportAssays" Content="Import holes only with assays" Margin="5,5,5,5" Click="chkImportAssays_Click"/>
-            <CheckBox Name="chkImportGeology" Content="Import holes only with geology" Margin="5,5,5,5" Click="chkImportGeology_Click"/>
-            <CheckBox Name="chkImportContinuous" Content="Import holes only with continuous values" Margin="5,5,5,5" Click="chkImportContinuous_Click"/>
-            <CheckBox Name="chkZeroAssays" Content="Ignore zero assays" Margin="5,5,5,5" Click="chkZeroAssays_Click"/>
-            <!--<CheckBox Name="chkCollar" Content="Create Collar" Margin="5,5,5,5" Click="chkCollar_Click"/>
-            <CheckBox Name="chkToe" Content="Create Toe" Margin="5,0,5,5" Click="chkToe_Click"/>-->
-        </StackPanel>
-
-        <StackPanel Name="stkGeology" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="1" Margin="15,20,50,0" Visibility="Hidden">
             <RadioButton Name="radTop" Content="Geology Top" Margin="5,5,5,5" Click="radTop_Click"/>
             <RadioButton Name="radBottom" Content="Geology Bottom" IsChecked="True" Margin="5,0,5,5" Click="radBottom_Click"/>
         </StackPanel>
 
-        <StackPanel x:Name="stkCollarToe" Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" Margin="15,20,50,0" Visibility="Hidden">
-            <CheckBox Name="chkCollar" Content="Create Collar" Margin="5,5,5,5" Click="chkCollar_Click"/>
+        <StackPanel x:Name="stkCheckbox" Grid.Column="2" Grid.Row="2" Margin="15,0,50,5" Visibility="Visible">
+            <CheckBox Name="chkImportDeviation" Content="Import holes only with deviation" Margin="5,5,5,5" Click="chkImportDeviation_Click"/>
+            <CheckBox Name="chkImportAssays" Content="Import holes only with assays" Margin="5,5,5,5" Click="chkImportAssays_Click"/>
+            <CheckBox Name="chkImportGeology" Content="Import holes only with geology" Margin="5,5,5,5" Click="chkImportGeology_Click"/>
+            <CheckBox Name="chkImportContinuous" Content="Import holes only with continuous values" Margin="5,5,5,5" Click="chkImportContinuous_Click"/>
+            <CheckBox Name="chkZeroAssays" Content="Ignore zero assays" Margin="5,5,5,60" Click="chkZeroAssays_Click"/>
+
+            <CheckBox Name="chkCollar" Content="Create Collar" Margin="5,7,5,5" Click="chkCollar_Click"/>
             <CheckBox Name="chkToe" Content="Create Toe" Margin="5,0,5,5" Click="chkToe_Click"/>
         </StackPanel>
+
+        <!--<StackPanel Name="stkGeology" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="1" Margin="15,20,50,0" Visibility="Hidden">
+            <RadioButton Name="radTop" Content="Geology Top" Margin="5,5,5,5" Click="radTop_Click"/>
+            <RadioButton Name="radBottom" Content="Geology Bottom" IsChecked="True" Margin="5,0,5,5" Click="radBottom_Click"/>
+        </StackPanel>-->
+
+        <!--<StackPanel x:Name="stkCollarToe" Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" Margin="15,20,50,0" Visibility="Hidden">
+            <CheckBox Name="chkCollar" Content="Create Collar" Margin="5,5,5,5" Click="chkCollar_Click"/>
+            <CheckBox Name="chkToe" Content="Create Toe" Margin="5,0,5,5" Click="chkToe_Click"/>
+        </StackPanel>-->
 
         <Button Name="btnExit" Grid.Column="1" Grid.Row="1" Content="Close Application" Width="Auto" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsCancel="True" Click="ExitForm"></Button>
 
