@@ -510,6 +510,183 @@ namespace Drillholes.Validation.TestMessage
             return continuousValidationDto;
         }
 
+        public async Task<ValidationContinuousDto> CheckStructuralMeasurements(ValidationMessages ValuesToCheck, XElement continuousValues)
+        {
+            continuousValidationDto.testMessages = ValuesToCheck;
+
+            string holeName = "";
+            int counter = 0;
+
+            var elements = continuousValues.Elements();
+
+            foreach (var check in ValuesToCheck.testMessage)
+            {
+                check.count = elements.Count();
+
+                string holeID = "";
+                string fieldID = "";
+                string fieldType = "";
+
+                foreach (XElement element in continuousValues.Elements())
+                {
+                    string hole = "";
+                    string fieldValue = "";
+                    string holeAttr = "";
+                    string message = "";
+
+                    switch (check.validationTest)
+                    {
+                        case DrillholeConstants.checkAlpha:
+                            holeID = check.tableFields[0].columnHeader;
+                            fieldID = check.tableFields[1].columnHeader;
+                            fieldType = check.tableFields[1].columnImportAs;
+
+                            hole = element.Element(holeID).Value;
+                            fieldValue = element.Element(fieldID).Value;
+                            holeAttr = element.Attribute("ID").Value;
+
+                            if (Information.IsNumeric(fieldValue))
+                            {
+                                double value = Convert.ToDouble(fieldValue);
+
+                                if (value > 90 || value < -90)
+                                {
+                                    message = "Alpha value for record " + holeAttr + " at field '" + fieldType + "' for hole '" + hole + "' is out of range: " + fieldValue;
+
+                                    check.validationMessages.Add(message);
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Error, Description = message, ErrorColour = "Red", id = Convert.ToInt32(holeAttr), holeID = hole });
+                                    check.verified = false;
+                                }
+                                else if (value == 0)
+                                {
+                                    message = "Alpha value for record " + holeAttr + " at field '" + fieldType + "' for hole '" + hole + " is ZERO";
+
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", id = Convert.ToInt32(holeAttr), holeID = hole });
+                                    check.validationMessages.Add(message);
+                                }
+                                else
+                                {
+                                    message = "Alpha value for record " + holeAttr + " at field '" + fieldType + "' for hole '" + hole + " is in range: " + fieldValue;
+
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green", id = Convert.ToInt32(holeAttr), holeID = hole });
+                                    check.validationMessages.Add(message);
+                                    check.verified = false;
+
+                                }
+                            }
+                            else
+                            {
+                                message = "Alpha value for record " + holeAttr + " for field '" + fieldID + "' for hole '" + hole + " is not NUMERIC";
+
+                                check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Error, Description = message, ErrorColour = "Red", id = Convert.ToInt32(holeAttr), holeID = hole });
+
+                                check.validationMessages.Add(message);
+                                check.verified = false;
+                            }
+                            break;
+                        case DrillholeConstants.checkBeta:
+                            holeID = check.tableFields[0].columnHeader;
+                            fieldID = check.tableFields[1].columnHeader;
+                            fieldType = check.tableFields[1].columnImportAs;
+
+                            hole = element.Element(holeID).Value;
+                            fieldValue = element.Element(fieldID).Value;
+                            holeAttr = element.Attribute("ID").Value;
+
+                            if (Information.IsNumeric(fieldValue))
+                            {
+                                double value = Convert.ToDouble(fieldValue);
+
+                                if (value > 360 || value < 360)
+                                {
+                                    message = "Beta value for record " + holeAttr + " at field '" + fieldType + "' for hole '" + hole + "' is out of range: " + fieldValue;
+
+                                    check.validationMessages.Add(message);
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Error, Description = message, ErrorColour = "Red", id = Convert.ToInt32(holeAttr), holeID = hole });
+                                    check.verified = false;
+                                }
+                                else if (value == 0)
+                                {
+                                    message = "Beta value for record " + holeAttr + " at field '" + fieldType + "' for hole '" + hole + " is ZERO";
+
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", id = Convert.ToInt32(holeAttr), holeID = hole });
+                                    check.validationMessages.Add(message);
+                                }
+                                else
+                                {
+                                    message = "Beta value for record " + holeAttr + " at field '" + fieldType + "' for hole '" + hole + " is in range: " + fieldValue;
+
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green", id = Convert.ToInt32(holeAttr), holeID = hole });
+                                    check.validationMessages.Add(message);
+                                    check.verified = false;
+
+                                }
+                            }
+                            else
+                            {
+                                message = "Beta value for record " + holeAttr + " for field '" + fieldID + "' for hole '" + hole + " is not NUMERIC";
+
+                                check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Error, Description = message, ErrorColour = "Red", id = Convert.ToInt32(holeAttr), holeID = hole });
+
+                                check.validationMessages.Add(message);
+                                check.verified = false;
+                            }
+                            break;
+                        case DrillholeConstants.checkGamma:
+                            holeID = check.tableFields[0].columnHeader;
+                            fieldID = check.tableFields[1].columnHeader;
+                            fieldType = check.tableFields[1].columnImportAs;
+
+                            hole = element.Element(holeID).Value;
+                            fieldValue = element.Element(fieldID).Value;
+                            holeAttr = element.Attribute("ID").Value;
+
+                            if (Information.IsNumeric(fieldValue))
+                            {
+                                double value = Convert.ToDouble(fieldValue);
+
+                                if (value > 360 || value < -360)
+                                {
+                                    message = "Gamma value for record " + holeAttr + " at field '" + fieldType + "' for hole '" + hole + "' is out of range: " + fieldValue;
+
+                                    check.validationMessages.Add(message);
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Error, Description = message, ErrorColour = "Red", id = Convert.ToInt32(holeAttr), holeID = hole });
+                                    check.verified = false;
+                                }
+                                else if (value == 0)
+                                {
+                                    message = "Gamma value for record " + holeAttr + " at field '" + fieldType + "' for hole '" + hole + " is ZERO";
+
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Warning, Description = message, ErrorColour = "Orange", id = Convert.ToInt32(holeAttr), holeID = hole });
+                                    check.validationMessages.Add(message);
+                                }
+                                else
+                                {
+                                    message = "Gamma value for record " + holeAttr + " at field '" + fieldType + "' for hole '" + hole + " is in range: " + fieldValue;
+
+                                    check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Valid, Description = message, ErrorColour = "Green", id = Convert.ToInt32(holeAttr), holeID = hole });
+                                    check.validationMessages.Add(message);
+                                    check.verified = false;
+
+                                }
+                            }
+                            else
+                            {
+                                message = "Gamma value for record " + holeAttr + " for field '" + fieldID + "' for hole '" + hole + " is not NUMERIC";
+
+                                check.ValidationStatus.Add(new DrillholeValidationStatus { ErrorType = DrillholeMessageStatus.Error, Description = message, ErrorColour = "Red", id = Convert.ToInt32(holeAttr), holeID = hole });
+
+                                check.validationMessages.Add(message);
+                                check.verified = false;
+                            }
+                            break;
+                    }
+                }
+            }
+
+            return continuousValidationDto;
+        }
+
 
         #endregion
     }

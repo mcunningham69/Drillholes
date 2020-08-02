@@ -82,6 +82,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
+       
         public override async Task<bool> CheckForEmptyFields(bool editData)
         {
             if (mapper == null)
@@ -245,6 +246,7 @@ namespace Drillholes.Windows.ViewModel
                 validationMessages = new List<string>(),
                 tableField = importAssayFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Single()
             });
+
             assayFieldTest.Add(new ValidationMessage
             {
                 verified = true,
@@ -508,10 +510,10 @@ namespace Drillholes.Windows.ViewModel
 
                 DisplayMessages.DisplayResults.Add(validationCheck.testMessages);
             }
-            #endregion
-
             return true;
         }
+
+        #endregion
 
         public override async void ReshapeMessages(DrillholeTableType tableType)
         {

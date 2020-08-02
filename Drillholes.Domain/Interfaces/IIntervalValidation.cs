@@ -10,11 +10,11 @@ namespace Drillholes.Domain.Interfaces
 {
     public interface IIntervalValidation
     {
-        Task<ValidationIntervalDto> CheckIsEmpty(ValidationMessages ValuesToCheck, XElement assayValues);
+        Task<ValidationIntervalDto> CheckIsEmpty(ValidationMessages ValuesToCheck, XElement intervalValues);
 
-        Task<ValidationIntervalDto> CheckForNumeric(ValidationMessages ValuesToCheck, XElement assayValues);
+        Task<ValidationIntervalDto> CheckForNumeric(ValidationMessages ValuesToCheck, XElement intervalValues);
 
-        Task<ValidationIntervalDto> CheckForDuplicates(ValidationMessages ValuesToCheck, XElement assayValues);
+        Task<ValidationIntervalDto> CheckForDuplicates(ValidationMessages ValuesToCheck, XElement intervalValues);
 
         Task<ValidationIntervalDto> CheckMaxDepth(ValidationMessages ValuesToCheck, List<XElement> drillholeValues);
 
@@ -25,5 +25,6 @@ namespace Drillholes.Domain.Interfaces
 
         Task<ValidationIntervalDto> CheckForMissingCollars(ValidationMessages ValuesToCheck, List<XElement> drillholeValues);
 
+        Task<ValidationIntervalDto> CheckStructuralMeasurements(ValidationMessages ValuesToCheck, XElement intervalValues);
     }
 }

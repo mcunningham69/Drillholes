@@ -72,11 +72,11 @@ namespace Drillholes.Domain.Services
         }
 
         //look for duplicates in collar
-        public async Task<ValidationInterval> CheckDuplicates(IMapper mapper, ValidationMessages ValuesToCheck, XElement assayValues)
+        public async Task<ValidationInterval> CheckDuplicates(IMapper mapper, ValidationMessages ValuesToCheck, XElement intervalValues)
         {
 
 
-            var validateValues = await _validation.CheckForDuplicates(ValuesToCheck, assayValues);
+            var validateValues = await _validation.CheckForDuplicates(ValuesToCheck, intervalValues);
 
 
             return mapper.Map<ValidationIntervalDto, ValidationInterval>(validateValues);
@@ -87,6 +87,13 @@ namespace Drillholes.Domain.Services
         {
 
             var validateValues = await _validation.CheckMaxDepth(ValuesToCheck, drillholeValues);
+
+            return mapper.Map<ValidationIntervalDto, ValidationInterval>(validateValues);
+        }
+
+        public async Task<ValidationInterval> CheckStructures(IMapper mapper, ValidationMessages ValuesToCheck, XElement intervalValues)
+        {
+            var validateValues = await _validation.CheckStructuralMeasurements(ValuesToCheck, intervalValues);
 
             return mapper.Map<ValidationIntervalDto, ValidationInterval>(validateValues);
         }

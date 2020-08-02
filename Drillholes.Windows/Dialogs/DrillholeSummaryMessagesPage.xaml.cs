@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Drillholes.Domain.DataObject;
+using Drillholes.Domain.Enum;
+using Drillholes.Windows.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,19 +23,104 @@ namespace Drillholes.Windows.Dialogs
     /// </summary>
     public partial class DrillholeSummaryMessagesPage : Page
     {
-        public DrillholeSummaryMessagesPage()
+        public CollarTableObject collarObject { get; set; }
+        public SurveyTableObject surveyObject { get; set; }
+        public AssayTableObject assayObject { get; set; }
+        public IntervalTableObject intervalObject { get; set; }
+        public ContinuousTableObject continuousObject { get; set; }
+
+
+        private CollarValidationView collarMessagesView { get; set; }
+        private SurveyValidationView surveyMessagesView { get; set; }
+        private AssayValidationView assayMessagesView { get; set; }
+        private IntervalValidationView intervalMessagesView { get; set; }
+        private ContinuousValidationView continuousMessagesView { get; set; }
+
+
+        private int selectedIndex { get; set; }
+
+        public DrillholeSummaryMessagesPage(int _selectedIndex)
         {
             InitializeComponent();
+
+            selectedIndex = _selectedIndex;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            DisplayMessages();
+        }
 
+        private async void DisplayMessages()
+        {
+            if (selectedIndex == 0)
+            {
+                collarMessagesView = new CollarValidationView(DrillholeTableType.collar, collarObject.surveyType, collarObject.xPreview);
+                collarMessagesView.importCollarFields = collarObject.tableData;
+                await collarMessagesView.ValidateAllTables(false);
+
+                DataContext = collarMessagesView;
+
+            }
+            else if (selectedIndex == 1)
+            {
+                surveyMessagesView = new SurveyValidationView(DrillholeTableType.survey, surveyObject.xPreview);
+                surveyMessagesView.importSurveyFields = surveyObject.tableData;
+                surveyMessagesView.importCollarFields = collarObject.tableData;
+                surveyMessagesView.xmlCollarData = collarObject.xPreview;
+                await surveyMessagesView.ValidateAllTables(false);
+
+                DataContext = surveyMessagesView;
+
+            }
+            else if (selectedIndex == 2)
+            {
+                assayMessagesView = new AssayValidationView(DrillholeTableType.assay, assayObject.xPreview);
+                assayMessagesView.importAssayFields = assayObject.tableData;
+                assayMessagesView.importCollarFields = collarObject.tableData;
+                assayMessagesView.xmlCollarData = collarObject.xPreview;
+                await assayMessagesView.ValidateAllTables(false);
+
+                DataContext = assayMessagesView;
+
+            }
+            else if (selectedIndex == 3)
+            {
+                intervalMessagesView = new IntervalValidationView(DrillholeTableType.interval, intervalObject.xPreview);
+                intervalMessagesView.importIntervalFields = intervalObject.tableData;
+                intervalMessagesView.importCollarFields = collarObject.tableData;
+                intervalMessagesView.xmlCollarData = collarObject.xPreview;
+                await intervalMessagesView.ValidateAllTables(false);
+
+                DataContext = intervalMessagesView;
+
+            }
+            else if (selectedIndex == 4)
+            {
+                continuousMessagesView = new ContinuousValidationView(DrillholeTableType.continuous, continuousObject.xPreview);
+                continuousMessagesView.importContinuousFields = continuousObject.tableData;
+                continuousMessagesView.importCollarFields = collarObject.tableData;
+                continuousMessagesView.xmlCollarData = collarObject.xPreview;
+                await continuousMessagesView.ValidateAllTables(false);
+
+                DataContext = continuousMessagesView;
+
+            }
         }
 
         private void btnFixErrors_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void btnReturn_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.NavigationService.CanGoBack)
+                this.NavigationService.GoBack();
+            else
+            {
+                MessageBox.Show("Sorry but no entries in back navigation history.", "Apologies", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }

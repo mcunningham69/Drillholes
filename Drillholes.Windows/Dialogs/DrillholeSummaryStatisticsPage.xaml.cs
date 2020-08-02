@@ -51,6 +51,8 @@ namespace Drillholes.Windows.Dialogs
             assayObject = _assayView;
             intervalObject = _intervalView;
             continuousObject = _continuous;
+
+            selectedIndex = _selectedIndex;
         }
 
         private void ValidatedTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -115,7 +117,7 @@ namespace Drillholes.Windows.Dialogs
 
         private async void SummariseValues()
         {
-            bool bCheck;
+            bool bCheck = true;
             if (selectedIndex == 0)
             {
                 bCheck = await CollarStatistics();
@@ -167,6 +169,9 @@ namespace Drillholes.Windows.Dialogs
 
                 bCheck = await ContinuousStatistics();
             }
+
+            if (!bCheck)
+                MessageBox.Show("Problem with statistics");
         }
 
 
@@ -268,5 +273,14 @@ namespace Drillholes.Windows.Dialogs
             return true;
         }
 
+        private void btnReturn_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.NavigationService.CanGoBack)
+                this.NavigationService.GoBack();
+            else
+            {
+                MessageBox.Show("Sorry but no entries in back navigation history.", "Apologies", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
     }
 }

@@ -95,25 +95,7 @@ namespace Drillholes.Windows.ViewModel
 
             if (bOpen)
             {
-                var continuousFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, continuousTableObject.tableType) as ImportTableFields;
-                continuousTableObject.tableData = continuousFields;
-
-                var names = continuousFields.Select(a => a.columnHeader);
-
-                List<string> fieldNames = new List<string>();
-
-                foreach (string field in names)
-                {
-                    fieldNames.Add(field);
-                }
-
-                continuousTableObject.fields = fieldNames;
-
-                continuousTableObject.collarKey = continuousFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
-
-                continuousTableObject.tableIsValid = true;
-
-                continuousDataFields = continuousTableObject.tableData;
+                await RetrieveFieldsForOpenSession();
 
             }
             else
@@ -141,6 +123,48 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
+        public override async Task<bool> RetrieveFieldsForOpenSession()
+        {
+            var continuousFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, continuousTableObject.tableType) as ImportTableFields;
+
+            if (continuousFields.Count == 0)
+            {
+                var continuousService = await _continuousService.GetSurveyFields(classMapper, continuousTableObject.tableLocation,
+                    continuousTableObject.tableFormat, continuousTableObject.tableName);
+
+                continuousTableObject.fields = continuousService.fields;
+                continuousTableObject.tableData = continuousService.tableData;
+                continuousTableObject.surveyKey = continuousService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+
+            }
+            else
+            {
+                continuousTableObject.tableData = continuousFields;
+
+                var names = continuousFields.Select(a => a.columnHeader);
+
+                List<string> fieldNames = new List<string>();
+
+                foreach (string field in names)
+                {
+                    fieldNames.Add(field);
+                }
+
+                continuousTableObject.fields = fieldNames;
+
+                continuousTableObject.collarKey = continuousFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+            }
+
+
+            continuousTableObject.tableIsValid = true;
+
+            continuousDataFields = continuousTableObject.tableData;
+
+            return true;
+
+        }
+
+
         public override async Task<bool> PreviewDataToImport(int limit, bool bOpen)
         {
             List<string> fields = new List<string>();
@@ -150,25 +174,26 @@ namespace Drillholes.Windows.ViewModel
                 var continuousObject = await _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, continuousTableObject.tableType);
                 continuousTableObject.xPreview = continuousObject;
 
-            }
-            else
-            {
-                if (continuousTableObject.xPreview == null)
+                if (continuousObject != null)
                 {
-
-                    var continuousService = await _continuousService.PreviewData(classMapper, continuousTableObject.tableType, limit);
-
-                    continuousTableObject.xPreview = continuousService.xPreview;
-
-
-                    await _xmlService.DrillholeData(fullPathnameData, continuousService.xPreview, DrillholeTableType.continuous, DrillholeConstants._Continuous + "s", rootNameData);
-
                     if (savedSession)
                         _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, continuousTableObject.tableType);
-
-
                 }
+
             }
+            if (continuousTableObject.xPreview == null)
+            {
+                var continuousService = await _continuousService.PreviewData(classMapper, continuousTableObject.tableType, limit);
+
+                continuousTableObject.xPreview = continuousService.xPreview;
+
+
+                await _xmlService.DrillholeData(fullPathnameData, continuousService.xPreview, DrillholeTableType.continuous, DrillholeConstants._Continuous + "s", rootNameData);
+
+                if (savedSession)
+                    _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, continuousTableObject.tableType);
+            }
+
 
             fields = continuousTableObject.fields;
 
@@ -179,7 +204,6 @@ namespace Drillholes.Windows.ViewModel
                 {
                     dataGrid.Columns.Add(name);
                 }
-
 
                 tableCaption = char.ToUpper(continuousTableObject.tableType.ToString()[0]) +
                     continuousTableObject.tableType.ToString().Substring(1);

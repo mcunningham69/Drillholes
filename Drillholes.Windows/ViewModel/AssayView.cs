@@ -92,26 +92,7 @@ namespace Drillholes.Windows.ViewModel
 
             if (bOpen)
             {
-                var assayFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, assayTableObject.tableType) as ImportTableFields;
-                assayTableObject.tableData = assayFields;
-
-                var names = assayFields.Select(a => a.columnHeader);
-
-                List<string> fieldNames = new List<string>();
-
-                foreach (string field in names)
-                {
-                    fieldNames.Add(field);
-                }
-
-                assayTableObject.fields = fieldNames;
-
-                assayTableObject.collarKey = assayFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
-
-                assayTableObject.tableIsValid = true;
-
-                assayDataFields = assayTableObject.tableData;
-
+                await RetrieveFieldsForOpenSession();
             }
             else
             {
@@ -140,18 +121,72 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
+        public override async Task<bool> RetrieveFieldsForOpenSession()
+        {
+            var assayFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, assayTableObject.tableType) as ImportTableFields;
+
+            if (assayFields.Count == 0)
+            {
+                var assayService = await _assayService.GetSurveyFields(classMapper, assayTableObject.tableLocation,
+                    assayTableObject.tableFormat, assayTableObject.tableName);
+
+                assayTableObject.fields = assayService.fields;
+                assayTableObject.tableData = assayService.tableData;
+                assayTableObject.surveyKey = assayService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+
+            }
+            else
+            {
+                assayTableObject.tableData = assayFields;
+
+                var names = assayFields.Select(a => a.columnHeader);
+
+                List<string> fieldNames = new List<string>();
+
+                foreach (string field in names)
+                {
+                    fieldNames.Add(field);
+                }
+
+                assayTableObject.fields = fieldNames;
+
+
+                assayTableObject.collarKey = assayFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+            }
+
+
+            assayTableObject.tableIsValid = true;
+
+            assayDataFields = assayTableObject.tableData;
+
+            return true;
+
+        }
+
+
         public override async Task<bool> PreviewDataToImport(int limit, bool bOpen)
         {
             List<string> fields = new List<string>();
 
+            //if (bOpen)
+            //{
+            //    var assayObject = await _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, assayTableObject.tableType);
+            //    assayTableObject.xPreview = assayObject;
+
+            //}
             if (bOpen)
             {
                 var assayObject = await _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, assayTableObject.tableType);
                 assayTableObject.xPreview = assayObject;
 
+                if (assayObject != null)
+                {
+                    if (savedSession)
+                        _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, assayTableObject.tableType);
+                }
             }
-            else
-            {
+          //  else
+          //  {
                 if (assayTableObject.xPreview == null)
                 {
 
@@ -164,7 +199,7 @@ namespace Drillholes.Windows.ViewModel
                     if (savedSession)
                         _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, assayTableObject.tableType);
                 }
-            }
+           // }
 
             fields = assayTableObject.fields;
 

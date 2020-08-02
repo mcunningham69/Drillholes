@@ -16,7 +16,6 @@ namespace Drillholes.Domain
         public const string drillholeData = "DrillholeData";
         public const string drillholeDesurv = "DrillholeDesurv";
 
-
         //validation tests
         public const string checkHole = "Check 'HoleID' field";
         public const string checkX = "Check 'X' field";
@@ -33,7 +32,9 @@ namespace Drillholes.Domain
         public const string checkFrom = "Check 'From' field";
         public const string checkTo = "Check 'To' field";
         public const string checkCoord = "Check 'X' and 'Y' fields";
-
+        public const string checkAlpha = "Check Alpha values";
+        public const string checkBeta = "Check Beta values";
+        public const string checkGamma = "Check Gamma values";
 
         //test type
         public const string IsEmptyOrNull = "Empty or Null";
@@ -49,7 +50,7 @@ namespace Drillholes.Domain
         public const string NegativeOrZeroInterval = "Negative or Zero Interval";
         public const string OverlappingInterval = "Interval Overlap";
         public const string ZeroGrade = "Zero Grade";
-
+        public const string Structures = "Structural Measurements";
 
 
         //label for combobox

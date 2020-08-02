@@ -216,11 +216,13 @@ namespace Drillholes.Validation.TestMessage
 
                     CheckNumericValues(surveyValues, check, fieldID, fieldName, holeName);
                 }
+
+                counter++;
             }
 
             return surveyValidationDto;
 
-            counter++;
+            
         }
 
         public async Task<ValidationSurveyDto> CheckIsEmpty(ValidationMessages ValuesToCheck, XElement surveyValues)

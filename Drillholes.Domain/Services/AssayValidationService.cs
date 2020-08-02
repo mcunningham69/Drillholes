@@ -83,7 +83,7 @@ namespace Drillholes.Domain.Services
             return mapper.Map<ValidationAssayDto, ValidationAssay>(validateValues);
         }
 
-
+    
         public async Task<ValidationAssay> CheckMaxDepth(IMapper mapper, ValidationMessages ValuesToCheck, List<XElement> drillholeValues)
         {
 

@@ -429,6 +429,31 @@ namespace Drillholes.FileDialog
                     ReturnFormatAndUpdateFields.UpdateOptionalFields(DrillholeConstants._genericName, queryUpdate, intervalTableDto.tableData,
                         DrillholeConstants.GroupOtherFields, true, "Text", new KeyValuePair<bool, bool>(false, false));
                     break;
+                case DrillholeConstants._alpha:
+                    {
+                        ReturnFormatAndUpdateFields.UpdateOptionalFields("Alpha", queryUpdate, intervalTableDto.tableData,
+                            DrillholeConstants.GroupOtherFields, true, "Double", new KeyValuePair<bool, bool>(false, false));
+                        break;
+                    }
+                case DrillholeConstants._beta:
+                    {
+                        ReturnFormatAndUpdateFields.UpdateOptionalFields("Beta", queryUpdate, intervalTableDto.tableData,
+                            DrillholeConstants.GroupOtherFields, true, "Double", new KeyValuePair<bool, bool>(false, false));
+                        break;
+                    }
+                case DrillholeConstants._gamma:
+                    {
+                        ReturnFormatAndUpdateFields.UpdateOptionalFields("Gamma", queryUpdate, intervalTableDto.tableData,
+                            DrillholeConstants.GroupOtherFields, true, "Double", new KeyValuePair<bool, bool>(false, false));
+                        break;
+                    }
+                case DrillholeConstants._density:
+                    {
+                        ReturnFormatAndUpdateFields.UpdateOptionalFields(DrillholeConstants._density, queryUpdate, intervalTableDto.tableData,
+                            DrillholeConstants.GroupOtherFields, true, "Double", new KeyValuePair<bool, bool>(false, false));
+                        break;
+                    }
+
 
                     //default:
                     //    {

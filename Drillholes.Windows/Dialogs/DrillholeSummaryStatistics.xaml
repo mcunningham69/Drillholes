@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Drillholes.Windows.Dialogs"
         mc:Ignorable="d"
-        Title="Preview Drillhole Statistics" Height="750" Width="650" WindowStartupLocation="CenterScreen" FontSize="14" Loaded="Window_Loaded" Closing="Window_Closing">
+        Title="Preview Drillhole Statistics" Height="750" Width="650" WindowStartupLocation="CenterScreen" FontSize="14" Loaded="Window_Loaded" >
 
     <Window.Background>
         <ImageBrush ImageSource="../Images/glencoe.jpg" Opacity="0.8" Stretch="UniformToFill"/>
@@ -543,7 +543,7 @@
             </DockPanel>
 
             <DockPanel Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
-                <Button Name="btnClose" HorizontalAlignment="Stretch" Content="Close Summary Window" Click="CloseForm"/>
+                <Button Name="btnReturn" HorizontalAlignment="Stretch" Content="Return to Main Import Page" Click="btnReturn_Click"/>
             </DockPanel>
 
         </Grid>

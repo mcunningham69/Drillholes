@@ -299,10 +299,9 @@ namespace Drillholes.Windows.Dialogs
             return true;
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void btnReturn_Click(object sender, RoutedEventArgs e)
         {
-            m_instance = null;
-
+          
         }
     }
 }

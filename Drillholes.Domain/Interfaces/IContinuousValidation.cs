@@ -21,8 +21,7 @@ namespace Drillholes.Domain.Interfaces
         Task<ValidationContinuousDto> CheckDistance(ValidationMessages ValuesToCheck, List<XElement> drillholeValues);
 
         Task<ValidationContinuousDto> CheckForMissingCollars(ValidationMessages ValuesToCheck, List<XElement> drillholeValues);
-
-
+        Task<ValidationContinuousDto> CheckStructuralMeasurements(ValidationMessages ValuesToCheck, XElement continuousValues);
 
     }
 }

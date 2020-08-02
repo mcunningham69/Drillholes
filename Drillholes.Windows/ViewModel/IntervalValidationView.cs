@@ -59,6 +59,7 @@ namespace Drillholes.Windows.ViewModel
             mTables += CheckForNegativeIntervals;
             mTables += CheckForMissingIntervals;
             mTables += CheckForOverlappingIntervals;
+            mTables += CheckStructuralMeasurements;
 
             return await mTables(editData);
         }
@@ -80,7 +81,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-
+        #region Validation
         public override async Task<bool> CheckForEmptyFields(bool editData)
         {
             if (mapper == null)
@@ -418,6 +419,95 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
+        public virtual async Task<bool> CheckStructuralMeasurements(bool editData)
+        {
+            if (mapper == null)
+                InitialiseMapping();
+
+            bool bAlpha = false;
+            bool bBeta = false;
+            bool bGamma = false;
+
+            if (importIntervalFields.Where(o => o.columnImportAs == "Alpha").Count() > 0)
+                bAlpha = true;
+
+            if (importIntervalFields.Where(o => o.columnImportAs == "Beta").Count() > 0)
+                bBeta = true;
+
+            if (importIntervalFields.Where(o => o.columnImportAs == "Gamma").Count() > 0)
+                bGamma = true;
+
+            if (!bAlpha && !bBeta && !bGamma)
+                return false;
+
+
+            List<ValidationMessage> intervalFieldTest = new List<ValidationMessage>();
+
+            List<ImportTableField> alphaFields = null;
+            List<ImportTableField> betaFields = null;
+            List<ImportTableField> gammaFields = null;
+
+            if (bAlpha)
+            {
+                alphaFields = new List<ImportTableField>();
+                alphaFields.Add(importIntervalFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).FirstOrDefault());
+                alphaFields.Add(importIntervalFields.Where(o => o.columnImportName == "Alpha").FirstOrDefault());
+
+                intervalFieldTest.Add(new ValidationMessage
+                {
+                    verified = true,
+                    count = 0,
+                    validationTest = DrillholeConstants.checkAlpha,
+                    validationMessages = new List<string>(),
+                    tableFields = alphaFields
+
+                });
+            }
+
+            if (bBeta)
+            {
+                betaFields = new List<ImportTableField>();
+                betaFields.Add(importIntervalFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).FirstOrDefault());
+                betaFields.Add(importIntervalFields.Where(o => o.columnImportName == "Beta").FirstOrDefault());
+
+                intervalFieldTest.Add(new ValidationMessage
+                {
+                    verified = true,
+                    count = 0,
+                    validationTest = DrillholeConstants.checkBeta,
+                    validationMessages = new List<string>(),
+                    tableFields = betaFields
+
+                });
+            }
+
+            if (bGamma)
+            {
+                gammaFields = new List<ImportTableField>();
+                gammaFields.Add(importIntervalFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).FirstOrDefault());
+                gammaFields.Add(importIntervalFields.Where(o => o.columnImportName == "Gamma").FirstOrDefault());
+
+                intervalFieldTest.Add(new ValidationMessage
+                {
+                    verified = true,
+                    count = 0,
+                    validationTest = DrillholeConstants.checkGamma,
+                    validationMessages = new List<string>(),
+                    tableFields = gammaFields
+
+                });
+            }
+
+            ValidationMessages intervalTests = new ValidationMessages { testType = DrillholeConstants.Structures, testMessage = intervalFieldTest};
+
+            var validationCheck = await _intervalValidationService.CheckStructures(mapper, intervalTests, xmlAssayData);
+
+            DisplayMessages.DisplayResults.Add(validationCheck.testMessages);
+
+            return true;
+        }
+
+#endregion
         public override async Task<bool> ReformatResults(ValidationMessage message, string _TestType, string validation, List<string> fields, List<DrillholeMessageStatus> statusMessages, DrillholeTableType tableType,
 IEnumerable<XElement> intervalValues)
         {
@@ -430,7 +520,6 @@ IEnumerable<XElement> intervalValues)
                 if (count > 0)
                 {
                     string holeIDName = importIntervalFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(n => n.columnHeader).FirstOrDefault(); //get hole name for querying XML
-
 
                     //setup outside the foreach hole loop below as it is the last item to add to the ReshapedToEdit list (which is data bound to the XAML DrillholeEdits form
                     List<GroupByHoles> groupedHoles = new List<GroupByHoles>();

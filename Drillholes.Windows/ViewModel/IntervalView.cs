@@ -96,26 +96,7 @@ namespace Drillholes.Windows.ViewModel
 
             if (bOpen)
             {
-                var intervalFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, intervalTableObject.tableType) as ImportTableFields;
-                intervalTableObject.tableData = intervalFields;
-
-                var names = intervalFields.Select(a => a.columnHeader);
-
-                List<string> fieldNames = new List<string>();
-
-                foreach (string field in names)
-                {
-                    fieldNames.Add(field);
-                }
-
-                intervalTableObject.fields = fieldNames;
-
-                intervalTableObject.collarKey = intervalFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
-
-                intervalTableObject.tableIsValid = true;
-
-                intervalDataFields = intervalTableObject.tableData;
-
+                await RetrieveFieldsForOpenSession();
             }
             else
             {
@@ -142,6 +123,49 @@ namespace Drillholes.Windows.ViewModel
             return true;
         }
 
+        public override async Task<bool> RetrieveFieldsForOpenSession()
+        {
+            var intervalFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, intervalTableObject.tableType) as ImportTableFields;
+
+            if (intervalFields.Count == 0)
+            {
+                var intervalService = await _intervalService.GetSurveyFields(classMapper, intervalTableObject.tableLocation,
+                    intervalTableObject.tableFormat, intervalTableObject.tableName);
+
+                intervalTableObject.fields = intervalService.fields;
+                intervalTableObject.tableData = intervalService.tableData;
+                intervalTableObject.surveyKey = intervalService.tableData.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+
+            }
+            else
+            {
+                intervalTableObject.tableData = intervalFields;
+
+                var names = intervalFields.Select(a => a.columnHeader);
+
+                List<string> fieldNames = new List<string>();
+
+                foreach (string field in names)
+                {
+                    fieldNames.Add(field);
+                }
+
+                intervalTableObject.fields = fieldNames;
+
+
+                intervalTableObject.collarKey = intervalFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
+            }
+
+
+            intervalTableObject.tableIsValid = true;
+
+            intervalDataFields = intervalTableObject.tableData;
+
+            return true;
+
+        }
+
+
         public override async Task<bool> PreviewDataToImport(int limit, bool bOpen)
         {
             List<string> fields = new List<string>();
@@ -151,21 +175,24 @@ namespace Drillholes.Windows.ViewModel
                 var intervalObject = await _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, intervalTableObject.tableType);
                 intervalTableObject.xPreview = intervalObject;
 
-            }
-            else
-            {
-                if (intervalTableObject.xPreview == null)
+                if (intervalObject != null)
                 {
-                    var intervalService = await _intervalService.PreviewData(classMapper, intervalTableObject.tableType, limit);
-
-                    intervalTableObject.xPreview = intervalService.xPreview;
-
-                    await _xmlService.DrillholeData(fullPathnameData, intervalService.xPreview, DrillholeTableType.interval, DrillholeConstants._Interval + "s", rootNameData);
-
                     if (savedSession)
                         _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, intervalTableObject.tableType);
-
                 }
+            }
+
+            if (intervalTableObject.xPreview == null)
+            {
+                var intervalService = await _intervalService.PreviewData(classMapper, intervalTableObject.tableType, limit);
+
+                intervalTableObject.xPreview = intervalService.xPreview;
+
+                await _xmlService.DrillholeData(fullPathnameData, intervalService.xPreview, DrillholeTableType.interval, DrillholeConstants._Interval + "s", rootNameData);
+
+                if (savedSession)
+                    _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, intervalTableObject.tableType);
+
             }
             fields = intervalTableObject.fields;
 

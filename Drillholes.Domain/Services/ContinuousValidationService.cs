@@ -68,5 +68,12 @@ namespace Drillholes.Domain.Services
 
             return mapper.Map<ValidationContinuousDto, ValidationContinuous>(continuousValidate);
         }
+
+        public async Task<ValidationContinuous> CheckStructures(IMapper mapper, ValidationMessages ValuesToCheck, XElement continuousValues)
+        {
+            var continuousValidate = await _validation.CheckStructuralMeasurements(ValuesToCheck, continuousValues);
+
+            return mapper.Map<ValidationContinuousDto, ValidationContinuous>(continuousValidate);
+        }
     }
 }

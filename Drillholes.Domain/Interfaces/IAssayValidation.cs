@@ -27,6 +27,5 @@ namespace Drillholes.Domain.Interfaces
 
         Task<ValidationAssayDto> CheckForZeroGradeValues(ValidationMessages ValuesToCheck, XElement assayValues);
 
-
     }
 }

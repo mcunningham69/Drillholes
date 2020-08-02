@@ -557,19 +557,13 @@ namespace Drillholes.Windows.Dialogs
 
             this.chkImport.IsChecked = true;
                 
-                //readPreferences.ImportAllColumns;
-
             if (readPreferences.surveyType == DrillholeSurveyType.collarsurvey)
             {
-                //this.radDhole.IsChecked = false;
-                //this.radVertical.IsChecked = false;
                 this.radSurvey.IsChecked = true;
             }
             else if (readPreferences.surveyType == DrillholeSurveyType.vertical)
             {
-               //this.radDhole.IsChecked = false;
                 this.radVertical.IsChecked = true;
-                //this.radSurvey.IsChecked = true;
             }
             else
             {
@@ -680,7 +674,8 @@ namespace Drillholes.Windows.Dialogs
 
         private async void btnStatistics_Click(object sender, RoutedEventArgs e)
         {
-
+            if (_tabcontrol.SelectedIndex == -1)
+                return;
 
             switch (_tabcontrol.SelectedIndex)
             {
@@ -709,7 +704,36 @@ namespace Drillholes.Windows.Dialogs
 
         private void ValidateDrillholes(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new DrillholeSummaryMessagesPage());
+            if (_tabcontrol.SelectedIndex == -1)
+                return;
+
+            DrillholeSummaryMessagesPage validationMessages = new DrillholeSummaryMessagesPage(_tabcontrol.SelectedIndex);
+
+            switch (_tabcontrol.SelectedIndex)
+            {
+                case 0:
+                    validationMessages.collarObject = collarPreviewModel.collarTableObject;
+                    break;
+                case 1:
+                    validationMessages.collarObject = collarPreviewModel.collarTableObject;
+                    validationMessages.surveyObject = surveyPreviewModel.surveyTableObject;
+
+                    break;
+                case 2:
+                    validationMessages.collarObject = collarPreviewModel.collarTableObject;
+                    validationMessages.assayObject = assayPreviewModel.assayTableObject;
+                    break;
+                case 3:
+                    validationMessages.collarObject = collarPreviewModel.collarTableObject;
+                    validationMessages.intervalObject = intervalPreviewModel.intervalTableObject;
+                    break;
+                case 4:
+                    validationMessages.collarObject = collarPreviewModel.collarTableObject;
+                    validationMessages.continuousObject = continuousPreviewModel.continuousTableObject;
+                    break;
+            }
+
+            NavigationService.Navigate(validationMessages);
 
         }
 
@@ -778,7 +802,7 @@ namespace Drillholes.Windows.Dialogs
                 DataContext = surveyPreviewModel;
 
                 //update key 
-                await surveyPreviewModel.UpdateHoleKeyInXml();
+              //  await surveyPreviewModel.UpdateHoleKeyInXml();
 
                 //TODO update changed field in XML
             }
@@ -791,7 +815,7 @@ namespace Drillholes.Windows.Dialogs
                 DataContext = assayPreviewModel;
 
                 //update key 
-                await assayPreviewModel.UpdateHoleKeyInXml();
+                //await assayPreviewModel.UpdateHoleKeyInXml();
 
                 //TODO update changed field in XML
 
@@ -804,7 +828,7 @@ namespace Drillholes.Windows.Dialogs
                 DataContext = intervalPreviewModel;
 
                 //update key 
-                await intervalPreviewModel.UpdateHoleKeyInXml();
+              //  await intervalPreviewModel.UpdateHoleKeyInXml();
 
                 //TODO update changed field in XML
             }
@@ -817,7 +841,7 @@ namespace Drillholes.Windows.Dialogs
                 DataContext = continuousPreviewModel;
 
                 //update key 
-                await continuousPreviewModel.UpdateHoleKeyInXml();
+              //  await continuousPreviewModel.UpdateHoleKeyInXml();
 
             }
         }
@@ -831,29 +855,52 @@ namespace Drillholes.Windows.Dialogs
                 {
                     collarPreviewModel.importChecked = false;
                     collarPreviewModel.ImportGenericFields(false, openSession);
-                }
 
-                else if ((bool)chkImport.IsChecked)
+                    DataContext = collarPreviewModel;
+                }
+            }
+
+            if (_tabcontrol.SelectedIndex == 1)
+            {
+             if ((bool)chkImport.IsChecked)
                 {
                     surveyPreviewModel.importChecked = false;
                     surveyPreviewModel.ImportGenericFields(false, openSession);
+
+                    DataContext = surveyPreviewModel;
                 }
-                else if ((bool)chkImport.IsChecked)
+            }
+            if (_tabcontrol.SelectedIndex == 2)
+            {
+             if ((bool)chkImport.IsChecked)
                 {
                     assayPreviewModel.importChecked = false;
                     assayPreviewModel.ImportGenericFields(false, openSession);
+
+                    DataContext = assayPreviewModel;
                 }
-                else if ((bool)chkImport.IsChecked)
+            }
+            if (_tabcontrol.SelectedIndex == 3)
+            {
+                if ((bool)chkImport.IsChecked)
                 {
                     intervalPreviewModel.importChecked = false;
                     intervalPreviewModel.ImportGenericFields(false, openSession);
+
+                    DataContext = intervalPreviewModel;
                 }
-                else if ((bool)chkImport.IsChecked)
+            }
+            if (_tabcontrol.SelectedIndex == 4)
+            {
+                if ((bool)chkImport.IsChecked)
                 {
                     continuousPreviewModel.importChecked = false;
                     continuousPreviewModel.ImportGenericFields(false, openSession);
+
+                    DataContext = continuousPreviewModel;
                 }
             }
+            
         }
 
         private void lblFile_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -861,6 +908,16 @@ namespace Drillholes.Windows.Dialogs
 
         }
 
-    
+        private void btnReturn_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.NavigationService.CanGoBack)
+            {
+                this.NavigationService.GoBack();
+            }
+            else
+            {
+                MessageBox.Show("Sorry but no entries in back navigation history.", "Apologies", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
     }
 }

@@ -6,9 +6,9 @@
       xmlns:local="clr-namespace:Drillholes.Windows.Dialogs"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Preview Drillhole Statistics" Height="750" Width="650" FontSize="14" Loaded="Page_Loaded">
+      Title="Preview Drillhole Statistics" MaxHeight="900" Height="700 " Width="650" FontSize="14" Loaded="Page_Loaded">
 
-    <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
+    <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" Height="Auto" Width="600" >
         <Grid>
             <Grid.Resources>
                 <ControlTemplate x:Key="validGlassButton" TargetType="{x:Type Button}">
@@ -538,7 +538,9 @@
                     </TabItem>
                 </TabControl>
             </DockPanel>
-
+            <DockPanel Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
+                <Button Name="btnReturn" HorizontalAlignment="Stretch" Content="Return to Main Import Page" Click="btnReturn_Click"/>
+            </DockPanel>
         </Grid>
     </ScrollViewer>
 </Page>

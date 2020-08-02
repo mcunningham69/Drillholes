@@ -59,6 +59,7 @@ namespace Drillholes.Windows.ViewModel
             mTables += CheckMaxDepth;
             mTables += CheckDistance;
             mTables += CheckCollars;
+            mTables += CheckStructuralMeasurements;
 
             return await mTables(editData);
 
@@ -81,6 +82,94 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
+        public virtual async Task<bool> CheckStructuralMeasurements(bool editData)
+        {
+            if (mapper == null)
+                InitialiseMapping();
+
+            bool bAlpha = false;
+            bool bBeta = false;
+            bool bGamma = false;
+
+            if (importContinuousFields.Where(o => o.columnImportAs == "Alpha").Count() > 0)
+                bAlpha = true;
+            
+            if (importContinuousFields.Where(o => o.columnImportAs == "Beta").Count() > 0)
+                bBeta = true;
+
+            if (importContinuousFields.Where(o => o.columnImportAs == "Gamma").Count() > 0)
+                bGamma = true;
+
+            if (!bAlpha && !bBeta && !bGamma)
+                return false;
+
+
+            List<ImportTableField> alphaFields = null;
+            List<ImportTableField> betaFields = null;
+            List<ImportTableField> gammaFields = null;
+
+            List<ValidationMessage> continuousFieldTest = new List<ValidationMessage>();
+
+            if (bAlpha)
+            {
+                alphaFields = new List<ImportTableField>();
+                alphaFields.Add(importContinuousFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).FirstOrDefault());
+                alphaFields.Add(importContinuousFields.Where(o => o.columnImportName == "Alpha").FirstOrDefault());
+
+                continuousFieldTest.Add(new ValidationMessage
+                {
+                    verified = true,
+                    count = 0,
+                    validationTest = DrillholeConstants.checkAlpha,
+                    validationMessages = new List<string>(),
+                    tableFields = alphaFields
+
+                });
+            }
+
+            if (bBeta)
+            {
+                betaFields = new List<ImportTableField>();
+                betaFields.Add(importContinuousFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).FirstOrDefault());
+                betaFields.Add(importContinuousFields.Where(o => o.columnImportName == "Beta").FirstOrDefault());
+
+                continuousFieldTest.Add(new ValidationMessage
+                {
+                    verified = true,
+                    count = 0,
+                    validationTest = DrillholeConstants.checkBeta,
+                    validationMessages = new List<string>(),
+                    tableFields = betaFields
+
+                });
+            }
+
+            if (bGamma)
+            {
+                gammaFields = new List<ImportTableField>();
+                gammaFields.Add(importContinuousFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).FirstOrDefault());
+                gammaFields.Add(importContinuousFields.Where(o => o.columnImportName == "Gamma").FirstOrDefault());
+
+                continuousFieldTest.Add(new ValidationMessage
+                {
+                    verified = true,
+                    count = 0,
+                    validationTest = DrillholeConstants.checkGamma,
+                    validationMessages = new List<string>(),
+                    tableFields = gammaFields
+
+                });
+            }
+
+
+            ValidationMessages continuousTests = new ValidationMessages { testType = DrillholeConstants.Structures, testMessage = continuousFieldTest };
+
+            var validationCheck = await _continuousValidationService.CheckStructures(mapper, continuousTests, xmlContinuousData);
+
+            DisplayMessages.DisplayResults.Add(validationCheck.testMessages);
+
+            return true;
+        }
         public async override Task<bool> CheckForEmptyFields(bool editData)
         {
             if (mapper == null)
@@ -107,24 +196,24 @@ namespace Drillholes.Windows.ViewModel
             });
 
 
-            var isNumericField = importContinuousFields.Where(o => o.fieldType == "Double").Where(p => p.genericType == true).ToList();
+            //var isNumericField = importContinuousFields.Where(o => o.fieldType == "Double").Where(p => p.genericType == true).ToList();
 
-            if (isNumericField.Count > 0)
-            {
-                foreach (var field in isNumericField)
-                {
-                    continuousFieldTest.Add(new ValidationMessage
-                    {
-                        verified = true,
-                        count = 0,
-                        validationTest = DrillholeConstants.checkNumeric,
-                        validationMessages = new List<string>(),
-                        tableField = field
+            //if (isNumericField.Count > 0)
+            //{
+            //    foreach (var field in isNumericField)
+            //    {
+            //        continuousFieldTest.Add(new ValidationMessage
+            //        {
+            //            verified = true,
+            //            count = 0,
+            //            validationTest = DrillholeConstants.checkNumeric,
+            //            validationMessages = new List<string>(),
+            //            tableField = field
 
-                    });
+            //        });
 
-                }
-            }
+            //    }
+            //}
 
             ValidationMessages continuousTests = new ValidationMessages { testType = DrillholeConstants.IsEmptyOrNull, testMessage = continuousFieldTest };
 
@@ -228,24 +317,24 @@ namespace Drillholes.Windows.ViewModel
 
 
 
-            var isNumericField = importContinuousFields.Where(o => o.fieldType == "Double").Where(p => p.genericType == true).ToList();
+            //var isNumericField = importContinuousFields.Where(o => o.fieldType == "Double").Where(p => p.genericType == true).ToList();
 
-            if (isNumericField.Count > 0)
-            {
-                foreach (var field in isNumericField)
-                {
-                    continuousFieldTest.Add(new ValidationMessage
-                    {
-                        verified = true,
-                        count = 0,
-                        validationTest = DrillholeConstants.checkNumeric,
-                        validationMessages = new List<string>(),
-                        tableField = field
+            //if (isNumericField.Count > 0)
+            //{
+            //    foreach (var field in isNumericField)
+            //    {
+            //        continuousFieldTest.Add(new ValidationMessage
+            //        {
+            //            verified = true,
+            //            count = 0,
+            //            validationTest = DrillholeConstants.checkNumeric,
+            //            validationMessages = new List<string>(),
+            //            tableField = field
 
-                    });
+            //        });
 
-                }
-            }
+            //    }
+            //}
 
             ValidationMessages continuousTests = new ValidationMessages { testType = DrillholeConstants.IsNumeric, testMessage = continuousFieldTest };
 
@@ -646,6 +735,7 @@ namespace Drillholes.Windows.ViewModel
 
             return true;
         }
+
 
         public override async Task<System.Data.DataTable> PopulateGridValues(List<RowsToEdit> _edit, DrillholeTableType tableType, bool preview)
         {

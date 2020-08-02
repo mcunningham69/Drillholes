@@ -414,6 +414,12 @@ namespace Drillholes.FileDialog
                             DrillholeConstants.GroupOtherFields, true, "Double", new KeyValuePair<bool, bool>(false, false));
                         break;
                     }
+                case DrillholeConstants._density:
+                    {
+                        ReturnFormatAndUpdateFields.UpdateOptionalFields(DrillholeConstants._density, queryUpdate, assayTableDto.tableData,
+                            DrillholeConstants.GroupOtherFields, true, "Double", new KeyValuePair<bool, bool>(false, false));
+                        break;
+                    }
                 case DrillholeConstants._grade:
                     {
                         ReturnFormatAndUpdateFields.UpdateOptionalFields(DrillholeConstants._grade, queryUpdate, assayTableDto.tableData,

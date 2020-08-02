@@ -344,6 +344,7 @@
                                             <Separator/>
                                             <ComboBoxItem Content="Sample ID" Foreground="DarkBlue"/>
                                             <ComboBoxItem Content="Grade" Foreground="DarkBlue"/>
+                                            <ComboBoxItem Content="Density" Foreground="DarkBlue"/>
                                             <Separator/>
                                             <ComboBoxItem Content="Numeric" Foreground="DarkOrange"/>
                                             <ComboBoxItem Content ="Text" Foreground="DarkOrange"/>
@@ -407,6 +408,9 @@
                                             <ComboBoxItem Content="To" Foreground="DarkGreen"/>
                                             <Separator/>
                                             <ComboBoxItem Content="Density" Foreground="DarkBlue"/>
+                                            <ComboBoxItem Content="a" Foreground="DarkBlue" FontFamily="Symbol" />
+                                            <ComboBoxItem Content="b" Foreground="DarkBlue" FontFamily="Symbol"/>
+                                            <ComboBoxItem Content="g" Foreground="DarkBlue" FontFamily="Symbol"/>
                                             <Separator/>
                                             <ComboBoxItem Content="Numeric" Foreground="DarkOrange"/>
                                             <ComboBoxItem Content ="Text" Foreground="DarkOrange"/>
@@ -495,7 +499,9 @@
         <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal" Grid.ColumnSpan="2">
 
             <Button Name="btnDesurvey" IsEnabled="true" Content="Create Drillhole Trace" FontSize="16" HorizontalAlignment="Center" 
-                    VerticalAlignment="Bottom" Width="350" Height="30" Click="btnCreateHole_Click" Visibility="Visible"></Button>
+                    VerticalAlignment="Bottom" Width="240" Height="30" Click="btnCreateHole_Click" Visibility="Visible"></Button>
+
+            <Button Name="btnReturn" Content="Return to Previous" HorizontalAlignment="Left" Width="180" Click="btnReturn_Click"/>
 
         </StackPanel>
 
