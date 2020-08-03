@@ -79,6 +79,7 @@ namespace Drillholes.Windows.ViewModel
                 OnPropertyChanged("importAllColumns");
             }
         }
+
         private string _tableFields;
         public string tableFields
         {

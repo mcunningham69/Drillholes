@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Drillholes.Domain;assembly=Drillholes.Domain"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Fix Errors and Review Warnings" Height="450" Width="800" Loaded="Page_Loaded">
+      Title="Fix Errors and Review Warnings" Height="450" Width="Auto" Loaded="Page_Loaded">
 
     <Page.Background>
         <LinearGradientBrush  EndPoint="0.5,1" StartPoint="0.5,0">

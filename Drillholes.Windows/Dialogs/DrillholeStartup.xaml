@@ -186,7 +186,7 @@
                 </RibbonQuickAccessToolBar>
             </Ribbon.QuickAccessToolBar>
 
-            <RibbonTab Name="ribbonHome" Header="Home" KeyTip="H">
+            <RibbonTab Name="ribbonHome" Header="Home" KeyTip="H" Visibility="Visible">
                 <RibbonGroup Header="Drillholes" QuickAccessToolBarId="holes">
                     <RibbonButton QuickAccessToolBarId="new" SmallImageSource="../Images/New.png" Label="New Session" KeyTip="N" Click="New_Session"/>
                     <RibbonButton QuickAccessToolBarId="open" SmallImageSource="../Images/Open.png" Label="Open Session" KeyTip="O" Click="Open_Session"/>
@@ -241,7 +241,7 @@
             <RibbonTab Name="ribbonSettings" Header="Environment" KeyTip="D">
                 <RibbonGroup Header="Settings" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
                     <RibbonCheckBox Name="chkDip" QuickAccessToolBarId="nd" SmallImageSource="../Images/Help.png" Label="Negative Dip (down)" IsChecked="True" Click="chkDip_Click"/>
-                    <RibbonCheckBox Name="chkImport" QuickAccessToolBarId="ic" SmallImageSource="../Images/Help.png" Label="Import All Columns" Click="chkImport_Click"/>
+                    <!--<RibbonCheckBox Name="chkImport" QuickAccessToolBarId="ic" SmallImageSource="../Images/Help.png" Label="Import All Columns" Click="chkImport_Click"/>-->
                     <RibbonCheckBox Name="chkIgnore" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Ignore Invalid Values" Click="chkIgnore_Click"/>
                     <RibbonCheckBox Name="chkDetection" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Half Lower Detection" IsChecked="True" Click="chkDetection_Click"/>
                 </RibbonGroup>
@@ -255,6 +255,28 @@
                     <RibbonRadioButton Name="radTopCore" QuickAccessToolBarId="topc" Label="Top Core" Click="radTopCore_Click" />
                     <RibbonRadioButton Name="radBotCore" QuickAccessToolBarId="botc" IsChecked="True" Label="Bottom Core" Click="radBottomCore_Click"/>
                     <RibbonCheckBox Name="chkAlphaBeta" QuickAccessToolBarId="ab" IsChecked="True" SmallImageSource="../Images/Help.png" Label="Calculate Structures" Click="chkAlphaBeta_Click" />
+                </RibbonGroup>
+                <RibbonGroup Header="Drillholes" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="dsu" Width="Auto">
+                    <Label  Content="Desurvey:" />
+                    <ComboBox Name="cboDesurvey" Width="Auto" DropDownClosed="cboDesurvey_DropDownClosed" SelectedIndex="3" SelectionChanged="Desurvey_Changed">
+                        <ComboBoxItem>Tangential</ComboBoxItem>
+                        <ComboBoxItem>Minimum Curvature</ComboBoxItem>
+                        <ComboBoxItem>Radius of Curvature</ComboBoxItem>
+                        <ComboBoxItem>Average Angle</ComboBoxItem>
+                        <ComboBoxItem>Balanced Tangential</ComboBoxItem>
+                    </ComboBox>
+                    <!--<RibbonComboBox QuickAccessToolBarId="ds"  Name="cboDesurvey" Width="Auto" DropDownClosed="cboDesurvey_DropDownClosed">
+                        <RibbonGallery MinColumnCount="1" Name="ribbonGallery" >
+                            <RibbonGalleryCategory Header="Survey Methodology">
+                                <RibbonGalleryItem Name="ribbonTangential" FontFamily="Arial">Tangential</RibbonGalleryItem>
+                                <RibbonGalleryItem FontFamily="Arial">Minimum Curvature</RibbonGalleryItem>
+                                <RibbonGalleryItem FontFamily="Arial">Radius of Curvature</RibbonGalleryItem>
+                                <RibbonGalleryItem FontFamily="Arial">Average Angle</RibbonGalleryItem>
+                                <RibbonGalleryItem FontFamily="Arial">Balanced Tangential</RibbonGalleryItem>
+                            </RibbonGalleryCategory>
+                            
+                        </RibbonGallery>
+                    </RibbonComboBox>-->
                 </RibbonGroup>
                 <RibbonGroup Header="Information" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
                     <RibbonButton Name="btnHelp" QuickAccessToolBarId="help" SmallImageSource="../Images/Help.png" Label="Help..." />

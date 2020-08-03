@@ -545,7 +545,6 @@ namespace Drillholes.XML
                 }
             }
 
-
             if (drillholeFields == "")
                 return null;
 
@@ -655,6 +654,9 @@ namespace Drillholes.XML
             nodes.Add(new XElement("TopCore", preferences.TopCore));
             nodes.Add(new XElement("BottomCore", preferences.BottomCore));
             nodes.Add(new XElement("CalculateStructures", preferences.CalculateStructures));
+            nodes.Add(new XElement("DesurveyMethod", preferences.DesurveyMethod));
+
+            
 
             tableParameters.Add(nodes);
 
@@ -703,6 +705,8 @@ namespace Drillholes.XML
             nodes.Add(new XElement("TopCore", preferences.TopCore));
             nodes.Add(new XElement("BottomCore", preferences.BottomCore));
             nodes.Add(new XElement("CalculateStructures", preferences.CalculateStructures));
+            nodes.Add(new XElement("DesurveyMethod", preferences.DesurveyMethod));
+
 
             if (updateValues.Any())
                 updateValues.Remove();

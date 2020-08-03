@@ -25,6 +25,7 @@ using Microsoft.Win32;
 using System.Xml.Linq;
 using System.Windows.Navigation;
 using Drillholes.Domain.DataObject;
+using System.Collections.Specialized;
 
 namespace Drillholes.Windows.Dialogs
 {
@@ -44,6 +45,9 @@ namespace Drillholes.Windows.Dialogs
         private string projectSession { get; set; }
         private string projectLocation { get; set; }
         private string projectFile { get; set; }
+
+       
+
         private DrillholeDialogPage dialogPage { get; set; }
         public DrillholeStartup()
         {
@@ -53,6 +57,7 @@ namespace Drillholes.Windows.Dialogs
             geology = new bool[2];
             savedProject = false;
             projectSession = "";
+
             dialogPage = new DrillholeDialogPage();
         }
 
@@ -501,17 +506,6 @@ namespace Drillholes.Windows.Dialogs
                 this.radDownhole.IsChecked = pageImport.radDhole.IsChecked;
                 this.radVertical.IsChecked = pageImport.radVertical.IsChecked;
                 this.radCollarSurvey.IsChecked = pageImport.radSurvey.IsChecked;
-                this.chkImport.IsChecked = pageImport.chkImport.IsChecked;
-
-
-            }
-            else
-            {
-                pageImport.radDhole.IsChecked = this.radDownhole.IsChecked;
-                pageImport.radVertical.IsChecked = this.radVertical.IsChecked;
-                pageImport.radSurvey.IsChecked = this.radCollarSurvey.IsChecked;
-                pageImport.chkImport.IsChecked = this.chkImport.IsChecked;
-
             }
 
             return true;
@@ -532,6 +526,10 @@ namespace Drillholes.Windows.Dialogs
         private async void Ribbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var ribbon = sender as Ribbon;
+
+            if (frameMain == null)
+                return;
+
             var whichPage = frameMain.Content as Page;
 
             DrillholeImportPage importPage = null;
@@ -592,14 +590,6 @@ namespace Drillholes.Windows.Dialogs
             xmlName = "NegativeDip";
 
             UpdateXmlPreferences((bool)chkDip.IsChecked);
-
-        }
-
-        private void chkImport_Click(object sender, RoutedEventArgs e)
-        {
-            xmlName = "ImportAllColumns";
-
-            UpdateXmlPreferences((bool)chkImport.IsChecked);
 
         }
 
@@ -731,6 +721,18 @@ namespace Drillholes.Windows.Dialogs
 
         }
 
+        private void cboDesurvey_DropDownClosed(object sender, EventArgs e)
+        {
+            //var test = sender as RibbonComboBox;
+
+
+            //if (test.Text != "")
+            //{
+            //    xmlName = "DesurveyMethod";
+            //    UpdateXmlPreferences(test.Text);
+            //}
+        }
+
         private void chkToe_Click(object sender, RoutedEventArgs e)
         {
             xmlName = "CreateToe";
@@ -846,7 +848,7 @@ namespace Drillholes.Windows.Dialogs
             DrillholePreferences preferences = new DrillholePreferences()
             {
                 NegativeDip = (bool)this.chkDip.IsChecked,
-                ImportAllColumns = (bool)this.chkImport.IsChecked,
+             //   ImportAllColumns = (bool)this.chkImport.IsChecked,
                 IgnoreInvalidValues = (bool)this.chkIgnore.IsChecked,
                 LowerDetection = (bool)this.chkDetection.IsChecked,
                 ImportSurveyOnly = (bool)this.chkImportDeviation.IsChecked,
@@ -898,6 +900,12 @@ namespace Drillholes.Windows.Dialogs
             else
                 preferences.DefaultValue = -99.0; //default
 
+            //ComboBox text value uses the previous value if the user selects different method. Therefore must use selected item instead
+            var value = cboDesurvey.SelectedItem as ComboBoxItem;
+            string selectedValue = value.Content.ToString();
+
+            preferences.DesurveyMethod = selectedValue; 
+
             return preferences;
         }
 
@@ -907,7 +915,6 @@ namespace Drillholes.Windows.Dialogs
                 fullName = XmlDefaultPath.GetProjectPathAndFilename(rootName, "alltables", projectSession, projectLocation);
             else
                 fullName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "allTables");
-
 
             //create XML temp table
             if (_xml == null)
@@ -929,7 +936,6 @@ namespace Drillholes.Windows.Dialogs
                 var dip = value.Element("NegativeDip").Value;
 
                 chkDip.IsChecked = Convert.ToBoolean(dip);
-                chkImport.IsChecked = Convert.ToBoolean(value.Element("ImportAllColumns").Value);
                 chkIgnore.IsChecked = Convert.ToBoolean(value.Element("IgnoreInvalidValues").Value);
                 chkDetection.IsChecked = Convert.ToBoolean(value.Element("LowerDetection").Value);
                 chkImportDeviation.IsChecked = Convert.ToBoolean(value.Element("ImportSurveyOnly").Value);
@@ -942,7 +948,6 @@ namespace Drillholes.Windows.Dialogs
                 radTopCore.IsChecked = Convert.ToBoolean(value.Element("TopCore").Value);
                 radBotCore.IsChecked = Convert.ToBoolean(value.Element("BottomCore").Value);
                 chkAlphaBeta.IsChecked = Convert.ToBoolean(value.Element("CalculateStructures").Value);
-
 
                 var geologybase = value.Element("GeologyBase").Value;
 
@@ -969,10 +974,30 @@ namespace Drillholes.Windows.Dialogs
                 var defaultValue = value.Element("DefaultValue").Value;
                 var dipTol = value.Element("DipTolerance").Value;
                 var aziTol = value.Element("AziTolerance").Value;
+                var desurv = value.Element("DesurveyMethod").Value;
 
                 txtAziTol.Text = aziTol.ToString();
                 txtDipTol.Text = dipTol.ToString();
                 txtDefault.Text = defaultValue.ToString();
+
+                //< RibbonComboBox QuickAccessToolBarId = "ds"  Name = "cboDesurvey" Width = "Auto" DropDownClosed = "cboDesurvey_DropDownClosed" >
+
+                //                < RibbonGallery MinColumnCount = "1" Name = "ribbonGallery" >
+
+                //                       < RibbonGalleryCategory Header = "Survey Methodology" >
+
+                //                            < RibbonGalleryItem Name = "ribbonTangential" FontFamily = "Arial" > Tangential </ RibbonGalleryItem >
+
+
+                var test = cboDesurvey.Items;
+               foreach(var temp in test)
+                {
+                  
+                }
+
+                              cboDesurvey.Text = desurv.ToString();
+
+                
 
             }
 
@@ -1024,15 +1049,31 @@ namespace Drillholes.Windows.Dialogs
             await _xmlService.DrillholePreferences(fullName, xmlName, xmlValue, DrillholeConstants.drillholePref);
         }
 
+
+
+
+
+
+
+
+
         #endregion
 
-
-
-
-
         #endregion
 
+        private void Desurvey_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            var test = sender as ComboBox;
+            var value = test.SelectedItem as ComboBoxItem;
 
+            string selectedValue = value.Content.ToString();
+
+            if (test.Text != "")
+            {
+                xmlName = "DesurveyMethod";
+                UpdateXmlPreferences(selectedValue);
+            }
+        }
     }
 
 

@@ -28,7 +28,7 @@ namespace Drillholes.Domain
         public bool BottomCore { get; set; }
         public bool TopCore { get; set; }
         public bool CalculateStructures { get; set; }
-
+        public string DesurveyMethod { get; set; }
 
     }
 

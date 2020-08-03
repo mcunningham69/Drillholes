@@ -739,7 +739,104 @@ namespace Drillholes.Windows.Dialogs
 
         private void btnValidate_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new DrillholeEditsPage());
+            int _tabIndex = _tabcontrol.SelectedIndex;
+
+            if (_tabIndex == -1)
+                return;
+
+            DrillholeEditsPage edits = new DrillholeEditsPage();
+
+
+            switch (_tabIndex)
+            {
+                case 0:
+                    edits.collarObject = collarPreviewModel.collarTableObject;
+                    if (collarPreviewModel.collarTableObject.surveyType == surveyType)
+                    {
+                        if (surveyPreviewModel.surveyTableObject.tableData != null)
+                            edits.surveyObject = surveyPreviewModel.surveyTableObject;
+                    }
+
+                    if (assayPreviewModel.surveyTableObject.tableData != null)
+                        edits.assayObject = assayPreviewModel.assayTableObject;
+
+                    if (intervalPreviewModel.surveyTableObject.tableData != null)
+                        edits.intervalObject = intervalPreviewModel.intervalTableObject;
+
+                    edits.selectedIndex = 0;
+
+                    collarPreviewModel.FillTable();
+
+                    DataContext = collarPreviewModel;
+                    collarPreviewModel.SetDataContext(dataPreview);
+                    break;
+
+                case 1:
+                    edits.collarObject = collarPreviewModel.collarTableObject;
+                    edits.surveyObject = surveyPreviewModel.surveyTableObject;
+
+                    if (assayPreviewModel.surveyTableObject.tableData != null)
+                        edits.assayObject = assayPreviewModel.assayTableObject;
+
+                    if (intervalPreviewModel.surveyTableObject.tableData != null)
+                        edits.intervalObject = intervalPreviewModel.intervalTableObject;
+
+                    edits.selectedIndex = 1;
+                    break;
+
+                case 2:
+                    edits.collarObject = collarPreviewModel.collarTableObject;
+                    edits.assayObject = assayPreviewModel.assayTableObject;
+
+                    if (collarPreviewModel.collarTableObject.surveyType == DrillholeSurveyType.downholesurvey)
+                    {
+                        if (surveyPreviewModel.surveyTableObject.tableData != null)
+                            edits.surveyObject = surveyPreviewModel.surveyTableObject;
+                    }
+
+                    if (intervalPreviewModel.intervalTableObject.tableData != null)
+                        edits.intervalObject = intervalPreviewModel.intervalTableObject;
+
+                    edits.selectedIndex = 2;
+                    break;
+
+                case 3:
+                    edits.collarObject = collarPreviewModel.collarTableObject;
+                    edits.intervalObject = intervalPreviewModel.intervalTableObject;
+
+                    if (collarPreviewModel.collarTableObject.surveyType == DrillholeSurveyType.downholesurvey)
+                    {
+                        if (surveyPreviewModel.surveyTableObject.tableData != null)
+                            edits.surveyObject = surveyPreviewModel.surveyTableObject;
+                    }
+
+                    if (assayPreviewModel.assayTableObject.tableData != null)
+                        edits.assayObject = assayPreviewModel.assayTableObject;
+
+                    edits.selectedIndex = 3;
+                    break;
+
+                case 4:
+                    edits.collarObject = collarPreviewModel.collarTableObject;
+                    edits.continuousObject = continuousPreviewModel.continuousTableObject;
+
+                    if (collarPreviewModel.collarTableObject.surveyType == DrillholeSurveyType.downholesurvey)
+                    {
+                        if (surveyPreviewModel.surveyTableObject.tableData != null)
+                            edits.surveyObject = surveyPreviewModel.surveyTableObject;
+                    }
+
+                    if (assayPreviewModel.assayTableObject.tableData != null)
+                        edits.assayObject = assayPreviewModel.assayTableObject;
+
+                    if (intervalPreviewModel.intervalTableObject.tableData != null)
+                        edits.intervalObject = intervalPreviewModel.intervalTableObject;
+
+                    edits.selectedIndex = 4;
+                    break;
+            }
+
+            NavigationService.Navigate(edits);
 
         }
 
