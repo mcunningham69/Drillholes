@@ -187,7 +187,7 @@
             </Ribbon.QuickAccessToolBar>
 
             <RibbonTab Name="ribbonHome" Header="Home" KeyTip="H" Visibility="Visible">
-                <RibbonGroup Header="Drillholes" QuickAccessToolBarId="holes">
+                <RibbonGroup Header="Project Session" QuickAccessToolBarId="holes">
                     <RibbonButton QuickAccessToolBarId="new" SmallImageSource="../Images/New.png" Label="New Session" KeyTip="N" Click="New_Session"/>
                     <RibbonButton QuickAccessToolBarId="open" SmallImageSource="../Images/Open.png" Label="Open Session" KeyTip="O" Click="Open_Session"/>
                     <RibbonButton QuickAccessToolBarId="save" SmallImageSource="../Images/Save.png" Label="Save Session" KeyTip="S" Click="Save_Session"/>
@@ -216,6 +216,44 @@
                         </RibbonButton.ToolTip>
                     </RibbonButton>
                 </RibbonGroup>
+
+                <RibbonGroup Header="Survey Type" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
+                    <RibbonRadioButton Name="radDownhole" QuickAccessToolBarId="dh" SmallImageSource="../Images/LineArrow.png" Label="Downhole"  IsChecked="True" Click="radDownhole_Click"/>
+                    <RibbonRadioButton Name="radCollarSurvey" QuickAccessToolBarId="cs" SmallImageSource="../Images/compass.png" Label="Collar Survey" IsChecked="False" Click="radCollarSurvey_Click"/>
+                    <RibbonRadioButton Name="radVertical" QuickAccessToolBarId="vh" SmallImageSource="../Images/DownArrow.png" Label="Vertical" IsChecked="False" Click="radVertical_Click"/>
+                </RibbonGroup>
+                <RibbonGroup Header="Survey Calculation" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="dsu" Width="Auto">
+                    <Label  Content="Desurvey:" />
+                    <ComboBox Name="cboDesurvey"  Width="Auto" DropDownClosed="cboDesurvey_DropDownClosed" SelectedIndex="3" SelectionChanged="Desurvey_Changed">
+                        <ComboBoxItem>Tangential</ComboBoxItem>
+                        <ComboBoxItem>Minimum Curvature</ComboBoxItem>
+                        <ComboBoxItem>Radius of Curvature</ComboBoxItem>
+                        <ComboBoxItem>Average Angle</ComboBoxItem>
+                        <ComboBoxItem>Balanced Tangential</ComboBoxItem>
+                    </ComboBox>
+
+                </RibbonGroup>
+                <RibbonGroup Header="Export Data" SmallImageSource="../Images/ExportTheme.png" QuickAccessToolBarId="exp">
+                    <RibbonRadioButton Name="radText" SmallImageSource="../Images/ExportTableToFile.png" QuickAccessToolBarId="xtxt" Label="Text file" Click="radText_Click" />
+                    <RibbonRadioButton Name="radExcel" SmallImageSource="../Images/ExportToExcel.png" QuickAccessToolBarId="xex" IsChecked="false" Label="To Excel" Click="radExcel_Click"/>
+                    <RibbonRadioButton Name="radDatabase" SmallImageSource="../Images/ExportData.png" QuickAccessToolBarId="xdbo" IsChecked="True" Label="To Database" Click="radDatabase_Click"/>
+                    <RibbonButton Name="btnExport" QuickAccessToolBarId="exp" SmallImageSource="../Images/ExportTestRunResult.png" Label="Export Drillholes" Click="btnExport_Click" />
+                </RibbonGroup>
+
+            </RibbonTab>
+
+            <RibbonTab Name="ribbonSettings" Header="Environment" KeyTip="D">
+                <RibbonGroup Header="Settings" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
+                    <RibbonCheckBox Name="chkDip" QuickAccessToolBarId="nd" SmallImageSource="../Images/Help.png" Label="Negative Dip (down)" IsChecked="True" Click="chkDip_Click"/>
+                    <RibbonCheckBox Name="chkIgnore" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Ignore Invalid Values" Click="chkIgnore_Click"/>
+                    <RibbonCheckBox Name="chkDetection" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Half Lower Detection" IsChecked="True" Click="chkDetection_Click"/>
+                </RibbonGroup>
+
+                <RibbonGroup Header="Oriented Core" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="ori">
+                    <RibbonRadioButton Name="radTopCore" SmallImageSource="../Images/top.png" QuickAccessToolBarId="topc" Label="Top Core" Click="radTopCore_Click" />
+                    <RibbonRadioButton Name="radBotCore" SmallImageSource="../Images/bottom.png" QuickAccessToolBarId="botc" IsChecked="True" Label="Bottom Core" Click="radBottomCore_Click"/>
+                    <RibbonCheckBox Name="chkAlphaBeta" QuickAccessToolBarId="ab" IsChecked="True" SmallImageSource="../Images/calculator.png" Label="Calculate Structures" Click="chkAlphaBeta_Click" />
+                </RibbonGroup>
                 <RibbonGroup Header="Font" QuickAccessToolBarId="font">
                     <RibbonComboBox>
                         <RibbonGallery MinColumnCount="2">
@@ -236,48 +274,6 @@
                         </RibbonGallery>
                     </RibbonComboBox>
                 </RibbonGroup>
-            </RibbonTab>
-
-            <RibbonTab Name="ribbonSettings" Header="Environment" KeyTip="D">
-                <RibbonGroup Header="Settings" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
-                    <RibbonCheckBox Name="chkDip" QuickAccessToolBarId="nd" SmallImageSource="../Images/Help.png" Label="Negative Dip (down)" IsChecked="True" Click="chkDip_Click"/>
-                    <!--<RibbonCheckBox Name="chkImport" QuickAccessToolBarId="ic" SmallImageSource="../Images/Help.png" Label="Import All Columns" Click="chkImport_Click"/>-->
-                    <RibbonCheckBox Name="chkIgnore" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Ignore Invalid Values" Click="chkIgnore_Click"/>
-                    <RibbonCheckBox Name="chkDetection" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Half Lower Detection" IsChecked="True" Click="chkDetection_Click"/>
-                </RibbonGroup>
-
-                <RibbonGroup Header="Survey" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
-                    <RibbonRadioButton Name="radDownhole" QuickAccessToolBarId="dh"  Label="Downhole"  IsChecked="True" Click="radDownhole_Click"/>
-                    <RibbonRadioButton Name="radCollarSurvey" QuickAccessToolBarId="cs"  Label="Collar Survey" IsChecked="False" Click="radCollarSurvey_Click"/>
-                    <RibbonRadioButton Name="radVertical" QuickAccessToolBarId="vh"  Label="Vertical" IsChecked="False" Click="radVertical_Click"/>
-                </RibbonGroup>
-                <RibbonGroup Header="Oriented Core" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="ori">
-                    <RibbonRadioButton Name="radTopCore" QuickAccessToolBarId="topc" Label="Top Core" Click="radTopCore_Click" />
-                    <RibbonRadioButton Name="radBotCore" QuickAccessToolBarId="botc" IsChecked="True" Label="Bottom Core" Click="radBottomCore_Click"/>
-                    <RibbonCheckBox Name="chkAlphaBeta" QuickAccessToolBarId="ab" IsChecked="True" SmallImageSource="../Images/Help.png" Label="Calculate Structures" Click="chkAlphaBeta_Click" />
-                </RibbonGroup>
-                <RibbonGroup Header="Drillholes" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="dsu" Width="Auto">
-                    <Label  Content="Desurvey:" />
-                    <ComboBox Name="cboDesurvey" Width="Auto" DropDownClosed="cboDesurvey_DropDownClosed" SelectedIndex="3" SelectionChanged="Desurvey_Changed">
-                        <ComboBoxItem>Tangential</ComboBoxItem>
-                        <ComboBoxItem>Minimum Curvature</ComboBoxItem>
-                        <ComboBoxItem>Radius of Curvature</ComboBoxItem>
-                        <ComboBoxItem>Average Angle</ComboBoxItem>
-                        <ComboBoxItem>Balanced Tangential</ComboBoxItem>
-                    </ComboBox>
-                    <!--<RibbonComboBox QuickAccessToolBarId="ds"  Name="cboDesurvey" Width="Auto" DropDownClosed="cboDesurvey_DropDownClosed">
-                        <RibbonGallery MinColumnCount="1" Name="ribbonGallery" >
-                            <RibbonGalleryCategory Header="Survey Methodology">
-                                <RibbonGalleryItem Name="ribbonTangential" FontFamily="Arial">Tangential</RibbonGalleryItem>
-                                <RibbonGalleryItem FontFamily="Arial">Minimum Curvature</RibbonGalleryItem>
-                                <RibbonGalleryItem FontFamily="Arial">Radius of Curvature</RibbonGalleryItem>
-                                <RibbonGalleryItem FontFamily="Arial">Average Angle</RibbonGalleryItem>
-                                <RibbonGalleryItem FontFamily="Arial">Balanced Tangential</RibbonGalleryItem>
-                            </RibbonGalleryCategory>
-                            
-                        </RibbonGallery>
-                    </RibbonComboBox>-->
-                </RibbonGroup>
                 <RibbonGroup Header="Information" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
                     <RibbonButton Name="btnHelp" QuickAccessToolBarId="help" SmallImageSource="../Images/Help.png" Label="Help..." />
                 </RibbonGroup>
@@ -287,7 +283,7 @@
 
         <StackPanel x:Name="stkLabel" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Visibility="Visible">
 
-            <Frame Name="frameMain" Source="DrillholeDialogPage.xaml" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Width="Auto"  Visibility="Hidden">
+            <Frame Name="frameMain" Source="DrillholeDialogPage.xaml" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Width="Auto"  Visibility="Hidden" Navigated="frameMain_Navigated">
 
             </Frame>
 
@@ -317,16 +313,6 @@
             <CheckBox Name="chkCollar" Content="Create Collar" Margin="5,7,5,5" Click="chkCollar_Click"/>
             <CheckBox Name="chkToe" Content="Create Toe" Margin="5,0,5,5" Click="chkToe_Click"/>
         </StackPanel>
-
-        <!--<StackPanel Name="stkGeology" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="1" Margin="15,20,50,0" Visibility="Hidden">
-            <RadioButton Name="radTop" Content="Geology Top" Margin="5,5,5,5" Click="radTop_Click"/>
-            <RadioButton Name="radBottom" Content="Geology Bottom" IsChecked="True" Margin="5,0,5,5" Click="radBottom_Click"/>
-        </StackPanel>-->
-
-        <!--<StackPanel x:Name="stkCollarToe" Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" Margin="15,20,50,0" Visibility="Hidden">
-            <CheckBox Name="chkCollar" Content="Create Collar" Margin="5,5,5,5" Click="chkCollar_Click"/>
-            <CheckBox Name="chkToe" Content="Create Toe" Margin="5,0,5,5" Click="chkToe_Click"/>
-        </StackPanel>-->
 
         <Button Name="btnExit" Grid.Column="1" Grid.Row="1" Content="Close Application" Width="Auto" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsCancel="True" Click="ExitForm"></Button>
 

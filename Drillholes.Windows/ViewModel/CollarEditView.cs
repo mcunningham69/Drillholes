@@ -23,12 +23,22 @@ namespace Drillholes.Windows.ViewModel
         public CollarEditServices _editService;
         public ICollarEdit _editValues;
 
+        public XmlService _xmlService;
+        public IDrillholeXML _xml;
+
+
         public virtual DrillholeSurveyType surveyType { get; set; }
 
         public ImportTableFields importCollarFields { get; set; }
         public XElement xmlCollarData { get; set; }
 
         public IMapper mapper = null;
+
+        public string fullPathnameData { get; set; }
+        public string rootNameData = "DrillholeData";
+        public bool savedSession { get; set; }
+        public string sessionName { get; set; }
+        public string projectLocation { get; set; }
 
         public CollarEditView(DrillholeSurveyType _surveyType, XElement _xmlCollarData, ImportTableFields _collarFields)
         {
@@ -39,6 +49,45 @@ namespace Drillholes.Windows.ViewModel
             _editValues = new CollarDataEdits();
 
             _editService = new CollarEditServices(_editValues);
+        }
+
+        public CollarEditView(DrillholeSurveyType _surveyType, XElement _xmlCollarData, ImportTableFields _collarFields, DrillholeTableType _tableType, 
+            bool _savedSession, string _sessionName, string _projectLocation)
+        {
+            surveyType = _surveyType;
+            xmlCollarData = _xmlCollarData;
+            importCollarFields = _collarFields;
+
+            _editValues = new CollarDataEdits();
+
+            _editService = new CollarEditServices(_editValues);
+
+            savedSession = _savedSession;
+            sessionName = _sessionName;
+            projectLocation = _projectLocation;
+
+            XmlSetUP(_tableType.ToString());
+        }
+
+
+        public void XmlSetUP(string tableType)
+        {
+            //create XML temp table
+            if (_xml == null)
+                _xml = new Drillholes.XML.XmlController();
+
+            if (_xmlService == null)
+                _xmlService = new XmlService(_xml);
+
+            if (!savedSession)
+            {
+                fullPathnameData = XmlDefaultPath.GetFullPathAndFilename(rootNameData, tableType);
+            }
+            else
+            {
+                fullPathnameData = XmlDefaultPath.GetProjectPathAndFilename(rootNameData, tableType, sessionName, projectLocation);
+            }
+
         }
 
         public virtual void InitialiseMapping()
@@ -87,6 +136,12 @@ namespace Drillholes.Windows.ViewModel
             }
 
             var _edits = await _editService.UpdateValues(mapper, rows, xmlCollarData, editFields);
+
+            await _xmlService.DrillholeData(fullPathnameData, _edits.xPreview, DrillholeTableType.collar, DrillholeConstants._Collar + "s", rootNameData);
+
+            if (savedSession)
+                _xmlService.DrillholeData(projectLocation + "\\" + sessionName + ".dh", fullPathnameData, DrillholeConstants.drillholeProject, DrillholeTableType.collar);
+
 
             return _edits.xPreview;
         }

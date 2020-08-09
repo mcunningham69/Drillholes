@@ -164,8 +164,6 @@ namespace Drillholes.Windows.Dialogs
             }
 
         }
-
-        
        
         private void SetModelViews(DrillholeTableType tableType)
         {
@@ -215,7 +213,6 @@ namespace Drillholes.Windows.Dialogs
 
         private async void SetSurveyType(bool edits)
         {
-            
             if (edits)
             {
                 if ((bool)radVertical.IsChecked)
@@ -396,20 +393,37 @@ namespace Drillholes.Windows.Dialogs
             }
         }
 
+        public async void RefreshPreviewData()
+        {
+            if (_tabcontrol.SelectedIndex == 0)
+                await collarPreviewModel.PreviewDataToImport(-99, openSession);
+            else if (_tabcontrol.SelectedIndex == 1)
+            {
+                //await surveyPreviewModel.PreviewDataToImport(-99, openSession);
+            }
+            else if (_tabcontrol.SelectedIndex == 2)
+            {
+                //await assayPreviewModel.PreviewDataToImport(-99, openSession);
+            }
+            else if (_tabcontrol.SelectedIndex == 3)
+            {
+                //await intervalPreviewModel.PreviewDataToImport(-99, openSession);
+            }
+            else if (_tabcontrol.SelectedIndex == 4)
+            {
+                //await continuousPreviewModel.PreviewDataToImport(-99, openSession);
+            }
 
+        }
         #region Load Tables
         private async Task<bool> LoadCollarTableAndFields(int nLimit)
         {
             //returns preferences on first read
             CheckPreferencesFromXml();
 
-
             await collarPreviewModel.RetrieveFieldsToMap(openSession); //on start, holeIDName set to empty string
 
             await collarPreviewModel.PreviewDataToImport(nLimit, openSession); //50 is the limit of records to preview
-
-            //sets the fieldnames
-         //   await collarPreviewModel.UpdateFieldnamesInXml();
 
             chkSkip.IsEnabled = false;
             chkSkip.IsChecked = false;
@@ -417,11 +431,11 @@ namespace Drillholes.Windows.Dialogs
             chkImport.IsChecked = collarPreviewModel.importChecked;
             collarPreviewModel.ImportAllColumns((bool)chkImport.IsChecked);
 
-
-
             return true;
 
         }
+
+
 
         private async Task<bool> LoadSurveyTableAndFields(int nLimit)
         {
@@ -431,8 +445,8 @@ namespace Drillholes.Windows.Dialogs
                 surveyPreviewModel.surveyTableObject.collarKey = collarPreviewModel.collarTableObject.collarKey;
                 await surveyPreviewModel.PreviewDataToImport(nLimit, openSession); //50 is the limit of records to preview
 
-                //sets the fieldnames
-                await surveyPreviewModel.UpdateFieldnamesInXml(); //update XML => eventually save and open project
+                ////sets the fieldnames
+                //await surveyPreviewModel.UpdateFieldnamesInXml(); //update XML => eventually save and open project
 
             }
 
@@ -465,7 +479,7 @@ namespace Drillholes.Windows.Dialogs
 
                 await assayPreviewModel.PreviewDataToImport(nLimit, openSession); //50 is the limit of records to preview
 
-                await assayPreviewModel.UpdateFieldnamesInXml();
+                //await assayPreviewModel.UpdateFieldnamesInXml();
             }
 
             chkSkip.IsEnabled = true;
@@ -500,7 +514,7 @@ namespace Drillholes.Windows.Dialogs
                 await intervalPreviewModel.PreviewDataToImport(nLimit, openSession); //50 is the limit of records to preview
 
                 //sets the fieldnames
-                await intervalPreviewModel.UpdateFieldnamesInXml(); //update XML => eventually save and open project
+                //await intervalPreviewModel.UpdateFieldnamesInXml(); //update XML => eventually save and open project
             }
 
             chkSkip.IsEnabled = true;
@@ -538,7 +552,7 @@ namespace Drillholes.Windows.Dialogs
                 await continuousPreviewModel.PreviewDataToImport(nLimit, openSession); //50 is the limit of records to preview
 
                 //sets the fieldnames
-                await continuousPreviewModel.UpdateFieldnamesInXml(); //update XML => eventually save and open project
+                //await continuousPreviewModel.UpdateFieldnamesInXml(); //update XML => eventually save and open project
             }
 
             chkSkip.IsEnabled = true;
@@ -573,15 +587,7 @@ namespace Drillholes.Windows.Dialogs
            
 
         }
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
-        {
 
-        }
-
-        private void btnCreateHole_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private async void chkImport_Click(object sender, RoutedEventArgs e)
         {
@@ -746,6 +752,9 @@ namespace Drillholes.Windows.Dialogs
 
             DrillholeEditsPage edits = new DrillholeEditsPage();
 
+            edits.projectSession = projectSession;
+            edits.projectLocation = projectLocation;
+            edits.savedSession = savedSession;
 
             switch (_tabIndex)
             {
@@ -1015,6 +1024,54 @@ namespace Drillholes.Windows.Dialogs
             {
                 MessageBox.Show("Sorry but no entries in back navigation history.", "Apologies", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+        }
+
+        private async void btnDesurvey_Click(object sender, RoutedEventArgs e)
+        {
+
+            //XDocument xmlProjectFile = await _xmlService.DrillholePreferences(projectFile, preferences, DrillholeConstants.drillholeProject);
+
+
+            //READ xml preferences for survey type and survey method
+            //First check if saved session or data is coming from TEMP
+            DrillholePreferences preferences = await collarPreviewModel.ReadXmlPreferences();
+            ///NEED
+            ///1) SurveyType
+            ///2) SurveyMethod
+            ///3) Create toe
+            ///4) Include collar -DEFAULT
+
+            bool bToe = preferences.CreateToe;
+            bool bCollar = preferences.CreateCollar;
+
+
+            if (_tabcontrol.SelectedIndex == 0)
+            {
+                Calculate.GenerateCollarDesurveyResults collarResults = new Calculate.GenerateCollarDesurveyResults(savedSession, projectSession, projectLocation, collarPreviewModel.collarDataFields,
+                   collarPreviewModel.collarTableObject.xPreview);
+
+                if (preferences.surveyType == DrillholeSurveyType.vertical)
+                {
+                    await collarResults.GenerateCollarDesurveyVertical(bToe, DrillholeDesurveyEnum.Tangential);
+                }
+                else
+                {
+                    await collarResults.GenerateCollarDesurveyFromCollarSurvey(bToe, DrillholeDesurveyEnum.Tangential);
+                }
+            }
+            else if (_tabcontrol.SelectedIndex > 0)
+            {
+                MessageBox.Show("Collar only implemented");
+            }
+
+        
+
+
+            //CREATE results
+
+
+            //Save to desruvey XML file
+
         }
     }
 }

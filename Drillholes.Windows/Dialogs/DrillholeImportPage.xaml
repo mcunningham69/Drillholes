@@ -498,8 +498,8 @@
 
         <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal" Grid.ColumnSpan="2">
 
-            <Button Name="btnDesurvey" IsEnabled="true" Content="Create Drillhole Trace" FontSize="16" HorizontalAlignment="Center" 
-                    VerticalAlignment="Bottom" Width="240" Height="30" Click="btnCreateHole_Click" Visibility="Visible"></Button>
+            <Button Name="btnDesurvey" IsEnabled="true" Content="Generate Drillholes" FontSize="16" HorizontalAlignment="Center" 
+                    VerticalAlignment="Bottom" Width="240" Height="30" Click="btnDesurvey_Click" Visibility="Visible"></Button>
 
             <Button Name="btnReturn" Content="Return to Previous" HorizontalAlignment="Left" Width="180" Click="btnReturn_Click"/>
 

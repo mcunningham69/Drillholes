@@ -63,6 +63,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Calculate\GenerateContinuousDesurveyResults.cs" />
+    <Compile Include="Calculate\GenerateIntervalDesurveyResults.cs" />
+    <Compile Include="Calculate\GenerateAssayDesurveyResults.cs" />
+    <Compile Include="Calculate\GenerateSurveyDesurveyResults.cs" />
+    <Compile Include="Calculate\GenerateCollarDesurveyResults.cs" />
     <Compile Include="Dialogs\DrillholeCreate.xaml.cs">
       <DependentUpon>DrillholeCreate.xaml</DependentUpon>
     </Compile>
@@ -226,6 +231,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Drillholes.CreateDrillholes\Drillholes.CreateDrillholes.csproj">
+      <Project>{0c693766-5023-4e67-9aca-fc9af0e713a0}</Project>
+      <Name>Drillholes.CreateDrillholes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Drillholes.Domain\Drillholes.Domain.csproj">
       <Project>{faaa7f51-4262-4c9a-9997-592f6d5ad802}</Project>
       <Name>Drillholes.Domain</Name>
@@ -283,6 +292,51 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\SaveAll.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\excel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\textedit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\database.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\calculator.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ExportToExcel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ExportTableToFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ExportData.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ExportTheme.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ExportTestRunResult.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PointAndFigureChart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\LineArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DownArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\compass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\bottom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\top.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

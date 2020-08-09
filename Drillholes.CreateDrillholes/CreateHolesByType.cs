@@ -7,57 +7,68 @@ using System.Xml.Linq;
 using Drillholes.Domain.DTO;
 using Drillholes.Domain.Enum;
 using Drillholes.Domain.Interfaces;
+using Drillholes.Domain;
 
 namespace Drillholes.CreateDrillholes
 {
     public class CreateHolesByType : IDesurveyDrillhole
     {
-        public Task<CollarDesurveyDto> CollarSurveyHole(DrillholeDesurveyEnum desurveyType, CollarTableDto collarTableDto, bool bToe)
+        public Task<AssayDesurveyDto> CreateAssayDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales)
         {
             throw new NotImplementedException();
         }
 
-        public Task<AssayDesurveyDto> CollarSurveyHole(DrillholeDesurveyEnum desurveyType, AssayTableDto assayTableDto, bool bToe, XElement collarValues)
+        public Task<AssayDesurveyDto> CreateAssaySurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IntervalDesurveyDto> CollarSurveyHole(DrillholeDesurveyEnum desurveyType, IntervalTableDto intervalTableDto, bool bToe, XElement collarValues)
+        public Task<AssayDesurveyDto> CreateAssayVerticalHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CollarDesurveyDto> DownholeSurveyHole(DrillholeDesurveyEnum desurveyType, CollarTableDto collarTableDto, bool bToe, XElement surveyValues)
+        public Task<CollarDesurveyDto> CreateCollarSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, XElement collarValues)
         {
             throw new NotImplementedException();
         }
 
-        public Task<SurveyDesurveyDto> DownholeSurveyHole(DrillholeDesurveyEnum desurveyType, SurveyTableDto surveyTableDto, bool bToe, XElement collarValues)
+        public Task<CollarDesurveyDto> CreateCollarVerticalHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, XElement collarValues)
         {
             throw new NotImplementedException();
         }
 
-        public Task<AssayDesurveyDto> DownholeSurveyHole(DrillholeDesurveyEnum desurveyType, AssayTableDto assayTableDto, bool bToe, List<XElement> drillholeVales)
+        public Task<ContinuousDesurveyDto> CreateContinuousDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IntervalDesurveyDto> DownholeSurveyHole(DrillholeDesurveyEnum desurveyType, IntervalTableDto intervalTableDto, bool bToe, List<XElement> drillholeVales)
+        public Task<ContinuousDesurveyDto> CreateContinuousSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CollarDesurveyDto> VerticalHole(DrillholeDesurveyEnum desurveyType, CollarTableDto collarTableDto, bool bToe)
+        public Task<ContinuousDesurveyDto> CreateContinuousVerticalHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales)
         {
             throw new NotImplementedException();
         }
 
-        public Task<AssayDesurveyDto> VerticalHole(DrillholeDesurveyEnum desurveyType, AssayTableDto assayTableDto, bool bToe, XElement collarValues)
+        public Task<IntervalDesurveyDto> CreateIntervalDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IntervalDesurveyDto> VerticalHole(DrillholeDesurveyEnum desurveyType, IntervalTableDto intervalTableDto, bool bToe, XElement collarValues)
+        public Task<IntervalDesurveyDto> CreateIntervalSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IntervalDesurveyDto> CreateIntervalVerticalHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SurveyDesurveyDto> CreateSurveyDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> surveyValues)
         {
             throw new NotImplementedException();
         }

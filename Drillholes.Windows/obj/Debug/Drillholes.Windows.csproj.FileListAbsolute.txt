@@ -94,3 +94,5 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\bin\Debug\Drillh
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeSummaryStatisticsPage.baml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeEditsPage.baml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeEditsPage.g.cs
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\bin\Debug\Drillholes.CreateDrillholes.dll
+C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\bin\Debug\Drillholes.CreateDrillholes.pdb

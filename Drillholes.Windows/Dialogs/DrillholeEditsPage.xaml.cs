@@ -55,6 +55,10 @@ namespace Drillholes.Windows.Dialogs
         private ContinuousEditView continuousEdit { get; set; }
         private bool bIgnore { get; set; }
         public int selectedIndex { get; set; }
+        public bool savedSession { get; set; }
+        public bool openSession { get; set; }
+        public string projectSession { get; set; }
+        public string projectLocation { get; set; }
         #endregion
         public DrillholeEditsPage()
         {
@@ -144,7 +148,9 @@ namespace Drillholes.Windows.Dialogs
             {
                 case 0: //collar table
                     if (collarEdit == null)
-                        collarEdit = new CollarEditView(collarObject.surveyType, collarObject.xPreview, collarObject.tableData);
+                        //collarEdit = new CollarEditView(collarObject.surveyType, collarObject.xPreview, collarObject.tableData);
+                        collarEdit = new CollarEditView(collarObject.surveyType, collarObject.xPreview, collarObject.tableData, DrillholeTableType.collar, savedSession, projectSession, projectLocation);
+
 
                     collarObject.xPreview = await collarEdit.SaveEdits(editedRows);
 
@@ -786,8 +792,37 @@ namespace Drillholes.Windows.Dialogs
 
             DataContext = continuousEdits;
         }
-        #endregion
-       
 
+        #endregion
+
+        private async void dataEdits_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+           // DataRowView edits = e.Row.DataContext as DataRowView;
+
+           // var array = edits.Row.ItemArray;
+
+           // //get record ID to check if any others have same
+           // int record = Convert.ToInt32(array[1]);
+
+           //if (dataEdits.Items.Count > 1)
+           // {
+
+           //     foreach(DataRowView row in dataEdits.Items.SourceCollection)
+           //     {
+           //         var checkValues = row.Row.ItemArray;
+
+           //         if (checkValues[1] == array[1] )
+           //         {
+           //             for (int i = 0; i < checkValues.Count(); i++)
+           //             {
+           //                 checkValues[i] = array[i];
+           //             }
+           //         }
+           //     }
+
+           // }
+
+            
+        }
     }
 }

@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/saveall_16x.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/top.png")]
 
 

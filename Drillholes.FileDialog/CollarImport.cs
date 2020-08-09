@@ -686,6 +686,9 @@ namespace Drillholes.FileDialog
 
         public async Task<CollarTableDto> PreviewAndImportFields(DrillholeTableType tableType, int limit)
         {
+            if (collarTableDto == null)
+                collarTableDto = new CollarTableDto();
+
             if (collarTableDto.tableIsValid)
             {
                 collarTableDto.tableType = tableType;

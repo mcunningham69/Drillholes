@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataObject\ContinuousDesurveyObject.cs" />
     <Compile Include="DataObject\IntervalDesurveyObject.cs" />
     <Compile Include="DataObject\AssayTableObject.cs" />
     <Compile Include="DataObject\AssayDesurveyObject.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="DTO\AssayTableDto.cs" />
     <Compile Include="DTO\CollarDesurveyDto.cs" />
     <Compile Include="DTO\CollarTableDto.cs" />
+    <Compile Include="DTO\ContinuousDesurveyDto.cs" />
     <Compile Include="DTO\IntervalDesurveyDto.cs" />
     <Compile Include="DTO\ContinuousTableDto.cs" />
     <Compile Include="DTO\SummaryContinuousStatisticsDto.cs" />
@@ -135,7 +137,11 @@
     <Compile Include="Services\AssayValidationService.cs" />
     <Compile Include="Services\CollarEditServices.cs" />
     <Compile Include="Services\CollarValidationService.cs" />
-    <Compile Include="Services\DesurveyServices.cs" />
+    <Compile Include="Services\CollarDesurveyServices.cs" />
+    <Compile Include="Services\AssayDesurveyServices.cs" />
+    <Compile Include="Services\IntervalDesurveyServices.cs" />
+    <Compile Include="Services\SurveyDesurveyServices.cs" />
+    <Compile Include="Services\ContinuousDesurveyServices.cs" />
     <Compile Include="Services\ContinuousEditServices.cs" />
     <Compile Include="Services\IntervalEditServices.cs" />
     <Compile Include="Services\ContinuousStatisticsService.cs" />

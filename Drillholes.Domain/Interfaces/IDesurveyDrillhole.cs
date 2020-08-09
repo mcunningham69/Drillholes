@@ -11,19 +11,21 @@ namespace Drillholes.Domain.Interfaces
 {
     public interface IDesurveyDrillhole
     {
-        Task<CollarDesurveyDto> VerticalHole(DrillholeDesurveyEnum desurveyType, CollarTableDto collarTableDto, bool bToe);
+        Task<CollarDesurveyDto> CreateCollarVerticalHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, XElement collarValues);
+        Task<CollarDesurveyDto> CreateCollarSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, XElement collarValues);
 
-        Task<CollarDesurveyDto> CollarSurveyHole(DrillholeDesurveyEnum desurveyType, CollarTableDto collarTableDto, bool bToe);
-        Task<CollarDesurveyDto> DownholeSurveyHole(DrillholeDesurveyEnum desurveyType, CollarTableDto collarTableDto, bool bToe, XElement surveyValues);
+        Task<SurveyDesurveyDto> CreateSurveyDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales);
 
-        Task<SurveyDesurveyDto> DownholeSurveyHole(DrillholeDesurveyEnum desurveyType, SurveyTableDto surveyTableDto, bool bToe, XElement collarValues);
-        Task<AssayDesurveyDto> VerticalHole(DrillholeDesurveyEnum desurveyType, AssayTableDto assayTableDto, bool bToe, XElement collarValues);
+        Task<AssayDesurveyDto> CreateAssaySurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales);
+        Task<AssayDesurveyDto> CreateAssayDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales);
+        Task<AssayDesurveyDto> CreateAssayVerticalHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales);
 
-        Task<AssayDesurveyDto> CollarSurveyHole(DrillholeDesurveyEnum desurveyType, AssayTableDto assayTableDto, bool bToe, XElement collarValues);
-        Task<AssayDesurveyDto> DownholeSurveyHole(DrillholeDesurveyEnum desurveyType, AssayTableDto assayTableDto, bool bToe, List<XElement> drillholeVales);
-        Task<IntervalDesurveyDto> VerticalHole(DrillholeDesurveyEnum desurveyType, IntervalTableDto intervalTableDto, bool bToe, XElement collarValues);
+        Task<IntervalDesurveyDto> CreateIntervalSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales);
+        Task<IntervalDesurveyDto> CreateIntervalDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales);
+        Task<IntervalDesurveyDto> CreateIntervalVerticalHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales);
 
-        Task<IntervalDesurveyDto> CollarSurveyHole(DrillholeDesurveyEnum desurveyType, IntervalTableDto intervalTableDto, bool bToe, XElement collarValues);
-        Task<IntervalDesurveyDto> DownholeSurveyHole(DrillholeDesurveyEnum desurveyType, IntervalTableDto intervalTableDto, bool bToe, List<XElement> drillholeVales);
+        Task<ContinuousDesurveyDto> CreateContinuousSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales);
+        Task<ContinuousDesurveyDto> CreateContinuousDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales);
+        Task<ContinuousDesurveyDto> CreateContinuousVerticalHole(DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeVales);
     }
 }

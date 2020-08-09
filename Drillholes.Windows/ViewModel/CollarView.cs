@@ -104,7 +104,6 @@ namespace Drillholes.Windows.ViewModel
         public string rootNameData = "DrillholeData";
 
         public bool savedSession { get; set; }
-
         public string sessionName { get; set; }
         public string projectLocation { get; set; }
 
@@ -239,28 +238,7 @@ namespace Drillholes.Windows.ViewModel
 
             if (bOpen)
             {
-                RetrieveFieldsForOpenSession();
-
-                //var collarFields = await _xmlService.DrillholeFields(projectLocation + "\\" + sessionName + ".dh", fullPathnameFields, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeFields, collarTableObject.tableType) as ImportTableFields;
-                //collarTableObject.tableData = collarFields;
-
-                //var names = collarFields.Select(a => a.columnHeader);
-
-                //List<string> fieldNames = new List<string>();
-
-                //foreach (string field in names)
-                //{
-                //    fieldNames.Add(field);
-                //}
-
-                //collarTableObject.fields = fieldNames;
-
-
-                //collarTableObject.collarKey = collarFields.Where(o => o.columnImportName == DrillholeConstants.holeIDName).Select(p => p.columnHeader).FirstOrDefault().ToString();
-
-                //collarTableObject.tableIsValid = true;
-
-                //collarDataFields = collarTableObject.tableData;
+                await RetrieveFieldsForOpenSession();
 
             }
             else

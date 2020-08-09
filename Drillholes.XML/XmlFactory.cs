@@ -733,6 +733,7 @@ namespace Drillholes.XML
 
             var importColumns = elements.Select(n => n.Element("ImportAllColumns").Value).SingleOrDefault();
             var surveyType = elements.Select(n => n.Element("SurveyType").Value).SingleOrDefault();
+            var surveyMethod = elements.Select(n => n.Element("DesurveyMethod").Value).SingleOrDefault();
 
             bool bImport = false;
 
@@ -754,10 +755,22 @@ namespace Drillholes.XML
                 survType = DrillholeSurveyType.collarsurvey;
             }
 
+            DrillholeDesurveyEnum desurveyMethod = DrillholeDesurveyEnum.AverageAngle;
+
+            if (surveyMethod == DrillholeDesurveyEnum.BalancedTangential.ToString())
+                desurveyMethod = DrillholeDesurveyEnum.BalancedTangential;
+            else if (surveyMethod == DrillholeDesurveyEnum.MinimumCurvature.ToString())
+                desurveyMethod = DrillholeDesurveyEnum.MinimumCurvature;
+            else if (surveyMethod == DrillholeDesurveyEnum.RadiusCurvature.ToString())
+                desurveyMethod = DrillholeDesurveyEnum.RadiusCurvature;
+            else if (surveyMethod == DrillholeDesurveyEnum.Tangential.ToString())
+                desurveyMethod = DrillholeDesurveyEnum.Tangential;
+
             DrillholePreferences readPreferences = new DrillholePreferences()
             {
                 surveyType = survType,
-                ImportAllColumns = bImport
+                ImportAllColumns = bImport,
+                DesurveyMethod = desurveyMethod
             };
 
 

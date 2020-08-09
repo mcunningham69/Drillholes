@@ -848,7 +848,6 @@ namespace Drillholes.Windows.Dialogs
             DrillholePreferences preferences = new DrillholePreferences()
             {
                 NegativeDip = (bool)this.chkDip.IsChecked,
-             //   ImportAllColumns = (bool)this.chkImport.IsChecked,
                 IgnoreInvalidValues = (bool)this.chkIgnore.IsChecked,
                 LowerDetection = (bool)this.chkDetection.IsChecked,
                 ImportSurveyOnly = (bool)this.chkImportDeviation.IsChecked,
@@ -904,7 +903,18 @@ namespace Drillholes.Windows.Dialogs
             var value = cboDesurvey.SelectedItem as ComboBoxItem;
             string selectedValue = value.Content.ToString();
 
-            preferences.DesurveyMethod = selectedValue; 
+            DrillholeDesurveyEnum surveyMethod = DrillholeDesurveyEnum.AverageAngle;
+
+            if (selectedValue == DrillholeDesurveyEnum.BalancedTangential.ToString())
+                surveyMethod = DrillholeDesurveyEnum.BalancedTangential;
+            else if (selectedValue == DrillholeDesurveyEnum.MinimumCurvature.ToString())
+                surveyMethod = DrillholeDesurveyEnum.MinimumCurvature;
+            else if (selectedValue == DrillholeDesurveyEnum.RadiusCurvature.ToString())
+                surveyMethod = DrillholeDesurveyEnum.RadiusCurvature;
+            else if (selectedValue == DrillholeDesurveyEnum.Tangential.ToString())
+                surveyMethod = DrillholeDesurveyEnum.Tangential;
+
+            preferences.DesurveyMethod = surveyMethod; 
 
             return preferences;
         }
@@ -1073,6 +1083,134 @@ namespace Drillholes.Windows.Dialogs
                 xmlName = "DesurveyMethod";
                 UpdateXmlPreferences(selectedValue);
             }
+        }
+
+        private void frameMain_Navigated(object sender, NavigationEventArgs e)
+        {
+            var whichPage = frameMain.Content as Page;
+
+            DrillholeImportPage importPage = null;
+
+            if (whichPage.Title == "Select Drillhole Fields")
+            {
+                importPage = frameMain.Content as DrillholeImportPage;
+                if (importPage.collarPreviewModel.collarDataFields != null)
+                    importPage.RefreshPreviewData();
+            }
+            else
+                return;
+        }
+
+        private void btnExport_Click(object sender, RoutedEventArgs e)
+        {
+            string strFilter = "";
+
+            if ((bool)radExcel.IsChecked)
+            {
+                MessageBox.Show("Sorry, but 'Export to Excel' has not yet been implemented!", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            else if ((bool) radText.IsChecked)
+            {
+
+                ExportToText("Drillhole Data (*.csv)| *.csv |Drillhole Data (*.txt)| *.txt |All files(*.*) | *.* ");
+            }
+            else if ((bool)radDatabase.IsChecked)
+            {
+                MessageBox.Show("Sorry, but 'Export to Database' has not yet been implemented!", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+        }
+
+        private async void ExportToText(string filter)
+        {
+            string outputName = "";
+            outputName = await ExportDataName(filter);
+
+            if (outputName == "")
+                return;
+
+            string xmlProjectFile = "";
+
+            //get pathname to project file if saved session
+            if (savedProject)
+            {
+                xmlProjectFile = await CheckProjectFile();
+
+            }
+            else
+            {
+
+            }
+
+            //TODO
+
+
+
+        }
+
+        private async Task<string> ExportDataName(string filter)
+        {
+            string strHeader = "Export Results";
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Title = strHeader;
+            saveFileDialog.Filter = filter;
+            saveFileDialog.FilterIndex = 1;
+            saveFileDialog.CreatePrompt = false;
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.AddExtension = false;
+
+            string outputName = "";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                outputName = saveFileDialog.FileName;
+
+                FileInfo info = new FileInfo(outputName);
+                string sessionName = info.Name;
+
+                //check if file exists
+                if (info.Exists)
+                {
+                    MessageBoxResult fileExists = MessageBox.Show("File '" + sessionName + "' already exists. Overwrite existing file?", "Save File", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+                    if (MessageBoxResult.Cancel == fileExists)
+                        return "";
+                    else if (MessageBoxResult.No == fileExists)
+                        return "";
+                }
+            }
+
+            return outputName;
+        }
+
+        private async void SaveOutputFromDesurvey(string projectFile, string drillholeTableFile)
+        {
+            List<DrillholeTable> tables = new List<DrillholeTable>();
+
+            if (_xml == null)
+                _xml = new Drillholes.XML.XmlController();
+
+            if (_xmlService == null)
+                _xmlService = new XmlService(_xml);
+
+            tables = await _xmlService.TableParameters(projectFile, drillholeTableFile, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable, DrillholeTableType.other);
+
+        }
+
+        private void radDatabase_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void radExcel_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void radText_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 

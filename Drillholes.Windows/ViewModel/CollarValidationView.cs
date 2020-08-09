@@ -1664,7 +1664,7 @@ namespace Drillholes.Windows.ViewModel
             {
                 if (!bOnce)
                 {
-                    // rowValues.Add(value.Ignore);
+                    rowValues.Add(value.Ignore);
                     rowValues.Add(value.id_col.ToString());
                     rowValues.Add(value.holeid);
                     rowValues.Add(value.x);
