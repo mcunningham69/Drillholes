@@ -16,6 +16,14 @@ namespace Drillholes.Domain
         public const string drillholeData = "DrillholeData";
         public const string drillholeDesurv = "DrillholeDesurv";
 
+        //desurvey
+        public const string AverageAngle = "Average Angle";
+        public const string BalancedTangential = "Balanced Tangential";
+        public const string MinimumCurvature = "Minimum Curvature";
+        public const string RadiusCurvature = "Radius Curvature";
+        public const string Tangential = "Tangential";
+
+
         //validation tests
         public const string checkHole = "Check 'HoleID' field";
         public const string checkX = "Check 'X' field";

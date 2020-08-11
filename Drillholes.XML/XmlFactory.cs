@@ -71,7 +71,7 @@ namespace Drillholes.XML
                 case DrillholesXmlEnum.DrillholeInputData:
                     return new XmlTableInputdata();
                 case DrillholesXmlEnum.DrillholeDesurveyData:
-                    return null;
+                    return new XmlDrillholeResults(); ;
                 case DrillholesXmlEnum.DrillholePreferences:
                     return new XmlDrillholePreferences();
                 case DrillholesXmlEnum.DrillholeProject:
@@ -277,134 +277,6 @@ namespace Drillholes.XML
 
 
             return table;
-        }
-    }
-
-    public class XmlTableInputdata : XmlManagement
-    {
-
-        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
-        {
-            var tableValues = (XElement)xmlValues;
-
-            XElement tableParameters = null;
-
-            XDocument xmlFile = new XDocument(
-               new XDeclaration("1.0", null, null),
-               new XProcessingInstruction("order", "alpha ascending"),
-               new XElement(rootName, new XAttribute("Modified", DateTime.Now)));
-
-            tableParameters = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
-            tableParameters.Add(tableValues);
-
-            xmlFile.Root.Add(tableParameters);
-
-            SaveXML(xmlFile, fullXmlName);
-
-            return xmlFile.Element(rootName);
-        }
-
-        public override async Task<object> OpenXML(string fullXmlName)
-        {
-            return XDocument.Load(fullXmlName);
-        }
-
-        public override void SaveXML(XDocument xmlFile, string fullXmlName)
-        {
-            xmlFile.Save(fullXmlName);
-        }
-
-
-
-        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
-        {
-            var tableValues = (XElement)xmlValues;
-
-            XElement tableParameters = null;
-
-            var elements = xmlData.Descendants(rootName).Elements();
-
-            var updateValues = elements.Where(e => e.Attribute("Value").Value == tableType.ToString());
-
-
-            if (updateValues.Any())
-            {
-                updateValues.Remove();
-
-            }
-
-
-            //insert if null
-
-            tableParameters = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
-            tableParameters.Add(tableValues);
-
-            xmlData.Root.Add(tableParameters);
-
-            //change modified time
-            var modified = xmlData.Descendants(rootName).Select(m => m.Attribute("Modified")).FirstOrDefault();
-            if (modified != null)
-                modified.Value = DateTime.Now.ToString();
-
-            SaveXML(xmlData, fullXmlName);
-
-            return xmlData.Element(rootName);
-        }
-
-        public override Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
-        {
-            //TODO
-            throw new NotImplementedException();
-        }
-
-        public override async void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot, DrillholeTableType tableType)
-        {
-            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
-            var elements = xmlFile.Descendants(drillholeRoot).Elements();
-
-            //var check = elements.Select(e => e.Element(DrillholeConstants.drillholeData).Value).SingleOrDefault();
-
-            //if (check == "")  //saved session at dialog page
-            //{
-                var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeData)).Select(f => f.Element(tableType.ToString())).FirstOrDefault();
-
-                updateValues.Value = drillholeFile;
-
-            //}
-
-            SaveXML(xmlFile, projectFile);
-        }
-
-        public override async Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType)
-        {
-            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
-            var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
-
-            var drillholeFieldValues = elements.Select(e => e.Element(drillholeRoot)).Nodes().ToList(); //return all the tables and check below for the table type to then open the table fields table.
-
-            string drillholeData = "";
-
-
-            foreach (XElement drillholeValue in drillholeFieldValues)
-            {
-                if (drillholeValue.Name == tableType.ToString())
-                {
-                    drillholeData = drillholeValue.Value;
-                    break;
-                }
-            }
-
-
-            if (drillholeData == "")
-                return null;
-
-            XDocument tableProperties = await OpenXML(drillholeData) as XDocument;
-
-            var tableElements = tableProperties.Descendants("TableType").Elements().FirstOrDefault();
-
-
-
-            return tableElements;
         }
     }
 
@@ -757,13 +629,13 @@ namespace Drillholes.XML
 
             DrillholeDesurveyEnum desurveyMethod = DrillholeDesurveyEnum.AverageAngle;
 
-            if (surveyMethod == DrillholeDesurveyEnum.BalancedTangential.ToString())
+            if (surveyMethod == DrillholeConstants.BalancedTangential)
                 desurveyMethod = DrillholeDesurveyEnum.BalancedTangential;
-            else if (surveyMethod == DrillholeDesurveyEnum.MinimumCurvature.ToString())
+            else if (surveyMethod == DrillholeConstants.MinimumCurvature)
                 desurveyMethod = DrillholeDesurveyEnum.MinimumCurvature;
-            else if (surveyMethod == DrillholeDesurveyEnum.RadiusCurvature.ToString())
+            else if (surveyMethod == DrillholeConstants.RadiusCurvature)
                 desurveyMethod = DrillholeDesurveyEnum.RadiusCurvature;
-            else if (surveyMethod == DrillholeDesurveyEnum.Tangential.ToString())
+            else if (surveyMethod == DrillholeConstants.Tangential)
                 desurveyMethod = DrillholeDesurveyEnum.Tangential;
 
             DrillholePreferences readPreferences = new DrillholePreferences()
@@ -914,5 +786,381 @@ namespace Drillholes.XML
         }
     }
 
+    public class XmlTableInputdata : XmlManagement
+    {
 
+        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
+        {
+            var tableValues = (XElement)xmlValues;
+
+            XElement tableParameters = null;
+
+            XDocument xmlFile = new XDocument(
+               new XDeclaration("1.0", null, null),
+               new XProcessingInstruction("order", "alpha ascending"),
+               new XElement(rootName, new XAttribute("Modified", DateTime.Now)));
+
+            tableParameters = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
+            tableParameters.Add(tableValues);
+
+            xmlFile.Root.Add(tableParameters);
+
+            SaveXML(xmlFile, fullXmlName);
+
+            return xmlFile.Element(rootName);
+        }
+
+        public override async Task<object> OpenXML(string fullXmlName)
+        {
+            return XDocument.Load(fullXmlName);
+        }
+
+        public override void SaveXML(XDocument xmlFile, string fullXmlName)
+        {
+            xmlFile.Save(fullXmlName);
+        }
+
+
+
+        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        {
+            var tableValues = (XElement)xmlValues;
+
+            XElement tableParameters = null;
+
+            var elements = xmlData.Descendants(rootName).Elements();
+
+            var updateValues = elements.Where(e => e.Attribute("Value").Value == tableType.ToString());
+
+
+            if (updateValues.Any())
+            {
+                updateValues.Remove();
+
+            }
+
+
+            //insert if null
+
+            tableParameters = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
+            tableParameters.Add(tableValues);
+
+            xmlData.Root.Add(tableParameters);
+
+            //change modified time
+            var modified = xmlData.Descendants(rootName).Select(m => m.Attribute("Modified")).FirstOrDefault();
+            if (modified != null)
+                modified.Value = DateTime.Now.ToString();
+
+            SaveXML(xmlData, fullXmlName);
+
+            return xmlData.Element(rootName);
+        }
+
+        public override Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
+        public override async void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot, DrillholeTableType tableType)
+        {
+            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
+            var elements = xmlFile.Descendants(drillholeRoot).Elements();
+
+            var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeData)).Select(f => f.Element(tableType.ToString())).FirstOrDefault();
+
+            updateValues.Value = drillholeFile;
+
+            SaveXML(xmlFile, projectFile);
+        }
+
+        public override async Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType)
+        {
+            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
+            var elements = xmlFile.Descendants(drillholeProjectRoot).Elements();
+
+            var drillholeFieldValues = elements.Select(e => e.Element(drillholeRoot)).Nodes().ToList(); //return all the tables and check below for the table type to then open the table fields table.
+
+            string drillholeData = "";
+
+
+            foreach (XElement drillholeValue in drillholeFieldValues)
+            {
+                if (drillholeValue.Name == tableType.ToString())
+                {
+                    drillholeData = drillholeValue.Value;
+                    break;
+                }
+            }
+
+            if (drillholeData == "")
+                return null;
+
+            XDocument tableProperties = await OpenXML(drillholeData) as XDocument;
+
+            var tableElements = tableProperties.Descendants("TableType").Elements().FirstOrDefault();
+
+
+
+            return tableElements;
+        }
+    }
+
+    public class XmlDrillholeResults : XmlManagement
+    {
+        public override async Task<XElement> CreateXML(string fullXmlName, object desurveyObject, DrillholeTableType tableType, string rootName)
+        {
+            XDocument xmlFile = new XDocument(
+            new XDeclaration("1.0", null, null),
+            new XProcessingInstruction("order", "alpha ascending"),
+            new XElement(rootName, new XAttribute("Modified", DateTime.Now)));
+
+            XElement desurveyed = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
+            XElement xmlValues = null;
+
+            switch (tableType)
+            {
+                case (DrillholeTableType.collar):
+                    xmlValues = await SaveDesurveyXml.SaveCollarXml(desurveyObject as CollarDesurveyObject);
+                    break;
+                case (DrillholeTableType.survey):
+                    xmlValues = await SaveDesurveyXml.SaveSurveyXml(desurveyObject as SurveyDesurveyObject);
+                    break;
+                case (DrillholeTableType.assay):
+                    xmlValues = await SaveDesurveyXml.SaveAssayXml(desurveyObject as AssayDesurveyObject);
+                    break;
+                case (DrillholeTableType.interval):
+                    xmlValues = await SaveDesurveyXml.SaveIntervalXml(desurveyObject as IntervalDesurveyObject);
+                    break;
+                case (DrillholeTableType.continuous):
+                    xmlValues = await SaveDesurveyXml.SaveContinuousXml(desurveyObject as ContinuousDesurveyObject);
+                    break;
+                default:
+                    throw new Exception("Problem with desurvey table type");
+
+            }
+
+            var tableValues = (XElement)xmlValues;
+
+            xmlFile.Root.Add(tableValues);
+
+            SaveXML(xmlFile, fullXmlName);
+
+            return xmlFile.Element(rootName);
+        }
+
+
+        public override async Task<object> OpenXML(string fullXmlName)
+        {
+            return XDocument.Load(fullXmlName);
+
+        }
+
+        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        {
+            var tableValues = (XElement)xmlValues;
+
+            XElement tableParameters = null;
+
+            var elements = xmlData.Descendants(rootName).Elements();
+
+            var updateValues = elements.Where(e => e.Attribute("Value").Value == tableType.ToString());
+
+
+            if (updateValues.Any())
+            {
+                updateValues.Remove();
+
+            }
+
+
+            //insert if null
+
+            tableParameters = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
+            tableParameters.Add(tableValues);
+
+            xmlData.Root.Add(tableParameters);
+
+            //change modified time
+            var modified = xmlData.Descendants(rootName).Select(m => m.Attribute("Modified")).FirstOrDefault();
+            if (modified != null)
+                modified.Value = DateTime.Now.ToString();
+
+            SaveXML(xmlData, fullXmlName);
+
+            return xmlData.Element(rootName);
+        }
+
+        public override async Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override async void SaveXML(XDocument xmlFile, string fullXmlName)
+        {
+            xmlFile.Save(fullXmlName);
+
+        }
+
+        public override async void UpdateProjectFile(string projectFile, string drillholeFile, string drillholeRoot, DrillholeTableType tableType)
+        {
+            XDocument xmlFile = await OpenXML(projectFile) as XDocument;
+            var elements = xmlFile.Descendants(drillholeRoot).Elements();
+
+            var updateValues = elements.Select(e => e.Element(DrillholeConstants.drillholeData)).Select(f => f.Element(tableType.ToString())).FirstOrDefault();
+
+            updateValues.Value = drillholeFile;
+
+            SaveXML(xmlFile, projectFile);
+        }
+
+        public override async Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
+        {
+            string strValue = "";
+            bool bValue = true;
+
+            var elements = xmlData.Descendants(rootName).Elements();
+            var updateValues = elements.Select(e => e.Element(xmlName)).SingleOrDefault();
+
+            if (Information.IsNumeric(xmlChange))
+            {
+                updateValues.Value = xmlChange.ToString();
+            }
+            else
+            {
+                updateValues.Value = xmlChange.ToString();
+            }
+
+            //change modified time
+            var modified = xmlData.Descendants(rootName).Select(m => m.Attribute("Modified")).FirstOrDefault();
+            if (modified != null)
+                modified.Value = DateTime.Now.ToString();
+
+            SaveXML(xmlData, fullXmlName);
+
+            return xmlData.Element(rootName);
+        }
+    }
+
+    public static class SaveDesurveyXml
+    {
+        public async static Task<XElement> SaveCollarXml(CollarDesurveyObject collarDesurvey)
+        {
+            XElement xmlResults = null;
+
+            List<XElement> nodes = new List<XElement>();
+            XElement subheader = null;
+            XElement header = new XElement("TableType", new XAttribute("Name", "Collar"));
+
+            //loop through each value and store in XML
+            var holeId = collarDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var xField = collarDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var yField = collarDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var zField = collarDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var tdField = collarDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var dipField = collarDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var azimuthField = collarDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+
+            //   var duplicates = collarDesurvey.bhid.GroupBy(x => x).Select(group => group.Key).ToList();
+
+            string hole = "";
+            int colid = 0;
+            double x = 0.0;
+            double y = 0.0;
+            double z = 0.0;
+            double td = 0.0;
+            double dip = 0.0;
+            double azimuth = 0.0;
+
+            int counter = 0;
+            for (int i = 0; i < collarDesurvey.bhid.Count; i++)
+            {
+                if (counter == 0)
+                {
+                    //add this once
+                    colid = collarDesurvey.id[i];
+                    hole = collarDesurvey.bhid[i];
+                    xmlResults = new XElement(holeId, new XAttribute("Name", hole), new XAttribute("ID", colid.ToString()));
+
+                    header.Add(xmlResults);
+                }
+
+                if (collarDesurvey.isCollar[i])
+                    subheader = new XElement("Coordinates", new XAttribute("Type", "Collar"));
+                else
+                    subheader = new XElement("Coordinates", new XAttribute("Type", "Toe"));
+
+                //add as many as needed
+                x = collarDesurvey.x[i];
+                y = collarDesurvey.y[i];
+                z = collarDesurvey.z[i];
+                td = collarDesurvey.length[i];
+
+
+                nodes.Add(new XElement(xField, x.ToString()));
+                nodes.Add(new XElement(yField, y.ToString()));
+                nodes.Add(new XElement(zField, z.ToString()));
+                nodes.Add(new XElement(tdField, td.ToString()));
+
+                if (dipField != null)
+                {
+                    azimuth = collarDesurvey.azimuth[i];
+                    dip = collarDesurvey.dip[i];
+                    nodes.Add(new XElement(dipField, dip.ToString()));
+                    nodes.Add(new XElement(azimuthField, azimuth.ToString()));
+                }
+
+
+                subheader.Add(nodes);
+                xmlResults.Add(subheader);
+
+                if (i < collarDesurvey.bhid.Count - 1)
+                {
+                    int idcheck = collarDesurvey.id[i + 1];
+
+                    if (idcheck != colid)
+                    {
+
+                        counter = 0;
+                    }
+                    else
+                    {
+                        counter++;
+                    }
+
+                    nodes.Clear();
+
+                }
+            }
+
+
+            return header;
+        }
+        public async static Task<XElement> SaveSurveyXml(SurveyDesurveyObject surveyDesurvey)
+        {
+            XElement xmlResults = null;
+
+            return xmlResults;
+        }
+
+        public async static Task<XElement> SaveAssayXml(AssayDesurveyObject assayDesurvey)
+        {
+            XElement xmlResults = null;
+
+            return xmlResults;
+        }
+        public async static Task<XElement> SaveIntervalXml(IntervalDesurveyObject intervalDesurvey)
+        {
+            XElement xmlResults = null;
+
+            return xmlResults;
+        }
+        public async static Task<XElement> SaveContinuousXml(ContinuousDesurveyObject intervalDesurvey)
+        {
+            XElement xmlResults = null;
+
+            return xmlResults;
+        }
+    }
 }

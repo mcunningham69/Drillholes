@@ -8,17 +8,21 @@ using System.Threading.Tasks;
 
 namespace Drillholes.Domain.DTO
 {
-    public class SurveyDesurveyDto
+    public class SurveyDesurveyDto : CollarDesurveyDto
     {
-        public string bhid { get; set; }
-        public float distance { get; set; }
-        public float azimuth { get; set; }
-        public float dip { get; set; }
-        public DrillholeDesurveyEnum desurveyType { get; set; }
-        public bool IsValid { get; set; }
-        public List<AttributeFields> attributeFields { get; set; }
+        public ImportTableFields surveyTableFields { get; set; }
+        public List<int> survID { get; set; }
+        public List<string> survHoleID { get; set; }
+        public List<double> distance { get; set; }
+        public List<bool> isSurvey { get; set; }
 
-      
+        public SurveyDesurveyDto()
+        {
+            survHoleID = new List<string>();
+            survID = new List<int>();
+            distance = new List<double>();
+            isSurvey = new List<bool>();
+        }
 
     }
 }

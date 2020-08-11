@@ -122,7 +122,14 @@ namespace Drillholes.Windows.Calculate
                 InitialiseAssayMapping();
 
             //surveymethod has to be Tangential
-            var collarResults = await _desurveyService.AssayVerticalHole(assayDesurvMapper, surveyMethod, tableFields, bToe, assayXmlData );
+            var assayResults = await _desurveyService.AssayVerticalHole(assayDesurvMapper, surveyMethod, tableFields, bToe, assayXmlData ); //ADD COLLARTABLEFIELDS AND INHERIT
+
+            //create tableFields table and store desurveyed results
+            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, assayResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.assay);
+
+            //save to xml
+            if (savedSession)
+                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.assay);
 
             return true;
         }

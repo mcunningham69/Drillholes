@@ -34,6 +34,8 @@ namespace Drillholes.Domain.Interfaces
         Task<object> DrillholeProjectProperties(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType);
 
 
-        Task<XElement> DrillholeDesurvey();
+        Task<XElement> DrillholeDesurvey(string fileName, object xPreview, DrillholeTableType tableType, string xmlNodeName, string rootName);
+        void DrillholeDesurvey(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType);
+        Task<XElement> DrillholeDesurvey(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType);
     }
 }

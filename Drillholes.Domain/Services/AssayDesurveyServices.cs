@@ -24,9 +24,9 @@ namespace Drillholes.Domain.Services
         }
 
       
-        public async Task<AssayDesurveyObject> AssayVerticalHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeValues)
+        public async Task<AssayDesurveyObject> AssayVerticalHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarFields, ImportTableFields assayTableFields, bool bToe, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateAssayVerticalHole(desurveyType, tableFields, bToe, drillholeValues) as AssayDesurveyDto;
+            var desurvDto = await _drillhole.CreateAssayVerticalHole(desurveyType, collarFields, assayTableFields, bToe, drillholeValues) as AssayDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {

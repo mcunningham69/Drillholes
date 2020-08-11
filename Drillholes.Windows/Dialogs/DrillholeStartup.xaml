@@ -218,9 +218,9 @@
                 </RibbonGroup>
 
                 <RibbonGroup Header="Survey Type" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
-                    <RibbonRadioButton Name="radDownhole" QuickAccessToolBarId="dh" SmallImageSource="../Images/LineArrow.png" Label="Downhole"  IsChecked="True" Click="radDownhole_Click"/>
+                    <RibbonRadioButton Name="radDownhole" QuickAccessToolBarId="dh" SmallImageSource="../Images/LineArrow.png" Label="Downhole"  IsChecked="False" Click="radDownhole_Click"/>
                     <RibbonRadioButton Name="radCollarSurvey" QuickAccessToolBarId="cs" SmallImageSource="../Images/compass.png" Label="Collar Survey" IsChecked="False" Click="radCollarSurvey_Click"/>
-                    <RibbonRadioButton Name="radVertical" QuickAccessToolBarId="vh" SmallImageSource="../Images/DownArrow.png" Label="Vertical" IsChecked="False" Click="radVertical_Click"/>
+                    <RibbonRadioButton Name="radVertical" QuickAccessToolBarId="vh" SmallImageSource="../Images/DownArrow.png" Label="Vertical" IsChecked="True" Click="radVertical_Click"/>
                 </RibbonGroup>
                 <RibbonGroup Header="Survey Calculation" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="dsu" Width="Auto">
                     <Label  Content="Desurvey:" />
@@ -234,9 +234,9 @@
 
                 </RibbonGroup>
                 <RibbonGroup Header="Export Data" SmallImageSource="../Images/ExportTheme.png" QuickAccessToolBarId="exp">
-                    <RibbonRadioButton Name="radText" SmallImageSource="../Images/ExportTableToFile.png" QuickAccessToolBarId="xtxt" Label="Text file" Click="radText_Click" />
+                    <RibbonRadioButton Name="radText" SmallImageSource="../Images/ExportTableToFile.png" QuickAccessToolBarId="xtxt" IsChecked="True" Label="Text file" Click="radText_Click" />
                     <RibbonRadioButton Name="radExcel" SmallImageSource="../Images/ExportToExcel.png" QuickAccessToolBarId="xex" IsChecked="false" Label="To Excel" Click="radExcel_Click"/>
-                    <RibbonRadioButton Name="radDatabase" SmallImageSource="../Images/ExportData.png" QuickAccessToolBarId="xdbo" IsChecked="True" Label="To Database" Click="radDatabase_Click"/>
+                    <RibbonRadioButton Name="radDatabase" SmallImageSource="../Images/ExportData.png" QuickAccessToolBarId="xdbo" IsChecked="false" Label="To Database" Click="radDatabase_Click"/>
                     <RibbonButton Name="btnExport" QuickAccessToolBarId="exp" SmallImageSource="../Images/ExportTestRunResult.png" Label="Export Drillholes" Click="btnExport_Click" />
                 </RibbonGroup>
 

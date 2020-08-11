@@ -23,7 +23,7 @@ namespace Drillholes.Domain.Services
             this._drillhole = drillhole;
         }
 
-        public async Task<CollarDesurveyObject> CollarVerticalHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, XElement collarData)
+        public async Task<CollarDesurveyObject> CollarVerticalHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> collarData)
         {
             var collarDesurvDto = await _drillhole.CreateCollarVerticalHole(desurveyType, tableFields, bToe, collarData) as CollarDesurveyDto;
 
@@ -35,7 +35,7 @@ namespace Drillholes.Domain.Services
             return mapper.Map<CollarDesurveyDto, CollarDesurveyObject>(collarDesurvDto);
         }
 
-        public async Task<CollarDesurveyObject> CollarSurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, XElement collarData)
+        public async Task<CollarDesurveyObject> CollarSurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> collarData)
         {
             var desurvDto = await _drillhole.CreateCollarSurveyHole(desurveyType, tableFields, bToe, collarData) as CollarDesurveyDto;
 

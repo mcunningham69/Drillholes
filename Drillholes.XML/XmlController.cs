@@ -59,11 +59,86 @@ namespace Drillholes.XML
             }
 
         }
+
+        public async Task<XElement> DrillholeData(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType)
+        {
+            XElement xPreview = null;
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeInputData);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeInputData);
+
+            if (File.Exists(projectFile))
+            {
+                var query = await factory.ReturnValuesFromXML(projectFile, drillholeTableFile, drillholeProjectRoot, drillholeRootname, tableType);
+
+                if (query != null)
+                    xPreview = query as XElement;
+            }
+
+            return xPreview;
+        }
         #endregion
 
-        public Task<XElement> DrillholeDesurvey()
+        public async Task<XElement> DrillholeDesurvey(string fileName, object desurveyObject, DrillholeTableType tableType, string xmlNodeName, string rootName)
         {
-            throw new NotImplementedException();
+            XDocument xmlFile = null;
+            XElement elements = null;
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeDesurveyData);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeDesurveyData);
+
+            if (!File.Exists(fileName))
+                elements = await factory.CreateXML(fileName, desurveyObject, tableType, rootName);
+            else
+            {
+                xmlFile = await factory.OpenXML(fileName) as XDocument;
+
+                if (xmlFile == null)
+                    elements = await factory.CreateXML(fileName, desurveyObject, tableType, rootName);
+                else
+                    elements = await factory.ReplaceXmlNode(fileName, desurveyObject, xmlFile, tableType, xmlNodeName, rootName) as XElement;
+            }
+
+            return elements;
+        }
+
+        public async void DrillholeDesurvey(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType)
+        {
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeDesurveyData);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeDesurveyData);
+
+            if (File.Exists(projectFile))
+            {
+                factory.UpdateProjectFile(projectFile, drillholePreferencesFile, drillholeProjectRoot, tableType);
+
+            }
+
+        }
+
+        public async Task<XElement> DrillholeDesurvey(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType)
+        {
+            XElement xPreview = null;
+
+            if (factory == null)
+                factory = new XmlFactory(DrillholesXmlEnum.DrillholeDesurveyData);
+            else
+                factory.SetXmlType(DrillholesXmlEnum.DrillholeDesurveyData);
+
+            if (File.Exists(projectFile))
+            {
+                var query = await factory.ReturnValuesFromXML(projectFile, drillholeTableFile, drillholeProjectRoot, drillholeRootname, tableType);
+
+                if (query != null)
+                    xPreview = query as XElement;
+            }
+
+            return xPreview;
         }
 
         #region Preferences
@@ -479,24 +554,6 @@ namespace Drillholes.XML
             return tables;
         }
 
-        public async Task<XElement> DrillholeData(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType)
-        {
-            XElement xPreview = null; 
 
-            if (factory == null)
-                factory = new XmlFactory(DrillholesXmlEnum.DrillholeInputData);
-            else
-                factory.SetXmlType(DrillholesXmlEnum.DrillholeInputData);
-
-            if (File.Exists(projectFile))
-            {
-                var query = await factory.ReturnValuesFromXML(projectFile, drillholeTableFile, drillholeProjectRoot, drillholeRootname, tableType);
-
-                if (query != null)
-                    xPreview = query as XElement;
-            }
-
-            return xPreview;
-        }
     }
 }

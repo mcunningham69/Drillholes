@@ -1047,8 +1047,11 @@ namespace Drillholes.Windows.Dialogs
 
             if (_tabcontrol.SelectedIndex == 0)
             {
+                List<XElement> collarValues = new List<XElement>();
+                collarValues.Add(collarPreviewModel.collarTableObject.xPreview);
+
                 Calculate.GenerateCollarDesurveyResults collarResults = new Calculate.GenerateCollarDesurveyResults(savedSession, projectSession, projectLocation, collarPreviewModel.collarDataFields,
-                   collarPreviewModel.collarTableObject.xPreview);
+                   collarValues);
 
                 if (preferences.surveyType == DrillholeSurveyType.vertical)
                 {
@@ -1059,9 +1062,30 @@ namespace Drillholes.Windows.Dialogs
                     await collarResults.GenerateCollarDesurveyFromCollarSurvey(bToe, DrillholeDesurveyEnum.Tangential);
                 }
             }
-            else if (_tabcontrol.SelectedIndex > 0)
+            else if (_tabcontrol.SelectedIndex == 1)
             {
-                MessageBox.Show("Collar only implemented");
+                MessageBox.Show("survey not implemented");
+            }
+            else if (_tabcontrol.SelectedIndex == 2)
+            {
+                List<XElement> assayValues = new List<XElement>();
+                assayValues.Add(assayPreviewModel.assayTableObject.xPreview);
+
+                Calculate.GenerateAssayDesurveyResults assayResults = new Calculate.GenerateAssayDesurveyResults(savedSession, projectSession, projectLocation, assayPreviewModel.assayDataFields,
+                   assayValues);
+
+                if (preferences.surveyType == DrillholeSurveyType.vertical)
+                {
+                    await assayResults.GenerateAssayDesurveyVertical(bToe, preferences.DesurveyMethod);
+                }
+                else if (preferences.surveyType == DrillholeSurveyType.collarsurvey)
+                {
+                    await assayResults.GenerateAssayDesurveyFromCollarSurvey(bToe, preferences.DesurveyMethod);
+                }
+                else
+                {
+                    await assayResults.GenerateAssayDesurveyFromDownhole(bToe, preferences.DesurveyMethod);
+                }
             }
 
         

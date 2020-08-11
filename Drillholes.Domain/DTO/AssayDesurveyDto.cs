@@ -8,18 +8,30 @@ using System.Threading.Tasks;
 
 namespace Drillholes.Domain.DTO
 {
-    public class AssayDesurveyDto
+    public class AssayDesurveyDto : SurveyDesurveyDto
     {
-        public string bhid { get; set; }
-        public float distFrom { get; set; }
-        public float distTo { get; set; }
-        public DrillholeDesurveyEnum desurveyType { get; set; }
-        public DrillholeSurveyType surveyType { get; set; }
-        public List<AttributeFields> gradeFields { get; set; }
-        public bool IsValid { get; set; }
-        public List<AttributeFields> attributeFields { get; set; }
+        public ImportTableFields assayTableFields { get; set; }
+        public List<int> assID { get; set; }
+        public List<string> assayBhid { get; set; }
+        public List<double> mfrom { get; set; }
+        public List<double> mto { get; set; }
+        public List<bool> isAssay { get; set; }
 
+
+        public AssayDesurveyDto()
+        {
+            assID = new List<int>();
+            assayBhid = new List<string>();
+            mfrom = new List<double>();
+            mto = new List<double>();
+            length = new List<double>();
+            isAssay = new List<bool>();
       
+        }
 
+        public void CalculateLength(int i)
+        {
+            length[i] = mto[i] - mfrom[i];
+        }
     }
 }

@@ -8,19 +8,15 @@ using System.Threading.Tasks;
 
 namespace Drillholes.Domain.DataObject
 {
-    public class AssayDesurveyObject
+    public class AssayDesurveyObject : SurveyDesurveyObject
     {
-        public string bhid { get; set; }
-        public float distFrom { get; set; }
-        public float distTo { get; set; }
-        public DrillholeDesurveyEnum desurveyType { get; set; }
-        public DrillholeSurveyType surveyType { get; set; }
-        public List<AttributeFields> gradeFields { get; set; }
-        public bool IsValid { get; set; }
+        public ImportTableFields assayTableFields { get; set; }
+        public List<int> assID { get; set; }
+        public List<string> assayBhid { get; set; }
+        public List<double> mfrom { get; set; }
+        public List<double> mto { get; set; }
+        public List<bool> isAssay { get; set; }
 
-        public List<AttributeFields> attributeFields { get; set; }
-
-      
 
     }
 }

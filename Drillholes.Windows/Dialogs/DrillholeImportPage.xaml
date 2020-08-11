@@ -510,9 +510,9 @@
         <CheckBox Grid.Column="2" Grid.Row="4" Name="chkImport" Content="{Binding importAllColumns}" IsChecked="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="chkImport_Click" Visibility="Visible"/>
 
         <RadioButton Name="radSurvey" VerticalAlignment="Bottom" Content="Collar" Grid.Column="1" Grid.Row="4" Visibility="Visible" ToolTip="Use Azimuth and Dip contained in 'Collar' table" Click="radSurvey_Click"/>
-        <RadioButton Name="radVertical" VerticalAlignment="Bottom" Content="Vertical"  Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" Margin="60,0,0,0" Visibility="Visible" 
+        <RadioButton Name="radVertical" VerticalAlignment="Bottom" IsChecked="True" Content="Vertical"  Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" Margin="60,0,0,0" Visibility="Visible" 
                      ToolTip="Treat all holes as 'Vertical'" Click="radVertical_Click"/>
-        <RadioButton Name="radDhole" VerticalAlignment="Bottom" Content="Downhole" IsChecked="True" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" Margin="130,0,0,0" Visibility="Visible" 
+        <RadioButton Name="radDhole" VerticalAlignment="Bottom" Content="Downhole" IsChecked="False" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" Margin="130,0,0,0" Visibility="Visible" 
                      ToolTip="Use Azimuth and Dip from downhole 'Survey' table" Click="radDhole_Click" />
 
         <Grid Grid.Column="4" Grid.Row="3" Grid.RowSpan="2" Grid.ColumnSpan="1" Name="grdValid">

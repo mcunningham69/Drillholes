@@ -40,9 +40,25 @@ namespace Drillholes.Domain.Services
 
         }
 
+
         public async Task<XElement> DrillholeData(string projectFile, string drillholeTableFile, string projectRoot, string rootName, DrillholeTableType tableType)
         {
             var xml = await _xml.DrillholeData(projectFile, drillholeTableFile, projectRoot, rootName, tableType) as XElement;
+
+            return xml;
+        }
+
+
+        public async Task<XElement> Drillholedesurveydata(string projectFile, string drillholeTableFile, string projectRoot, string rootName, DrillholeTableType tableType)
+        {
+            var xml = await _xml.DrillholeDesurvey(projectFile, drillholeTableFile, projectRoot, rootName, tableType) as XElement;
+
+            return xml;
+        }
+
+        public async Task<XElement> Drillholedesurveydata(string drillholeTableFile, object desurvObject, string rootName, DrillholeTableType tableType)
+        {
+            var xml = await _xml.DrillholeDesurvey(drillholeTableFile, desurvObject, tableType, "", rootName) as XElement;
 
             return xml;
         }

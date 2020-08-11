@@ -45,10 +45,11 @@ namespace Drillholes.Windows.Calculate
             }
         }
 
+
         public XmlService _xmlService;
         public IDrillholeXML _xml;
 
-        public XElement collarXmlData { get; set; }
+        public List<XElement> collarXmlData { get; set; }
         public bool savedSession { get; set; }
         public string sessionName { get; set; }
         public string projectLocation { get; set; }
@@ -56,7 +57,7 @@ namespace Drillholes.Windows.Calculate
         private string DesurveyTableXmlName { get; set; }
 
         public GenerateCollarDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _fields,
-            XElement drillholeData)
+            List<XElement> drillholeData)
         {
            
             //dataGrid = new System.Data.DataTable();
@@ -120,6 +121,14 @@ namespace Drillholes.Windows.Calculate
 
             //surveymethod has to be Tangential
             var collarResults = await _desurveyService.CollarVerticalHole(collarDesurvMapper, surveyMethod, tableFields, bToe, collarXmlData );
+
+            //create tableFields table and store desurveyed results
+            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, collarResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.collar);
+
+            //save to xml
+            if (savedSession)
+                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.collar);
+
 
             return true;
         }

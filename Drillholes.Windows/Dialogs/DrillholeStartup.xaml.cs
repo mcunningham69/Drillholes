@@ -901,18 +901,22 @@ namespace Drillholes.Windows.Dialogs
 
             //ComboBox text value uses the previous value if the user selects different method. Therefore must use selected item instead
             var value = cboDesurvey.SelectedItem as ComboBoxItem;
-            string selectedValue = value.Content.ToString();
 
-            DrillholeDesurveyEnum surveyMethod = DrillholeDesurveyEnum.AverageAngle;
+            DrillholeDesurveyEnum surveyMethod = DrillholeDesurveyEnum.Tangential;
 
-            if (selectedValue == DrillholeDesurveyEnum.BalancedTangential.ToString())
-                surveyMethod = DrillholeDesurveyEnum.BalancedTangential;
-            else if (selectedValue == DrillholeDesurveyEnum.MinimumCurvature.ToString())
-                surveyMethod = DrillholeDesurveyEnum.MinimumCurvature;
-            else if (selectedValue == DrillholeDesurveyEnum.RadiusCurvature.ToString())
-                surveyMethod = DrillholeDesurveyEnum.RadiusCurvature;
-            else if (selectedValue == DrillholeDesurveyEnum.Tangential.ToString())
-                surveyMethod = DrillholeDesurveyEnum.Tangential;
+            if (value != null)
+            {
+                string selectedValue = value.Content.ToString();
+
+                if (selectedValue == DrillholeDesurveyEnum.BalancedTangential.ToString())
+                    surveyMethod = DrillholeDesurveyEnum.BalancedTangential;
+                else if (selectedValue == DrillholeDesurveyEnum.MinimumCurvature.ToString())
+                    surveyMethod = DrillholeDesurveyEnum.MinimumCurvature;
+                else if (selectedValue == DrillholeDesurveyEnum.RadiusCurvature.ToString())
+                    surveyMethod = DrillholeDesurveyEnum.RadiusCurvature;
+                else if (selectedValue == DrillholeDesurveyEnum.Tangential.ToString())
+                    surveyMethod = DrillholeDesurveyEnum.Tangential;
+            }
 
             preferences.DesurveyMethod = surveyMethod; 
 
@@ -1075,6 +1079,9 @@ namespace Drillholes.Windows.Dialogs
         {
             var test = sender as ComboBox;
             var value = test.SelectedItem as ComboBoxItem;
+
+            if (value == null)
+                return;
 
             string selectedValue = value.Content.ToString();
 
