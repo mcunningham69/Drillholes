@@ -24,9 +24,9 @@ namespace Drillholes.Domain.Services
         }
 
       
-        public async Task<AssayDesurveyObject> AssayVerticalHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarFields, ImportTableFields assayTableFields, bool bToe, List<XElement> drillholeValues)
+        public async Task<AssayDesurveyObject> AssayVerticalHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields assayTableFields, bool bToe, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateAssayVerticalHole(desurveyType, collarFields, assayTableFields, bToe, drillholeValues) as AssayDesurveyDto;
+            var desurvDto = await _drillhole.CreateAssayVerticalHole(desurveyType, collarTableFields, assayTableFields, bToe, drillholeValues) as AssayDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {
@@ -36,9 +36,10 @@ namespace Drillholes.Domain.Services
             return mapper.Map<AssayDesurveyDto, AssayDesurveyObject>(desurvDto);
         }
 
-        public async Task<AssayDesurveyObject> AssaySurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeValues)
+        public async Task<AssayDesurveyObject> AssaySurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, 
+            ImportTableFields assayTableFields, bool bToe, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateAssaySurveyHole(desurveyType, tableFields, bToe, drillholeValues) as AssayDesurveyDto;
+            var desurvDto = await _drillhole.CreateAssaySurveyHole(desurveyType, assayTableFields, bToe, drillholeValues) as AssayDesurveyDto; //TODO update interface
 
             if (desurvDto.IsValid == false)
             {
@@ -48,9 +49,10 @@ namespace Drillholes.Domain.Services
             return mapper.Map<AssayDesurveyDto, AssayDesurveyObject>(desurvDto);
         }
 
-        public async Task<AssayDesurveyObject> AssayDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeValues)
+        public async Task<AssayDesurveyObject> AssayDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields,
+            ImportTableFields assayTableFields, bool bToe, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateAssayDownhole(desurveyType, tableFields, bToe, drillholeValues) as AssayDesurveyDto;
+            var desurvDto = await _drillhole.CreateAssayDownhole(desurveyType, assayTableFields, bToe, drillholeValues) as AssayDesurveyDto; //TODO update interface
 
             if (desurvDto.IsValid == false)
             {

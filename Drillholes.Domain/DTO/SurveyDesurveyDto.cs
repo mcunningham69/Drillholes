@@ -11,17 +11,17 @@ namespace Drillholes.Domain.DTO
     public class SurveyDesurveyDto : CollarDesurveyDto
     {
         public ImportTableFields surveyTableFields { get; set; }
-        public List<int> survID { get; set; }
-        public List<string> survHoleID { get; set; }
-        public List<double> distance { get; set; }
+        public List<double> distFrom { get; set; }
         public List<bool> isSurvey { get; set; }
 
         public SurveyDesurveyDto()
         {
-            survHoleID = new List<string>();
-            survID = new List<int>();
-            distance = new List<double>();
+            bhid = new List<string>();
+            id = new List<int>();
+            distFrom = new List<double>();
             isSurvey = new List<bool>();
+            azimuth = new List<double>();
+            dip = new List<double>();
         }
 
     }

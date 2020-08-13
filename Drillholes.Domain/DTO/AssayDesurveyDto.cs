@@ -11,27 +11,25 @@ namespace Drillholes.Domain.DTO
     public class AssayDesurveyDto : SurveyDesurveyDto
     {
         public ImportTableFields assayTableFields { get; set; }
-        public List<int> assID { get; set; }
-        public List<string> assayBhid { get; set; }
-        public List<double> mfrom { get; set; }
-        public List<double> mto { get; set; }
+        public List<double> distTo { get; set; }
         public List<bool> isAssay { get; set; }
-
 
         public AssayDesurveyDto()
         {
-            assID = new List<int>();
-            assayBhid = new List<string>();
-            mfrom = new List<double>();
-            mto = new List<double>();
+            id = new List<int>();
+            bhid = new List<string>();
+            distFrom = new List<double>();
+            distTo = new List<double>();
             length = new List<double>();
             isAssay = new List<bool>();
+            dip = new List<double>();
+            azimuth = new List<double>();
       
         }
 
         public void CalculateLength(int i)
         {
-            length[i] = mto[i] - mfrom[i];
+            length[i] = distTo[i] - distFrom[i];
         }
     }
 }

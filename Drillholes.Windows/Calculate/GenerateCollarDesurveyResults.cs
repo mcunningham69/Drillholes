@@ -20,30 +20,18 @@ using Drillholes.Windows.ViewModel;
 
 namespace Drillholes.Windows.Calculate
 {
-    public class GenerateCollarDesurveyResults : ViewEditModel
+    public class GenerateCollarDesurveyResults
     {
         private CollarDesurveyServices _desurveyService;
 
-        private IDesurveyDrillhole _desurveyTable;
+        public IDesurveyDrillhole _desurveyTable;
 
         //TODO - show results
         public System.Data.DataTable dataGrid { get; set; }
 
         private IMapper collarDesurvMapper;
-
-        private ImportTableFields _tableFields;
-        public ImportTableFields tableFields
-        {
-            get
-            {
-                return this._tableFields;
-            }
-            set
-            {
-                this._tableFields = value;
-                OnPropertyChanged("tableFields");
-            }
-        }
+        public ImportTableFields collarTableFields { get; set; }
+        
 
 
         public XmlService _xmlService;
@@ -56,7 +44,7 @@ namespace Drillholes.Windows.Calculate
 
         private string DesurveyTableXmlName { get; set; }
 
-        public GenerateCollarDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _fields,
+        public GenerateCollarDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _collarTableFields,
             List<XElement> drillholeData)
         {
            
@@ -66,7 +54,7 @@ namespace Drillholes.Windows.Calculate
             sessionName = _sessionName;
             projectLocation = _projectLocation;
             collarXmlData = drillholeData;
-            tableFields = _fields;
+            collarTableFields = _collarTableFields;
 
             XmlSetUP();
 
@@ -120,7 +108,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseCollarMapping();
 
             //surveymethod has to be Tangential
-            var collarResults = await _desurveyService.CollarVerticalHole(collarDesurvMapper, surveyMethod, tableFields, bToe, collarXmlData );
+            var collarResults = await _desurveyService.CollarVerticalHole(collarDesurvMapper, surveyMethod, collarTableFields, bToe, collarXmlData );
 
             //create tableFields table and store desurveyed results
             await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, collarResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.collar);
@@ -140,7 +128,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseCollarMapping();
 
             //surveymethod has to be Tangential
-            var collarResults = await _desurveyService.CollarSurveyHole(collarDesurvMapper, surveyMethod, tableFields, bToe, collarXmlData);
+            var collarResults = await _desurveyService.CollarSurveyHole(collarDesurvMapper, surveyMethod, collarTableFields, bToe, collarXmlData);
 
             return true;
         }

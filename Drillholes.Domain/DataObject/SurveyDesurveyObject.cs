@@ -11,9 +11,7 @@ namespace Drillholes.Domain.DataObject
     public class SurveyDesurveyObject : CollarDesurveyObject
     {
         public ImportTableFields surveyTableFields { get; set; }
-        public List<int> survID { get; set; }
-        public List<string> survHoleID { get; set; }
-        public List<double> distance { get; set; }
+        public List<double> distFrom { get; set; }
         public List<bool> isSurvey { get; set; }
 
 

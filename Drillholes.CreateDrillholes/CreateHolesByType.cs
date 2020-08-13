@@ -27,7 +27,7 @@ namespace Drillholes.CreateDrillholes
         {
 
             DesurveyDrillhole assayHole = new DesurveyDrillhole(DrillholeDesurveyEnum.Tangential);
-            var assayDesurvey = await assayHole.AssayVerticalTrace(collarTableFields, assayTableFields, drillholeVales);
+            var assayDesurvey = await assayHole.AssayVerticalTrace(collarTableFields, assayTableFields, drillholeVales, bToe);
 
             if (assayDesurvey.Count > 0)
             {

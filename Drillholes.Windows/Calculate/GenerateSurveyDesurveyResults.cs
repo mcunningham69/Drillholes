@@ -20,57 +20,33 @@ using Drillholes.Windows.ViewModel;
 
 namespace Drillholes.Windows.Calculate
 {
-    public class GenerateSurveyDesurveyResults : ViewEditModel
+    public class GenerateSurveyDesurveyResults : GenerateCollarDesurveyResults
     {
         private SurveyDesurveyServices _desurveyService;
 
-        private IDesurveyDrillhole _desurveyTable;
-
-        //TODO - show results
-        public System.Data.DataTable dataGrid { get; set; }
 
         private IMapper surveyDesurvMapper;
-
-        private ImportTableFields _tableFields;
-        public ImportTableFields tableFields
-        {
-            get
-            {
-                return this._tableFields;
-            }
-            set
-            {
-                this._tableFields = value;
-                OnPropertyChanged("tableFields");
-            }
-        }
+        public ImportTableFields surveyTableFields { get; set; }
 
         public List<XElement> surveyXmlData { get; set; }
 
-        public XmlService _xmlService;
-        public IDrillholeXML _xml;
-
-        public bool savedSession { get; set; }
-        public string sessionName { get; set; }
-        public string projectLocation { get; set; }
-
         private string DesurveyTableXmlName { get; set; }
 
-        public GenerateSurveyDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _fields,
-            List<XElement> drillholeData, List<XElement> _surveyXml)
+        public GenerateSurveyDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _surveyTableFields,
+            List<XElement> drillholeData):base(_savedSession, _sessionName, _projectLocation, _surveyTableFields, drillholeData)
         {
-
             //dataGrid = new System.Data.DataTable();
 
             savedSession = _savedSession;
             sessionName = _sessionName;
             projectLocation = _projectLocation;
-            surveyXmlData = _surveyXml;
-            tableFields = _fields;
+            surveyXmlData = drillholeData;
+            surveyTableFields = _surveyTableFields;
 
             XmlSetUP();
 
         }
+
 
         public async void XmlSetUP()
         {
@@ -122,7 +98,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseSurveyMapping();
 
             //surveymethod has to be Tangential
-            var surveyResults = await _desurveyService.SurveyDownhole(surveyDesurvMapper, surveyMethod, tableFields, bToe, surveyXmlData );
+            var surveyResults = await _desurveyService.SurveyDownhole(surveyDesurvMapper, surveyMethod, surveyTableFields, bToe, surveyXmlData );
 
             return true;
         }

@@ -20,44 +20,20 @@ using Drillholes.Windows.ViewModel;
 
 namespace Drillholes.Windows.Calculate
 {
-    public class GenerateAssayDesurveyResults : ViewEditModel
+    public class GenerateAssayDesurveyResults : GenerateSurveyDesurveyResults
     {
         private AssayDesurveyServices _desurveyService;
 
-        private IDesurveyDrillhole _desurveyTable;
-
         //TODO - show results
-        public System.Data.DataTable dataGrid { get; set; }
-
         private IMapper assayDesurvMapper;
-
-        private ImportTableFields _tableFields;
-        public ImportTableFields tableFields
-        {
-            get
-            {
-                return this._tableFields;
-            }
-            set
-            {
-                this._tableFields = value;
-                OnPropertyChanged("tableFields");
-            }
-        }
-
-        public XmlService _xmlService;
-        public IDrillholeXML _xml;
-
-        public bool savedSession { get; set; }
-        public string sessionName { get; set; }
-        public string projectLocation { get; set; }
+        public ImportTableFields assayTableFields { get; set; }
 
         private string DesurveyTableXmlName { get; set; }
 
         public List<XElement> assayXmlData { get; set; }
 
-        public GenerateAssayDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _fields,
-            List<XElement> drillholeData)
+        public GenerateAssayDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _assayFields,
+            List<XElement> drillholeData) : base(_savedSession, _sessionName, _projectLocation, _assayFields, drillholeData)
         {
            
             //dataGrid = new System.Data.DataTable();
@@ -66,7 +42,7 @@ namespace Drillholes.Windows.Calculate
             sessionName = _sessionName;
             projectLocation = _projectLocation;
             assayXmlData = drillholeData;
-            tableFields = _fields;
+            assayTableFields = _assayFields;
 
             XmlSetUP();
 
@@ -122,7 +98,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseAssayMapping();
 
             //surveymethod has to be Tangential
-            var assayResults = await _desurveyService.AssayVerticalHole(assayDesurvMapper, surveyMethod, tableFields, bToe, assayXmlData ); //ADD COLLARTABLEFIELDS AND INHERIT
+            var assayResults = await _desurveyService.AssayVerticalHole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, assayXmlData ); //ADD COLLARTABLEFIELDS AND INHERIT
 
             //create tableFields table and store desurveyed results
             await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, assayResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.assay);
@@ -140,7 +116,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseAssayMapping();
 
             //surveymethod has to be Tangential
-            var assayResults = await _desurveyService.AssaySurveyHole(assayDesurvMapper, surveyMethod, tableFields, bToe, assayXmlData);
+            var assayResults = await _desurveyService.AssaySurveyHole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, assayXmlData);
 
             return true;
         }
@@ -151,7 +127,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseAssayMapping();
 
             //surveymethod has to be Tangential
-            var assayResults = await _desurveyService.AssayDownhole(assayDesurvMapper, surveyMethod, tableFields, bToe, assayXmlData);
+            var assayResults = await _desurveyService.AssayDownhole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, assayXmlData);
 
             return true;
         }

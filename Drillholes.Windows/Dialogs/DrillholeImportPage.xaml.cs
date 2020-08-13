@@ -1069,10 +1069,25 @@ namespace Drillholes.Windows.Dialogs
             else if (_tabcontrol.SelectedIndex == 2)
             {
                 List<XElement> assayValues = new List<XElement>();
+
+                assayValues.Add(collarPreviewModel.collarTableObject.xPreview);
+
+                if (surveyPreviewModel.surveyTableObject.xPreview != null)
+                {
+                    assayValues.Add(surveyPreviewModel.surveyTableObject.xPreview);
+                }
+                else
+                {
+                    XElement surveyValues = new XElement("Survey", "Empty");
+                    assayValues.Add(surveyValues);
+                }
+
                 assayValues.Add(assayPreviewModel.assayTableObject.xPreview);
 
                 Calculate.GenerateAssayDesurveyResults assayResults = new Calculate.GenerateAssayDesurveyResults(savedSession, projectSession, projectLocation, assayPreviewModel.assayDataFields,
                    assayValues);
+
+                assayResults.collarTableFields = collarPreviewModel.collarDataFields;
 
                 if (preferences.surveyType == DrillholeSurveyType.vertical)
                 {

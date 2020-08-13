@@ -8,18 +8,22 @@ using System.Threading.Tasks;
 
 namespace Drillholes.Domain.DTO
 {
-    public class ContinuousDesurveyDto
+    public class ContinuousDesurveyDto : SurveyDesurveyDto
     {
-        public string bhid { get; set; }
-        public float distFrom { get; set; }
-        public float distTo { get; set; }
-        public DrillholeDesurveyEnum desurveyType { get; set; }
-        public DrillholeSurveyType surveyType { get; set; }
-        public bool IsValid { get; set; }
+        public ImportTableFields continuousTableFields { get; set; }
+        public List<bool> isContinuous { get; set; }
 
-        public List<AttributeFields> attributeFields { get; set; }
+        public ContinuousDesurveyDto()
+        {
+            id = new List<int>();
+            bhid = new List<string>();
+            distFrom = new List<double>();
+            length = new List<double>();
+            isContinuous = new List<bool>();
+            dip = new List<double>();
+            azimuth = new List<double>();
 
-      
+        }
 
     }
 }

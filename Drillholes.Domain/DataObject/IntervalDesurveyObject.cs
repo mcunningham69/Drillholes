@@ -10,7 +10,6 @@ namespace Drillholes.Domain.DataObject
 {
     public class IntervalDesurveyObject
     {
-        public string bhid { get; set; }
         public float distFrom { get; set; }
         public float distTo { get; set; }
         public DrillholeDesurveyEnum desurveyType { get; set; }

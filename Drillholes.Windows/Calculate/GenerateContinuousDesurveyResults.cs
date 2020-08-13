@@ -20,44 +20,20 @@ using Drillholes.Windows.ViewModel;
 
 namespace Drillholes.Windows.Calculate
 {
-    public class GenerateContinuousDesurveyResults : ViewEditModel
+    public class GenerateContinuousDesurveyResults : GenerateAssayDesurveyResults
     {
         private ContinuousDesurveyServices _desurveyService;
 
-        private IDesurveyDrillhole _desurveyTable;
-
-        //TODO - show results
-        public System.Data.DataTable dataGrid { get; set; }
-
         private IMapper continuousDesurvMapper;
 
-        private ImportTableFields _tableFields;
-        public ImportTableFields tableFields
-        {
-            get
-            {
-                return this._tableFields;
-            }
-            set
-            {
-                this._tableFields = value;
-                OnPropertyChanged("tableFields");
-            }
-        }
-
-        public XmlService _xmlService;
-        public IDrillholeXML _xml;
-
-        public bool savedSession { get; set; }
-        public string sessionName { get; set; }
-        public string projectLocation { get; set; }
+        public ImportTableFields continuousTableFields { get; set; }
 
         private string DesurveyTableXmlName { get; set; }
 
         public List<XElement> continuousXmlData { get; set; }
 
-        public GenerateContinuousDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _fields,
-            List<XElement> drillholeData)
+        public GenerateContinuousDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _continuousTableFields,
+            List<XElement> drillholeData) : base(_savedSession, _sessionName, _projectLocation, _continuousTableFields, drillholeData)
         {
            
             //dataGrid = new System.Data.DataTable();
@@ -66,7 +42,7 @@ namespace Drillholes.Windows.Calculate
             sessionName = _sessionName;
             projectLocation = _projectLocation;
             continuousXmlData = drillholeData;
-            tableFields = _fields;
+            continuousTableFields = _continuousTableFields;
 
             XmlSetUP();
 
@@ -122,7 +98,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseContinuousMapping();
 
             //surveymethod has to be Tangential
-            var collarResults = await _desurveyService.ContinuousVerticalHole(continuousDesurvMapper, surveyMethod, tableFields, bToe, continuousXmlData );
+            var collarResults = await _desurveyService.ContinuousVerticalHole(continuousDesurvMapper, surveyMethod, continuousTableFields, bToe, continuousXmlData );
 
             return true;
         }
@@ -133,7 +109,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseContinuousMapping();
 
             //surveymethod has to be Tangential
-            var collarResults = await _desurveyService.ContinuousSurveyHole(continuousDesurvMapper, surveyMethod, tableFields, bToe, continuousXmlData);
+            var collarResults = await _desurveyService.ContinuousSurveyHole(continuousDesurvMapper, surveyMethod, continuousTableFields, bToe, continuousXmlData);
 
             return true;
         }
@@ -144,7 +120,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseContinuousMapping();
 
             //surveymethod has to be Tangential
-            var collarResults = await _desurveyService.ContinuousDownhole(continuousDesurvMapper, surveyMethod, tableFields, bToe, continuousXmlData);
+            var collarResults = await _desurveyService.ContinuousDownhole(continuousDesurvMapper, surveyMethod, continuousTableFields, bToe, continuousXmlData);
 
             return true;
         }

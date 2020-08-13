@@ -20,44 +20,22 @@ using Drillholes.Windows.ViewModel;
 
 namespace Drillholes.Windows.Calculate
 {
-    public class GenerateIntervalDesurveyResults : ViewEditModel
+    public class GenerateIntervalDesurveyResults : GenerateAssayDesurveyResults
     {
         private IntervalDesurveyServices _desurveyService;
 
-        private IDesurveyDrillhole _desurveyTable;
-
         //TODO - show results
-        public System.Data.DataTable dataGrid { get; set; }
 
         private IMapper intervalDesurvMapper;
 
-        private ImportTableFields _tableFields;
-        public ImportTableFields tableFields
-        {
-            get
-            {
-                return this._tableFields;
-            }
-            set
-            {
-                this._tableFields = value;
-                OnPropertyChanged("tableFields");
-            }
-        }
-
-        public XmlService _xmlService;
-        public IDrillholeXML _xml;
-
-        public bool savedSession { get; set; }
-        public string sessionName { get; set; }
-        public string projectLocation { get; set; }
+        public ImportTableFields intervalTableFields { get; set; }
 
         private string DesurveyTableXmlName { get; set; }
 
         public List<XElement> intervalXmlData { get; set; }
 
-        public GenerateIntervalDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _fields,
-            List<XElement> drillholeData)
+        public GenerateIntervalDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _intervalTableFields,
+            List<XElement> drillholeData) : base(_savedSession, _sessionName, _projectLocation, _intervalTableFields, drillholeData)
         {
            
             //dataGrid = new System.Data.DataTable();
@@ -66,7 +44,7 @@ namespace Drillholes.Windows.Calculate
             sessionName = _sessionName;
             projectLocation = _projectLocation;
             intervalXmlData = drillholeData;
-            tableFields = _fields;
+            intervalTableFields = _intervalTableFields;
 
             XmlSetUP();
 
@@ -122,7 +100,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseIntervalMapping();
 
             //surveymethod has to be Tangential
-            var intervalResults = await _desurveyService.IntervalVerticalHole(intervalDesurvMapper, surveyMethod, tableFields, bToe, intervalXmlData);
+            var intervalResults = await _desurveyService.IntervalVerticalHole(intervalDesurvMapper, surveyMethod, intervalTableFields, bToe, intervalXmlData);
 
             return true;
         }
@@ -133,7 +111,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseIntervalMapping();
 
             //surveymethod has to be Tangential
-            var intervalResults = await _desurveyService.IntervalSurveyHole(intervalDesurvMapper, surveyMethod, tableFields, bToe, intervalXmlData);
+            var intervalResults = await _desurveyService.IntervalSurveyHole(intervalDesurvMapper, surveyMethod, intervalTableFields, bToe, intervalXmlData);
 
             return true;
         }
@@ -144,7 +122,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseIntervalMapping();
 
             //surveymethod has to be Tangential
-            var collarResults = await _desurveyService.IntervalDownhole(intervalDesurvMapper, surveyMethod, tableFields, bToe, intervalXmlData);
+            var collarResults = await _desurveyService.IntervalDownhole(intervalDesurvMapper, surveyMethod, intervalTableFields, bToe, intervalXmlData);
 
             return true;
         }

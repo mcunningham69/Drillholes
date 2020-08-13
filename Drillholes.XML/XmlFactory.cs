@@ -916,19 +916,19 @@ namespace Drillholes.XML
             new XProcessingInstruction("order", "alpha ascending"),
             new XElement(rootName, new XAttribute("Modified", DateTime.Now)));
 
-            XElement desurveyed = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
+            XElement header = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
             XElement xmlValues = null;
 
             switch (tableType)
             {
                 case (DrillholeTableType.collar):
-                    xmlValues = await SaveDesurveyXml.SaveCollarXml(desurveyObject as CollarDesurveyObject);
+                    xmlValues = await SaveDesurveyXml.SaveCollarXml(desurveyObject as CollarDesurveyObject, header);
                     break;
                 case (DrillholeTableType.survey):
                     xmlValues = await SaveDesurveyXml.SaveSurveyXml(desurveyObject as SurveyDesurveyObject);
                     break;
                 case (DrillholeTableType.assay):
-                    xmlValues = await SaveDesurveyXml.SaveAssayXml(desurveyObject as AssayDesurveyObject);
+                    xmlValues = await SaveDesurveyXml.SaveAssayXml(desurveyObject as AssayDesurveyObject, header);
                     break;
                 case (DrillholeTableType.interval):
                     xmlValues = await SaveDesurveyXml.SaveIntervalXml(desurveyObject as IntervalDesurveyObject);
@@ -945,6 +945,7 @@ namespace Drillholes.XML
 
             xmlFile.Root.Add(tableValues);
 
+
             SaveXML(xmlFile, fullXmlName);
 
             return xmlFile.Element(rootName);
@@ -959,14 +960,8 @@ namespace Drillholes.XML
 
         public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
         {
-            var tableValues = (XElement)xmlValues;
-
-            XElement tableParameters = null;
-
             var elements = xmlData.Descendants(rootName).Elements();
-
             var updateValues = elements.Where(e => e.Attribute("Value").Value == tableType.ToString());
-
 
             if (updateValues.Any())
             {
@@ -974,13 +969,34 @@ namespace Drillholes.XML
 
             }
 
+            XElement header = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
 
-            //insert if null
+            switch (tableType)
+            {
+                case (DrillholeTableType.collar):
+                    xmlValues = await SaveDesurveyXml.SaveCollarXml(xmlValues as CollarDesurveyObject, header);
+                    break;
+                case (DrillholeTableType.survey):
+                    xmlValues = await SaveDesurveyXml.SaveSurveyXml(xmlValues as SurveyDesurveyObject);
+                    break;
+                case (DrillholeTableType.assay):
+                    xmlValues = await SaveDesurveyXml.SaveAssayXml(xmlValues as AssayDesurveyObject, header);
+                    break;
+                case (DrillholeTableType.interval):
+                    xmlValues = await SaveDesurveyXml.SaveIntervalXml(xmlValues as IntervalDesurveyObject);
+                    break;
+                case (DrillholeTableType.continuous):
+                    xmlValues = await SaveDesurveyXml.SaveContinuousXml(xmlValues as ContinuousDesurveyObject);
+                    break;
+                default:
+                    throw new Exception("Problem with desurvey table type");
 
-            tableParameters = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
-            tableParameters.Add(tableValues);
+            }
 
-            xmlData.Root.Add(tableParameters);
+
+            var tableValues = (XElement)xmlValues;
+
+            xmlData.Root.Add(tableValues);
 
             //change modified time
             var modified = xmlData.Descendants(rootName).Select(m => m.Attribute("Modified")).FirstOrDefault();
@@ -990,6 +1006,7 @@ namespace Drillholes.XML
             SaveXML(xmlData, fullXmlName);
 
             return xmlData.Element(rootName);
+
         }
 
         public override async Task<object> ReturnValuesFromXML(string projectFile, string drillholeFile, string drillholeProjectRoot, string drillholeRoot, DrillholeTableType tableType)
@@ -1045,13 +1062,13 @@ namespace Drillholes.XML
 
     public static class SaveDesurveyXml
     {
-        public async static Task<XElement> SaveCollarXml(CollarDesurveyObject collarDesurvey)
+        public async static Task<XElement> SaveCollarXml(CollarDesurveyObject collarDesurvey, XElement header)
         {
             XElement xmlResults = null;
 
             List<XElement> nodes = new List<XElement>();
             XElement subheader = null;
-            XElement header = new XElement("TableType", new XAttribute("Name", "Collar"));
+          //  XElement header = new XElement("TableType", new XAttribute("Name", "Collar"));
 
             //loop through each value and store in XML
             var holeId = collarDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
@@ -1134,8 +1151,8 @@ namespace Drillholes.XML
                 }
             }
 
-
             return header;
+           // return subheader;
         }
         public async static Task<XElement> SaveSurveyXml(SurveyDesurveyObject surveyDesurvey)
         {
@@ -1144,11 +1161,98 @@ namespace Drillholes.XML
             return xmlResults;
         }
 
-        public async static Task<XElement> SaveAssayXml(AssayDesurveyObject assayDesurvey)
+        public async static Task<XElement> SaveAssayXml(AssayDesurveyObject assayDesurvey, XElement header)
         {
             XElement xmlResults = null;
 
-            return xmlResults;
+            List<XElement> nodes = new List<XElement>();
+            XElement subheader = null;
+            //  XElement header = new XElement("TableType", new XAttribute("Name", "Collar"));
+
+            //loop through each value and store in XML
+            var holeId = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var xField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var yField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var zField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var tdField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var dipField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var azimuthField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+
+            //   var duplicates = collarDesurvey.bhid.GroupBy(x => x).Select(group => group.Key).ToList();
+
+            string hole = "";
+            int colid = 0;
+            double x = 0.0;
+            double y = 0.0;
+            double z = 0.0;
+            double td = 0.0;
+            double dip = 0.0;
+            double azimuth = 0.0;
+
+            int counter = 0;
+            for (int i = 0; i < assayDesurvey.bhid.Count; i++)
+            {
+                if (counter == 0)
+                {
+                    //add this once
+                    colid = assayDesurvey.id[i];
+                    hole = assayDesurvey.bhid[i];
+                    xmlResults = new XElement(holeId, new XAttribute("Name", hole), new XAttribute("ID", colid.ToString()));
+
+                    header.Add(xmlResults);
+                }
+
+                if (assayDesurvey.isAssay[i])
+                    subheader = new XElement("Coordinates", new XAttribute("Type", "Collar"));
+                else
+                    subheader = new XElement("Coordinates", new XAttribute("Type", "Sample"));
+
+                //TODO ADD TOE
+
+                //add as many as needed
+                x = assayDesurvey.x[i];
+                y = assayDesurvey.y[i];
+                z = assayDesurvey.z[i];
+                td = assayDesurvey.length[i];
+
+
+                nodes.Add(new XElement(xField, x.ToString()));
+                nodes.Add(new XElement(yField, y.ToString()));
+                nodes.Add(new XElement(zField, z.ToString()));
+                nodes.Add(new XElement(tdField, td.ToString()));
+
+                if (dipField != null)
+                {
+                    azimuth = assayDesurvey.azimuth[i];
+                    dip = assayDesurvey.dip[i];
+                    nodes.Add(new XElement(dipField, dip.ToString()));
+                    nodes.Add(new XElement(azimuthField, azimuth.ToString()));
+                }
+
+
+                subheader.Add(nodes);
+                xmlResults.Add(subheader);
+
+                if (i < assayDesurvey.bhid.Count - 1)
+                {
+                    int idcheck = assayDesurvey.id[i + 1];
+
+                    if (idcheck != colid)
+                    {
+
+                        counter = 0;
+                    }
+                    else
+                    {
+                        counter++;
+                    }
+
+                    nodes.Clear();
+
+                }
+            }
+
+            return header;
         }
         public async static Task<XElement> SaveIntervalXml(IntervalDesurveyObject intervalDesurvey)
         {
