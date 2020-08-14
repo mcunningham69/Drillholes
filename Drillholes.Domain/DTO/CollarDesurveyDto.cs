@@ -11,7 +11,7 @@ namespace Drillholes.Domain.DTO
     {
         public int Count { get; set; }
         public ImportTableFields collarTableFields { get; set; }
-        public List<int> id { get; set; }
+        public List<int> colId { get; set; }
         public List<string> bhid { get; set; }
         public List<double> x { get; set; }
         public List<double> y { get; set; }
@@ -26,7 +26,7 @@ namespace Drillholes.Domain.DTO
         public bool IsValid { get; set; }
         public CollarDesurveyDto()
         {
-            id = new List<int>();
+            colId = new List<int>();
             bhid = new List<string>();
             x = new List<double>();
             y = new List<double>();

@@ -13,10 +13,12 @@ namespace Drillholes.Domain.DTO
         public ImportTableFields assayTableFields { get; set; }
         public List<double> distTo { get; set; }
         public List<bool> isAssay { get; set; }
+        public List<int> assayId { get; set; }
+
 
         public AssayDesurveyDto()
         {
-            id = new List<int>();
+            colId = new List<int>();
             bhid = new List<string>();
             distFrom = new List<double>();
             distTo = new List<double>();
@@ -24,7 +26,9 @@ namespace Drillholes.Domain.DTO
             isAssay = new List<bool>();
             dip = new List<double>();
             azimuth = new List<double>();
-      
+            assayId = new List<int>();
+            survId = new List<int>();
+
         }
 
         public void CalculateLength(int i)

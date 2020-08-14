@@ -179,7 +179,8 @@ namespace Drillholes.CreateDrillholes
                                 dblLength = Convert.ToDouble(totalDepth);
 
                                 //create collar => future will have a choice to create or not
-                                assayDesurveyDto.id.Add(Convert.ToInt16(assayHoleAttr));
+                                assayDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
+                                assayDesurveyDto.assayId.Add(Convert.ToInt16(assayHoleAttr));
                                 assayDesurveyDto.bhid.Add(hole);
                                 assayDesurveyDto.x.Add(Convert.ToDouble(xCoord));
                                 assayDesurveyDto.y.Add(Convert.ToDouble(yCoord));
@@ -203,7 +204,8 @@ namespace Drillholes.CreateDrillholes
 
                                     dblNewZ = dblZ - dblDistance;
 
-                                    assayDesurveyDto.id.Add(Convert.ToInt16(assayHoleAttr));
+                                    assayDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
+                                    assayDesurveyDto.assayId.Add(Convert.ToInt16(assayHoleAttr));
                                     assayDesurveyDto.bhid.Add(hole);
                                     assayDesurveyDto.x.Add(Convert.ToDouble(xCoord));
                                     assayDesurveyDto.y.Add(Convert.ToDouble(yCoord));
@@ -229,7 +231,8 @@ namespace Drillholes.CreateDrillholes
 
                                     dblNewZ = dblZ - dblTo; //take from surface in case a record has been ignored
 
-                                    assayDesurveyDto.id.Add(Convert.ToInt16(assayHoleAttr));
+                                    assayDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
+                                    assayDesurveyDto.assayId.Add(Convert.ToInt16(assayHoleAttr));
                                     assayDesurveyDto.bhid.Add(hole);
                                     assayDesurveyDto.x.Add(Convert.ToDouble(xCoord));
                                     assayDesurveyDto.y.Add(Convert.ToDouble(yCoord));
@@ -257,8 +260,9 @@ namespace Drillholes.CreateDrillholes
 
                                 dblNewZ = dblZ - dblLength;
 
-                                int value = assayDesurveyDto.id.Last();
-                                assayDesurveyDto.id.Add(value);
+                                int value = assayDesurveyDto.assayId.Last();
+                                assayDesurveyDto.assayId.Add(value);
+                                assayDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
                                 assayDesurveyDto.bhid.Add(hole);
                                 assayDesurveyDto.x.Add(Convert.ToDouble(xCoord));
                                 assayDesurveyDto.y.Add(Convert.ToDouble(yCoord));
@@ -279,15 +283,17 @@ namespace Drillholes.CreateDrillholes
             {
                 CollarDesurveyDto collarDesurveyDto = new CollarDesurveyDto()
                 {
-                    id = new List<int>(),
-                    bhid = new List<string>(),
-                    x = new List<double>(),
-                    y = new List<double>(),
-                    z = new List<double>(),
-                    length = new List<double>(),
-                    azimuth = new List<double>(),
-                    dip = new List<double>(),
-                    isCollar = new List<bool>()
+                    //colId = new List<int>(),
+                    //bhid = new List<string>(),
+                    //x = new List<double>(),
+                    //y = new List<double>(),
+                    //z = new List<double>(),
+                    //length = new List<double>(),
+                    //azimuth = new List<double>(),
+                    //dip = new List<double>(),
+                    //isCollar = new List<bool>()
+                    desurveyType = DrillholeDesurveyEnum.Tangential,
+                    surveyType = DrillholeSurveyType.collarsurvey
                 };
 
                 //Need holeID, x, y, z, length => reference name in xml
@@ -332,7 +338,7 @@ namespace Drillholes.CreateDrillholes
 
 
                     //store collar
-                    collarDesurveyDto.id.Add(Convert.ToInt16(colID));
+                    collarDesurveyDto.colId.Add(Convert.ToInt16(colID));
                     collarDesurveyDto.bhid.Add(hole);
                     collarDesurveyDto.x.Add(dblX);
                     collarDesurveyDto.y.Add(dblY);
@@ -349,7 +355,7 @@ namespace Drillholes.CreateDrillholes
                     if (coordinate == null)
                         return null;
 
-                    collarDesurveyDto.id.Add(Convert.ToInt16(colID));
+                    collarDesurveyDto.colId.Add(Convert.ToInt16(colID));
                     collarDesurveyDto.bhid.Add(hole);
                     collarDesurveyDto.x.Add(coordinate.x);
                     collarDesurveyDto.y.Add(coordinate.y);
@@ -368,13 +374,13 @@ namespace Drillholes.CreateDrillholes
             {
                 CollarDesurveyDto collarDesurveyDto = new CollarDesurveyDto()
                 {
-                    id = new List<int>(),
-                    bhid = new List<string>(),
-                    x = new List<double>(),
-                    y = new List<double>(),
-                    z = new List<double>(),
-                    length = new List<double>(),
-                    isCollar = new List<bool>(),
+                    //id = new List<int>(),
+                    //bhid = new List<string>(),
+                    //x = new List<double>(),
+                    //y = new List<double>(),
+                    //z = new List<double>(),
+                    //length = new List<double>(),
+                    //isCollar = new List<bool>(),
                     desurveyType = DrillholeDesurveyEnum.Tangential,
                     surveyType = DrillholeSurveyType.vertical
 
@@ -412,7 +418,7 @@ namespace Drillholes.CreateDrillholes
                     if (bCheck)
                     {
                         //store collar
-                        collarDesurveyDto.id.Add(Convert.ToInt16(holeAttr));
+                        collarDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
                         collarDesurveyDto.bhid.Add(hole);
                         collarDesurveyDto.x.Add(Convert.ToDouble(xCoord));
                         collarDesurveyDto.y.Add(Convert.ToDouble(yCoord));
@@ -426,7 +432,7 @@ namespace Drillholes.CreateDrillholes
 
                         double newZ = zcoord - depth;
 
-                        collarDesurveyDto.id.Add(Convert.ToInt16(holeAttr));
+                        collarDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
                         collarDesurveyDto.bhid.Add(hole);
                         collarDesurveyDto.x.Add(Convert.ToDouble(xCoord));
                         collarDesurveyDto.y.Add(Convert.ToDouble(yCoord));

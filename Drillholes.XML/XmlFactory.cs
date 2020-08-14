@@ -925,16 +925,16 @@ namespace Drillholes.XML
                     xmlValues = await SaveDesurveyXml.SaveCollarXml(desurveyObject as CollarDesurveyObject, header);
                     break;
                 case (DrillholeTableType.survey):
-                    xmlValues = await SaveDesurveyXml.SaveSurveyXml(desurveyObject as SurveyDesurveyObject);
+                    xmlValues = await SaveDesurveyXml.SaveSurveyXml(desurveyObject as SurveyDesurveyObject, header);
                     break;
                 case (DrillholeTableType.assay):
-                    xmlValues = await SaveDesurveyXml.SaveAssayXml(desurveyObject as AssayDesurveyObject, header);
+                    xmlValues = await SaveDesurveyXml.SaveAssayXml(desurveyObject as AssayDesurveyObject, header, false);
                     break;
                 case (DrillholeTableType.interval):
-                    xmlValues = await SaveDesurveyXml.SaveIntervalXml(desurveyObject as IntervalDesurveyObject);
+                    xmlValues = await SaveDesurveyXml.SaveIntervalXml(desurveyObject as IntervalDesurveyObject, header, false);
                     break;
                 case (DrillholeTableType.continuous):
-                    xmlValues = await SaveDesurveyXml.SaveContinuousXml(desurveyObject as ContinuousDesurveyObject);
+                    xmlValues = await SaveDesurveyXml.SaveContinuousXml(desurveyObject as ContinuousDesurveyObject, header, false);
                     break;
                 default:
                     throw new Exception("Problem with desurvey table type");
@@ -977,16 +977,16 @@ namespace Drillholes.XML
                     xmlValues = await SaveDesurveyXml.SaveCollarXml(xmlValues as CollarDesurveyObject, header);
                     break;
                 case (DrillholeTableType.survey):
-                    xmlValues = await SaveDesurveyXml.SaveSurveyXml(xmlValues as SurveyDesurveyObject);
+                    xmlValues = await SaveDesurveyXml.SaveSurveyXml(xmlValues as SurveyDesurveyObject, header);
                     break;
                 case (DrillholeTableType.assay):
-                    xmlValues = await SaveDesurveyXml.SaveAssayXml(xmlValues as AssayDesurveyObject, header);
+                    xmlValues = await SaveDesurveyXml.SaveAssayXml(xmlValues as AssayDesurveyObject, header, false);
                     break;
                 case (DrillholeTableType.interval):
-                    xmlValues = await SaveDesurveyXml.SaveIntervalXml(xmlValues as IntervalDesurveyObject);
+                    xmlValues = await SaveDesurveyXml.SaveIntervalXml(xmlValues as IntervalDesurveyObject, header, false);
                     break;
                 case (DrillholeTableType.continuous):
-                    xmlValues = await SaveDesurveyXml.SaveContinuousXml(xmlValues as ContinuousDesurveyObject);
+                    xmlValues = await SaveDesurveyXml.SaveContinuousXml(xmlValues as ContinuousDesurveyObject, header, false);
                     break;
                 default:
                     throw new Exception("Problem with desurvey table type");
@@ -1096,7 +1096,7 @@ namespace Drillholes.XML
                 if (counter == 0)
                 {
                     //add this once
-                    colid = collarDesurvey.id[i];
+                    colid = collarDesurvey.colId[i];
                     hole = collarDesurvey.bhid[i];
                     xmlResults = new XElement(holeId, new XAttribute("Name", hole), new XAttribute("ID", colid.ToString()));
 
@@ -1127,14 +1127,18 @@ namespace Drillholes.XML
                     nodes.Add(new XElement(dipField, dip.ToString()));
                     nodes.Add(new XElement(azimuthField, azimuth.ToString()));
                 }
-
+                else
+                {
+                    nodes.Add(new XElement("Dip", "-090"));
+                    nodes.Add(new XElement("Azimuth", "000"));
+                }
 
                 subheader.Add(nodes);
                 xmlResults.Add(subheader);
 
                 if (i < collarDesurvey.bhid.Count - 1)
                 {
-                    int idcheck = collarDesurvey.id[i + 1];
+                    int idcheck = collarDesurvey.colId[i + 1];
 
                     if (idcheck != colid)
                     {
@@ -1154,90 +1158,79 @@ namespace Drillholes.XML
             return header;
            // return subheader;
         }
-        public async static Task<XElement> SaveSurveyXml(SurveyDesurveyObject surveyDesurvey)
-        {
-            XElement xmlResults = null;
-
-            return xmlResults;
-        }
-
-        public async static Task<XElement> SaveAssayXml(AssayDesurveyObject assayDesurvey, XElement header)
+        public async static Task<XElement> SaveSurveyXml(SurveyDesurveyObject surveyDesurvey, XElement header)
         {
             XElement xmlResults = null;
 
             List<XElement> nodes = new List<XElement>();
             XElement subheader = null;
-            //  XElement header = new XElement("TableType", new XAttribute("Name", "Collar"));
 
             //loop through each value and store in XML
-            var holeId = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-            var xField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-            var yField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-            var zField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-            var tdField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-            var dipField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-            var azimuthField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-
-            //   var duplicates = collarDesurvey.bhid.GroupBy(x => x).Select(group => group.Key).ToList();
+            var holeId = surveyDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var xField = surveyDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var yField = surveyDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var zField = surveyDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var tdField = surveyDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var aziField = surveyDesurvey.surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var dipField = surveyDesurvey.surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var distField = surveyDesurvey.surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
 
             string hole = "";
-            int colid = 0;
-            double x = 0.0;
-            double y = 0.0;
-            double z = 0.0;
-            double td = 0.0;
-            double dip = 0.0;
-            double azimuth = 0.0;
+            int colid = 0, survId = 0;
+            double x = 0.0, y = 0.0, z = 0.0, dip = 0.0, azimuth = 0.0, dblFrom = 0.0;
 
             int counter = 0;
-            for (int i = 0; i < assayDesurvey.bhid.Count; i++)
+            for (int i = 0; i < surveyDesurvey.bhid.Count; i++)
             {
-                if (counter == 0)
+                if (counter == 0) //for each new hole counter will be 0
                 {
                     //add this once
-                    colid = assayDesurvey.id[i];
-                    hole = assayDesurvey.bhid[i];
-                    xmlResults = new XElement(holeId, new XAttribute("Name", hole), new XAttribute("ID", colid.ToString()));
+                    colid = surveyDesurvey.colId[i];
+                    hole = surveyDesurvey.bhid[i];
+                    xmlResults = new XElement(holeId, new XAttribute("Name", hole), new XAttribute("ID", colid.ToString())); //add parent element as hole name and collar ID
 
                     header.Add(xmlResults);
                 }
 
-                if (assayDesurvey.isAssay[i])
-                    subheader = new XElement("Coordinates", new XAttribute("Type", "Collar"));
+                if (surveyDesurvey.isSurvey[i])
+                {
+                    subheader = new XElement("Coordinates", new XAttribute("Type", "Survey"));
+                }
                 else
-                    subheader = new XElement("Coordinates", new XAttribute("Type", "Sample"));
+                {
+                    if (counter == 0)
+                        subheader = new XElement("Coordinates", new XAttribute("Type", "Collar")); //From and To will be 0
+                    else
+                        subheader = new XElement("Coordinates", new XAttribute("Type", "Toe")); //beyond last sample => interval to end hole
+                }
 
-                //TODO ADD TOE
+                //get values from desurveyed object
+                survId = surveyDesurvey.survId[i];
+                x = surveyDesurvey.x[i];
+                y = surveyDesurvey.y[i];
+                z = surveyDesurvey.z[i];
+                dblFrom = surveyDesurvey.distFrom[i];
+                azimuth = surveyDesurvey.azimuth[i];
+                dip = surveyDesurvey.dip[i];
 
-                //add as many as needed
-                x = assayDesurvey.x[i];
-                y = assayDesurvey.y[i];
-                z = assayDesurvey.z[i];
-                td = assayDesurvey.length[i];
-
-
+                //add values to XML
+                nodes.Add(new XElement("SurveyID", survId.ToString())); //unique primary key
                 nodes.Add(new XElement(xField, x.ToString()));
                 nodes.Add(new XElement(yField, y.ToString()));
                 nodes.Add(new XElement(zField, z.ToString()));
-                nodes.Add(new XElement(tdField, td.ToString()));
-
-                if (dipField != null)
-                {
-                    azimuth = assayDesurvey.azimuth[i];
-                    dip = assayDesurvey.dip[i];
-                    nodes.Add(new XElement(dipField, dip.ToString()));
-                    nodes.Add(new XElement(azimuthField, azimuth.ToString()));
-                }
+                nodes.Add(new XElement(distField, dblFrom.ToString()));
+                nodes.Add(new XElement(dipField, dip.ToString()));
+                nodes.Add(new XElement(aziField, azimuth.ToString()));
 
 
                 subheader.Add(nodes);
                 xmlResults.Add(subheader);
 
-                if (i < assayDesurvey.bhid.Count - 1)
+                if (i < surveyDesurvey.bhid.Count - 1) //check to see if at last interval
                 {
-                    int idcheck = assayDesurvey.id[i + 1];
+                    string holeCheck = surveyDesurvey.bhid[i + 1];
 
-                    if (idcheck != colid)
+                    if (holeCheck != hole) //if next interval is a new hole then reset counter to 0
                     {
 
                         counter = 0;
@@ -1248,23 +1241,346 @@ namespace Drillholes.XML
                     }
 
                     nodes.Clear();
-
                 }
             }
 
             return header;
         }
-        public async static Task<XElement> SaveIntervalXml(IntervalDesurveyObject intervalDesurvey)
+
+        public async static Task<XElement> SaveAssayXml(AssayDesurveyObject assayDesurvey, XElement header, bool bDownhole)
         {
             XElement xmlResults = null;
 
-            return xmlResults;
+            List<XElement> nodes = new List<XElement>();
+            XElement subheader = null;
+
+            //loop through each value and store in XML
+            var holeId = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var xField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var yField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var zField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var tdField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var distFrom = assayDesurvey.assayTableFields.Where(f => f.columnImportName == DrillholeConstants.distFromName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var distTo = assayDesurvey.assayTableFields.Where(f => f.columnImportName == DrillholeConstants.distToName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+
+            string hole = "";
+            int colid = 0, assayId = 0;
+            double x = 0.0, y = 0.0, z = 0.0, td = 0.0, dip = 0.0, azimuth = 0.0, dblFrom = 0.0, dblTo = 0.0, dblLength = 0.0;
+
+            int counter = 0;
+            for (int i = 0; i < assayDesurvey.bhid.Count; i++)
+            {
+                if (counter == 0) //for each new hole counter will be 0
+                {
+                    //add this once
+                    colid = assayDesurvey.colId[i];
+                    hole = assayDesurvey.bhid[i];
+                    xmlResults = new XElement(holeId, new XAttribute("Name", hole), new XAttribute("ID", colid.ToString())); //add parent element as hole name and collar ID
+
+                    header.Add(xmlResults);
+                }
+
+                if (assayDesurvey.isAssay[i])
+                {
+                    subheader = new XElement("Coordinates", new XAttribute("Type", "Interval"));
+                }
+                else
+                {
+                    if (counter == 0)
+                        subheader = new XElement("Coordinates", new XAttribute("Type", "Collar")); //From and To will be 0
+                    else
+                        subheader = new XElement("Coordinates", new XAttribute("Type", "Toe")); //beyond last sample => interval to end hole
+                }
+
+                //get values from desurveyed object
+                assayId = assayDesurvey.assayId[i];
+                x = assayDesurvey.x[i];
+                y = assayDesurvey.y[i];
+                z = assayDesurvey.z[i];
+                td = assayDesurvey.length[i];
+                dblFrom = assayDesurvey.distFrom[i];
+                dblTo = assayDesurvey.distTo[i];
+                dblLength = assayDesurvey.length[i];
+
+                //add values to XML
+                nodes.Add(new XElement("AssayID", assayId.ToString())); //unique primary key
+                nodes.Add(new XElement(xField, x.ToString()));
+                nodes.Add(new XElement(yField, y.ToString()));
+                nodes.Add(new XElement(zField, z.ToString()));
+                nodes.Add(new XElement(distFrom, dblFrom.ToString()));
+                nodes.Add(new XElement(distTo, dblTo.ToString()));
+                nodes.Add(new XElement("Interval", dblLength.ToString()));
+
+                string dipField = "", azimuthField = "";
+                if (bDownhole)
+                {
+                    dipField = assayDesurvey.surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                    azimuthField = assayDesurvey.surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                }
+                else
+                {
+                    dipField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                    azimuthField = assayDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                }
+
+                if (dipField != null)
+                {
+                    azimuth = assayDesurvey.azimuth[i];
+                    dip = assayDesurvey.dip[i];
+                    nodes.Add(new XElement(dipField, dip.ToString()));
+                    nodes.Add(new XElement(azimuthField, azimuth.ToString()));
+                }
+
+                else //if no dip and azimuth then must be vertical
+                {
+                    nodes.Add(new XElement("Dip", "-090"));
+                    nodes.Add(new XElement("Azimuth", "000"));
+                }
+
+                subheader.Add(nodes);
+                xmlResults.Add(subheader);
+
+                if (i < assayDesurvey.bhid.Count - 1) //check to see if at last interval
+                {
+                    string holeCheck = assayDesurvey.bhid[i + 1];
+
+                    if (holeCheck != hole) //if next interval is a new hole then reset counter to 0
+                    {
+
+                        counter = 0;
+                    }
+                    else
+                    {
+                        counter++;
+                    }
+
+                    nodes.Clear();
+                }
+            }
+
+            return header;
         }
-        public async static Task<XElement> SaveContinuousXml(ContinuousDesurveyObject intervalDesurvey)
+        public async static Task<XElement> SaveIntervalXml(IntervalDesurveyObject intervalDesurvey, XElement header, bool bDownhole)
         {
             XElement xmlResults = null;
 
-            return xmlResults;
+            List<XElement> nodes = new List<XElement>();
+            XElement subheader = null;
+
+            //loop through each value and store in XML
+            var holeId = intervalDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var xField = intervalDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var yField = intervalDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var zField = intervalDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var tdField = intervalDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var distFrom = intervalDesurvey.intervalTableFields.Where(f => f.columnImportName == DrillholeConstants.distFromName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var distTo = intervalDesurvey.intervalTableFields.Where(f => f.columnImportName == DrillholeConstants.distToName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+
+            string hole = "";
+            int colid = 0, intId = 0;
+            double x = 0.0, y = 0.0, z = 0.0, td = 0.0, dip = 0.0, azimuth = 0.0, dblFrom = 0.0, dblTo = 0.0, dblLength = 0.0;
+
+            int counter = 0;
+            for (int i = 0; i < intervalDesurvey.bhid.Count; i++)
+            {
+                if (counter == 0) //for each new hole counter will be 0
+                {
+                    //add this once
+                    colid = intervalDesurvey.colId[i];
+                    hole = intervalDesurvey.bhid[i];
+                    xmlResults = new XElement(holeId, new XAttribute("Name", hole), new XAttribute("ID", colid.ToString())); //add parent element as hole name and collar ID
+
+                    header.Add(xmlResults);
+                }
+
+                if (intervalDesurvey.isInterval[i])
+                {
+                    subheader = new XElement("Coordinates", new XAttribute("Type", "Interval"));
+                }
+                else
+                {
+                    if (counter == 0)
+                        subheader = new XElement("Coordinates", new XAttribute("Type", "Collar")); //From and To will be 0
+                    else
+                        subheader = new XElement("Coordinates", new XAttribute("Type", "Toe")); //beyond last sample => interval to end hole
+                }
+
+                //get values from desurveyed object
+                intId = intervalDesurvey.intId[i];
+                x = intervalDesurvey.x[i];
+                y = intervalDesurvey.y[i];
+                z = intervalDesurvey.z[i];
+                td = intervalDesurvey.length[i];
+                dblFrom = intervalDesurvey.distFrom[i];
+                dblTo = intervalDesurvey.distTo[i];
+                dblLength = intervalDesurvey.length[i];
+
+                //add values to XML
+                nodes.Add(new XElement("IntervalID", intId.ToString())); //unique primary key
+                nodes.Add(new XElement(xField, x.ToString()));
+                nodes.Add(new XElement(yField, y.ToString()));
+                nodes.Add(new XElement(zField, z.ToString()));
+                nodes.Add(new XElement(distFrom, dblFrom.ToString()));
+                nodes.Add(new XElement(distTo, dblTo.ToString()));
+                nodes.Add(new XElement("Interval", dblLength.ToString()));
+
+                string dipField = "", azimuthField = "";
+                if (bDownhole)
+                {
+                    dipField = intervalDesurvey.surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                    azimuthField = intervalDesurvey.surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                }
+                else
+                {
+                    dipField = intervalDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                    azimuthField = intervalDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                }
+
+                if (dipField != null)
+                {
+                    azimuth = intervalDesurvey.azimuth[i];
+                    dip = intervalDesurvey.dip[i];
+                    nodes.Add(new XElement(dipField, dip.ToString()));
+                    nodes.Add(new XElement(azimuthField, azimuth.ToString()));
+                }
+
+                else //if no dip and azimuth then must be vertical
+                {
+                    nodes.Add(new XElement("Dip", "-090"));
+                    nodes.Add(new XElement("Azimuth", "000"));
+                }
+
+                subheader.Add(nodes);
+                xmlResults.Add(subheader);
+
+                if (i < intervalDesurvey.bhid.Count - 1) //check to see if at last interval
+                {
+                    string holeCheck = intervalDesurvey.bhid[i + 1];
+
+                    if (holeCheck != hole) //if next interval is a new hole then reset counter to 0
+                    {
+
+                        counter = 0;
+                    }
+                    else
+                    {
+                        counter++;
+                    }
+
+                    nodes.Clear();
+                }
+            }
+
+            return header;
+        }
+        public async static Task<XElement> SaveContinuousXml(ContinuousDesurveyObject continuousDesurvey, XElement header, bool bDownhole)
+        {
+            XElement xmlResults = null;
+
+            List<XElement> nodes = new List<XElement>();
+            XElement subheader = null;
+
+            //loop through each value and store in XML
+            var holeId = continuousDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var xField = continuousDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var yField = continuousDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var zField = continuousDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var tdField = continuousDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var distFrom = continuousDesurvey.assayTableFields.Where(f => f.columnImportName == DrillholeConstants.distFromName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var distTo = continuousDesurvey.assayTableFields.Where(f => f.columnImportName == DrillholeConstants.distToName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+
+            string hole = "";
+            int colid = 0, contId = 0;
+            double x = 0.0, y = 0.0, z = 0.0, td = 0.0, dip = 0.0, azimuth = 0.0, dblFrom = 0.0, dblTo = 0.0, dblLength = 0.0;
+
+            int counter = 0;
+            for (int i = 0; i < continuousDesurvey.bhid.Count; i++)
+            {
+                if (counter == 0) //for each new hole counter will be 0
+                {
+                    //add this once
+                    colid = continuousDesurvey.colId[i];
+                    hole = continuousDesurvey.bhid[i];
+                    xmlResults = new XElement(holeId, new XAttribute("Name", hole), new XAttribute("ID", colid.ToString())); //add parent element as hole name and collar ID
+
+                    header.Add(xmlResults);
+                }
+
+                if (continuousDesurvey.isInterval[i])
+                {
+                    subheader = new XElement("Coordinates", new XAttribute("Type", "Distance"));
+                }
+                else
+                {
+                    if (counter == 0)
+                        subheader = new XElement("Coordinates", new XAttribute("Type", "Collar")); //From and To will be 0
+                    else
+                        subheader = new XElement("Coordinates", new XAttribute("Type", "Toe")); //beyond last sample => interval to end hole
+                }
+
+                //get values from desurveyed object
+                contId = continuousDesurvey.contId[i];
+                x = continuousDesurvey.x[i];
+                y = continuousDesurvey.y[i];
+                z = continuousDesurvey.z[i];
+                td = continuousDesurvey.length[i];
+                dblFrom = continuousDesurvey.distFrom[i];
+
+                //add values to XML
+                nodes.Add(new XElement("IntervalID", contId.ToString())); //unique primary key
+                nodes.Add(new XElement(xField, x.ToString()));
+                nodes.Add(new XElement(yField, y.ToString()));
+                nodes.Add(new XElement(zField, z.ToString()));
+                nodes.Add(new XElement(distFrom, dblFrom.ToString()));
+
+                string dipField = "", azimuthField = "";
+                if (bDownhole)
+                {
+                    dipField = continuousDesurvey.surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                    azimuthField = continuousDesurvey.surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                }
+                else
+                {
+                    dipField = continuousDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                    azimuthField = continuousDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                }
+
+                if (dipField != null)
+                {
+                    azimuth = continuousDesurvey.azimuth[i];
+                    dip = continuousDesurvey.dip[i];
+                    nodes.Add(new XElement(dipField, dip.ToString()));
+                    nodes.Add(new XElement(azimuthField, azimuth.ToString()));
+                }
+
+                else //if no dip and azimuth then must be vertical
+                {
+                    nodes.Add(new XElement("Dip", "-090"));
+                    nodes.Add(new XElement("Azimuth", "000"));
+                }
+
+                subheader.Add(nodes);
+                xmlResults.Add(subheader);
+
+                if (i < continuousDesurvey.bhid.Count - 1) //check to see if at last interval
+                {
+                    string holeCheck = continuousDesurvey.bhid[i + 1];
+
+                    if (holeCheck != hole) //if next interval is a new hole then reset counter to 0
+                    {
+
+                        counter = 0;
+                    }
+                    else
+                    {
+                        counter++;
+                    }
+
+                    nodes.Clear();
+                }
+            }
+
+            return header;
         }
     }
 }

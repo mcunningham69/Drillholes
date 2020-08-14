@@ -8,14 +8,17 @@ using System.Threading.Tasks;
 
 namespace Drillholes.Domain.DTO
 {
-    public class ContinuousDesurveyDto : SurveyDesurveyDto
+    public class ContinuousDesurveyDto : IntervalDesurveyDto
     {
         public ImportTableFields continuousTableFields { get; set; }
         public List<bool> isContinuous { get; set; }
+        public List<int> contId { get; set; }
 
         public ContinuousDesurveyDto()
         {
-            id = new List<int>();
+            contId = new List<int>();
+            colId = new List<int>();
+            survId = new List<int>();
             bhid = new List<string>();
             distFrom = new List<double>();
             length = new List<double>();

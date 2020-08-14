@@ -12,10 +12,13 @@ namespace Drillholes.Domain.DTO
     {
         public ImportTableFields intervalTableFields { get; set; }
         public List<bool> isInterval { get; set; }
+        public List<int> intId { get; set; }
 
         public IntervalDesurveyDto()
         {
-            id = new List<int>();
+            colId = new List<int>();
+            intId = new List<int>();
+            survId = new List<int>();
             bhid = new List<string>();
             distFrom = new List<double>();
             distTo = new List<double>();

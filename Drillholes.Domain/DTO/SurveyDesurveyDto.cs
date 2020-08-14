@@ -13,11 +13,12 @@ namespace Drillholes.Domain.DTO
         public ImportTableFields surveyTableFields { get; set; }
         public List<double> distFrom { get; set; }
         public List<bool> isSurvey { get; set; }
-
+        public List<int>survId { get; set; }
         public SurveyDesurveyDto()
         {
             bhid = new List<string>();
-            id = new List<int>();
+            colId = new List<int>();
+            survId = new List<int>();
             distFrom = new List<double>();
             isSurvey = new List<bool>();
             azimuth = new List<double>();

@@ -13,8 +13,7 @@ namespace Drillholes.Domain.DataObject
         public ImportTableFields surveyTableFields { get; set; }
         public List<double> distFrom { get; set; }
         public List<bool> isSurvey { get; set; }
-
-
+        public List<int> survId { get; set; }
 
     }
 }

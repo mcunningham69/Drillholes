@@ -12,7 +12,7 @@ namespace Drillholes.Domain.DataObject
     {
         public int Count { get; set; }
         public ImportTableFields collarTableFields { get; set; }
-        public List<int> id { get; set; }
+        public List<int> colId { get; set; }
         public List<string> bhid { get; set; }
         public List<double> x { get; set; }
         public List<double> y { get; set; }

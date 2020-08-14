@@ -11,7 +11,7 @@ namespace Drillholes.Domain.DataObject
     public class AssayDesurveyObject : SurveyDesurveyObject
     {
         public ImportTableFields assayTableFields { get; set; }
-        public List<double> distFrom { get; set; }
+        public List<int> assayId { get; set; }
         public List<double> distTo { get; set; }
         public List<bool> isAssay { get; set; }
 
