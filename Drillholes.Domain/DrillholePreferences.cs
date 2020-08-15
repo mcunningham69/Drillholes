@@ -10,7 +10,12 @@ namespace Drillholes.Domain
     public class DrillholePreferences
     {
         public bool NegativeDip { get; set; }
-        public bool ImportAllColumns { get; set; }
+        public bool ImportCollarColumns { get; set; }
+        public bool ImportSurveyColumns { get; set; }
+        public bool ImportAssayColumns { get; set; }
+        public bool ImportIntervalColumns { get; set; }
+        public bool ImportContinuousColumns { get; set; }
+
         public bool IgnoreInvalidValues { get; set; }
         public bool LowerDetection { get; set; }
         public DrillholeSurveyType surveyType { get; set; }

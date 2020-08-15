@@ -266,9 +266,9 @@ namespace Drillholes.XML
             }
 
             //todo check if XElement null and throw exception
-            elements = await factory.CreateXML(fileName, fields, tableType, rootName);
-
-            if (elements != null)
+            if (elements == null)
+                elements = await factory.CreateXML(fileName, fields, tableType, rootName);
+            else
                 xmlFile = await factory.OpenXML(fileName) as XDocument;
 
             return xmlFile;

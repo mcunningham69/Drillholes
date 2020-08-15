@@ -188,11 +188,10 @@
 
             <RibbonTab Name="ribbonHome" Header="Home" KeyTip="H" Visibility="Visible">
                 <RibbonGroup Header="Project Session" QuickAccessToolBarId="holes">
-                    <RibbonButton QuickAccessToolBarId="new" SmallImageSource="../Images/New.png" Label="New Session" KeyTip="N" Click="New_Session"/>
-                    <RibbonButton QuickAccessToolBarId="open" SmallImageSource="../Images/Open.png" Label="Open Session" KeyTip="O" Click="Open_Session"/>
-                    <RibbonButton QuickAccessToolBarId="save" SmallImageSource="../Images/Save.png" Label="Save Session" KeyTip="S" Click="Save_Session"/>
-                    <RibbonButton QuickAccessToolBarId="saveas" SmallImageSource="../Images/SaveAll.png" Label="Save Session As" KeyTip="S" Click="Save_SessionAs"/>
-
+                    <RibbonButton QuickAccessToolBarId="new" SmallImageSource="../Images/New.png" Label="New" KeyTip="N" Click="New_Session"/>
+                    <RibbonButton QuickAccessToolBarId="open" SmallImageSource="../Images/Open.png" Label="Open" KeyTip="O" Click="Open_Session"/>
+                    <RibbonButton QuickAccessToolBarId="save" SmallImageSource="../Images/Save.png" Label="Save" KeyTip="S" Click="Save_Session"/>
+                    <RibbonButton QuickAccessToolBarId="saveas" SmallImageSource="../Images/SaveAll.png" Label="Save As" KeyTip="S" Click="Save_SessionAs"/>
                 </RibbonGroup>
 
                 <RibbonGroup Header="Clipboard" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="clip">
@@ -217,6 +216,14 @@
                     </RibbonButton>
                 </RibbonGroup>
 
+                <RibbonGroup Header="Import Columns" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
+                    <RibbonCheckBox Name="chkCollarColumns" QuickAccessToolBarId="co" SmallImageSource="../Images/AbstractClass.png" Label="Collar"  IsChecked="False" Click="chkCollarColumns_Click"/>
+                    <RibbonCheckBox Name="chkSurveyColumns" QuickAccessToolBarId="su" SmallImageSource="../Images/AbsolutePosition.png" Label="Survey" IsChecked="False" Click="chkSurveyColumns_Click"/>
+                    <RibbonCheckBox Name="chkAssayColumns" QuickAccessToolBarId="as" SmallImageSource="../Images/AbstractCube.png"  Label="Assay" IsChecked="False" Click="chkAssayColumns_Click"/>
+                    <RibbonCheckBox Name="chkIntervalColumns" QuickAccessToolBarId="in" SmallImageSource="../Images/3DCameraOrbit.png" Label="Interval" IsChecked="False" Click="chkIntervalColumns_Click"/>
+                    <RibbonCheckBox Name="chkContinuousColumns" QuickAccessToolBarId="co" SmallImageSource="../Images/Accelerator.png" Label="Continuous" IsChecked="False" Click="chkContinuousColumns_Click"/>
+                </RibbonGroup>
+                
                 <RibbonGroup Header="Survey Type" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="help">
                     <RibbonRadioButton Name="radDownhole" QuickAccessToolBarId="dh" SmallImageSource="../Images/LineArrow.png" Label="Downhole"  IsChecked="False" Click="radDownhole_Click"/>
                     <RibbonRadioButton Name="radCollarSurvey" QuickAccessToolBarId="cs" SmallImageSource="../Images/compass.png" Label="Collar Survey" IsChecked="False" Click="radCollarSurvey_Click"/>
@@ -247,6 +254,7 @@
                     <RibbonCheckBox Name="chkDip" QuickAccessToolBarId="nd" SmallImageSource="../Images/Help.png" Label="Negative Dip (down)" IsChecked="True" Click="chkDip_Click"/>
                     <RibbonCheckBox Name="chkIgnore" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Ignore Invalid Values" Click="chkIgnore_Click"/>
                     <RibbonCheckBox Name="chkDetection" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Half Lower Detection" IsChecked="True" Click="chkDetection_Click"/>
+                   
                 </RibbonGroup>
 
                 <RibbonGroup Header="Oriented Core" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="ori">
@@ -314,7 +322,7 @@
             <CheckBox Name="chkToe" Content="Create Toe" Margin="5,0,5,5" Click="chkToe_Click"/>
         </StackPanel>
 
-        <Button Name="btnExit" Grid.Column="1" Grid.Row="1" Content="Close Application" Width="Auto" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsCancel="True" Click="ExitForm"></Button>
+        <Button Name="btnExit" Grid.Column="1" Grid.Row="1" Content="Close Application" Width="Auto" Height="30" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsCancel="True" Click="ExitForm"></Button>
 
     </Grid>
 </RibbonWindow>

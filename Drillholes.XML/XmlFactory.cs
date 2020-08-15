@@ -339,29 +339,55 @@ namespace Drillholes.XML
             XElement fieldName = null;
 
             tableParameters = new XElement("TableType", new XAttribute("Value", tableType.ToString()));
-
             var elements = xmlData.Descendants(rootName).Elements();
 
-            foreach (var field in tableFields)
+            if (xmlNodeTableNam == "")
             {
                 var updateValues = elements.Where(e => e.Attribute("Value").Value == tableType.ToString());
-
-                List<XElement> nodes = new List<XElement>();
-                nodes.Add(new XElement("ColumnImportAs", field.columnImportAs));
-                nodes.Add(new XElement("ColumnImportName", field.columnImportName));
-                nodes.Add(new XElement("FieldType", field.fieldType));
-                nodes.Add(new XElement("GenericType", field.genericType));
-                nodes.Add(new XElement("GroupName", field.groupName));
-                nodes.Add(new XElement("FieldType", field.keys)); //?
-
-                fieldName = new XElement("ColumnHeader", new XAttribute("Name", field.columnHeader));
-                fieldName.Add(nodes);
 
                 if (updateValues.Any())
                     updateValues.Remove();
 
-                tableParameters.Add(fieldName);
+                foreach (var field in tableFields)
+                {
+                    List<XElement> nodes = new List<XElement>();
+                    nodes.Add(new XElement("ColumnImportAs", field.columnImportAs));
+                    nodes.Add(new XElement("ColumnImportName", field.columnImportName));
+                    nodes.Add(new XElement("FieldType", field.fieldType));
+                    nodes.Add(new XElement("GenericType", field.genericType));
+                    nodes.Add(new XElement("GroupName", field.groupName));
+                    nodes.Add(new XElement("FieldKeys", field.keys)); //?
 
+                    fieldName = new XElement("ColumnHeader", new XAttribute("Name", field.columnHeader));
+                    fieldName.Add(nodes);
+
+                    tableParameters.Add(fieldName);
+                }
+
+            }
+            else
+            {
+                foreach (var field in tableFields)
+                {
+                    var updateValues = elements.Where(e => e.Attribute("Value").Value == tableType.ToString());
+
+                    List<XElement> nodes = new List<XElement>();
+                    nodes.Add(new XElement("ColumnImportAs", field.columnImportAs));
+                    nodes.Add(new XElement("ColumnImportName", field.columnImportName));
+                    nodes.Add(new XElement("FieldType", field.fieldType));
+                    nodes.Add(new XElement("GenericType", field.genericType));
+                    nodes.Add(new XElement("GroupName", field.groupName));
+                    nodes.Add(new XElement("FieldType", field.keys)); //?
+
+                    fieldName = new XElement("ColumnHeader", new XAttribute("Name", field.columnHeader));
+                    fieldName.Add(nodes);
+
+                    if (updateValues.Any())
+                        updateValues.Remove();
+
+                    tableParameters.Add(fieldName);
+
+                }
             }
 
             xmlData.Root.Add(tableParameters);
@@ -507,14 +533,12 @@ namespace Drillholes.XML
 
             List<XElement> nodes = new List<XElement>();
             nodes.Add(new XElement("NegativeDip", preferences.NegativeDip));
-            nodes.Add(new XElement("ImportAllColumns", preferences.ImportAllColumns));
             nodes.Add(new XElement("IgnoreInvalidValues", preferences.IgnoreInvalidValues));
             nodes.Add(new XElement("LowerDetection", preferences.LowerDetection));
             nodes.Add(new XElement("SurveyType", preferences.surveyType.ToString()));
             nodes.Add(new XElement("DipTolerance", preferences.DipTolerance.ToString())); //?
             nodes.Add(new XElement("AziTolerance", preferences.AzimuthTolerance.ToString())); //?
             nodes.Add(new XElement("DefaultValue", preferences.DefaultValue.ToString())); //?
-            nodes.Add(new XElement("ImportAllColumns", preferences.ImportAllColumns));
             nodes.Add(new XElement("ImportSurveyOnly", preferences.ImportSurveyOnly));
             nodes.Add(new XElement("ImportAssayOnly", preferences.ImportAssayOnly));
             nodes.Add(new XElement("ImportGeologyOnly", preferences.ImportGeologyOnly));
@@ -526,9 +550,12 @@ namespace Drillholes.XML
             nodes.Add(new XElement("TopCore", preferences.TopCore));
             nodes.Add(new XElement("BottomCore", preferences.BottomCore));
             nodes.Add(new XElement("CalculateStructures", preferences.CalculateStructures));
+            nodes.Add(new XElement("ImportCollarColumns", preferences.ImportCollarColumns));
+            nodes.Add(new XElement("ImportSurveyColumns", preferences.ImportSurveyColumns));
+            nodes.Add(new XElement("ImportAssayColumns", preferences.ImportAssayColumns));
+            nodes.Add(new XElement("ImportIntervalColumns", preferences.ImportIntervalColumns));
+            nodes.Add(new XElement("ImportContinuousColumns", preferences.ImportContinuousColumns));
             nodes.Add(new XElement("DesurveyMethod", preferences.DesurveyMethod));
-
-            
 
             tableParameters.Add(nodes);
 
@@ -558,14 +585,12 @@ namespace Drillholes.XML
 
             List<XElement> nodes = new List<XElement>();
             nodes.Add(new XElement("NegativeDip", preferences.NegativeDip));
-            nodes.Add(new XElement("ImportAllColumns", preferences.ImportAllColumns));
             nodes.Add(new XElement("IgnoreInvalidValues", preferences.IgnoreInvalidValues));
             nodes.Add(new XElement("LowerDetection", preferences.LowerDetection));
             nodes.Add(new XElement("SurveyType", preferences.surveyType.ToString()));
             nodes.Add(new XElement("DipTolerance", preferences.DipTolerance.ToString())); //?
             nodes.Add(new XElement("AziTolerance", preferences.AzimuthTolerance.ToString())); //?
             nodes.Add(new XElement("DefaultValue", preferences.DefaultValue.ToString())); //?
-            nodes.Add(new XElement("ImportAllColumns", preferences.ImportAllColumns));
             nodes.Add(new XElement("ImportSurveyOnly", preferences.ImportSurveyOnly));
             nodes.Add(new XElement("ImportAssayOnly", preferences.ImportAssayOnly));
             nodes.Add(new XElement("ImportGeologyOnly", preferences.ImportGeologyOnly));
@@ -577,6 +602,11 @@ namespace Drillholes.XML
             nodes.Add(new XElement("TopCore", preferences.TopCore));
             nodes.Add(new XElement("BottomCore", preferences.BottomCore));
             nodes.Add(new XElement("CalculateStructures", preferences.CalculateStructures));
+            nodes.Add(new XElement("ImportCollarColumns", preferences.ImportCollarColumns));
+            nodes.Add(new XElement("ImportSurveyColumns", preferences.ImportSurveyColumns));
+            nodes.Add(new XElement("ImportAssayColumns", preferences.ImportAssayColumns));
+            nodes.Add(new XElement("ImportIntervalColumns", preferences.ImportIntervalColumns));
+            nodes.Add(new XElement("ImportContinuousColumns", preferences.ImportContinuousColumns));
             nodes.Add(new XElement("DesurveyMethod", preferences.DesurveyMethod));
 
 
@@ -603,21 +633,18 @@ namespace Drillholes.XML
 
             var elements = xmlFile.Descendants(drillholeProjectRoot).Elements().ToList();
 
-            var importColumns = elements.Select(n => n.Element("ImportAllColumns").Value).SingleOrDefault();
+            var importCollarColumns = elements.Select(n => n.Element("ImportCollarColumns").Value).SingleOrDefault();
+            var importSurveyColumns = elements.Select(n => n.Element("ImportSurveyColumns").Value).SingleOrDefault();
+            var importAssayColumns = elements.Select(n => n.Element("ImportAssayColumns").Value).SingleOrDefault();
+            var importIntervalColumns = elements.Select(n => n.Element("ImportIntervalColumns").Value).SingleOrDefault();
+            var importContinuousColumns = elements.Select(n => n.Element("ImportContinuousColumns").Value).SingleOrDefault();
+
+
             var surveyType = elements.Select(n => n.Element("SurveyType").Value).SingleOrDefault();
             var surveyMethod = elements.Select(n => n.Element("DesurveyMethod").Value).SingleOrDefault();
 
             var createToe = elements.Select(n => n.Element("CreateCollar").Value).SingleOrDefault();
             var createCollar = elements.Select(n => n.Element("CreateToe").Value).SingleOrDefault();
-
-            bool bImport = false;
-
-            if (importColumns != null)
-            {
-                if (importColumns.ToString() != "")
-                    bImport = Convert.ToBoolean(importColumns);
-
-            }
 
             DrillholeSurveyType survType = DrillholeSurveyType.downholesurvey; //default
 
@@ -644,7 +671,11 @@ namespace Drillholes.XML
             DrillholePreferences readPreferences = new DrillholePreferences()
             {
                 surveyType = survType,
-                ImportAllColumns = bImport,
+                ImportCollarColumns = Convert.ToBoolean(importCollarColumns),
+                ImportSurveyColumns = Convert.ToBoolean(importSurveyColumns),
+                ImportAssayColumns = Convert.ToBoolean(importAssayColumns),
+                ImportIntervalColumns = Convert.ToBoolean(importIntervalColumns),
+                ImportContinuousColumns = Convert.ToBoolean(importContinuousColumns),
                 DesurveyMethod = desurveyMethod,
                 CreateCollar = Convert.ToBoolean(createCollar),
                 CreateToe = Convert.ToBoolean(createToe)

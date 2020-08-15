@@ -278,6 +278,10 @@ namespace Drillholes.Windows.ViewModel
                 {
                     var assayService = await _assayService.ImportAllFieldsAsGeneric(classMapper, bImport);
                     assayTableObject.tableData = assayService.tableData;
+                    assayDataFields = assayService.tableData;
+
+                    if (assayDataFields != null)
+                        await _xmlService.DrillholeFields(fullPathnameFields, assayDataFields, DrillholeTableType.assay, rootNameFields);
                 }
             }
 

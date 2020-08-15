@@ -272,6 +272,7 @@ namespace Drillholes.Windows.ViewModel
                 {
                     var continuousService = await _continuousService.ImportAllFieldsAsGeneric(classMapper, bImport);
                     continuousTableObject.tableData = continuousService.tableData;
+                    continuousDataFields = continuousService.tableData;
                 }
             }
         }

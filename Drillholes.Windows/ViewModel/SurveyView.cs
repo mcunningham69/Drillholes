@@ -283,6 +283,10 @@ namespace Drillholes.Windows.ViewModel
                 {
                     var surveyService = await _surveyService.ImportAllFieldsAsGeneric(classMapper, bImport);
                     surveyTableObject.tableData = surveyService.tableData;
+                    surveyDataFields = surveyService.tableData;
+
+                    if (surveyDataFields != null)
+                        await _xmlService.DrillholeFields(fullPathnameFields, surveyDataFields, DrillholeTableType.survey, rootNameFields);
                 }
             }
 

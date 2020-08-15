@@ -263,19 +263,10 @@ namespace Drillholes.Windows.Dialogs
                 await ManageXmlTableParameters(pageImport);
 
                 //update settings
-                await SynchroniseSettings(true, pageImport);
+             //   await SynchroniseSettings(true, pageImport);
 
                 await ManageXmlPreferences();
             }
-            else
-            {
-
-            }
-            
-
-
-
-            
 
         }
 
@@ -499,17 +490,17 @@ namespace Drillholes.Windows.Dialogs
             this.Close();
         }
 
-        private async Task<bool> SynchroniseSettings(bool pageToSetting, DrillholeImportPage pageImport)
-        {
-            if (pageToSetting)
-            {
-                this.radDownhole.IsChecked = pageImport.radDhole.IsChecked;
-                this.radVertical.IsChecked = pageImport.radVertical.IsChecked;
-                this.radCollarSurvey.IsChecked = pageImport.radSurvey.IsChecked;
-            }
+        //private async Task<bool> SynchroniseSettings(bool pageToSetting, DrillholeImportPage pageImport)
+        //{
+        //    if (pageToSetting)
+        //    {
+        //        this.radDownhole.IsChecked = pageImport.radDhole.IsChecked;
+        //        this.radVertical.IsChecked = pageImport.radVertical.IsChecked;
+        //        this.radCollarSurvey.IsChecked = pageImport.radSurvey.IsChecked;
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
         private void HelpDocumentation(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Not yet implemented");
@@ -550,7 +541,7 @@ namespace Drillholes.Windows.Dialogs
                 //check if import page then automatically reload preferences and refresh interface if required
                 if (importPage != null)
                 {
-                    await SynchroniseSettings(false, importPage);
+                   // await SynchroniseSettings(false, importPage);
                     await ManageXmlPreferences();
                 }
 
@@ -563,8 +554,8 @@ namespace Drillholes.Windows.Dialogs
                 stkCheckbox.Visibility = Visibility.Visible;
                 stkTolerance.Visibility = Visibility.Visible;
 
-                if (importPage != null)
-                await SynchroniseSettings(true, importPage);
+                //if (importPage != null)
+                //await SynchroniseSettings(true, importPage);
 
                 await ManageXmlPreferences();
 
@@ -584,6 +575,62 @@ namespace Drillholes.Windows.Dialogs
         #region Preference controls
 
 
+        private async void chkCollarColumns_Click(object sender, RoutedEventArgs e)
+        {
+            xmlName = "ImportCollarColumns";
+            UpdateXmlPreferences((bool)chkCollarColumns.IsChecked);
+
+            await ImportColumns(DrillholeTableType.collar, (bool)chkCollarColumns.IsChecked);
+        }
+
+        private async void chkSurveyColumns_Click(object sender, RoutedEventArgs e)
+        {
+            xmlName = "ImportSurveyColumns";
+            UpdateXmlPreferences((bool)chkSurveyColumns.IsChecked);
+
+            await ImportColumns(DrillholeTableType.survey, (bool)chkSurveyColumns.IsChecked);
+        }
+
+        private async void chkAssayColumns_Click(object sender, RoutedEventArgs e)
+        {
+            xmlName = "ImportAssayColumns";
+            UpdateXmlPreferences((bool)chkAssayColumns.IsChecked);
+            await ImportColumns(DrillholeTableType.assay, (bool)chkAssayColumns.IsChecked);
+
+        }
+
+        private async void chkIntervalColumns_Click(object sender, RoutedEventArgs e)
+        {
+            xmlName = "ImportIntervalColumns";
+            UpdateXmlPreferences((bool)chkIntervalColumns.IsChecked);
+            await ImportColumns(DrillholeTableType.interval, (bool)chkIntervalColumns.IsChecked);
+
+        }
+
+        private async void chkContinuousColumns_Click(object sender, RoutedEventArgs e)
+        {
+            xmlName = "ImportContinuousColumns";
+            UpdateXmlPreferences((bool)chkContinuousColumns.IsChecked);
+            await ImportColumns(DrillholeTableType.continuous, (bool)chkContinuousColumns.IsChecked);
+
+        }
+
+        private async Task<bool> ImportColumns(DrillholeTableType tableType, bool isChecked)
+        {
+            var whichpage = frameMain.Content;
+
+            var test = whichpage.GetType();
+
+            if (test.Name == "DrillholeImportPage")
+            {
+                DrillholeImportPage thisPage = whichpage as DrillholeImportPage;
+                await thisPage.ImportColumns(tableType, isChecked);
+
+                return true;
+            }
+            else
+                return false;
+        }
 
         private void chkDip_Click(object sender, RoutedEventArgs e)
         {
@@ -854,6 +901,11 @@ namespace Drillholes.Windows.Dialogs
                 ImportAssayOnly = (bool)this.chkImportAssays.IsChecked,
                 ImportGeologyOnly = (bool)this.chkImportGeology.IsChecked,
                 ImportContinuousOnly = (bool)this.chkImportContinuous.IsChecked,
+                ImportCollarColumns = (bool) this.chkCollarColumns.IsChecked,
+                ImportSurveyColumns = (bool) this.chkSurveyColumns.IsChecked,
+                ImportAssayColumns = (bool) this.chkAssayColumns.IsChecked,
+                ImportIntervalColumns = (bool) this.chkIntervalColumns.IsChecked,
+                ImportContinuousColumns = (bool) this.chkContinuousColumns.IsChecked,
                 NullifyZeroAssays = (bool)this.chkZeroAssays.IsChecked,
                 CreateCollar = (bool)this.chkCollar.IsChecked,
                 CreateToe = (bool)this.chkToe.IsChecked,
@@ -962,6 +1014,11 @@ namespace Drillholes.Windows.Dialogs
                 radTopCore.IsChecked = Convert.ToBoolean(value.Element("TopCore").Value);
                 radBotCore.IsChecked = Convert.ToBoolean(value.Element("BottomCore").Value);
                 chkAlphaBeta.IsChecked = Convert.ToBoolean(value.Element("CalculateStructures").Value);
+                chkCollarColumns.IsChecked = Convert.ToBoolean(value.Element("ImportCollarColumns").Value);
+                chkSurveyColumns.IsChecked = Convert.ToBoolean(value.Element("ImportSurveyColumns").Value);
+                chkAssayColumns.IsChecked = Convert.ToBoolean(value.Element("ImportAssayColumns").Value);
+                chkIntervalColumns.IsChecked = Convert.ToBoolean(value.Element("ImportIntervalColumns").Value);
+                chkContinuousColumns.IsChecked = Convert.ToBoolean(value.Element("ImportContinuousColumns").Value);
 
                 var geologybase = value.Element("GeologyBase").Value;
 
@@ -994,25 +1051,7 @@ namespace Drillholes.Windows.Dialogs
                 txtDipTol.Text = dipTol.ToString();
                 txtDefault.Text = defaultValue.ToString();
 
-                //< RibbonComboBox QuickAccessToolBarId = "ds"  Name = "cboDesurvey" Width = "Auto" DropDownClosed = "cboDesurvey_DropDownClosed" >
-
-                //                < RibbonGallery MinColumnCount = "1" Name = "ribbonGallery" >
-
-                //                       < RibbonGalleryCategory Header = "Survey Methodology" >
-
-                //                            < RibbonGalleryItem Name = "ribbonTangential" FontFamily = "Arial" > Tangential </ RibbonGalleryItem >
-
-
-                var test = cboDesurvey.Items;
-               foreach(var temp in test)
-                {
-                  
-                }
-
-                              cboDesurvey.Text = desurv.ToString();
-
-                
-
+                cboDesurvey.Text = desurv.ToString();
             }
 
         }
@@ -1062,14 +1101,6 @@ namespace Drillholes.Windows.Dialogs
         {
             await _xmlService.DrillholePreferences(fullName, xmlName, xmlValue, DrillholeConstants.drillholePref);
         }
-
-
-
-
-
-
-
-
 
         #endregion
 
@@ -1219,6 +1250,8 @@ namespace Drillholes.Windows.Dialogs
         {
 
         }
+
+
     }
 
 

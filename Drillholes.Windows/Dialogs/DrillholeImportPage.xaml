@@ -199,7 +199,7 @@
                 </TabItem.LayoutTransform>
 
                 <ListView x:Name="fieldMapping" VerticalAlignment="Top" Grid.Column="3" Grid.Row="3" Width="Auto" 
-                          Height="250" Grid.RowSpan="1" ItemsSource="{Binding collarDataFields}"  
+                          Height="250" Grid.RowSpan="1" ItemsSource="{Binding collarDataFields, Mode=TwoWay}"  
                           IsSynchronizedWithCurrentItem="True" SelectionMode="Single">
 
                     <ListView.View>
@@ -256,7 +256,7 @@
                         <TranslateTransform/>
                     </TransformGroup>
                 </TabItem.LayoutTransform>
-                <ListView x:Name="surveyMapping" VerticalAlignment="Top" Grid.Column="3" Grid.Row="3" Width="Auto" Height="250" Grid.RowSpan="1" ItemsSource="{Binding surveyDataFields}" IsSynchronizedWithCurrentItem="True" >
+                <ListView x:Name="surveyMapping" VerticalAlignment="Top" Grid.Column="3" Grid.Row="3" Width="Auto" Height="250" Grid.RowSpan="1" ItemsSource="{Binding surveyDataFields, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" >
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -312,7 +312,7 @@
                         <TranslateTransform/>
                     </TransformGroup>
                 </TabItem.LayoutTransform>
-                <ListView Name="assayMapping" VerticalAlignment="Top" Grid.Column="3" Grid.Row="3" Width="Auto" Height="250" Grid.RowSpan="1" ItemsSource="{Binding assayDataFields}" IsSynchronizedWithCurrentItem="True">
+                <ListView Name="assayMapping" VerticalAlignment="Top" Grid.Column="3" Grid.Row="3" Width="Auto" Height="250" Grid.RowSpan="1" ItemsSource="{Binding assayDataFields, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True">
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -371,7 +371,7 @@
                         <TranslateTransform/>
                     </TransformGroup>
                 </TabItem.LayoutTransform>
-                <ListView Name="lithoMapping" VerticalAlignment="Top" Grid.Column="3" Grid.Row="3" Width="Auto" Height="250" Grid.RowSpan="1" ItemsSource="{Binding intervalDataFields}" IsSynchronizedWithCurrentItem="True">
+                <ListView Name="lithoMapping" VerticalAlignment="Top" Grid.Column="3" Grid.Row="3" Width="Auto" Height="250" Grid.RowSpan="1" ItemsSource="{Binding intervalDataFields, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True">
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -437,7 +437,7 @@
                         <TranslateTransform/>
                     </TransformGroup>
                 </TabItem.LayoutTransform>
-                <ListView Name="distMapping" VerticalAlignment="Top" Grid.Column="3" Grid.Row="3" Width="Auto" Height="250" Grid.RowSpan="1" ItemsSource="{Binding continuousDataFields}" IsSynchronizedWithCurrentItem="True">
+                <ListView Name="distMapping" VerticalAlignment="Top" Grid.Column="3" Grid.Row="3" Width="Auto" Height="250" Grid.RowSpan="1" ItemsSource="{Binding continuousDataFields, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True">
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -507,13 +507,13 @@
 
 
 
-        <CheckBox Grid.Column="2" Grid.Row="4" Name="chkImport" Content="{Binding importAllColumns}" IsChecked="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="chkImport_Click" Visibility="Visible"/>
+        <!--<CheckBox Grid.Column="2" Grid.Row="4" Name="chkImport" Content="{Binding importAllColumns}" IsChecked="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="chkImport_Click" Visibility="Visible"/>
 
         <RadioButton Name="radSurvey" VerticalAlignment="Bottom" Content="Collar" Grid.Column="1" Grid.Row="4" Visibility="Visible" ToolTip="Use Azimuth and Dip contained in 'Collar' table" Click="radSurvey_Click"/>
         <RadioButton Name="radVertical" VerticalAlignment="Bottom" IsChecked="True" Content="Vertical"  Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" Margin="60,0,0,0" Visibility="Visible" 
                      ToolTip="Treat all holes as 'Vertical'" Click="radVertical_Click"/>
         <RadioButton Name="radDhole" VerticalAlignment="Bottom" Content="Downhole" IsChecked="False" Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" Margin="130,0,0,0" Visibility="Visible" 
-                     ToolTip="Use Azimuth and Dip from downhole 'Survey' table" Click="radDhole_Click" />
+                     ToolTip="Use Azimuth and Dip from downhole 'Survey' table" Click="radDhole_Click" />-->
 
         <Grid Grid.Column="4" Grid.Row="3" Grid.RowSpan="2" Grid.ColumnSpan="1" Name="grdValid">
             <Grid.Resources>

@@ -445,6 +445,10 @@ namespace Drillholes.Windows.ViewModel
                 {
                     var collarService = await _collarService.ImportAllFieldsAsGeneric(classMapper, bImport);
                     collarTableObject.tableData = collarService.tableData;
+                    collarDataFields = collarService.tableData; 
+
+                    if (collarDataFields != null)
+                        await _xmlService.DrillholeFields(fullPathnameFields, collarDataFields, DrillholeTableType.collar, rootNameFields);
                 }
             }
 

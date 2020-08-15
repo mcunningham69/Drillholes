@@ -272,6 +272,10 @@ namespace Drillholes.Windows.ViewModel
                 {
                     var intervalService = await _intervalService.ImportAllFieldsAsGeneric(classMapper, bImport);
                     intervalTableObject.tableData = intervalService.tableData;
+                    intervalDataFields = intervalService.tableData;
+
+                    if (intervalDataFields != null)
+                        await _xmlService.DrillholeFields(fullPathnameFields, intervalDataFields, DrillholeTableType.interval, rootNameFields);
                 }
             }
 

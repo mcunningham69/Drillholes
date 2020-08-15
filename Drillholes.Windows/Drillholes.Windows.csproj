@@ -338,5 +338,20 @@
   <ItemGroup>
     <Resource Include="Images\top.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\AbstractCube.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\AbstractClass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\AbsolutePosition.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\3DCameraOrbit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Accelerator.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
