@@ -28,8 +28,6 @@ namespace Drillholes.Windows.Calculate
         private IMapper assayDesurvMapper;
         public ImportTableFields assayTableFields { get; set; }
 
-        private string DesurveyTableXmlName { get; set; }
-
         public List<XElement> assayXmlData { get; set; }
 
         public GenerateAssayDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _assayFields,
@@ -44,32 +42,10 @@ namespace Drillholes.Windows.Calculate
             assayXmlData = drillholeData;
             assayTableFields = _assayFields;
 
-            XmlSetUP();
+            XmlSetUP(DrillholeTableType.assay);
 
         }
 
-        public async void XmlSetUP()
-        {
-            //create XML temp table
-            if (_xml == null)
-                _xml = new Drillholes.XML.XmlController();
-
-            if (_xmlService == null)
-                _xmlService = new XmlService(_xml);
-
-            if (!savedSession)
-            {
-                DesurveyTableXmlName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeDesurv, "assay");
-            }
-            else
-            {
-                DesurveyTableXmlName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeDesurv, "assay", sessionName, projectLocation) ;
-            }
-        }
-
-
-        //TODO move out of here
-     
         private async void InitialiseAssayMapping()
         {
             _desurveyTable = new Drillholes.CreateDrillholes.CreateHolesByType();
@@ -84,21 +60,13 @@ namespace Drillholes.Windows.Calculate
             _desurveyService = new AssayDesurveyServices(_desurveyTable);
         }
      
-
-        public async void SetDataContext(DataGrid dataPreview)
-        {
-
-            if (dataGrid.Columns.Count > 0)
-                dataPreview.DataContext = dataGrid;
-        }
-
-        public async Task<bool>GenerateAssayDesurveyVertical(bool bToe, DrillholeDesurveyEnum surveyMethod)
+        public async Task<bool>GenerateAssayDesurveyVertical(bool bToe, bool bCollar, DrillholeDesurveyEnum surveyMethod)
         {
             if (assayDesurvMapper == null)
                 InitialiseAssayMapping();
 
             //surveymethod has to be Tangential
-            var assayResults = await _desurveyService.AssayVerticalHole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, assayXmlData ); //ADD COLLARTABLEFIELDS AND INHERIT
+            var assayResults = await _desurveyService.AssayVerticalHole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, bCollar, assayXmlData ); //ADD COLLARTABLEFIELDS AND INHERIT
 
             //create tableFields table and store desurveyed results
             await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, assayResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.assay);
@@ -110,24 +78,24 @@ namespace Drillholes.Windows.Calculate
             return true;
         }
 
-        public async Task<bool> GenerateAssayDesurveyFromCollarSurvey(bool bToe, DrillholeDesurveyEnum surveyMethod)
+        public async Task<bool> GenerateAssayDesurveyFromCollarSurvey(bool bToe, bool bCollar, DrillholeDesurveyEnum surveyMethod)
         {
             if (assayDesurvMapper == null)
                 InitialiseAssayMapping();
 
             //surveymethod has to be Tangential
-            var assayResults = await _desurveyService.AssaySurveyHole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, assayXmlData);
+            var assayResults = await _desurveyService.AssaySurveyHole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, bCollar, assayXmlData);
 
             return true;
         }
 
-        public async Task<bool> GenerateAssayDesurveyFromDownhole(bool bToe, DrillholeDesurveyEnum surveyMethod)
+        public async Task<bool> GenerateAssayDesurveyFromDownhole(bool bToe, bool bCollar, DrillholeDesurveyEnum surveyMethod)
         {
             if (assayDesurvMapper == null)
                 InitialiseAssayMapping();
 
             //surveymethod has to be Tangential
-            var assayResults = await _desurveyService.AssayDownhole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, assayXmlData);
+            var assayResults = await _desurveyService.AssayDownhole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, bCollar, assayXmlData);
 
             return true;
         }

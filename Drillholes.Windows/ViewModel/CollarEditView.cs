@@ -70,7 +70,7 @@ namespace Drillholes.Windows.ViewModel
         }
 
 
-        public void XmlSetUP(string tableType)
+        public async void XmlSetUP(string tableType)
         {
             //create XML temp table
             if (_xml == null)
@@ -81,11 +81,11 @@ namespace Drillholes.Windows.ViewModel
 
             if (!savedSession)
             {
-                fullPathnameData = XmlDefaultPath.GetFullPathAndFilename(rootNameData, tableType);
+                fullPathnameData = await XmlDefaultPath.GetFullPathAndFilename(rootNameData, tableType);
             }
             else
             {
-                fullPathnameData = XmlDefaultPath.GetProjectPathAndFilename(rootNameData, tableType, sessionName, projectLocation);
+                fullPathnameData = await XmlDefaultPath.GetProjectPathAndFilename(rootNameData, tableType, sessionName, projectLocation);
             }
 
         }

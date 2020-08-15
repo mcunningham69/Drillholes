@@ -201,11 +201,11 @@ namespace Drillholes.Windows.Dialogs
             string fullPathName = "";
             if (savedSession)
             {
-                fullPathName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", projectSession, projectLocation);
+                fullPathName = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", projectSession, projectLocation);
             }
             else
             {
-                fullPathName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "allTables");
+                fullPathName = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "allTables");
             }
 
                 await collarPreviewModel.UpdateXmlPreferences(fullPathName, "SurveyType", surveyType);
@@ -604,9 +604,9 @@ namespace Drillholes.Windows.Dialogs
 
             string fullPathName = "";
             if (savedSession)
-                fullPathName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", projectSession, projectLocation);
+                fullPathName = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", projectSession, projectLocation);
             else
-                fullPathName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "allTables");
+                fullPathName = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "allTables");
 
             if (_tabcontrol.SelectedIndex == 0)
             {
@@ -1045,7 +1045,7 @@ namespace Drillholes.Windows.Dialogs
             bool bCollar = preferences.CreateCollar;
 
 
-            if (_tabcontrol.SelectedIndex == 0)
+            if (_tabcontrol.SelectedIndex == 0) //collar
             {
                 List<XElement> collarValues = new List<XElement>();
                 collarValues.Add(collarPreviewModel.collarTableObject.xPreview);
@@ -1062,11 +1062,11 @@ namespace Drillholes.Windows.Dialogs
                     await collarResults.GenerateCollarDesurveyFromCollarSurvey(bToe, DrillholeDesurveyEnum.Tangential);
                 }
             }
-            else if (_tabcontrol.SelectedIndex == 1)
+            else if (_tabcontrol.SelectedIndex == 1) //downhole survey
             {
                 MessageBox.Show("survey not implemented");
             }
-            else if (_tabcontrol.SelectedIndex == 2)
+            else if (_tabcontrol.SelectedIndex == 2) //Assay
             {
                 List<XElement> assayValues = new List<XElement>();
 
@@ -1091,19 +1091,93 @@ namespace Drillholes.Windows.Dialogs
 
                 if (preferences.surveyType == DrillholeSurveyType.vertical)
                 {
-                    await assayResults.GenerateAssayDesurveyVertical(bToe, preferences.DesurveyMethod);
+                    await assayResults.GenerateAssayDesurveyVertical(bToe, bCollar, preferences.DesurveyMethod);
                 }
                 else if (preferences.surveyType == DrillholeSurveyType.collarsurvey)
                 {
-                    await assayResults.GenerateAssayDesurveyFromCollarSurvey(bToe, preferences.DesurveyMethod);
+                    await assayResults.GenerateAssayDesurveyFromCollarSurvey(bToe, bCollar, preferences.DesurveyMethod);
+                }
+                else //downhole surveys
+                {
+                    assayResults.surveyTableFields = surveyPreviewModel.surveyDataFields;
+                    await assayResults.GenerateAssayDesurveyFromDownhole(bToe, bCollar, preferences.DesurveyMethod);
+                }
+            }
+            else if (_tabcontrol.SelectedIndex == 3) //Interval
+            {
+                List<XElement> intervalValues = new List<XElement>();
+
+                intervalValues.Add(collarPreviewModel.collarTableObject.xPreview);
+
+                if (surveyPreviewModel.surveyTableObject.xPreview != null)
+                {
+                    intervalValues.Add(surveyPreviewModel.surveyTableObject.xPreview);
                 }
                 else
                 {
-                    await assayResults.GenerateAssayDesurveyFromDownhole(bToe, preferences.DesurveyMethod);
+                    XElement surveyValues = new XElement("Survey", "Empty");
+                    intervalValues.Add(surveyValues);
+                }
+
+                intervalValues.Add(intervalPreviewModel.intervalTableObject.xPreview);
+
+                Calculate.GenerateIntervalDesurveyResults intervalResults = new Calculate.GenerateIntervalDesurveyResults(savedSession, projectSession, projectLocation, intervalPreviewModel.intervalDataFields,
+                   intervalValues);
+
+                intervalResults.collarTableFields = collarPreviewModel.collarDataFields;
+
+                if (preferences.surveyType == DrillholeSurveyType.vertical)
+                {
+                    await intervalResults.GenerateIntervalDesurveyVertical(bToe,bCollar, preferences.DesurveyMethod);
+                }
+                else if (preferences.surveyType == DrillholeSurveyType.collarsurvey)
+                {
+                    await intervalResults.GenerateIntervalDesurveyFromCollarSurvey(bToe, bCollar, preferences.DesurveyMethod);
+                }
+                else
+                {
+                    intervalResults.surveyTableFields = surveyPreviewModel.surveyDataFields;
+                    await intervalResults.GenerateIntervalDesurveyFromDownhole(bToe, bCollar, preferences.DesurveyMethod);
+                }
+            }
+            else if (_tabcontrol.SelectedIndex == 4) //Continuous
+            {
+                List<XElement> continuousValues = new List<XElement>();
+
+                continuousValues.Add(collarPreviewModel.collarTableObject.xPreview);
+
+                if (surveyPreviewModel.surveyTableObject.xPreview != null)
+                {
+                    continuousValues.Add(surveyPreviewModel.surveyTableObject.xPreview);
+                }
+                else
+                {
+                    XElement surveyValues = new XElement("Survey", "Empty");
+                    continuousValues.Add(surveyValues);
+                }
+
+                continuousValues.Add(continuousPreviewModel.continuousTableObject.xPreview);
+
+                Calculate.GenerateContinuousDesurveyResults continuousResults = new Calculate.GenerateContinuousDesurveyResults(savedSession, projectSession, projectLocation, continuousPreviewModel.continuousDataFields,
+                   continuousValues);
+
+                continuousResults.collarTableFields = collarPreviewModel.collarDataFields;
+
+                if (preferences.surveyType == DrillholeSurveyType.vertical)
+                {
+                    await continuousResults.GenerateContinuousDesurveyVertical(bToe, bCollar, preferences.DesurveyMethod);
+                }
+                else if (preferences.surveyType == DrillholeSurveyType.collarsurvey)
+                {
+                    await continuousResults.GenerateContinuousDesurveyFromCollarSurvey(bToe, bCollar, preferences.DesurveyMethod);
+                }
+                else
+                {
+                    continuousResults.surveyTableFields = surveyPreviewModel.surveyDataFields;
+                    await continuousResults.GenerateContinuousDesurveyFromDownhole(bToe, bCollar, preferences.DesurveyMethod);
                 }
             }
 
-        
 
 
             //CREATE results

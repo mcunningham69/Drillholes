@@ -607,6 +607,9 @@ namespace Drillholes.XML
             var surveyType = elements.Select(n => n.Element("SurveyType").Value).SingleOrDefault();
             var surveyMethod = elements.Select(n => n.Element("DesurveyMethod").Value).SingleOrDefault();
 
+            var createToe = elements.Select(n => n.Element("CreateCollar").Value).SingleOrDefault();
+            var createCollar = elements.Select(n => n.Element("CreateToe").Value).SingleOrDefault();
+
             bool bImport = false;
 
             if (importColumns != null)
@@ -642,7 +645,9 @@ namespace Drillholes.XML
             {
                 surveyType = survType,
                 ImportAllColumns = bImport,
-                DesurveyMethod = desurveyMethod
+                DesurveyMethod = desurveyMethod,
+                CreateCollar = Convert.ToBoolean(createCollar),
+                CreateToe = Convert.ToBoolean(createToe)
             };
 
 
@@ -1486,12 +1491,11 @@ namespace Drillholes.XML
             var yField = continuousDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
             var zField = continuousDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
             var tdField = continuousDesurvey.collarTableFields.Where(f => f.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-            var distFrom = continuousDesurvey.assayTableFields.Where(f => f.columnImportName == DrillholeConstants.distFromName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-            var distTo = continuousDesurvey.assayTableFields.Where(f => f.columnImportName == DrillholeConstants.distToName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+            var distField = continuousDesurvey.continuousTableFields.Where(f => f.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
 
             string hole = "";
             int colid = 0, contId = 0;
-            double x = 0.0, y = 0.0, z = 0.0, td = 0.0, dip = 0.0, azimuth = 0.0, dblFrom = 0.0, dblTo = 0.0, dblLength = 0.0;
+            double x = 0.0, y = 0.0, z = 0.0, td = 0.0, dip = 0.0, azimuth = 0.0, dblDistance = 0.0;
 
             int counter = 0;
             for (int i = 0; i < continuousDesurvey.bhid.Count; i++)
@@ -1506,7 +1510,7 @@ namespace Drillholes.XML
                     header.Add(xmlResults);
                 }
 
-                if (continuousDesurvey.isInterval[i])
+                if (continuousDesurvey.isContinuous[i])
                 {
                     subheader = new XElement("Coordinates", new XAttribute("Type", "Distance"));
                 }
@@ -1523,15 +1527,14 @@ namespace Drillholes.XML
                 x = continuousDesurvey.x[i];
                 y = continuousDesurvey.y[i];
                 z = continuousDesurvey.z[i];
-                td = continuousDesurvey.length[i];
-                dblFrom = continuousDesurvey.distFrom[i];
+                dblDistance = continuousDesurvey.distFrom[i];
 
                 //add values to XML
-                nodes.Add(new XElement("IntervalID", contId.ToString())); //unique primary key
+                nodes.Add(new XElement("ContinuousID", contId.ToString())); //unique primary key
                 nodes.Add(new XElement(xField, x.ToString()));
                 nodes.Add(new XElement(yField, y.ToString()));
                 nodes.Add(new XElement(zField, z.ToString()));
-                nodes.Add(new XElement(distFrom, dblFrom.ToString()));
+                nodes.Add(new XElement(distField, dblDistance.ToString()));
 
                 string dipField = "", azimuthField = "";
                 if (bDownhole)

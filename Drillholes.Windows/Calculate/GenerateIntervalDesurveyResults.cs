@@ -30,8 +30,6 @@ namespace Drillholes.Windows.Calculate
 
         public ImportTableFields intervalTableFields { get; set; }
 
-        private string DesurveyTableXmlName { get; set; }
-
         public List<XElement> intervalXmlData { get; set; }
 
         public GenerateIntervalDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _intervalTableFields,
@@ -46,31 +44,9 @@ namespace Drillholes.Windows.Calculate
             intervalXmlData = drillholeData;
             intervalTableFields = _intervalTableFields;
 
-            XmlSetUP();
+            XmlSetUP(DrillholeTableType.interval);
 
         }
-
-        public async void XmlSetUP()
-        {
-            //create XML temp table
-            if (_xml == null)
-                _xml = new Drillholes.XML.XmlController();
-
-            if (_xmlService == null)
-                _xmlService = new XmlService(_xml);
-
-            if (!savedSession)
-            {
-                DesurveyTableXmlName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeDesurv, "interval");
-            }
-            else
-            {
-                DesurveyTableXmlName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeDesurv, "interval", sessionName, projectLocation) ;
-            }
-        }
-
-
-        //TODO move out of here
      
         private async void InitialiseIntervalMapping()
         {
@@ -87,42 +63,43 @@ namespace Drillholes.Windows.Calculate
         }
      
 
-        public async void SetDataContext(DataGrid dataPreview)
-        {
-
-            if (dataGrid.Columns.Count > 0)
-                dataPreview.DataContext = dataGrid;
-        }
-
-        public async Task<bool>GenerateIntervalDesurveyVertical(bool bToe, DrillholeDesurveyEnum surveyMethod)
+        public async Task<bool>GenerateIntervalDesurveyVertical(bool bToe, bool bCollar, DrillholeDesurveyEnum surveyMethod)
         {
             if (intervalDesurvMapper == null)
                 InitialiseIntervalMapping();
 
             //surveymethod has to be Tangential
-            var intervalResults = await _desurveyService.IntervalVerticalHole(intervalDesurvMapper, surveyMethod, intervalTableFields, bToe, intervalXmlData);
+            var intervalResults = await _desurveyService.IntervalVerticalHole(intervalDesurvMapper, surveyMethod, collarTableFields, intervalTableFields, bToe, bCollar, intervalXmlData);
+
+            //create tableFields table and store desurveyed results
+            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, intervalResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.interval);
+
+            //save to xml
+            if (savedSession)
+                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.interval);
+
+            return true;
+
+        }
+
+        public async Task<bool> GenerateIntervalDesurveyFromCollarSurvey(bool bToe, bool bCollar, DrillholeDesurveyEnum surveyMethod)
+        {
+            if (intervalDesurvMapper == null)
+                InitialiseIntervalMapping();
+
+            //surveymethod has to be Tangential
+            var intervalResults = await _desurveyService.IntervalSurveyHole(intervalDesurvMapper, surveyMethod, intervalTableFields, bToe, bCollar, intervalXmlData);
 
             return true;
         }
 
-        public async Task<bool> GenerateAssayDesurveyFromCollarSurvey(bool bToe, DrillholeDesurveyEnum surveyMethod)
+        public async Task<bool> GenerateIntervalDesurveyFromDownhole(bool bToe, bool bCollar, DrillholeDesurveyEnum surveyMethod)
         {
             if (intervalDesurvMapper == null)
                 InitialiseIntervalMapping();
 
             //surveymethod has to be Tangential
-            var intervalResults = await _desurveyService.IntervalSurveyHole(intervalDesurvMapper, surveyMethod, intervalTableFields, bToe, intervalXmlData);
-
-            return true;
-        }
-
-        public async Task<bool> GenerateAssayDesurveyFromDownhole(bool bToe, DrillholeDesurveyEnum surveyMethod)
-        {
-            if (intervalDesurvMapper == null)
-                InitialiseIntervalMapping();
-
-            //surveymethod has to be Tangential
-            var collarResults = await _desurveyService.IntervalDownhole(intervalDesurvMapper, surveyMethod, intervalTableFields, bToe, intervalXmlData);
+            var collarResults = await _desurveyService.IntervalDownhole(intervalDesurvMapper, surveyMethod, intervalTableFields, bToe, bCollar, intervalXmlData);
 
             return true;
         }

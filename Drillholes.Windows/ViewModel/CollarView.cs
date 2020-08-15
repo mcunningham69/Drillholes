@@ -135,7 +135,7 @@ namespace Drillholes.Windows.ViewModel
 
         }
 
-        public void XmlSetUP(string tableType)
+        public async void XmlSetUP(string tableType)
         {
             //create XML temp table
             if (_xml == null)
@@ -146,13 +146,13 @@ namespace Drillholes.Windows.ViewModel
 
             if (!savedSession)
             {
-                fullPathnameFields = XmlDefaultPath.GetFullPathAndFilename(rootNameFields, tableType);
-                fullPathnameData = XmlDefaultPath.GetFullPathAndFilename(rootNameData, tableType);
+                fullPathnameFields = await XmlDefaultPath.GetFullPathAndFilename(rootNameFields, tableType);
+                fullPathnameData = await XmlDefaultPath.GetFullPathAndFilename(rootNameData, tableType);
             }
             else
             {
-                fullPathnameFields = XmlDefaultPath.GetProjectPathAndFilename(rootNameFields, tableType, sessionName, projectLocation) ;
-                fullPathnameData = XmlDefaultPath.GetProjectPathAndFilename(rootNameData, tableType, sessionName, projectLocation);
+                fullPathnameFields = await XmlDefaultPath.GetProjectPathAndFilename(rootNameFields, tableType, sessionName, projectLocation) ;
+                fullPathnameData = await XmlDefaultPath.GetProjectPathAndFilename(rootNameData, tableType, sessionName, projectLocation);
             }
 
         }
@@ -170,11 +170,11 @@ namespace Drillholes.Windows.ViewModel
 
             if (!savedSession)
             {
-                fullPathnamePreferences = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "alltables");
+                fullPathnamePreferences = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "alltables");
             }
             else 
             {
-                fullPathnamePreferences = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", sessionName, projectLocation);
+                fullPathnamePreferences = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", sessionName, projectLocation);
             }
 
             DrillholePreferences preferences = await _xmlService.ReadDrillholePreferences(fullPathnamePreferences, DrillholeConstants.drillholePref);

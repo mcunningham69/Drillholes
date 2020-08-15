@@ -24,9 +24,9 @@ namespace Drillholes.Domain.Services
         }
 
      
-        public async Task<IntervalDesurveyObject> IntervalVerticalHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeValues)
+        public async Task<IntervalDesurveyObject> IntervalVerticalHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields intervalFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateIntervalVerticalHole(desurveyType, tableFields, bToe, drillholeValues) as IntervalDesurveyDto;
+            var desurvDto = await _drillhole.CreateIntervalVerticalHole(desurveyType, collarTableFields, intervalFields, bToe, bCollar, drillholeValues) as IntervalDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {
@@ -36,9 +36,9 @@ namespace Drillholes.Domain.Services
             return mapper.Map<IntervalDesurveyDto, IntervalDesurveyObject>(desurvDto);
         }
 
-        public async Task<IntervalDesurveyObject> IntervalSurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeValues)
+        public async Task<IntervalDesurveyObject> IntervalSurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateIntervalSurveyHole(desurveyType, tableFields, bToe, drillholeValues) as IntervalDesurveyDto;
+            var desurvDto = await _drillhole.CreateIntervalSurveyHole(desurveyType, tableFields, bToe, bCollar, drillholeValues) as IntervalDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {
@@ -48,9 +48,9 @@ namespace Drillholes.Domain.Services
             return mapper.Map<IntervalDesurveyDto, IntervalDesurveyObject>(desurvDto);
         }
 
-        public async Task<IntervalDesurveyObject> IntervalDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, List<XElement> drillholeValues)
+        public async Task<IntervalDesurveyObject> IntervalDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateIntervalDownhole(desurveyType, tableFields, bToe, drillholeValues) as IntervalDesurveyDto;
+            var desurvDto = await _drillhole.CreateIntervalDownhole(desurveyType, tableFields, bToe, bCollar, drillholeValues) as IntervalDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {

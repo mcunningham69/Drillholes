@@ -344,14 +344,14 @@ namespace Drillholes.Windows.Dialogs
                 //Read XML
 
                 //Add new entry and save
-                fullName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeTable, "alltables", projectSession, projectLocation);
+                fullName = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeTable, "alltables", projectSession, projectLocation);
 
             }
             else
             {
                 //get pathname
                 if (fullName == "")
-                    fullName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeTable, "alltables");
+                    fullName = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeTable, "alltables");
             }
 
             //create XML temp table

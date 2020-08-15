@@ -42,7 +42,7 @@ namespace Drillholes.Windows.Calculate
         public string sessionName { get; set; }
         public string projectLocation { get; set; }
 
-        private string DesurveyTableXmlName { get; set; }
+        public string DesurveyTableXmlName { get; set; }
 
         public GenerateCollarDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _collarTableFields,
             List<XElement> drillholeData)
@@ -56,11 +56,11 @@ namespace Drillholes.Windows.Calculate
             collarXmlData = drillholeData;
             collarTableFields = _collarTableFields;
 
-            XmlSetUP();
+            XmlSetUP(DrillholeTableType.collar);
 
         }
 
-        public async void XmlSetUP( )
+        public async void XmlSetUP(DrillholeTableType tableType)
         {
             //create XML temp table
             if (_xml == null)
@@ -71,11 +71,11 @@ namespace Drillholes.Windows.Calculate
 
             if (!savedSession)
             {
-                DesurveyTableXmlName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeDesurv, "collar");
+                DesurveyTableXmlName =  await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeDesurv, tableType.ToString());
             }
             else
             {
-                DesurveyTableXmlName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeDesurv, "collar", sessionName, projectLocation) ;
+                DesurveyTableXmlName = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeDesurv, tableType.ToString(), sessionName, projectLocation) ;
             }
         }
 
@@ -121,7 +121,7 @@ namespace Drillholes.Windows.Calculate
             return true;
         }
 
-        public virtual async Task<bool> GenerateCollarDesurveyFromCollarSurvey(bool bToe, DrillholeDesurveyEnum surveyMethod)
+        public async Task<bool> GenerateCollarDesurveyFromCollarSurvey(bool bToe, DrillholeDesurveyEnum surveyMethod)
         {
 
             if (collarDesurvMapper == null)

@@ -24,9 +24,9 @@ namespace Drillholes.Domain.Services
         }
 
       
-        public async Task<AssayDesurveyObject> AssayVerticalHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields assayTableFields, bool bToe, List<XElement> drillholeValues)
+        public async Task<AssayDesurveyObject> AssayVerticalHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields assayTableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateAssayVerticalHole(desurveyType, collarTableFields, assayTableFields, bToe, drillholeValues) as AssayDesurveyDto;
+            var desurvDto = await _drillhole.CreateAssayVerticalHole(desurveyType, collarTableFields, assayTableFields, bToe, bCollar, drillholeValues) as AssayDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {
@@ -37,9 +37,9 @@ namespace Drillholes.Domain.Services
         }
 
         public async Task<AssayDesurveyObject> AssaySurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, 
-            ImportTableFields assayTableFields, bool bToe, List<XElement> drillholeValues)
+            ImportTableFields assayTableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateAssaySurveyHole(desurveyType, assayTableFields, bToe, drillholeValues) as AssayDesurveyDto; //TODO update interface
+            var desurvDto = await _drillhole.CreateAssaySurveyHole(desurveyType, assayTableFields, bToe, bCollar, drillholeValues) as AssayDesurveyDto; //TODO update interface
 
             if (desurvDto.IsValid == false)
             {
@@ -50,9 +50,9 @@ namespace Drillholes.Domain.Services
         }
 
         public async Task<AssayDesurveyObject> AssayDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields,
-            ImportTableFields assayTableFields, bool bToe, List<XElement> drillholeValues)
+            ImportTableFields assayTableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateAssayDownhole(desurveyType, assayTableFields, bToe, drillholeValues) as AssayDesurveyDto; //TODO update interface
+            var desurvDto = await _drillhole.CreateAssayDownhole(desurveyType, assayTableFields, bToe, bCollar, drillholeValues) as AssayDesurveyDto; //TODO update interface
 
             if (desurvDto.IsValid == false)
             {

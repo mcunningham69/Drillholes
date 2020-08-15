@@ -24,13 +24,10 @@ namespace Drillholes.Windows.Calculate
     {
         private SurveyDesurveyServices _desurveyService;
 
-
         private IMapper surveyDesurvMapper;
         public ImportTableFields surveyTableFields { get; set; }
 
         public List<XElement> surveyXmlData { get; set; }
-
-        private string DesurveyTableXmlName { get; set; }
 
         public GenerateSurveyDesurveyResults(bool _savedSession, string _sessionName, string _projectLocation, ImportTableFields _surveyTableFields,
             List<XElement> drillholeData):base(_savedSession, _sessionName, _projectLocation, _surveyTableFields, drillholeData)
@@ -43,30 +40,9 @@ namespace Drillholes.Windows.Calculate
             surveyXmlData = drillholeData;
             surveyTableFields = _surveyTableFields;
 
-            XmlSetUP();
+            XmlSetUP(DrillholeTableType.survey);
 
         }
-
-
-        public async void XmlSetUP()
-        {
-            //create XML temp table
-            if (_xml == null)
-                _xml = new Drillholes.XML.XmlController();
-
-            if (_xmlService == null)
-                _xmlService = new XmlService(_xml);
-
-            if (!savedSession)
-            {
-                DesurveyTableXmlName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeDesurv, "survey");
-            }
-            else
-            {
-                DesurveyTableXmlName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeDesurv, "survey", sessionName, projectLocation);
-            }
-        }
-
 
         //TODO move out of here
    
@@ -85,20 +61,13 @@ namespace Drillholes.Windows.Calculate
         }
        
 
-        public async void SetDataContext(DataGrid dataPreview)
-        {
-
-            if (dataGrid.Columns.Count > 0)
-                dataPreview.DataContext = dataGrid;
-        }
-
-        public async Task<bool> GenerateSurvey(bool bToe, DrillholeDesurveyEnum surveyMethod)
+        public async Task<bool> GenerateSurvey(bool bToe, bool bCollar, DrillholeDesurveyEnum surveyMethod)
         {
             if (surveyDesurvMapper == null)
                 InitialiseSurveyMapping();
 
             //surveymethod has to be Tangential
-            var surveyResults = await _desurveyService.SurveyDownhole(surveyDesurvMapper, surveyMethod, surveyTableFields, bToe, surveyXmlData );
+            var surveyResults = await _desurveyService.SurveyDownhole(surveyDesurvMapper, surveyMethod, surveyTableFields, bToe, bCollar, surveyXmlData );
 
             return true;
         }

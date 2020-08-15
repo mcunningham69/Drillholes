@@ -9,7 +9,7 @@ namespace Drillholes.Windows
 {
     public static class XmlDefaultPath
     {
-        public static string GetFullPathAndFilename(string _rootName, string tableName)
+        public static async Task<string> GetFullPathAndFilename(string _rootName, string tableName)
         {
             string rootName = _rootName;
             string fullPathAndName = "";
@@ -57,7 +57,7 @@ namespace Drillholes.Windows
             return xmlPath + tableName + "_" + rootName + ".xml";
         }
 
-        public static string GetProjectPathAndFilename(string _rootName, string tableName, string sessionName, string projectLocation)
+        public static async Task<string> GetProjectPathAndFilename(string _rootName, string tableName, string sessionName, string projectLocation)
         {
             string rootName = _rootName;
             string fullPathAndName = "";

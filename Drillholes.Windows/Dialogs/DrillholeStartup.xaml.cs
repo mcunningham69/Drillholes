@@ -69,11 +69,11 @@ namespace Drillholes.Windows.Dialogs
             {
                 //get pathname
                 if (fullName == "" || fullName == null)
-                    fullName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "alltables");
+                    fullName = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "alltables");
             }
             else
             {
-                fullName = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", projectSession, projectLocation);
+                fullName = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholePref, "alltables", projectSession, projectLocation);
             }
 
             //create XML temp table
@@ -104,28 +104,28 @@ namespace Drillholes.Windows.Dialogs
         {
             //Create table with paths and parameters
 
-            string fullPathname = XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeTable, "alltables", projectSession, projectLocation);
+            string fullPathname = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeTable, "alltables", projectSession, projectLocation);
             await _xmlService.TableParameters(fullPathname, page.tables, DrillholeConstants.drillholeTable);
             _xmlService.TableParameters(projectLocation + "\\" + projectSession + ".dh", fullPathname, DrillholeConstants.drillholeProject, DrillholeTableType.other);
 
 
             //get collar name for fields
-            fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.collar.ToString(), projectSession, projectLocation);
+            fullPathname = await XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.collar.ToString(), projectSession, projectLocation);
 
             //Create table fields for collar and entry into .dh file
             await CreateTableFieldForImportDialogPage(fullPathname, DrillholeTableType.collar, page.collarPreviewModel.collarDataFields, "DrillholeFields");
 
-            fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.collar.ToString(), projectSession, projectLocation);
+            fullPathname = await XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.collar.ToString(), projectSession, projectLocation);
             await CreateTableDataForImportDialogPage(fullPathname, page.collarPreviewModel.collarTableObject.xPreview, DrillholeTableType.collar, "DrillholeData");
 
             if (page.surveyPreviewModel != null)
             {
                 if (page.surveyPreviewModel.surveyDataFields != null)
                 {
-                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.survey.ToString(), projectSession, projectLocation);
+                    fullPathname = await XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.survey.ToString(), projectSession, projectLocation);
                     await CreateTableFieldForImportDialogPage(fullPathname, DrillholeTableType.survey, page.surveyPreviewModel.surveyDataFields, "DrillholeFields");
 
-                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.survey.ToString(), projectSession, projectLocation);
+                    fullPathname = await XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.survey.ToString(), projectSession, projectLocation);
                     await CreateTableDataForImportDialogPage(fullPathname, page.surveyPreviewModel.surveyTableObject.xPreview, DrillholeTableType.survey, "DrillholeData");
                 }
             }
@@ -134,10 +134,10 @@ namespace Drillholes.Windows.Dialogs
             {
                 if (page.assayPreviewModel.assayDataFields != null)
                 {
-                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.assay.ToString(), projectSession, projectLocation);
+                    fullPathname = await XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.assay.ToString(), projectSession, projectLocation);
                     await CreateTableFieldForImportDialogPage(fullPathname, DrillholeTableType.assay, page.assayPreviewModel.assayDataFields, "DrillholeFields");
 
-                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.assay.ToString(), projectSession, projectLocation);
+                    fullPathname = await XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.assay.ToString(), projectSession, projectLocation);
                     await CreateTableDataForImportDialogPage(fullPathname, page.assayPreviewModel.assayTableObject.xPreview, DrillholeTableType.assay, "DrillholeData");
                 }
             }
@@ -145,10 +145,10 @@ namespace Drillholes.Windows.Dialogs
             {
                 if (page.intervalPreviewModel.intervalDataFields != null)
                 {
-                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.interval.ToString(), projectSession, projectLocation);
+                    fullPathname = await XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.interval.ToString(), projectSession, projectLocation);
                     await CreateTableFieldForImportDialogPage(fullPathname, DrillholeTableType.interval, page.intervalPreviewModel.intervalDataFields, "DrillholeFields");
 
-                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.interval.ToString(), projectSession, projectLocation);
+                    fullPathname = await XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.interval.ToString(), projectSession, projectLocation);
                     await CreateTableDataForImportDialogPage(fullPathname, page.intervalPreviewModel.intervalTableObject.xPreview, DrillholeTableType.interval, "DrillholeData");
                 }
             }
@@ -157,10 +157,10 @@ namespace Drillholes.Windows.Dialogs
             {
                 if (page.continuousPreviewModel.continuousDataFields != null)
                 {
-                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.continuous.ToString(), projectSession, projectLocation);
+                    fullPathname = await XmlDefaultPath.GetProjectPathAndFilename("DrillholeFields", DrillholeTableType.continuous.ToString(), projectSession, projectLocation);
                     await CreateTableFieldForImportDialogPage(fullPathname, DrillholeTableType.continuous, page.continuousPreviewModel.continuousDataFields, "DrillholeFields");
 
-                    fullPathname = XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.continuous.ToString(), projectSession, projectLocation);
+                    fullPathname = await XmlDefaultPath.GetProjectPathAndFilename("DrillholeData", DrillholeTableType.continuous.ToString(), projectSession, projectLocation);
                     await CreateTableDataForImportDialogPage(fullPathname, page.continuousPreviewModel.continuousTableObject.xPreview, DrillholeTableType.continuous, "DrillholeData");
                 }
             }
@@ -926,9 +926,9 @@ namespace Drillholes.Windows.Dialogs
         private async void SetEnvironmentFromXml(string rootName)
         {
             if (savedProject)
-                fullName = XmlDefaultPath.GetProjectPathAndFilename(rootName, "alltables", projectSession, projectLocation);
+                fullName = await XmlDefaultPath.GetProjectPathAndFilename(rootName, "alltables", projectSession, projectLocation);
             else
-                fullName = XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "allTables");
+                fullName = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholePref, "allTables");
 
             //create XML temp table
             if (_xml == null)
