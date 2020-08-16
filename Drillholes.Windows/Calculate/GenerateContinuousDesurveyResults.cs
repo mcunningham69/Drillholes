@@ -79,6 +79,8 @@ namespace Drillholes.Windows.Calculate
             if (savedSession)
                 await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.continuous);
 
+            StoreResultsToXml(contResults);
+
             return true;
         }
 
@@ -88,7 +90,9 @@ namespace Drillholes.Windows.Calculate
                 InitialiseContinuousMapping();
 
             //surveymethod has to be Tangential
-            var collarResults = await _desurveyService.ContinuousSurveyHole(continuousDesurvMapper, surveyMethod, continuousTableFields, bToe, bCollar, continuousXmlData);
+            var contResults = await _desurveyService.ContinuousSurveyHole(continuousDesurvMapper, surveyMethod, collarTableFields, continuousTableFields, bToe, bCollar, continuousXmlData);
+
+            StoreResultsToXml(contResults);
 
             return true;
         }
@@ -99,9 +103,23 @@ namespace Drillholes.Windows.Calculate
                 InitialiseContinuousMapping();
 
             //surveymethod has to be Tangential
-            var collarResults = await _desurveyService.ContinuousDownhole(continuousDesurvMapper, surveyMethod, continuousTableFields, bToe, bCollar, continuousXmlData);
+            var contResults = await _desurveyService.ContinuousDownhole(continuousDesurvMapper, surveyMethod, collarTableFields, continuousTableFields, surveyTableFields, bToe, bCollar, continuousXmlData);
+
+            StoreResultsToXml(contResults);
 
             return true;
+        }
+
+        private async void StoreResultsToXml(ContinuousDesurveyObject contResults)
+        {
+
+            //create tableFields table and store desurveyed results
+            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, contResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.continuous);
+
+            //save to xml
+            if (savedSession)
+                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.continuous);
+
         }
     }
 }

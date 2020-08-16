@@ -986,7 +986,18 @@ namespace Drillholes.Windows.Dialogs
             }
             else if (_tabcontrol.SelectedIndex == 1) //downhole survey
             {
-                MessageBox.Show("survey not implemented");
+                List<XElement> surveyValues = new List<XElement>();
+                surveyValues.Add(collarPreviewModel.collarTableObject.xPreview);
+                surveyValues.Add(surveyPreviewModel.surveyTableObject.xPreview);
+
+                Calculate.GenerateSurveyDesurveyResults surveyResults = new Calculate.GenerateSurveyDesurveyResults(savedSession, projectSession, projectLocation, surveyPreviewModel.surveyDataFields,
+                   surveyValues)
+                {
+                    collarTableFields = collarPreviewModel.collarDataFields
+                };
+
+                await surveyResults.GenerateSurvey(bToe, bCollar, preferences.DesurveyMethod);
+
             }
             else if (_tabcontrol.SelectedIndex == 2) //Assay
             {
@@ -1007,9 +1018,11 @@ namespace Drillholes.Windows.Dialogs
                 assayValues.Add(assayPreviewModel.assayTableObject.xPreview);
 
                 Calculate.GenerateAssayDesurveyResults assayResults = new Calculate.GenerateAssayDesurveyResults(savedSession, projectSession, projectLocation, assayPreviewModel.assayDataFields,
-                   assayValues);
-
-                assayResults.collarTableFields = collarPreviewModel.collarDataFields;
+                   assayValues)
+                {
+                    collarTableFields = collarPreviewModel.collarDataFields,
+                    surveyTableFields = surveyPreviewModel.surveyDataFields
+                };
 
                 if (preferences.surveyType == DrillholeSurveyType.vertical)
                 {
@@ -1044,13 +1057,15 @@ namespace Drillholes.Windows.Dialogs
                 intervalValues.Add(intervalPreviewModel.intervalTableObject.xPreview);
 
                 Calculate.GenerateIntervalDesurveyResults intervalResults = new Calculate.GenerateIntervalDesurveyResults(savedSession, projectSession, projectLocation, intervalPreviewModel.intervalDataFields,
-                   intervalValues);
-
-                intervalResults.collarTableFields = collarPreviewModel.collarDataFields;
+                   intervalValues)
+                {
+                    collarTableFields = collarPreviewModel.collarDataFields,
+                    surveyTableFields = surveyPreviewModel.surveyDataFields
+                };
 
                 if (preferences.surveyType == DrillholeSurveyType.vertical)
                 {
-                    await intervalResults.GenerateIntervalDesurveyVertical(bToe,bCollar, preferences.DesurveyMethod);
+                    await intervalResults.GenerateIntervalDesurveyVertical(bToe, bCollar, preferences.DesurveyMethod);
                 }
                 else if (preferences.surveyType == DrillholeSurveyType.collarsurvey)
                 {
@@ -1081,9 +1096,11 @@ namespace Drillholes.Windows.Dialogs
                 continuousValues.Add(continuousPreviewModel.continuousTableObject.xPreview);
 
                 Calculate.GenerateContinuousDesurveyResults continuousResults = new Calculate.GenerateContinuousDesurveyResults(savedSession, projectSession, projectLocation, continuousPreviewModel.continuousDataFields,
-                   continuousValues);
-
-                continuousResults.collarTableFields = collarPreviewModel.collarDataFields;
+                   continuousValues)
+                {
+                    collarTableFields = collarPreviewModel.collarDataFields,
+                    surveyTableFields = surveyPreviewModel.surveyDataFields
+                };
 
                 if (preferences.surveyType == DrillholeSurveyType.vertical)
                 {

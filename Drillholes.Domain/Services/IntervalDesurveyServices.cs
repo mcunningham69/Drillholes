@@ -36,9 +36,9 @@ namespace Drillholes.Domain.Services
             return mapper.Map<IntervalDesurveyDto, IntervalDesurveyObject>(desurvDto);
         }
 
-        public async Task<IntervalDesurveyObject> IntervalSurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
+        public async Task<IntervalDesurveyObject> IntervalSurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields intervalTableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateIntervalSurveyHole(desurveyType, tableFields, bToe, bCollar, drillholeValues) as IntervalDesurveyDto;
+            var desurvDto = await _drillhole.CreateIntervalSurveyHole(desurveyType, collarTableFields, intervalTableFields, bToe, bCollar, drillholeValues) as IntervalDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {
@@ -48,9 +48,10 @@ namespace Drillholes.Domain.Services
             return mapper.Map<IntervalDesurveyDto, IntervalDesurveyObject>(desurvDto);
         }
 
-        public async Task<IntervalDesurveyObject> IntervalDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
+        public async Task<IntervalDesurveyObject> IntervalDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields intervalTableFields, 
+            ImportTableFields surveyTableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateIntervalDownhole(desurveyType, tableFields, bToe, bCollar, drillholeValues) as IntervalDesurveyDto;
+            var desurvDto = await _drillhole.CreateIntervalDownhole(desurveyType, collarTableFields, intervalTableFields, surveyTableFields, bToe, bCollar, drillholeValues) as IntervalDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {

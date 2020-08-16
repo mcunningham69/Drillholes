@@ -10,7 +10,7 @@ namespace Drillholes.CreateDrillholes
     {
         public static async Task<Coordinate3D> ReturnCoordinateTangential(double dblX, double dblY, double dblZ, double dblDistance, double dblAzim, double dblDip)
         {
-            Coordinate3D coordinate3D = null;
+            Coordinate3D coordinate3D = new Coordinate3D(); ;
 
             double dblRadAzimuth = (Math.PI / 180) * dblAzim;
             double dblRadDip = (Math.PI / 180) * dblDip;

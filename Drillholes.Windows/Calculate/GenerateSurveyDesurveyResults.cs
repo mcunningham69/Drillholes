@@ -67,7 +67,7 @@ namespace Drillholes.Windows.Calculate
                 InitialiseSurveyMapping();
 
             //surveymethod has to be Tangential
-            var surveyResults = await _desurveyService.SurveyDownhole(surveyDesurvMapper, surveyMethod, surveyTableFields, bToe, bCollar, surveyXmlData );
+            var surveyResults = await _desurveyService.SurveyDownhole(surveyDesurvMapper, surveyMethod, collarTableFields, surveyTableFields, bToe, bCollar, surveyXmlData );
 
             return true;
         }

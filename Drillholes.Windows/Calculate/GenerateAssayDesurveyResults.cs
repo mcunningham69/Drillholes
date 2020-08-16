@@ -68,12 +68,7 @@ namespace Drillholes.Windows.Calculate
             //surveymethod has to be Tangential
             var assayResults = await _desurveyService.AssayVerticalHole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, bCollar, assayXmlData ); //ADD COLLARTABLEFIELDS AND INHERIT
 
-            //create tableFields table and store desurveyed results
-            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, assayResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.assay);
-
-            //save to xml
-            if (savedSession)
-                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.assay);
+            StoreResultsToXml(assayResults);
 
             return true;
         }
@@ -86,6 +81,8 @@ namespace Drillholes.Windows.Calculate
             //surveymethod has to be Tangential
             var assayResults = await _desurveyService.AssaySurveyHole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, bCollar, assayXmlData);
 
+            StoreResultsToXml(assayResults);
+
             return true;
         }
 
@@ -95,9 +92,24 @@ namespace Drillholes.Windows.Calculate
                 InitialiseAssayMapping();
 
             //surveymethod has to be Tangential
-            var assayResults = await _desurveyService.AssayDownhole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, bToe, bCollar, assayXmlData);
+            var assayResults = await _desurveyService.AssayDownhole(assayDesurvMapper, surveyMethod, collarTableFields, assayTableFields, surveyTableFields, bToe, bCollar, assayXmlData);
+
+            StoreResultsToXml(assayResults);
 
             return true;
+        }
+
+
+        private async void StoreResultsToXml(AssayDesurveyObject assayResults)
+        {
+
+            //create tableFields table and store desurveyed results
+            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, assayResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.assay);
+
+            //save to xml
+            if (savedSession)
+                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.assay);
+
         }
     }
 }

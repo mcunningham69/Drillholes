@@ -35,9 +35,10 @@ namespace Drillholes.Domain.Services
             return mapper.Map<ContinuousDesurveyDto, ContinuousDesurveyObject>(desurvDto);
         }
 
-        public async Task<ContinuousDesurveyObject> ContinuousSurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
+        public async Task<ContinuousDesurveyObject> ContinuousSurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields,
+            bool bToe, bool bCollar, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateContinuousSurveyHole(desurveyType, tableFields, bToe, bCollar, drillholeValues) as ContinuousDesurveyDto;
+            var desurvDto = await _drillhole.CreateContinuousSurveyHole(desurveyType, collarTableFields, contTableFields, bToe, bCollar, drillholeValues) as ContinuousDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {
@@ -47,9 +48,10 @@ namespace Drillholes.Domain.Services
             return mapper.Map<ContinuousDesurveyDto, ContinuousDesurveyObject>(desurvDto);
         }
 
-        public async Task<ContinuousDesurveyObject> ContinuousDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
+        public async Task<ContinuousDesurveyObject> ContinuousDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields,
+            ImportTableFields surveyTableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
         {
-            var desurvDto = await _drillhole.CreateContinuousDownhole(desurveyType, tableFields, bToe, bCollar, drillholeValues) as ContinuousDesurveyDto;
+            var desurvDto = await _drillhole.CreateContinuousDownhole(desurveyType, collarTableFields, contTableFields, surveyTableFields, bToe, bCollar, drillholeValues) as ContinuousDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {

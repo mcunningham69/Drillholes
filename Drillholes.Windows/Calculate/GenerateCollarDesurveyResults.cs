@@ -110,13 +110,7 @@ namespace Drillholes.Windows.Calculate
             //surveymethod has to be Tangential
             var collarResults = await _desurveyService.CollarVerticalHole(collarDesurvMapper, surveyMethod, collarTableFields, bToe, collarXmlData );
 
-            //create tableFields table and store desurveyed results
-            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, collarResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.collar);
-
-            //save to xml
-            if (savedSession)
-                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.collar);
-
+            StoreResultsToXml(collarResults);
 
             return true;
         }
@@ -130,7 +124,21 @@ namespace Drillholes.Windows.Calculate
             //surveymethod has to be Tangential
             var collarResults = await _desurveyService.CollarSurveyHole(collarDesurvMapper, surveyMethod, collarTableFields, bToe, collarXmlData);
 
+            StoreResultsToXml(collarResults);
+
             return true;
+        }
+
+        private async void StoreResultsToXml(CollarDesurveyObject collarResults)
+        {
+
+            //create tableFields table and store desurveyed results
+            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, collarResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.collar);
+
+            //save to xml
+            if (savedSession)
+                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.collar);
+
         }
     }
 }

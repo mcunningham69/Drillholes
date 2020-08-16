@@ -25,9 +25,9 @@ namespace Drillholes.Domain.Services
 
    
 
-        public async Task<SurveyDesurveyObject> SurveyDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields tableFields, bool bToe, bool bCollar, List<XElement> surveyValues)
+        public async Task<SurveyDesurveyObject> SurveyDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields surveyTableFields, bool bToe, bool bCollar, List<XElement> surveyValues)
         {
-            var desurvDto = await _drillhole.CreateSurveyDownhole(desurveyType, tableFields, bToe, bCollar, surveyValues) as SurveyDesurveyDto;
+            var desurvDto = await _drillhole.CreateSurveyDownhole(desurveyType, collarTableFields, surveyTableFields, bToe, bCollar, surveyValues) as SurveyDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {
