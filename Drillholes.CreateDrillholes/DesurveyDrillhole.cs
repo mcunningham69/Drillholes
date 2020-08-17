@@ -157,13 +157,33 @@ namespace Drillholes.CreateDrillholes
 
         }
 
+        #region Assay
         public class Tangential : DrillholeDesurveyValues
         {
+            /// <summary>
+            /// Desurvey assay table using downhole surveys from survey table
+            /// </summary>
+            /// <param name="collarTableFields"></param>
+            /// <param name="assayTableFields"></param>
+            /// <param name="surveyTableFields"></param>
+            /// <param name="drillholeValues"></param>
+            /// <param name="bToe"></param>
+            /// <param name="bCollar"></param>
+            /// <returns></returns>
             public override Task<AssayDesurveyDto> AssayDownholeTrace(ImportTableFields collarTableFields, ImportTableFields assayTableFields, ImportTableFields surveyTableFields, List<XElement> drillholeValues, bool bToe, bool bCollar)
             {
                 throw new NotImplementedException();
             }
 
+            /// <summary>
+            /// Desurvey assay table using dip and azimuth from collar table
+            /// </summary>
+            /// <param name="collarTableFields"></param>
+            /// <param name="assayTableFields"></param>
+            /// <param name="drillholeValues"></param>
+            /// <param name="bToe"></param>
+            /// <param name="bCollar"></param>
+            /// <returns></returns>
             public override async Task<AssayDesurveyDto> AssayCollarSurveyTrace(ImportTableFields collarTableFields, ImportTableFields assayTableFields, List<XElement> drillholeValues, bool bToe, bool bCollar)
             {
                 AssayDesurveyDto assayDesurveyDto = new AssayDesurveyDto()
@@ -289,9 +309,9 @@ namespace Drillholes.CreateDrillholes
                             //check to add TD
                             if (bToe)
                             {
-                                if (dblLength > dblFrom)
+                                if (dblLength > dblTo)
                                 {
-                                    await PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblLength, dblAzimuth, dblDip, holeAttr, assayHoleAttr, hole, assayDesurveyDto,
+                                    await PopulateDesurveyObject(dblX, dblY, dblZ, dblTo, dblLength, dblAzimuth, dblDip, holeAttr, assayHoleAttr, hole, assayDesurveyDto,
                                         DrillholeTableType.assay, false, false);
                                 }
                             }
@@ -302,146 +322,15 @@ namespace Drillholes.CreateDrillholes
                 return assayDesurveyDto;
             }
 
-            private async Task<Coordinate3D> PopulateDesurveyObject(double dblX, double dblY, double dblZ, double dblFrom, double dblTo, double dblAzimuth, double dblDip,
-                string holeAttr, string sampleAttr, string hole, object desurveyDto, DrillholeTableType tableType, bool isSample, bool bCollar)
-            {
-                Coordinate3D coordinate = null;
-
-                if (tableType == DrillholeTableType.assay)
-                {
-                    AssayDesurveyDto assayDesurveyDto = desurveyDto as AssayDesurveyDto;
-
-                    assayDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                    assayDesurveyDto.assayId.Add(Convert.ToInt16(sampleAttr));
-                    assayDesurveyDto.bhid.Add(hole);
-                    assayDesurveyDto.distFrom.Add(dblFrom);
-                    assayDesurveyDto.distTo.Add(dblTo);
-                    assayDesurveyDto.dip.Add(dblDip);
-                    assayDesurveyDto.azimuth.Add(dblAzimuth);
-                    assayDesurveyDto.length.Add(Convert.ToDouble(dblTo - dblFrom));
-                    assayDesurveyDto.Count++;
-                    assayDesurveyDto.isAssay.Add(isSample);
-
-                    if (!bCollar)
-                    {
-                        coordinate = await CalculateSurveys.ReturnCoordinateTangential(dblX, dblY, dblZ, dblTo - dblFrom, dblAzimuth, dblDip);
-
-                        assayDesurveyDto.x.Add(Convert.ToDouble(coordinate.x));
-                        assayDesurveyDto.y.Add(Convert.ToDouble(coordinate.y));
-                        assayDesurveyDto.z.Add(Convert.ToDouble(coordinate.z));
-
-                    }
-                    else
-                    {
-                        assayDesurveyDto.x.Add(dblX);
-                        assayDesurveyDto.y.Add(dblY);
-                        assayDesurveyDto.z.Add(dblZ);
-                    }
-
-                }
-                else if (tableType == DrillholeTableType.interval)
-                {
-                    IntervalDesurveyDto intervalDesurveyDto = desurveyDto as IntervalDesurveyDto;
-
-                    intervalDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                    intervalDesurveyDto.intId.Add(Convert.ToInt16(sampleAttr));
-                    intervalDesurveyDto.bhid.Add(hole);
-                    intervalDesurveyDto.distFrom.Add(dblFrom);
-                    intervalDesurveyDto.distTo.Add(dblTo);
-                    intervalDesurveyDto.dip.Add(dblDip);
-                    intervalDesurveyDto.azimuth.Add(dblAzimuth);
-                    intervalDesurveyDto.length.Add(Convert.ToDouble(dblTo - dblFrom));
-                    intervalDesurveyDto.Count++;
-                    intervalDesurveyDto.isInterval.Add(isSample);
-
-                    if (!bCollar)
-                    {
-                        coordinate = await CalculateSurveys.ReturnCoordinateTangential(dblX, dblY, dblZ, dblTo - dblFrom, dblAzimuth, dblDip);
-
-                        intervalDesurveyDto.x.Add(Convert.ToDouble(coordinate.x));
-                        intervalDesurveyDto.y.Add(Convert.ToDouble(coordinate.y));
-                        intervalDesurveyDto.z.Add(Convert.ToDouble(coordinate.z));
-
-                    }
-                    else
-                    {
-                        intervalDesurveyDto.x.Add(dblX);
-                        intervalDesurveyDto.y.Add(dblY);
-                        intervalDesurveyDto.z.Add(dblZ);
-                    }
-
-                }
-                else if (tableType == DrillholeTableType.continuous) //dblFrom is actually distance
-                {
-                    ContinuousDesurveyDto continuousDesurveyDto = desurveyDto as ContinuousDesurveyDto;
-
-                    continuousDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                    continuousDesurveyDto.contId.Add(Convert.ToInt16(sampleAttr));
-                    continuousDesurveyDto.bhid.Add(hole);
-                    if (dblTo != 0.0)
-                    {
-                        continuousDesurveyDto.distFrom.Add(dblTo - dblFrom);
-                    }
-                    else
-                    {
-                        continuousDesurveyDto.distFrom.Add(dblFrom);
-
-                    }
-
-                    continuousDesurveyDto.dip.Add(dblDip);
-                    continuousDesurveyDto.azimuth.Add(dblAzimuth);
-                    continuousDesurveyDto.Count++;
-                    continuousDesurveyDto.isContinuous.Add(isSample);
-
-                    if (!bCollar)
-                    {
-                        coordinate = await CalculateSurveys.ReturnCoordinateTangential(dblX, dblY, dblZ, dblFrom, dblAzimuth, dblDip);
-
-                        continuousDesurveyDto.x.Add(Convert.ToDouble(coordinate.x));
-                        continuousDesurveyDto.y.Add(Convert.ToDouble(coordinate.y));
-                        continuousDesurveyDto.z.Add(Convert.ToDouble(coordinate.z));
-
-                    }
-                    else
-                    {
-                        continuousDesurveyDto.x.Add(dblX);
-                        continuousDesurveyDto.y.Add(dblY);
-                        continuousDesurveyDto.z.Add(dblZ);
-                    }
-                }
-                else if (tableType == DrillholeTableType.survey)
-                {
-                    SurveyDesurveyDto surveyDesurveyDto = desurveyDto as SurveyDesurveyDto;
-
-                    surveyDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                    surveyDesurveyDto.survId.Add(Convert.ToInt16(sampleAttr));
-                    surveyDesurveyDto.bhid.Add(hole);
-                    surveyDesurveyDto.distFrom.Add(dblFrom);
-                    surveyDesurveyDto.dip.Add(dblDip);
-                    surveyDesurveyDto.azimuth.Add(dblAzimuth);
-                    surveyDesurveyDto.Count++;
-                    surveyDesurveyDto.isSurvey.Add(isSample);
-
-                    if (!bCollar)
-                    {
-                        coordinate = await CalculateSurveys.ReturnCoordinateTangential(dblX, dblY, dblZ, dblTo - dblFrom, dblAzimuth, dblDip);
-
-                        surveyDesurveyDto.x.Add(Convert.ToDouble(coordinate.x));
-                        surveyDesurveyDto.y.Add(Convert.ToDouble(coordinate.y));
-                        surveyDesurveyDto.z.Add(Convert.ToDouble(coordinate.z));
-
-                    }
-                    else
-                    {
-                        surveyDesurveyDto.x.Add(dblX);
-                        surveyDesurveyDto.y.Add(dblY);
-                        surveyDesurveyDto.z.Add(dblZ);
-                    }
-                }
-
-                return coordinate;
-            }
-
+            /// <summary>
+            /// Creates vertical intervals for each assay record
+            /// </summary>
+            /// <param name="collarTableFields"></param>
+            /// <param name="assayTableFields"></param>
+            /// <param name="drillholeValues"></param>
+            /// <param name="bToe"></param>
+            /// <param name="bCollar"></param>
+            /// <returns></returns>
             public override async Task<AssayDesurveyDto> AssayVerticalTrace(ImportTableFields collarTableFields, ImportTableFields assayTableFields, List<XElement> drillholeValues, bool bToe, bool bCollar)
             {
                 //initialise object and set up lists
@@ -451,6 +340,7 @@ namespace Drillholes.CreateDrillholes
                     surveyType = DrillholeSurveyType.vertical
                 };
 
+                #region fieldnames
                 //Need holeID, x, y, z, length => reference name in xml
                 var collarHoleID = collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
                 var xField = collarTableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
@@ -462,6 +352,7 @@ namespace Drillholes.CreateDrillholes
                 var assayHoleID = assayTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
                 var mFromField = assayTableFields.Where(f => f.columnImportName == DrillholeConstants.distFromName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
                 var mToField = assayTableFields.Where(f => f.columnImportName == DrillholeConstants.distToName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                #endregion
 
                 XElement elements = drillholeValues[0];
                 var collarElements = elements.Elements();
@@ -482,132 +373,88 @@ namespace Drillholes.CreateDrillholes
                     string zCoord = element.Element(zField).Value;
                     string totalDepth = element.Element(tdField).Value; //FOR NOW< IGNORE
 
-                    //check values are number otherwise go to next hole
-                    bool bCheck = await ValidateValues(xCoord, yCoord, zCoord, totalDepth, holeAttr, null, null, null, null);
-
-                    if (bCheck)
+                    int assayCount = assayElements.Where(h => h.Element(assayHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").Count(); //check collar exists in assay table
+                    if (assayCount > 0)
                     {
-                        double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblLength = 0.0, dblFrom = 0.0, dblTo = 0.0, dblDistance = 0.0, dblNewZ; //Vertical so only z will change
+                        //check values are number otherwise go to next hole
+                        bool bCheck = await ValidateValues(xCoord, yCoord, zCoord, totalDepth, holeAttr, null, null, null, null);
 
-                        var assayHole = assayElements.Where(h => h.Element(assayHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").ToList(); //get all samples for hole and ignroe those flagged
+                        Coordinate3D coordinate = new Coordinate3D();
 
-                        int counter = 0;
-                        foreach (var assayValue in assayHole) //loop through each sample interval
+                        string assayHoleAttr = "";
+                        if (bCheck)
                         {
-                            string assayHoleAttr = assayValue.Attribute("ID").Value;
-                            string mFrom = assayValue.Element(mFromField).Value;
-                            string mTo = assayValue.Element(mToField).Value;
+                            double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblLength = 0.0, dblFrom = 0.0, dblTo = 0.0; //Vertical so only z will change
 
-                            bool bCheckDistance = true;
+                            var assayHole = assayElements.Where(h => h.Element(assayHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").ToList(); //get all samples for hole and ignroe those flagged
 
-                            if (counter == 0) //always set as condition above shows collar coordiantes are valid
+                            int counter = 0;
+                            foreach (var assayValue in assayHole) //loop through each sample interval
                             {
-                                dblX = Convert.ToDouble(xCoord);
-                                dblY = Convert.ToDouble(yCoord);
-                                dblZ = Convert.ToDouble(zCoord);
-                                dblLength = Convert.ToDouble(totalDepth);
+                                assayHoleAttr = assayValue.Attribute("ID").Value;
+                                string mFrom = assayValue.Element(mFromField).Value;
+                                string mTo = assayValue.Element(mToField).Value;
 
-                                if (bCollar)
+                                bool bCheckDistance = true;
+
+                                if (counter == 0) //always set as condition above shows collar coordiantes are valid
                                 {
-                                    //create collar => future will have a choice to create or not
-                                    assayDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                    assayDesurveyDto.assayId.Add(Convert.ToInt16(assayHoleAttr));
-                                    assayDesurveyDto.bhid.Add(hole);
-                                    assayDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                    assayDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                    assayDesurveyDto.z.Add(Convert.ToDouble(dblZ));
-                                    assayDesurveyDto.distFrom.Add(0);
-                                    assayDesurveyDto.distTo.Add(0);
-                                    assayDesurveyDto.dip.Add(-90.0);
-                                    assayDesurveyDto.azimuth.Add(0.0);
-                                    assayDesurveyDto.Count++;
-                                    assayDesurveyDto.length.Add(Convert.ToDouble(dblLength)); //use total hole length for collar
-                                    assayDesurveyDto.isAssay.Add(false);
+                                    dblX = Convert.ToDouble(xCoord);
+                                    dblY = Convert.ToDouble(yCoord);
+                                    dblZ = Convert.ToDouble(zCoord);
+                                    dblLength = Convert.ToDouble(totalDepth);
+
+                                    if (bCollar)
+                                    {
+                                        await PopulateDesurveyObject(dblX, dblY, dblZ, 0, 0, 0.0, -90, holeAttr, assayHoleAttr, hole, assayDesurveyDto,
+                                               DrillholeTableType.assay, false, true);
+
+                                    }
+
+                                    bCheckDistance = await ValidateValues(null, null, null, null, assayHoleAttr, null, null, mFrom, mTo);
+
+                                    if (bCheckDistance)
+                                    {
+                                        //create first sample record
+                                        dblFrom = Convert.ToDouble(mFrom);
+                                        dblTo = Convert.ToDouble(mTo);
+
+                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, 0.0, -90, holeAttr, assayHoleAttr,
+                                            hole, assayDesurveyDto, DrillholeTableType.assay, true, false);
+
+                                    }
+                                }
+                                else
+                                {
+                                    bCheckDistance = await ValidateValues(null, null, null, null, assayHoleAttr, null, null, mFrom, mTo);
+
+                                    if (bCheckDistance)
+                                    {
+                                        dblFrom = Convert.ToDouble(mFrom);
+                                        dblTo = Convert.ToDouble(mTo);
+
+                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, 0.0, -90, holeAttr, assayHoleAttr, hole, assayDesurveyDto,
+                                              DrillholeTableType.assay, true, false);
+                                    }
+
                                 }
 
-                                bCheckDistance = await ValidateValues(null, null, null, null, assayHoleAttr, null, null, mFrom, mTo);
+                                dblZ = coordinate.z;
 
-                                if (bCheckDistance)
-                                {
-                                    //create first sample record
-                                    dblFrom = Convert.ToDouble(mFrom);
-                                    dblTo = Convert.ToDouble(mTo);
-
-                                    dblDistance = dblTo - dblFrom;
-
-                                    dblNewZ = dblZ - dblDistance;
-
-                                    assayDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                    assayDesurveyDto.assayId.Add(Convert.ToInt16(assayHoleAttr));
-                                    assayDesurveyDto.bhid.Add(hole);
-                                    assayDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                    assayDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                    assayDesurveyDto.z.Add(dblNewZ);
-                                    assayDesurveyDto.distFrom.Add(dblFrom);
-                                    assayDesurveyDto.distTo.Add(dblTo);
-                                    assayDesurveyDto.dip.Add(-90.0);
-                                    assayDesurveyDto.azimuth.Add(0.0);
-                                    assayDesurveyDto.length.Add(dblDistance); //use total hole length for collar
-                                    assayDesurveyDto.isAssay.Add(true);
-                                    assayDesurveyDto.Count++;
-                                }
-                            }
-                            else
-                            {
-                                bCheckDistance = await ValidateValues(null, null, null, null, assayHoleAttr, null, null, mFrom, mTo);
-
-                                if (bCheckDistance)
-                                {
-                                    dblFrom = Convert.ToDouble(mFrom);
-                                    dblTo = Convert.ToDouble(mTo);
-
-                                    dblDistance = dblTo - dblFrom;
-
-                                    dblNewZ = dblZ - dblTo; //take from surface in case a record has been ignored
-
-                                    assayDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                    assayDesurveyDto.assayId.Add(Convert.ToInt16(assayHoleAttr));
-                                    assayDesurveyDto.bhid.Add(hole);
-                                    assayDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                    assayDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                    assayDesurveyDto.z.Add(Convert.ToDouble(dblNewZ));
-                                    assayDesurveyDto.distFrom.Add(dblFrom);
-                                    assayDesurveyDto.distTo.Add(dblTo);
-                                    assayDesurveyDto.dip.Add(-90.0);
-                                    assayDesurveyDto.azimuth.Add(0.0);
-                                    assayDesurveyDto.length.Add(Convert.ToDouble(dblDistance));
-                                    assayDesurveyDto.Count++;
-                                    assayDesurveyDto.isAssay.Add(true);
-                                }
-
+                                counter++;
                             }
 
-                            counter++;
-                        }
-
-                        //check to add TD
-                        if (bToe)
-                        {
-                            if (dblLength > dblTo)
+                            //check to add TD
+                            if (bToe)
                             {
-                                dblDistance = dblLength - dblTo;
 
-                                dblNewZ = dblZ - dblLength;
+                                if (dblLength > dblFrom)
+                                {
+                                    await PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblLength, 0.0, -90.0, holeAttr, assayHoleAttr, hole, assayDesurveyDto,
+                                        DrillholeTableType.assay, false, false);
+                                }
 
-                                int value = assayDesurveyDto.assayId.Last();
-                                assayDesurveyDto.assayId.Add(value);
-                                assayDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                assayDesurveyDto.bhid.Add(hole);
-                                assayDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                assayDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                assayDesurveyDto.z.Add(Convert.ToDouble(dblNewZ));
-                                assayDesurveyDto.length.Add(Convert.ToDouble(dblDistance));
-                                assayDesurveyDto.Count++;
-                                assayDesurveyDto.isAssay.Add(false);
-                                assayDesurveyDto.distFrom.Add(0);
-                                assayDesurveyDto.distTo.Add(0);
-                                assayDesurveyDto.dip.Add(-90.0);
-                                assayDesurveyDto.azimuth.Add(0.0);
+
                             }
                         }
                     }
@@ -616,7 +463,83 @@ namespace Drillholes.CreateDrillholes
 
                 return assayDesurveyDto;
             }
+            #endregion
 
+
+            #region Collar
+            /// <summary>
+            /// Create two points per collar
+            /// </summary>
+            /// <param name="tableFields"></param>
+            /// <param name="drillholeValues"></param>
+            /// <returns></returns>
+            public override async Task<CollarDesurveyDto> VerticalTrace(ImportTableFields tableFields, List<XElement> drillholeValues)
+            {
+                CollarDesurveyDto collarDesurveyDto = new CollarDesurveyDto()
+                {
+                    desurveyType = DrillholeDesurveyEnum.Tangential,
+                    surveyType = DrillholeSurveyType.vertical
+
+                };
+
+                #region fields
+                //Need holeID, x, y, z, length => reference name in xml
+                var holeId = tableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var xField = tableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var yField = tableFields.Where(f => f.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var zField = tableFields.Where(f => f.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var tdField = tableFields.Where(f => f.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                #endregion
+
+                XElement elements = drillholeValues[0];
+                var collarElements = elements.Elements();
+
+                var showElements = collarElements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
+
+                collarDesurveyDto.Count = 0;
+
+                foreach (XElement element in showElements)
+                {
+                    string hole = element.Element(holeId).Value;
+                    string xCoord = element.Element(xField).Value;
+                    string yCoord = element.Element(yField).Value;
+                    string zCoord = element.Element(zField).Value;
+                    string totalDepth = element.Element(tdField).Value;
+                    string holeAttr = element.Attribute("ID").Value;
+
+                    bool bCheck = true;
+                    if (hole != "")
+                    {
+                        bCheck = await ValidateValues(xCoord, yCoord, zCoord, totalDepth, holeAttr, null, null, null, null);
+                    }
+
+                    double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblLength = 0.0; //Vertical so only z will change
+
+                    if (bCheck)
+                    {
+                        dblX = Convert.ToDouble(xCoord);
+                        dblY = Convert.ToDouble(yCoord);
+                        dblZ = Convert.ToDouble(zCoord);
+                        dblLength = Convert.ToDouble(totalDepth);
+
+                        await PopulateDesurveyObject(dblX, dblY, dblZ, 0, 0, 0.0, -90.0, holeAttr, "", hole, collarDesurveyDto,
+                                            DrillholeTableType.collar, true, true);
+
+                        //store toe
+                        await PopulateDesurveyObject(dblX, dblY, dblZ, 0.0, dblLength, 0.0, -90.0, holeAttr, "", hole, collarDesurveyDto,
+                                            DrillholeTableType.collar, false, false);
+                    }
+                }
+
+                return collarDesurveyDto;
+            }
+
+            /// <summary>
+            /// Creates collar and toe based on azimuth and dip
+            /// </summary>
+            /// <param name="tableFields"></param>
+            /// <param name="drillholeValues"></param>
+            /// <returns></returns>
             public override async Task<CollarDesurveyDto> CollarSurveyTrace(ImportTableFields tableFields, List<XElement> drillholeValues)
             {
                 CollarDesurveyDto collarDesurveyDto = new CollarDesurveyDto()
@@ -664,43 +587,24 @@ namespace Drillholes.CreateDrillholes
                         bCheck = await ValidateValues(xCoord, yCoord, zCoord, totalDepth, colID, dip, azimuth, null, null);
                     }
 
+                    Coordinate3D coordinate = new Coordinate3D();
+                    double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblDistance = 0.0, dblDip = 0.0, dblAzimuth = 0.0 ; 
+
                     if (bCheck)
                     {
-                        double dblX = Convert.ToDouble(xCoord);
-                        double dblY = Convert.ToDouble(yCoord);
-                        double dblZ = Convert.ToDouble(zCoord);
-                        double dblDistance = Convert.ToDouble(totalDepth);
-                        double dblDip = Convert.ToDouble(dip);
-                        double dblAzimuth = Convert.ToDouble(azimuth);
+                        dblX = Convert.ToDouble(xCoord);
+                        dblY = Convert.ToDouble(yCoord);
+                        dblZ = Convert.ToDouble(zCoord);
+                        dblDistance = Convert.ToDouble(totalDepth);
+                        dblDip = Convert.ToDouble(dip);
+                        dblAzimuth = Convert.ToDouble(azimuth);
 
-
-                        //store collar
-                        collarDesurveyDto.colId.Add(Convert.ToInt16(colID));
-                        collarDesurveyDto.bhid.Add(hole);
-                        collarDesurveyDto.x.Add(dblX);
-                        collarDesurveyDto.y.Add(dblY);
-                        collarDesurveyDto.z.Add(dblZ);
-                        collarDesurveyDto.length.Add(dblDistance);
-                        collarDesurveyDto.dip.Add(dblDip);
-                        collarDesurveyDto.azimuth.Add(dblAzimuth);
-                        collarDesurveyDto.isCollar.Add(true);
+                        await PopulateDesurveyObject(dblX, dblY, dblZ, 0, 0, dblAzimuth, dblDip, colID, "", hole, collarDesurveyDto,
+                                          DrillholeTableType.collar, true, true);
 
                         //store toe
-                        Coordinate3D coordinate = await CalculateSurveys.ReturnCoordinateTangential(dblX, dblY, dblZ, dblDistance, dblAzimuth, dblDip);
-
-                        //check not null
-                        if (coordinate == null)
-                            return null;
-
-                        collarDesurveyDto.colId.Add(Convert.ToInt16(colID));
-                        collarDesurveyDto.bhid.Add(hole);
-                        collarDesurveyDto.x.Add(coordinate.x);
-                        collarDesurveyDto.y.Add(coordinate.y);
-                        collarDesurveyDto.z.Add(coordinate.z);
-                        collarDesurveyDto.length.Add(dblDistance);
-                        collarDesurveyDto.dip.Add(dblDip);
-                        collarDesurveyDto.azimuth.Add(dblAzimuth);
-                        collarDesurveyDto.isCollar.Add(false);
+                        await PopulateDesurveyObject(dblX, dblY, dblZ, 0.0, dblDistance, dblAzimuth, dblDip, colID, "", hole, collarDesurveyDto,
+                                            DrillholeTableType.collar, false, false);
 
                         collarDesurveyDto.Count++;
 
@@ -709,7 +613,19 @@ namespace Drillholes.CreateDrillholes
 
                 return collarDesurveyDto;
             }
+            #endregion
 
+            #region Continuous
+
+            /// <summary>
+            /// Create a desruveyed continous table (i.e. distance to field) using dip and azi from collar table
+            /// </summary>
+            /// <param name="collarTableFields"></param>
+            /// <param name="continuousTableFields"></param>
+            /// <param name="drillholeValues"></param>
+            /// <param name="bToe"></param>
+            /// <param name="bCollar"></param>
+            /// <returns></returns>
             public override async Task<ContinuousDesurveyDto> ContinuousCollarSurveyTrace(ImportTableFields collarTableFields, ImportTableFields continuousTableFields, List<XElement> drillholeValues, bool bToe, bool bCollar)
             {
                 ContinuousDesurveyDto continuousDesurveyDto = new ContinuousDesurveyDto()
@@ -734,8 +650,8 @@ namespace Drillholes.CreateDrillholes
                 }
 
                 //TODO - add assay fields 
-                var intervalHoleID = continuousTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-                var distField = continuousTableFields.Where(f => f.columnImportName == DrillholeConstants.distFromName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var continuousHoleID = continuousTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var distField = continuousTableFields.Where(f => f.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
                 #endregion
 
                 XElement elements = drillholeValues[0];
@@ -759,7 +675,7 @@ namespace Drillholes.CreateDrillholes
                     string dip = element.Element(dipField).Value;
                     string azimuth = element.Element(azimuthField).Value;
 
-                    int contCount = continuousElements.Where(h => h.Element(intervalHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").Count(); //check collar exists in assay table
+                    int contCount = continuousElements.Where(h => h.Element(continuousHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").Count(); //check collar exists in assay table
                     if (contCount > 0)
                     {
                         //check values are number otherwise go to next hole
@@ -768,7 +684,7 @@ namespace Drillholes.CreateDrillholes
                         if (bCheck)
                         {
                             double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblLength = 0.0, dblFrom = 0.0, dblTo = 0.0,
-                                dblDip = 0.0, dblAzimuth = 0.0;
+                                dblDip = 0.0, dblAzimuth = 0.0, dblNewFrom = 0.0, dblPreviousDistance = 0.0;
 
                             dblX = Convert.ToDouble(xCoord);
                             dblY = Convert.ToDouble(yCoord);
@@ -777,7 +693,7 @@ namespace Drillholes.CreateDrillholes
                             dblAzimuth = Convert.ToDouble(azimuth);
                             dblDip = Convert.ToDouble(dip);
 
-                            var continuousHole = continuousElements.Where(h => h.Element(intervalHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").ToList(); //get all samples for hole and ignroe those flagged
+                            var continuousHole = continuousElements.Where(h => h.Element(continuousHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").ToList(); //get all samples for hole and ignroe those flagged
 
                             string continuousHoleAttr = "";
                             int counter = 0;
@@ -804,7 +720,7 @@ namespace Drillholes.CreateDrillholes
                                     {
                                         dblFrom = Convert.ToDouble(mDist);
 
-                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, dblAzimuth, dblDip, holeAttr, continuousHoleAttr,
+                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, 0, dblFrom, dblAzimuth, dblDip, holeAttr, continuousHoleAttr,
                                             hole, continuousDesurveyDto, DrillholeTableType.continuous, true, false);
                                     }
                                 }
@@ -814,9 +730,13 @@ namespace Drillholes.CreateDrillholes
 
                                     if (bCheckDistance)
                                     {
+                                        dblPreviousDistance = dblFrom;
+
                                         dblFrom = Convert.ToDouble(mDist);
 
-                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, dblAzimuth, dblDip, holeAttr, continuousHoleAttr, hole,
+                                        dblNewFrom = dblFrom - dblPreviousDistance;
+
+                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, 0, dblNewFrom, dblAzimuth, dblDip, holeAttr, continuousHoleAttr, hole,
                                             continuousDesurveyDto, DrillholeTableType.continuous, true, false);
                                     }
                                 }
@@ -844,11 +764,30 @@ namespace Drillholes.CreateDrillholes
                 return continuousDesurveyDto;
             }
 
+            /// <summary>
+            /// Desurvey continuous table using downhole surveys from survey table
+            /// </summary>
+            /// <param name="collarTableFields"></param>
+            /// <param name="continuousTableFields"></param>
+            /// <param name="surveyTableFields"></param>
+            /// <param name="drillholeValues"></param>
+            /// <param name="bToe"></param>
+            /// <param name="bCollar"></param>
+            /// <returns></returns>
             public override Task<ContinuousDesurveyDto> ContinuousDownholeTrace(ImportTableFields collarTableFields, ImportTableFields continuousTableFields, ImportTableFields surveyTableFields, List<XElement> drillholeValues, bool bToe, bool bCollar)
             {
                 throw new NotImplementedException();
             }
 
+            /// <summary>
+            /// Create a vertical desurvey for continuous table
+            /// </summary>
+            /// <param name="collarTableFields"></param>
+            /// <param name="continuousTableFields"></param>
+            /// <param name="drillholeValues"></param>
+            /// <param name="bToe"></param>
+            /// <param name="bCollar"></param>
+            /// <returns></returns>
             public override async Task<ContinuousDesurveyDto> ContinuousVerticalTrace(ImportTableFields collarTableFields, ImportTableFields continuousTableFields, List<XElement> drillholeValues, bool bToe, bool bCollar)
             {
                 ContinuousDesurveyDto continuousDesurveyDto = new ContinuousDesurveyDto()
@@ -857,6 +796,7 @@ namespace Drillholes.CreateDrillholes
                     surveyType = DrillholeSurveyType.vertical
                 };
 
+                #region Fields
                 //Need holeID, x, y, z, length => reference name in xml
                 var collarHoleID = collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
                 var xField = collarTableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
@@ -867,6 +807,7 @@ namespace Drillholes.CreateDrillholes
                 //TODO - add assay fields 
                 var contHoleID = continuousTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
                 var distanceField = continuousTableFields.Where(f => f.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                #endregion
 
                 XElement elements = drillholeValues[0];
                 var collarElements = elements.Elements();
@@ -887,131 +828,101 @@ namespace Drillholes.CreateDrillholes
                     string zCoord = element.Element(zField).Value;
                     string totalDepth = element.Element(tdField).Value; //FOR NOW< IGNORE
 
-                    //check values are number otherwise go to next hole
-                    bool bCheck = await ValidateValues(xCoord, yCoord, zCoord, totalDepth, holeAttr, null, null, null, null);
 
-                    if (bCheck)
+                    int contCount = continuousElements.Where(h => h.Element(contHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").Count(); //check collar exists in assay table
+                    if (contCount > 0)
                     {
-                        double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblLength = 0.0, dblDistance = 0.0, dblNewZ; //Vertical so only z will change
+                        //check values are number otherwise go to next hole
+                        bool bCheck = await ValidateValues(xCoord, yCoord, zCoord, totalDepth, holeAttr, null, null, null, null);
 
-                        var continuousHole = continuousElements.Where(h => h.Element(contHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").ToList(); //get all samples for hole and ignroe those flagged
 
-                        int counter = 0;
-                        foreach (var contValue in continuousHole) //loop through each sample interval
+                        if (bCheck)
                         {
-                            string contHoleAttr = contValue.Attribute("ID").Value;
-                            string distance = contValue.Element(distanceField).Value;
+                            double dblLength = Convert.ToDouble(totalDepth);
+                            double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblDistance = 0.0; //Vertical so only z will change
 
-                            bool bCheckDistance = true;
+                            var continuousHole = continuousElements.Where(h => h.Element(contHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").ToList(); //get all samples for hole and ignroe those flagged
+                            string contHoleAttr = "";
+                            Coordinate3D coordinate = new Coordinate3D();
 
-                            if (counter == 0) //always set as condition above shows collar coordiantes are valid
+                            dblX = Convert.ToDouble(xCoord);
+                            dblY = Convert.ToDouble(yCoord);
+                            dblZ = Convert.ToDouble(zCoord);
+                            int counter = 0;
+                            foreach (var contValue in continuousHole) //loop through each sample interval
                             {
-                                dblX = Convert.ToDouble(xCoord);
-                                dblY = Convert.ToDouble(yCoord);
-                                dblZ = Convert.ToDouble(zCoord);
-                                dblLength = Convert.ToDouble(totalDepth);
+                                contHoleAttr = contValue.Attribute("ID").Value;
+                                string distance = contValue.Element(distanceField).Value;
 
-                                if (bCollar)
+                                bool bCheckDistance = true;
+
+
+                                if (counter == 0) //always set as condition above shows collar coordiantes are valid
                                 {
-                                    //create collar => future will have a choice to create or not
-                                    continuousDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                    continuousDesurveyDto.contId.Add(Convert.ToInt16(contHoleAttr));
-                                    continuousDesurveyDto.bhid.Add(hole);
-                                    continuousDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                    continuousDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                    continuousDesurveyDto.z.Add(Convert.ToDouble(dblZ));
-                                    continuousDesurveyDto.distFrom.Add(0);
-                                    continuousDesurveyDto.dip.Add(-90.0);
-                                    continuousDesurveyDto.azimuth.Add(0.0);
-                                    continuousDesurveyDto.Count++;
-                                    continuousDesurveyDto.length.Add(Convert.ToDouble(dblLength)); //use total hole length for collar
-                                    continuousDesurveyDto.isContinuous.Add(false);
+
+                                    if (bCollar)
+                                    {
+                                        await PopulateDesurveyObject(dblX, dblY, dblZ, 0, 0, 0.0, -90, holeAttr, contHoleAttr, hole, continuousDesurveyDto,
+                                              DrillholeTableType.continuous, false, true);
+                                    }
+
+                                    bCheckDistance = await ValidateValues(null, null, null, null, contHoleAttr, null, null, distance, null);
+
+                                    if (bCheckDistance)
+                                    {
+                                        dblDistance = Convert.ToDouble(distance);
+
+                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, 0, dblDistance, 0.0, -90, holeAttr, contHoleAttr, hole, continuousDesurveyDto,
+                                              DrillholeTableType.continuous, true, false);
+                                    }
+                                }
+                                else
+                                {
+                                    bCheckDistance = await ValidateValues(null, null, null, null, contHoleAttr, null, null, distance, null);
+
+                                    if (bCheckDistance)
+                                    {
+                                        dblDistance = Convert.ToDouble(distance);
+                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, 0, dblDistance, 0.0, -90, holeAttr, contHoleAttr, hole, continuousDesurveyDto,
+                                              DrillholeTableType.continuous, true, false);
+                                    }
+
                                 }
 
-                                bCheckDistance = await ValidateValues(null, null, null, null, contHoleAttr, null, null, distance, null);
+                                // dblZ = coordinate.z;
 
-                                if (bCheckDistance)
-                                {
-                                    //create first sample record
-                                    dblDistance = Convert.ToDouble(distance);
-
-                                    dblNewZ = dblZ - dblDistance;
-
-                                    continuousDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                    continuousDesurveyDto.contId.Add(Convert.ToInt16(contHoleAttr));
-                                    continuousDesurveyDto.bhid.Add(hole);
-                                    continuousDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                    continuousDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                    continuousDesurveyDto.z.Add(dblNewZ);
-                                    continuousDesurveyDto.distFrom.Add(dblDistance);
-                                    continuousDesurveyDto.dip.Add(-90.0);
-                                    continuousDesurveyDto.azimuth.Add(0.0);
-                                    continuousDesurveyDto.Count++;
-                                    //   continuousDesurveyDto.length.Add(dblLength); //use total hole length for collar
-                                    continuousDesurveyDto.isContinuous.Add(true);
-                                }
+                                counter++;
                             }
-                            else
+
+                            if (bToe)
                             {
-                                bCheckDistance = await ValidateValues(null, null, null, null, contHoleAttr, null, null, distance, null);
-
-                                if (bCheckDistance)
+                                if (dblLength > dblDistance)
                                 {
-                                    dblDistance = Convert.ToDouble(distance);
-
-                                    dblNewZ = dblZ - dblDistance; //take from surface in case a record has been ignored
-
-                                    continuousDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                    continuousDesurveyDto.contId.Add(Convert.ToInt16(contHoleAttr));
-                                    continuousDesurveyDto.bhid.Add(hole);
-                                    continuousDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                    continuousDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                    continuousDesurveyDto.z.Add(Convert.ToDouble(dblNewZ));
-                                    continuousDesurveyDto.distFrom.Add(dblDistance);
-                                    continuousDesurveyDto.dip.Add(-90.0);
-                                    continuousDesurveyDto.azimuth.Add(0.0);
-                                    // intervalDesurveyDto.length.Add(Convert.ToDouble(dblDistance));
-                                    continuousDesurveyDto.Count++;
-                                    continuousDesurveyDto.isContinuous.Add(true);
+                                    await PopulateDesurveyObject(dblX, dblY, dblZ, dblDistance, dblLength, 0.0, -90.0, holeAttr, contHoleAttr, hole,
+                                        continuousDesurveyDto, DrillholeTableType.continuous, false, false);
                                 }
 
                             }
-
-                            counter++;
                         }
 
-                        //check to add TD
-                        if (bToe)
-                        {
-                            if (dblLength > dblDistance)
-                            {
-                                //  dblDistance = dblLength - dblTo;
-
-                                dblNewZ = dblZ - dblLength;
-
-                                int value = continuousDesurveyDto.contId.Last();
-                                continuousDesurveyDto.contId.Add(value);
-                                continuousDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                continuousDesurveyDto.bhid.Add(hole);
-                                continuousDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                continuousDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                continuousDesurveyDto.z.Add(Convert.ToDouble(dblNewZ));
-                                continuousDesurveyDto.distFrom.Add(Convert.ToDouble(dblDistance));
-                                continuousDesurveyDto.Count++;
-                                continuousDesurveyDto.isContinuous.Add(false);
-                                continuousDesurveyDto.azimuth.Add(0.0);
-                                continuousDesurveyDto.dip.Add(-90.0);
-                                continuousDesurveyDto.isContinuous.Add(false);
-                                continuousDesurveyDto.distFrom.Add(0.0);
-                            }
-                        }
                     }
-
                 }
 
                 return continuousDesurveyDto;
             }
+            #endregion
 
+            #region Interval
+
+            /// <summary>
+            /// Desurvey interval table using azimuth and dip from collar table
+            /// </summary>
+            /// <param name="collarTableFields"></param>
+            /// <param name="intervalTableFields"></param>
+            /// <param name="drillholeValues"></param>
+            /// <param name="bToe"></param>
+            /// <param name="bCollar"></param>
+            /// <returns></returns>
             public override async Task<IntervalDesurveyDto> IntervalCollarSurveyTrace(ImportTableFields collarTableFields, ImportTableFields intervalTableFields, List<XElement> drillholeValues, bool bToe, bool bCollar)
             {
                 IntervalDesurveyDto intervalDesurveyDto = new IntervalDesurveyDto()
@@ -1150,11 +1061,30 @@ namespace Drillholes.CreateDrillholes
                 return intervalDesurveyDto;
             }
 
+            /// <summary>
+            /// Desurvey interval table using dowhole surveys from survey table
+            /// </summary>
+            /// <param name="collarTableFields"></param>
+            /// <param name="intervalTableFields"></param>
+            /// <param name="surveyTableFields"></param>
+            /// <param name="drillholeValues"></param>
+            /// <param name="bToe"></param>
+            /// <param name="bCollar"></param>
+            /// <returns></returns>
             public override Task<IntervalDesurveyDto> IntervalDownholeTrace(ImportTableFields collarTableFields, ImportTableFields intervalTableFields, ImportTableFields surveyTableFields, List<XElement> drillholeValues, bool bToe, bool bCollar)
             {
                 throw new NotImplementedException();
             }
 
+            /// <summary>
+            /// Create a vertical trace for each interval
+            /// </summary>
+            /// <param name="collarTableFields"></param>
+            /// <param name="intervalTableFields"></param>
+            /// <param name="drillholeValues"></param>
+            /// <param name="bToe"></param>
+            /// <param name="bCollar"></param>
+            /// <returns></returns>
             public override async Task<IntervalDesurveyDto> IntervalVerticalTrace(ImportTableFields collarTableFields, ImportTableFields intervalTableFields, List<XElement> drillholeValues, bool bToe, bool bCollar)
             {
                 IntervalDesurveyDto intervalDesurveyDto = new IntervalDesurveyDto()
@@ -1163,6 +1093,7 @@ namespace Drillholes.CreateDrillholes
                     surveyType = DrillholeSurveyType.vertical
                 };
 
+                #region fieldnames
                 //Need holeID, x, y, z, length => reference name in xml
                 var collarHoleID = collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
                 var xField = collarTableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
@@ -1174,6 +1105,7 @@ namespace Drillholes.CreateDrillholes
                 var intervalHoleID = intervalTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
                 var mFromField = intervalTableFields.Where(f => f.columnImportName == DrillholeConstants.distFromName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
                 var mToField = intervalTableFields.Where(f => f.columnImportName == DrillholeConstants.distToName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                #endregion
 
                 XElement elements = drillholeValues[0];
                 var collarElements = elements.Elements();
@@ -1194,132 +1126,82 @@ namespace Drillholes.CreateDrillholes
                     string zCoord = element.Element(zField).Value;
                     string totalDepth = element.Element(tdField).Value; //FOR NOW< IGNORE
 
-                    //check values are number otherwise go to next hole
-                    bool bCheck = await ValidateValues(xCoord, yCoord, zCoord, totalDepth, holeAttr, null, null, null, null);
-
-                    if (bCheck)
+                    int intervalCount = intervalElements.Where(h => h.Element(intervalHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").Count(); //check collar exists in assay table
+                    if (intervalCount > 0)
                     {
-                        double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblLength = 0.0, dblFrom = 0.0, dblTo = 0.0, dblDistance = 0.0, dblNewZ; //Vertical so only z will change
+                        //check values are number otherwise go to next hole
+                        bool bCheck = await ValidateValues(xCoord, yCoord, zCoord, totalDepth, holeAttr, null, null, null, null);
 
-                        var intervalHole = intervalElements.Where(h => h.Element(intervalHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").ToList(); //get all samples for hole and ignroe those flagged
-
-                        int counter = 0;
-                        foreach (var intervalValue in intervalHole) //loop through each sample interval
+                        if (bCheck)
                         {
-                            string intervalHoleAttr = intervalValue.Attribute("ID").Value;
-                            string mFrom = intervalValue.Element(mFromField).Value;
-                            string mTo = intervalValue.Element(mToField).Value;
+                            double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblLength = 0.0, dblFrom = 0.0, dblTo = 0.0; //Vertical so only z will change
 
-                            bool bCheckDistance = true;
+                            var intervalHole = intervalElements.Where(h => h.Element(intervalHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").ToList(); //get all samples for hole and ignroe those flagged
 
-                            if (counter == 0) //always set as condition above shows collar coordiantes are valid
+                            string intervalHoleAttr = "";
+
+                            int counter = 0;
+                            foreach (var intervalValue in intervalHole) //loop through each sample interval
                             {
-                                dblX = Convert.ToDouble(xCoord);
-                                dblY = Convert.ToDouble(yCoord);
-                                dblZ = Convert.ToDouble(zCoord);
-                                dblLength = Convert.ToDouble(totalDepth);
+                                intervalHoleAttr = intervalValue.Attribute("ID").Value;
+                                string mFrom = intervalValue.Element(mFromField).Value;
+                                string mTo = intervalValue.Element(mToField).Value;
 
-                                if (bCollar)
+                                bool bCheckDistance = true;
+                                Coordinate3D coordinate = new Coordinate3D();
+
+                                if (counter == 0) //always set as condition above shows collar coordiantes are valid
                                 {
-                                    //create collar => future will have a choice to create or not
-                                    intervalDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                    intervalDesurveyDto.intId.Add(Convert.ToInt16(intervalHoleAttr));
-                                    intervalDesurveyDto.bhid.Add(hole);
-                                    intervalDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                    intervalDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                    intervalDesurveyDto.z.Add(Convert.ToDouble(dblZ));
-                                    intervalDesurveyDto.distFrom.Add(0);
-                                    intervalDesurveyDto.distTo.Add(0);
-                                    intervalDesurveyDto.dip.Add(-90.0);
-                                    intervalDesurveyDto.azimuth.Add(0.0);
-                                    intervalDesurveyDto.Count++;
-                                    intervalDesurveyDto.length.Add(Convert.ToDouble(dblLength)); //use total hole length for collar
-                                    intervalDesurveyDto.isInterval.Add(false);
+                                    dblX = Convert.ToDouble(xCoord);
+                                    dblY = Convert.ToDouble(yCoord);
+                                    dblZ = Convert.ToDouble(zCoord);
+                                    dblLength = Convert.ToDouble(totalDepth);
+
+                                    if (bCollar)
+                                    {
+                                        await PopulateDesurveyObject(dblX, dblY, dblZ, 0, dblLength, 0.0, -90, holeAttr, intervalHoleAttr, hole, intervalDesurveyDto,
+                                              DrillholeTableType.interval, false, true);
+                                    }
+
+                                    bCheckDistance = await ValidateValues(null, null, null, null, intervalHoleAttr, null, null, mFrom, mTo);
+
+                                    if (bCheckDistance)
+                                    {
+                                        //create first sample record
+                                        dblFrom = Convert.ToDouble(mFrom);
+                                        dblTo = Convert.ToDouble(mTo);
+
+                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, 0.0, -90, holeAttr, intervalHoleAttr, hole, intervalDesurveyDto,
+                                              DrillholeTableType.interval, true, false);
+                                    }
+                                }
+                                else
+                                {
+                                    bCheckDistance = await ValidateValues(null, null, null, null, intervalHoleAttr, null, null, mFrom, mTo);
+
+                                    if (bCheckDistance)
+                                    {
+                                        dblFrom = Convert.ToDouble(mFrom);
+                                        dblTo = Convert.ToDouble(mTo);
+
+                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, 0.0, -90, holeAttr, intervalHoleAttr, hole, intervalDesurveyDto,
+                                             DrillholeTableType.interval, true, false);
+                                    }
+
                                 }
 
-                                bCheckDistance = await ValidateValues(null, null, null, null, intervalHoleAttr, null, null, mFrom, mTo);
-
-                                if (bCheckDistance)
-                                {
-                                    //create first sample record
-                                    dblFrom = Convert.ToDouble(mFrom);
-                                    dblTo = Convert.ToDouble(mTo);
-
-                                    dblDistance = dblTo - dblFrom;
-
-                                    dblNewZ = dblZ - dblDistance;
-
-                                    intervalDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                    intervalDesurveyDto.intId.Add(Convert.ToInt16(intervalHoleAttr));
-                                    intervalDesurveyDto.bhid.Add(hole);
-                                    intervalDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                    intervalDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                    intervalDesurveyDto.z.Add(dblNewZ);
-                                    intervalDesurveyDto.distFrom.Add(dblFrom);
-                                    intervalDesurveyDto.distTo.Add(dblTo);
-                                    intervalDesurveyDto.dip.Add(-90.0);
-                                    intervalDesurveyDto.azimuth.Add(0.0);
-                                    intervalDesurveyDto.Count++;
-                                    intervalDesurveyDto.length.Add(dblDistance); //use total hole length for collar
-                                    intervalDesurveyDto.isInterval.Add(true);
-                                }
-                            }
-                            else
-                            {
-                                bCheckDistance = await ValidateValues(null, null, null, null, intervalHoleAttr, null, null, mFrom, mTo);
-
-                                if (bCheckDistance)
-                                {
-                                    dblFrom = Convert.ToDouble(mFrom);
-                                    dblTo = Convert.ToDouble(mTo);
-
-                                    dblDistance = dblTo - dblFrom;
-
-                                    dblNewZ = dblZ - dblTo; //take from surface in case a record has been ignored
-
-                                    intervalDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                    intervalDesurveyDto.intId.Add(Convert.ToInt16(intervalHoleAttr));
-                                    intervalDesurveyDto.bhid.Add(hole);
-                                    intervalDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                    intervalDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                    intervalDesurveyDto.z.Add(Convert.ToDouble(dblNewZ));
-                                    intervalDesurveyDto.distFrom.Add(dblFrom);
-                                    intervalDesurveyDto.distTo.Add(dblTo);
-                                    intervalDesurveyDto.dip.Add(-90.0);
-                                    intervalDesurveyDto.azimuth.Add(0.0);
-                                    intervalDesurveyDto.length.Add(Convert.ToDouble(dblDistance));
-                                    intervalDesurveyDto.Count++;
-                                    intervalDesurveyDto.isInterval.Add(true);
-                                }
-
+                                dblZ = coordinate.z;
+                                counter++;
                             }
 
-                            counter++;
-                        }
-
-                        //check to add TD
-                        if (bToe)
-                        {
-                            if (dblLength > dblTo)
+                            //check to add TD
+                            if (bToe)
                             {
-                                dblDistance = dblLength - dblTo;
-
-                                dblNewZ = dblZ - dblLength;
-
-                                int value = intervalDesurveyDto.intId.Last();
-                                intervalDesurveyDto.intId.Add(value);
-                                intervalDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                                intervalDesurveyDto.bhid.Add(hole);
-                                intervalDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                                intervalDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                                intervalDesurveyDto.z.Add(Convert.ToDouble(dblNewZ));
-                                intervalDesurveyDto.length.Add(Convert.ToDouble(dblDistance));
-                                intervalDesurveyDto.Count++;
-                                intervalDesurveyDto.azimuth.Add(0.0);
-                                intervalDesurveyDto.dip.Add(-90.0);
-                                intervalDesurveyDto.isInterval.Add(false);
-                                intervalDesurveyDto.distFrom.Add(0.0);
-                                intervalDesurveyDto.distTo.Add(0.0);
+                                if (dblLength > dblFrom)
+                                {
+                                    await PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblLength, 0.0, -90.0, holeAttr, intervalHoleAttr, hole,
+                                        intervalDesurveyDto, DrillholeTableType.interval, false, false);
+                                }
                             }
                         }
                     }
@@ -1328,83 +1210,140 @@ namespace Drillholes.CreateDrillholes
 
                 return intervalDesurveyDto;
             }
+            #endregion
 
-            public override Task<SurveyDesurveyDto> SurveyDownhole(ImportTableFields collarTableFields, ImportTableFields surveyTableFields, List<XElement> drillholeValues)
+         
+            public override async Task<SurveyDesurveyDto> SurveyDownhole(ImportTableFields collarTableFields, ImportTableFields surveyTableFields, List<XElement> drillholeValues)
             {
-                throw new NotImplementedException();
-            }
-
-            public override async Task<CollarDesurveyDto> VerticalTrace(ImportTableFields tableFields, List<XElement> drillholeValues)
-            {
-                CollarDesurveyDto collarDesurveyDto = new CollarDesurveyDto()
+                SurveyDesurveyDto surveyDesurveyDto = new SurveyDesurveyDto()
                 {
                     desurveyType = DrillholeDesurveyEnum.Tangential,
-                    surveyType = DrillholeSurveyType.vertical
-
+                    surveyType = DrillholeSurveyType.downholesurvey
                 };
 
+                #region fieldnames
                 //Need holeID, x, y, z, length => reference name in xml
-                var holeId = tableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-                var xField = tableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-                var yField = tableFields.Where(f => f.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-                var zField = tableFields.Where(f => f.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
-                var tdField = tableFields.Where(f => f.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var collarHoleID = collarTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var xField = collarTableFields.Where(f => f.columnImportName == DrillholeConstants.xName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var yField = collarTableFields.Where(f => f.columnImportName == DrillholeConstants.yName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var zField = collarTableFields.Where(f => f.columnImportName == DrillholeConstants.zName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var tdField = collarTableFields.Where(f => f.columnImportName == DrillholeConstants.maxName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+
+                //TODO - add assay fields 
+                var surveyHoleID = surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.holeIDName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var distField = surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.distName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var dipField = surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+                var azimuthField = surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.azimuthName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();
+
+                #endregion
 
                 XElement elements = drillholeValues[0];
                 var collarElements = elements.Elements();
 
-                var showElements = collarElements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
+                XElement survElements = drillholeValues[2];
+                var surveyElements = survElements.Elements();
 
-                collarDesurveyDto.Count = 0;
+                //return collar coordiantes and length for all holes which are not flagged to be ignored
+                var showElements = collarElements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
 
                 foreach (XElement element in showElements)
                 {
-                    string hole = element.Element(holeId).Value;
+                    //get the values from XML
+                    string holeAttr = element.Attribute("ID").Value;
+                    string hole = element.Element(collarHoleID).Value;
                     string xCoord = element.Element(xField).Value;
                     string yCoord = element.Element(yField).Value;
                     string zCoord = element.Element(zField).Value;
-                    string totalDepth = element.Element(tdField).Value;
-                    string holeAttr = element.Attribute("ID").Value;
+                    string totalDepth = element.Element(tdField).Value; //FOR NOW< IGNORE
 
-                    bool bCheck = true;
-                    if (hole != "")
+                    int contCount = surveyElements.Where(h => h.Element(surveyHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").Count(); //check collar exists in assay table
+                    if (contCount > 0)
                     {
-                        bCheck = await ValidateValues(xCoord, yCoord, zCoord, totalDepth, holeAttr, null, null, null, null);
-                    }
+                        //check values are number otherwise go to next hole
+                        bool bCheck = await ValidateValues(xCoord, yCoord, zCoord, totalDepth, holeAttr, null, null, null, null);
 
-                    if (bCheck)
-                    {
-                        //store collar
-                        collarDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                        collarDesurveyDto.bhid.Add(hole);
-                        collarDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                        collarDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                        collarDesurveyDto.z.Add(Convert.ToDouble(zCoord));
-                        collarDesurveyDto.length.Add(Convert.ToDouble(totalDepth));
-                        collarDesurveyDto.isCollar.Add(true);
+                        if (bCheck)
+                        {
+                            double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblLength = 0.0, dblFrom = 0.0, dblTo = 0.0,
+                                dblDip = 0.0, dblAzimuth = 0.0;
 
-                        //store toe
-                        double depth = Convert.ToDouble(totalDepth);
-                        double zcoord = Convert.ToDouble(zCoord);
+                            dblX = Convert.ToDouble(xCoord);
+                            dblY = Convert.ToDouble(yCoord);
+                            dblZ = Convert.ToDouble(zCoord);
+                            dblLength = Convert.ToDouble(totalDepth);
 
-                        double newZ = zcoord - depth;
+                            var surveyHole = surveyElements.Where(h => h.Element(surveyHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").ToList(); //get all samples for hole and ignroe those flagged
 
-                        collarDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
-                        collarDesurveyDto.bhid.Add(hole);
-                        collarDesurveyDto.x.Add(Convert.ToDouble(xCoord));
-                        collarDesurveyDto.y.Add(Convert.ToDouble(yCoord));
-                        collarDesurveyDto.z.Add(Convert.ToDouble(newZ));
+                            string surveyHoleAttr = "";
+                            int counter = 0;
+                            foreach (var surveyValue in surveyHole) //loop through each sample interval for hole
+                            {
+                                surveyHoleAttr = surveyValue.Attribute("ID").Value;
+                                string mDist = surveyValue.Element(distField).Value;
+                                string dip = surveyValue.Element(dipField).Value;
+                                string azimuth = surveyValue.Element(azimuthField).Value;
 
-                        collarDesurveyDto.length.Add(Convert.ToDouble(depth));
-                        collarDesurveyDto.isCollar.Add(false);
+                                bool bCheckDistance = true;
 
-                        collarDesurveyDto.Count++;
+                                Coordinate3D coordinate = new Coordinate3D();
+
+                                if (counter == 0) //always set as condition above shows collar coordiantes are valid
+                                {
+
+                                    //TODO separate dip and azimuth
+                                    bCheckDistance = await ValidateValues(null, null, null, null, surveyHoleAttr, dip, azimuth, mDist, null);
+
+                                    if (bCheckDistance)
+                                    {
+                                        dblFrom = Convert.ToDouble(mDist);
+
+                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, dblAzimuth, dblDip, holeAttr, surveyHoleAttr,
+                                            hole, surveyDesurveyDto, DrillholeTableType.survey, true, false);
+                                    }
+                                }
+                                else
+                                {
+                                    bCheckDistance = await ValidateValues(null, null, null, null, surveyHoleAttr, dip, azimuth, mDist, null);
+
+                                    if (bCheckDistance)
+                                    {
+                                        dblFrom = Convert.ToDouble(mDist);
+
+                                        coordinate = await PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, dblAzimuth, dblDip, holeAttr, surveyHoleAttr, hole,
+                                            surveyDesurveyDto, DrillholeTableType.continuous, true, false);
+                                    }
+                                }
+
+                                dblX = coordinate.x;
+                                dblY = coordinate.y;
+                                dblZ = coordinate.z;
+
+                                counter++;
+                            }
+
+                           
+                        }
                     }
                 }
 
-                return collarDesurveyDto;
+                return surveyDesurveyDto;
             }
 
+
+
+            /// <summary>
+            /// Checks for valid values
+            /// </summary>
+            /// <param name="x"></param>
+            /// <param name="y"></param>
+            /// <param name="z"></param>
+            /// <param name="td"></param>
+            /// <param name="holeID"></param>
+            /// <param name="dip"></param>
+            /// <param name="azi"></param>
+            /// <param name="distance"></param>
+            /// <param name="distanceTo"></param>
+            /// <returns></returns>
             private async Task<bool> ValidateValues(string x, string y, string z, string td, string holeID, string dip, string azi, string distance, string distanceTo)
             {
                 if (x != null)
@@ -1447,6 +1386,171 @@ namespace Drillholes.CreateDrillholes
                 }
 
                 return true;
+            }
+
+            private async Task<Coordinate3D> PopulateDesurveyObject(double dblX, double dblY, double dblZ, double dblFrom, double dblTo, double dblAzimuth, double dblDip,
+ string holeAttr, string sampleAttr, string hole, object desurveyDto, DrillholeTableType tableType, bool isSample, bool bCollar)
+            {
+                Coordinate3D coordinate = null;
+
+                if (tableType == DrillholeTableType.assay)
+                {
+                    AssayDesurveyDto assayDesurveyDto = desurveyDto as AssayDesurveyDto;
+
+                    assayDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
+                    assayDesurveyDto.assayId.Add(Convert.ToInt16(sampleAttr));
+                    assayDesurveyDto.bhid.Add(hole);
+                    assayDesurveyDto.distFrom.Add(dblFrom);
+                    assayDesurveyDto.dip.Add(dblDip);
+                    assayDesurveyDto.azimuth.Add(dblAzimuth);
+                    assayDesurveyDto.length.Add(Convert.ToDouble(dblTo - dblFrom));
+                    assayDesurveyDto.Count++;
+                    assayDesurveyDto.isAssay.Add(isSample);
+
+                    if (!bCollar)
+                    {
+                        coordinate = await CalculateSurveys.ReturnCoordinateTangential(dblX, dblY, dblZ, dblTo - dblFrom, dblAzimuth, dblDip);
+                        
+                        assayDesurveyDto.distTo.Add(dblTo);
+
+                        assayDesurveyDto.x.Add(Convert.ToDouble(coordinate.x));
+                        assayDesurveyDto.y.Add(Convert.ToDouble(coordinate.y));
+                        assayDesurveyDto.z.Add(Convert.ToDouble(coordinate.z));
+
+                    }
+                    else
+                    {
+                        assayDesurveyDto.distTo.Add(0.0);
+                        assayDesurveyDto.x.Add(dblX);
+                        assayDesurveyDto.y.Add(dblY);
+                        assayDesurveyDto.z.Add(dblZ);
+                    }
+
+                }
+                else if (tableType == DrillholeTableType.interval)
+                {
+                    IntervalDesurveyDto intervalDesurveyDto = desurveyDto as IntervalDesurveyDto;
+
+                    intervalDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
+                    intervalDesurveyDto.intId.Add(Convert.ToInt16(sampleAttr));
+                    intervalDesurveyDto.bhid.Add(hole);
+                    intervalDesurveyDto.distFrom.Add(dblFrom);
+                    intervalDesurveyDto.dip.Add(dblDip);
+                    intervalDesurveyDto.azimuth.Add(dblAzimuth);
+                    intervalDesurveyDto.length.Add(Convert.ToDouble(dblTo - dblFrom));
+                    intervalDesurveyDto.Count++;
+                    intervalDesurveyDto.isInterval.Add(isSample);
+
+                    if (!bCollar)
+                    {
+                        coordinate = await CalculateSurveys.ReturnCoordinateTangential(dblX, dblY, dblZ, dblTo - dblFrom, dblAzimuth, dblDip);
+                       
+                        intervalDesurveyDto.distTo.Add(dblTo);
+                        intervalDesurveyDto.x.Add(Convert.ToDouble(coordinate.x));
+                        intervalDesurveyDto.y.Add(Convert.ToDouble(coordinate.y));
+                        intervalDesurveyDto.z.Add(Convert.ToDouble(coordinate.z));
+
+                    }
+                    else
+                    {
+                        intervalDesurveyDto.distTo.Add(0.0);
+
+                        intervalDesurveyDto.x.Add(dblX);
+                        intervalDesurveyDto.y.Add(dblY);
+                        intervalDesurveyDto.z.Add(dblZ);
+                    }
+
+                }
+                else if (tableType == DrillholeTableType.continuous) //dblFrom is actually distance
+                {
+                    ContinuousDesurveyDto continuousDesurveyDto = desurveyDto as ContinuousDesurveyDto;
+
+                    continuousDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
+                    continuousDesurveyDto.contId.Add(Convert.ToInt16(sampleAttr));
+                    continuousDesurveyDto.bhid.Add(hole);
+                    continuousDesurveyDto.dip.Add(dblDip);
+                    continuousDesurveyDto.azimuth.Add(dblAzimuth);
+                    continuousDesurveyDto.Count++;
+                    continuousDesurveyDto.isContinuous.Add(isSample);
+
+                    if (!bCollar)
+                    {
+                        coordinate = await CalculateSurveys.ReturnCoordinateTangential(dblX, dblY, dblZ, dblTo - dblFrom, dblAzimuth, dblDip);
+
+                        continuousDesurveyDto.x.Add(Convert.ToDouble(coordinate.x));
+                        continuousDesurveyDto.y.Add(Convert.ToDouble(coordinate.y));
+                        continuousDesurveyDto.z.Add(Convert.ToDouble(coordinate.z));
+                        continuousDesurveyDto.distFrom.Add(dblTo - dblFrom);
+
+                    }
+                    else
+                    {
+                        continuousDesurveyDto.distFrom.Add(dblTo);
+                        continuousDesurveyDto.x.Add(dblX);
+                        continuousDesurveyDto.y.Add(dblY);
+                        continuousDesurveyDto.z.Add(dblZ);
+                    }
+                }
+                else if (tableType == DrillholeTableType.survey)
+                {
+                    SurveyDesurveyDto surveyDesurveyDto = desurveyDto as SurveyDesurveyDto;
+
+                    surveyDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
+                    surveyDesurveyDto.survId.Add(Convert.ToInt16(sampleAttr));
+                    surveyDesurveyDto.bhid.Add(hole);
+                    surveyDesurveyDto.distFrom.Add(dblFrom);
+                    surveyDesurveyDto.dip.Add(dblDip);
+                    surveyDesurveyDto.azimuth.Add(dblAzimuth);
+                    surveyDesurveyDto.Count++;
+                    surveyDesurveyDto.isSurvey.Add(isSample);
+
+                    if (!bCollar)
+                    {
+                        coordinate = await CalculateSurveys.ReturnCoordinateTangential(dblX, dblY, dblZ, dblTo - dblFrom, dblAzimuth, dblDip);
+
+                        surveyDesurveyDto.x.Add(Convert.ToDouble(coordinate.x));
+                        surveyDesurveyDto.y.Add(Convert.ToDouble(coordinate.y));
+                        surveyDesurveyDto.z.Add(Convert.ToDouble(coordinate.z));
+
+                    }
+                    else
+                    {
+                        surveyDesurveyDto.x.Add(dblX);
+                        surveyDesurveyDto.y.Add(dblY);
+                        surveyDesurveyDto.z.Add(dblZ);
+                    }
+                }
+
+                else if (tableType == DrillholeTableType.collar)
+                {
+                    CollarDesurveyDto collarDesurveyDto = desurveyDto as CollarDesurveyDto;
+
+                    collarDesurveyDto.colId.Add(Convert.ToInt16(holeAttr));
+                    collarDesurveyDto.bhid.Add(hole);
+                    collarDesurveyDto.dip.Add(dblDip);
+                    collarDesurveyDto.azimuth.Add(dblAzimuth);
+                    collarDesurveyDto.length.Add(Convert.ToDouble(dblTo - dblFrom));
+                    collarDesurveyDto.Count++;
+                    collarDesurveyDto.isCollar.Add(isSample);
+
+                    if (!bCollar)
+                    {
+                        coordinate = await CalculateSurveys.ReturnCoordinateTangential(dblX, dblY, dblZ, dblTo - dblFrom, dblAzimuth, dblDip);
+                        collarDesurveyDto.x.Add(Convert.ToDouble(coordinate.x));
+                        collarDesurveyDto.y.Add(Convert.ToDouble(coordinate.y));
+                        collarDesurveyDto.z.Add(Convert.ToDouble(coordinate.z));
+
+                    }
+                    else
+                    {
+                        collarDesurveyDto.x.Add(dblX);
+                        collarDesurveyDto.y.Add(dblY);
+                        collarDesurveyDto.z.Add(dblZ);
+                    }
+
+                }
+
+                return coordinate;
             }
         }
     }

@@ -664,13 +664,21 @@ namespace Drillholes.Windows.Dialogs
             if ((bool)radDownhole.IsChecked)
             {
                 survey[0] = true;
+                survey[1] = false;
+                survey[2] = false;
             }
             else if ((bool)radCollarSurvey.IsChecked)
             {
+                survey[0] = false;
                 survey[1] = true;
+                survey[2] = false;
             }
             else if ((bool)radVertical.IsChecked)
+            {
+                survey[0] = false;
+                survey[1] = false;
                 survey[2] = true;
+            }
 
             UpdateXmlSurveyPreferences(survey);
 
