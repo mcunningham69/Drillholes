@@ -5,12 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Drillholes.Windows.Dialogs;
 using System.Windows.Controls.Ribbon;
 using System.IO;
@@ -36,6 +30,10 @@ namespace Drillholes.Windows.Dialogs
     {
         private XmlService _xmlService;
         private IDrillholeXML _xml;
+
+        private ExportResultsService _exportService;
+        private IDrillholeExport _export;
+
        // private string rootName = "DrillholePreferences";
         private string fullName { get; set; }
         private string xmlName { get; set; }
@@ -46,7 +44,9 @@ namespace Drillholes.Windows.Dialogs
         private string projectLocation { get; set; }
         private string projectFile { get; set; }
 
-       
+        private DrillholeImportFormat exportFormat { get; set; }
+
+
 
         private DrillholeDialogPage dialogPage { get; set; }
         public DrillholeStartup()
@@ -57,6 +57,7 @@ namespace Drillholes.Windows.Dialogs
             geology = new bool[2];
             savedProject = false;
             projectSession = "";
+            exportFormat = DrillholeImportFormat.text_csv;
 
             dialogPage = new DrillholeDialogPage();
         }
@@ -86,6 +87,15 @@ namespace Drillholes.Windows.Dialogs
             await _xmlService.DrillholePreferences(fullName, preferences, DrillholeConstants.drillholePref);
 
             return true;
+        }
+
+        private async void SetupExportService()
+        {
+            if (_export == null)
+                _export = new Drillholes.FileDialog.FileExportDrillholes();
+
+            if (_exportService == null)
+                _exportService = new ExportResultsService(_export);
         }
 
         private async Task<bool> ManageXmlProperties(DrillholeProjectProperties properties)
@@ -490,17 +500,6 @@ namespace Drillholes.Windows.Dialogs
             this.Close();
         }
 
-        //private async Task<bool> SynchroniseSettings(bool pageToSetting, DrillholeImportPage pageImport)
-        //{
-        //    if (pageToSetting)
-        //    {
-        //        this.radDownhole.IsChecked = pageImport.radDhole.IsChecked;
-        //        this.radVertical.IsChecked = pageImport.radVertical.IsChecked;
-        //        this.radCollarSurvey.IsChecked = pageImport.radSurvey.IsChecked;
-        //    }
-
-        //    return true;
-        //}
         private void HelpDocumentation(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Not yet implemented");
@@ -1170,28 +1169,69 @@ namespace Drillholes.Windows.Dialogs
 
         private async void ExportToText(string filter)
         {
-            string outputName = "";
-            outputName = await ExportDataName(filter);
+            string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\test.csv";
+            //outputName = await ExportDataName(filter);
 
             if (outputName == "")
                 return;
 
-            string xmlProjectFile = "";
+            //get table type
+            var whichpage = frameMain.Content;
 
-            //get pathname to project file if saved session
+            var test = whichpage.GetType();
+
+            DrillholeTableType tableType = DrillholeTableType.collar;
+
+            if (test.Name == "DrillholeImportPage")
+            {
+                DrillholeImportPage thisPage = whichpage as DrillholeImportPage;
+
+                int selected = thisPage._tabcontrol.SelectedIndex;
+
+                if (selected == 1)
+                {
+                    tableType = DrillholeTableType.survey;
+                }
+                else if (selected == 2)
+                {
+                    tableType = DrillholeTableType.assay;
+
+                }
+                else if (selected == 3)
+                {
+                    tableType = DrillholeTableType.interval;
+
+                }
+                else if (selected == 4)
+                {
+                    tableType = DrillholeTableType.continuous;
+
+                }
+
+                //TODO export all desurveyed tables
+            }
+            else
+                tableType = DrillholeTableType.other;
+
+            string drillholeName = "", drillholeFields = "", drillholeInputData = "";
+
             if (savedProject)
             {
-                xmlProjectFile = await CheckProjectFile();
-
+                drillholeName = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeDesurv, tableType.ToString(), projectSession, projectLocation);
+                drillholeFields = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeFields, tableType.ToString(), projectSession, projectLocation);
+                drillholeInputData = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeData, tableType.ToString(), projectSession, projectLocation);
             }
             else
             {
+                drillholeName = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeDesurv, tableType.ToString());
+                drillholeFields = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeFields, tableType.ToString());
+                drillholeInputData = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeData, tableType.ToString());
 
             }
 
-            //TODO
+            SetupExportService();
 
-
+            await _exportService.ExportTextCsv(outputName, drillholeName, drillholeFields, drillholeInputData, exportFormat, true);
 
         }
 
@@ -1246,17 +1286,20 @@ namespace Drillholes.Windows.Dialogs
 
         private void radDatabase_Click(object sender, RoutedEventArgs e)
         {
-
+            if ((bool)radText.IsChecked)
+                exportFormat = DrillholeImportFormat.egdb_table;
         }
 
         private void radExcel_Click(object sender, RoutedEventArgs e)
         {
-
+            if ((bool)radText.IsChecked)
+                exportFormat = DrillholeImportFormat.excel_table;
         }
 
         private void radText_Click(object sender, RoutedEventArgs e)
         {
-
+            if ((bool)radText.IsChecked) 
+                exportFormat= DrillholeImportFormat.text_csv;
         }
 
 

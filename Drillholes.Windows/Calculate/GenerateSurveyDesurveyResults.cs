@@ -69,7 +69,21 @@ namespace Drillholes.Windows.Calculate
             //surveymethod has to be Tangential
             var surveyResults = await _desurveyService.SurveyDownhole(surveyDesurvMapper, surveyMethod, collarTableFields, surveyTableFields, bToe, bCollar, surveyXmlData );
 
+            StoreResultsToXml(surveyResults);
+
             return true;
+        }
+
+        private async void StoreResultsToXml(SurveyDesurveyObject surveyResults)
+        {
+
+            //create tableFields table and store desurveyed results
+            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, surveyResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.survey);
+
+            //save to xml
+            if (savedSession)
+                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.survey);
+
         }
 
     }

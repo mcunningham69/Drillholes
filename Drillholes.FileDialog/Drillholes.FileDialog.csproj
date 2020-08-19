@@ -50,6 +50,8 @@
     <Compile Include="CollarImport.cs" />
     <Compile Include="DrillholeImportEngine.cs" />
     <Compile Include="ContinuousImport.cs" />
+    <Compile Include="FileExportDrillholes.cs" />
+    <Compile Include="FileExportFactory.cs" />
     <Compile Include="IntervalImport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SurveyImport.cs" />

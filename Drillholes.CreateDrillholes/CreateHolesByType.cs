@@ -227,6 +227,7 @@ namespace Drillholes.CreateDrillholes
 
             //need this for xml, so use table fields in the desurvey object class
             surveyDesurvey.surveyTableFields = surveyTableFields;
+            surveyDesurvey.collarTableFields = collarTableFields;
 
             return surveyDesurvey;
         }
