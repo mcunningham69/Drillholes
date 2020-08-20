@@ -1181,12 +1181,13 @@ namespace Drillholes.Windows.Dialogs
             var test = whichpage.GetType();
 
             DrillholeTableType tableType = DrillholeTableType.collar;
+            int selected = 0;
 
             if (test.Name == "DrillholeImportPage")
             {
                 DrillholeImportPage thisPage = whichpage as DrillholeImportPage;
 
-                int selected = thisPage._tabcontrol.SelectedIndex;
+                selected = thisPage._tabcontrol.SelectedIndex;
 
                 if (selected == 1)
                 {
@@ -1231,7 +1232,8 @@ namespace Drillholes.Windows.Dialogs
 
             SetupExportService();
 
-            await _exportService.ExportTextCsv(outputName, drillholeName, drillholeFields, drillholeInputData, exportFormat, true);
+            if (selected == 1)
+                await _exportService.ExportTextCsv(outputName, drillholeName, drillholeFields, "", drillholeInputData, exportFormat, true, DrillholeTableType.collar);
 
         }
 

@@ -29,6 +29,26 @@ namespace Drillholes.FileDialog
             return await _exportTo.ExportCollarTable(outputName, drillholeTableFile, drillholeFields, drillholeInputData, bAttributes);
 
         }
+        public async Task<bool> ExportSurveyTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeSurveyFields, string drillholeInputData, bool bAttributes)
+        {
+            return await _exportTo.ExportSurveyTable(outputName, drillholeTableFile, drillholeCollarFields, drillholeSurveyFields, drillholeInputData, bAttributes);
+
+        }
+        public async Task<bool> ExportAssayTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeAssayFields, string drillholeInputData, bool bAttributes)
+        {
+            return await _exportTo.ExportAssayTable(outputName, drillholeTableFile, drillholeCollarFields, drillholeAssayFields, drillholeInputData, bAttributes);
+
+        }
+        public async Task<bool> ExportIntervalTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeIntervalFields, string drillholeInputData, bool bAttributes)
+        {
+            return await _exportTo.ExportIntervalTable(outputName, drillholeTableFile, drillholeCollarFields, drillholeIntervalFields, drillholeInputData, bAttributes);
+
+        }
+        public async Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, string drillholeInputData, bool bAttributes)
+        {
+            return await _exportTo.ExportContinuousTable(outputName, drillholeTableFile, drillholeCollarFields, drillholeContinuousFields, drillholeInputData, bAttributes);
+
+        }
 
     }
 
@@ -49,44 +69,299 @@ namespace Drillholes.FileDialog
         }
 
         public abstract Task<bool> ExportCollarTable(string outputName, string drillholeTableFile, string drillholeFields, string drillholeInputData, bool bAttributes);
+        public abstract Task<bool> ExportSurveyTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeSurveyFields, string drillholeInputData, bool bAttributes);
+        public abstract Task<bool> ExportAssayTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeAssayFields, string drillholeInputData, bool bAttributes);
+        public abstract Task<bool> ExportIntervalTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeIntervalFields, string drillholeInputData, bool bAttributes);
+        public abstract Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, string drillholeInputData, bool bAttributes);
+
     }
 
     public class TextCsvFormat : ExportDesurveyResults
     {
+        public override async Task<bool> ExportAssayTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeAssayFields, 
+            string drillholeInputData, bool bAttributes)
+        {
+            //Load XML tables from project directory or temp folder
+            XDocument xmlResults = XDocument.Load(drillholeTableFile);
+            XDocument xmlCollarFields = XDocument.Load(drillholeCollarFields);
+            XDocument xmlAssayFields = XDocument.Load(drillholeAssayFields);
+            XDocument xmlInput = XDocument.Load(drillholeInputData);
+
+            //Get each row as an XElement
+            var desurvElements = xmlResults.Descendants(DrillholeConstants.drillholeDesurv).Descendants("TableType").Elements();
+            var inputElements = xmlInput.Descendants(DrillholeConstants.drillholeData).Descendants("TableType").Descendants("Assays").Elements();
+
+            #region Field names
+            IEnumerable<XElement> mandatoryFields = null;
+            IEnumerable<XElement> mandatoryAssayFields = null;
+
+            IEnumerable<XElement> optionalFields = null;
+
+            //Get each row as an XElement for mandatory fields
+            mandatoryFields = xmlCollarFields.Descendants(DrillholeConstants.drillholeFields).Descendants("TableType").Elements().Where(g => g.Element("GroupName").Value == "Mandatory Fields");
+
+            //get field names
+            string bhid = mandatoryFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.holeID).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string x = mandatoryFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.x).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string y = mandatoryFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.y).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string z = mandatoryFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.z).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string td = mandatoryFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.maxDepth).Select(v => v.Attribute("Name").Value).FirstOrDefault(); 
+
+            mandatoryAssayFields = xmlAssayFields.Descendants(DrillholeConstants.drillholeFields).Descendants("TableType").Elements().Where(g => g.Element("GroupName").Value == "Mandatory Fields");
+            string assayHole = mandatoryAssayFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.holeID).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string from = mandatoryAssayFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.distFromName).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string to = mandatoryAssayFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.distToName).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+
+
+            List<string> header = new List<string>(); //need these for CSV header
+            List<string> attributes = new List<string>(); //use to search input data based on option imported fields
+
+            List<RowsForExport> rowsForExport = new List<RowsForExport>(); //helper class for writing results to CSV
+
+            header.Add(bhid);
+            header.Add(x);
+            header.Add(y);
+            header.Add(z);
+            header.Add(td);
+
+            if (bAttributes)
+            {
+                optionalFields = xmlAssayFields.Descendants(DrillholeConstants.drillholeFields).Descendants("TableType").Elements().Where(g => g.Element("GroupName").Value == "Other Fields")
+                .Where(i => i.Element("ColumnImportAs").Value != "Not Imported"); //get optional fields that have been selected for importing
+
+                foreach (var field in optionalFields)
+                {
+                    header.Add(field.Attribute("Name").Value);
+                    attributes.Add(field.Attribute("Name").Value);
+                }
+            }
+
+            header.Add("Comment"); //add a comment about coordinate type
+            #endregion
+
+            List<string> attributeValues = new List<string>();
+
+            string holeID = "";
+            string collarID = "";
+
+            foreach (var desurvey in desurvElements)
+            {
+                collarID = desurvey.Attribute("ID").Value; //use ID for joining desurvey with input data
+                holeID = desurvey.Attribute("Name").Value; //get name of hole
+
+                var queryCoord = desurvey.Elements(); //break down coordinate type per hole, i.e. collar and toe
+
+                string coordType = "";
+
+                foreach (var coord in queryCoord)
+                {
+                    RowsForExport attributeRow = new RowsForExport();
+
+                    if (coord.Attribute("Type").Value == "Collar")
+                    {
+                        coordType = "Collar";
+                    }
+                    else if (coord.Attribute("Type").Value == "Toe")
+                    {
+                        coordType = "Toe";
+                    }
+                    else if (coord.Attribute("Type").Value == "Sample")
+                        coordType = "Sample";
+
+                    //add to the string list in the RowsForExport class
+                    attributeRow.attributes.Add(holeID);
+                    attributeRow.attributes.Add(coord.Element(x).Value);
+                    attributeRow.attributes.Add(coord.Element(y).Value);
+                    attributeRow.attributes.Add(coord.Element(z).Value);
+                    attributeRow.attributes.Add(coord.Element(td).Value);
+
+                    if (bAttributes)
+                    {
+                        var inputTest = inputElements.Where(i => i.Attribute("ID").Value == collarID); //search by optional field name in the input data table
+
+                        foreach (var attribute in attributes)
+                        {
+                            attributeRow.attributes.Add(inputTest.Select(a => a.Element(attribute).Value).SingleOrDefault()); //add to the list
+                        }
+                    }
+
+                    attributeRow.attributes.Add(coordType); //add type of coordiante
+
+                    rowsForExport.Add(attributeRow); //add the class to a list of same class
+
+                }
+            }
+
+            await CsvExport.ToCSV(outputName, header, rowsForExport); //export to CSV
+
+            return true;
+        }
+
         public override async Task<bool> ExportCollarTable(string outputName, string drillholeTableFile, string drillholeFields, string drillholeInputData, bool bAttributes)
         {
+            //Load XML tables from project directory or temp folder
             XDocument xmlResults = XDocument.Load(drillholeTableFile);
             XDocument xmlFields = XDocument.Load(drillholeFields);
             XDocument xmlInput = XDocument.Load(drillholeInputData);
 
+            //Get each row as an XElement
+            var desurvElements = xmlResults.Descendants(DrillholeConstants.drillholeDesurv).Descendants("TableType").Elements();
+            var inputElements = xmlInput.Descendants(DrillholeConstants.drillholeData).Descendants("TableType").Descendants("Collars").Elements();
+
+            #region Field names
             IEnumerable<XElement> mandatoryFields = null;
             IEnumerable<XElement> optionalFields = null;
 
-            var desurvElements = xmlResults.Descendants(DrillholeConstants.drillholeDesurv).Descendants("TableType").Elements();
-            mandatoryFields = xmlFields.Descendants(DrillholeConstants.drillholeFields).Descendants("TableType").Elements().Where(g => g.Element("GroupName").Value == "Mandatory Fields");
-            var inputElements = xmlInput.Descendants(DrillholeConstants.drillholeData).Descendants("TableType").Elements();
+            //Get each row as an XElement for mandatory fields
+            mandatoryFields = xmlFields.Descendants(DrillholeConstants.drillholeFields).Descendants("TableType").Elements().Where(g => g.Element("GroupName").Value == "Mandatory Fields");            
 
+            //get field names
+            string bhid = mandatoryFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.holeID).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string x = mandatoryFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.x).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string y = mandatoryFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.y).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string z = mandatoryFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.z).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string td = mandatoryFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.maxDepth).Select(v => v.Attribute("Name").Value).FirstOrDefault(); ;
+
+            List<string> header = new List<string>(); //need these for CSV header
+            List<string> attributes = new List<string>(); //use to search input data based on option imported fields
+
+            List<RowsForExport> rowsForExport = new List<RowsForExport>(); //helper class for writing results to CSV
+
+            header.Add(bhid);
+            header.Add(x);
+            header.Add(y);
+            header.Add(z);
+            header.Add(td);
 
             if (bAttributes)
             {
-                optionalFields = xmlFields.Descendants(DrillholeConstants.drillholeFields).Descendants("TableType").Elements().Where(g => g.Element("GroupName").Value == "Other Fields");
+                optionalFields = xmlFields.Descendants(DrillholeConstants.drillholeFields).Descendants("TableType").Elements().Where(g => g.Element("GroupName").Value == "Other Fields")
+                .Where(i => i.Element("ColumnImportAs").Value != "Not Imported"); //get optional fields that have been selected for importing
+
+                foreach (var field in optionalFields)
+                {
+                    header.Add(field.Attribute("Name").Value);
+                    attributes.Add(field.Attribute("Name").Value);
+                }
             }
 
+            header.Add("Comment"); //add a comment about coordinate type
+            #endregion
 
+            List<string> attributeValues = new List<string>();
 
-            //  var DesurvElements = desurvElements.Where(f => f.Attribute("Value").Value == "collar").ToList();
-            //  var FieldElements = fieldElements.Select(f => f.Element("TableType")).Nodes().ToList();
-            //  var InputElements = inputElements.Select(f => f.Element("collar")).Nodes().ToList();
+            string holeID = "";
+            string collarID = "";
 
+            foreach (var desurvey in desurvElements)
+            {
+                collarID = desurvey.Attribute("ID").Value; //use ID for joining desurvey with input data
+                holeID = desurvey.Attribute("Name").Value; //get name of hole
 
-            //Mandatory fieldnames
-            //   var collar = fieldElements.Select(x => x.Element("ColumnHeader")).ToList();
+                var queryCoord = desurvey.Elements(); //break down coordinate type per hole, i.e. collar and toe
 
+                string coordType = "";
 
+                foreach (var coord in queryCoord)
+                {
+                    RowsForExport attributeRow = new RowsForExport();
 
+                    if (coord.Attribute("Type").Value == "Collar")
+                    {
+                        coordType = "Collar";
+                    }
+                    else if (coord.Attribute("Type").Value == "Toe")
+                    {
+                        coordType = "Toe";
+                    }
 
+                    //add to the string list in the RowsForExport class
+                    attributeRow.attributes.Add(holeID);
+                    attributeRow.attributes.Add(coord.Element(x).Value);
+                    attributeRow.attributes.Add(coord.Element(y).Value);
+                    attributeRow.attributes.Add(coord.Element(z).Value);
+                    attributeRow.attributes.Add(coord.Element(td).Value);
+
+                    if (bAttributes)
+                    {
+                        var inputTest = inputElements.Where(i => i.Attribute("ID").Value == collarID); //search by optional field name in the input data table
+
+                        foreach (var attribute in attributes)
+                        {
+                            attributeRow.attributes.Add(inputTest.Select(a => a.Element(attribute).Value).SingleOrDefault()); //add to the list
+                        }
+                    }
+
+                    attributeRow.attributes.Add(coordType); //add type of coordiante
+
+                    rowsForExport.Add(attributeRow); //add the class to a list of same class
+
+                }
+            }
+
+            await CsvExport.ToCSV(outputName, header, rowsForExport); //export to CSV
+
+            return true;
+        }
+
+        public override Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, string drillholeInputData, bool bAttributes)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<bool> ExportIntervalTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeIntervalFields,
+            string drillholeInputData, bool bAttributes)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<bool> ExportSurveyTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeSurveyFields, string drillholeInputData, bool bAttributes)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class RowsForExport
+    {
+        public List<string> attributes { get; set; }
+
+        public RowsForExport()
+        {
+            attributes = new List<string>();
+        }
+    }
+
+    public static class CsvExport
+    {
+        public static async Task<bool> ToCSV(string fileName, List<string> header, List<RowsForExport>rows)
+        {
+            StreamWriter sw = new StreamWriter(fileName, false);
+
+            //write the fieldnames to header
+            foreach (string field in header)
+            {
+                sw.Write(field);
+                sw.Write(",");
+            }
+
+            sw.Write(sw.NewLine); //new line
+
+            foreach(var row in rows)
+            {
+                foreach(var value in row.attributes) //same values as columns
+                {
+                    sw.Write(value);
+                    sw.Write(",");
+                }
+
+                sw.Write(sw.NewLine); //new line for each row
+            }
+            
+            sw.Close();
 
             return true;
         }
     }
+
+   
 }

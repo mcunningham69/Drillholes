@@ -12,7 +12,8 @@ namespace Drillholes.FileDialog
     {
         FileExportFactory factory = null;
 
-        public async Task<bool>ExportResultsToCsv(string outputName, string drillholeTableFile, string drillholeFields, string drillholeInputData, DrillholeImportFormat exportMode, bool bAttributes)
+        public async Task<bool>ExportResultsToCsv(string outputName, string drillholeTableFile, string drillholeFields, string drillholeOtherFields, string drillholeInputData, 
+            DrillholeImportFormat exportMode, bool bAttributes, DrillholeTableType tableType)
         {
             if (factory == null)
                 factory = new FileExportFactory(exportMode);
@@ -24,5 +25,7 @@ namespace Drillholes.FileDialog
             return true;
 
         }
+
+       
     }
 }

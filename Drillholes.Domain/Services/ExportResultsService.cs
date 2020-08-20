@@ -19,10 +19,11 @@ namespace Drillholes.Domain.Services
             this._drillhole = drillhole;
         }
 
-        public async Task<bool> ExportTextCsv(string outputName, string drillholeTableFile, string drillholeFields, string drillholeInputData, DrillholeImportFormat exportMode, bool bAttributes)
+        public async Task<bool> ExportTextCsv(string outputName, string drillholeTableFile, string drillholeFields, string drillholeOtherFields, string drillholeInputData, 
+            DrillholeImportFormat exportMode, bool bAttributes, DrillholeTableType tableType)
         {
-            bool saveToCsv = await _drillhole.ExportResultsToCsv(outputName, drillholeTableFile, drillholeFields, drillholeInputData, exportMode, bAttributes);
-
+            bool saveToCsv = await _drillhole.ExportResultsToCsv(outputName, drillholeTableFile, drillholeFields, drillholeOtherFields, drillholeInputData, exportMode, bAttributes, tableType);
+            
             if (saveToCsv)
                 return true;
             else

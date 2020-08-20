@@ -9,6 +9,9 @@ namespace Drillholes.Domain.Interfaces
 {
     public interface IDrillholeExport
     {
-        Task<bool> ExportResultsToCsv(string outputName, string drillholeTableFile, string drillholeFields, string drillholeInputData, DrillholeImportFormat exportMode,bool bAttributes);
+        Task<bool> ExportResultsToCsv(string outputName, string drillholeTableFile, string drillholeFields, string drillholeOtherFields, string drillholeInputData, DrillholeImportFormat exportMode,
+            bool bAttributes, DrillholeTableType tableType);
+       
+
     }
 }
