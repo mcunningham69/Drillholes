@@ -20,7 +20,16 @@ namespace Drillholes.FileDialog
             else
                 factory.SetExportType(exportMode);
 
-            await factory.ExportCollarTable(outputName, drillholeTableFile, drillholeFields, drillholeInputData, bAttributes);
+            if (tableType == DrillholeTableType.collar)
+                await factory.ExportCollarTable(outputName, drillholeTableFile, drillholeFields, drillholeInputData, bAttributes);
+            else if (tableType == DrillholeTableType.survey)
+                await factory.ExportSurveyTable(outputName, drillholeTableFile, drillholeFields, drillholeOtherFields, drillholeInputData, bAttributes);
+            else if (tableType == DrillholeTableType.assay)
+                await factory.ExportAssayTable(outputName, drillholeTableFile, drillholeFields, drillholeOtherFields, drillholeInputData, bAttributes);
+            else if (tableType == DrillholeTableType.interval)
+                await factory.ExportIntervalTable(outputName, drillholeTableFile, drillholeFields, drillholeOtherFields, drillholeInputData, bAttributes);
+            else if (tableType == DrillholeTableType.continuous)
+                await factory.ExportContinuousTable(outputName, drillholeTableFile, drillholeFields, drillholeOtherFields, drillholeInputData, bAttributes);
 
             return true;
 

@@ -1169,7 +1169,12 @@ namespace Drillholes.Windows.Dialogs
 
         private async void ExportToText(string filter)
         {
-            string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\test.csv";
+           // string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\collar_export.csv";
+            //string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\survey_export.csv";
+            //string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\assay_export.csv";
+            string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\interval_export.csv";
+            //string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\continuous_export.csv";
+
             //outputName = await ExportDataName(filter);
 
             if (outputName == "")
@@ -1182,6 +1187,8 @@ namespace Drillholes.Windows.Dialogs
 
             DrillholeTableType tableType = DrillholeTableType.collar;
             int selected = 0;
+
+            string drillholeOtherFields = "";
 
             if (test.Name == "DrillholeImportPage")
             {
@@ -1219,21 +1226,22 @@ namespace Drillholes.Windows.Dialogs
             if (savedProject)
             {
                 drillholeName = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeDesurv, tableType.ToString(), projectSession, projectLocation);
-                drillholeFields = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeFields, tableType.ToString(), projectSession, projectLocation);
+                drillholeFields = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeFields, "collar", projectSession, projectLocation);
                 drillholeInputData = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeData, tableType.ToString(), projectSession, projectLocation);
+                drillholeOtherFields = await XmlDefaultPath.GetProjectPathAndFilename(DrillholeConstants.drillholeFields, tableType.ToString(), projectSession, projectLocation);
             }
             else
             {
                 drillholeName = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeDesurv, tableType.ToString());
-                drillholeFields = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeFields, tableType.ToString());
+                drillholeFields = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeFields, "collar");
                 drillholeInputData = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeData, tableType.ToString());
+                drillholeOtherFields = await XmlDefaultPath.GetFullPathAndFilename(DrillholeConstants.drillholeFields, tableType.ToString());
 
             }
 
             SetupExportService();
 
-            if (selected == 1)
-                await _exportService.ExportTextCsv(outputName, drillholeName, drillholeFields, "", drillholeInputData, exportFormat, true, DrillholeTableType.collar);
+            await _exportService.ExportTextCsv(outputName, drillholeName, drillholeFields, drillholeOtherFields, drillholeInputData, exportFormat, true, tableType);
 
         }
 
