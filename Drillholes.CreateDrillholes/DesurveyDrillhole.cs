@@ -1539,7 +1539,10 @@ namespace Drillholes.CreateDrillholes
             double dblTo = Convert.ToDouble(mTo);
             double dbltD = Convert.ToDouble(tD);
 
-            double dblInterval = dblTo - dblFrom;
+            if (dblTo > dbltD)
+                dblTo = dbltD;
+
+            double dblInterval = dblTo - dblFrom; //TODO, work out ratio of length for weighting
 
             List<double> dblAzimuths = new List<double>();
             List<double> dblDips = new List<double>();
@@ -1614,11 +1617,7 @@ namespace Drillholes.CreateDrillholes
                     downholeSurveys.azimuth.Add(dblAzimuths[d+1]);
                     downholeSurveys.dip.Add(dblDips[d+1]);
                     //IF to is greater than the next interval then from and to will be survey values
-                    if (dblTo > dblTd)
-                    {
-
-                    }
-
+                   
                     //TO
                 }
 
