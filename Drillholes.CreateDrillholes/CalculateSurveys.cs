@@ -33,4 +33,22 @@ namespace Drillholes.CreateDrillholes
         public double y { get; set; }
         public double z { get; set; }
     }
+
+    public class DownholeSurveys
+    {
+        public List<double> azimuth { get; set; }
+        public List<double> dip { get; set; }
+        public List<double>distance { get; set; }
+        public List<double> distFrom { get; set; }
+        public List<double> distTo { get; set; }
+
+        public DownholeSurveys()
+        {
+            azimuth = new List<double>();
+            dip = new List<double>();
+            distance = new List<double>();
+            distFrom = new List<double>();
+            distTo = new List<double>();
+        }
+    }
 }

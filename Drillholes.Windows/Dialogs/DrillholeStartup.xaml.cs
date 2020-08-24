@@ -1170,10 +1170,10 @@ namespace Drillholes.Windows.Dialogs
         private async void ExportToText(string filter)
         {
            // string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\collar_export.csv";
-            //string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\survey_export.csv";
+          //  string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\survey_export.csv";
             //string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\assay_export.csv";
-            string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\interval_export.csv";
-            //string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\continuous_export.csv";
+            //string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\interval_export.csv";
+            string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\continuous_export.csv";
 
             //outputName = await ExportDataName(filter);
 
