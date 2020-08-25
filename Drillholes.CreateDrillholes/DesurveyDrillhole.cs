@@ -251,7 +251,7 @@ namespace Drillholes.CreateDrillholes
 
                         if (bCheck)
                         {
-                            double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblLength = 0.0, dblFrom = 0.0, dblTo = 0.0
+                            double dblX = 0.0, dblY = 0.0, dblZ = 0.0, dblLength = 0.0, dblFrom = 0.0, dblTo = 0.0;
 
                             dblX = Convert.ToDouble(xCoord);
                             dblY = Convert.ToDouble(yCoord);
@@ -270,54 +270,56 @@ namespace Drillholes.CreateDrillholes
                                 string mFrom = assayValue.Element(mFromField).Value;
                                 string mTo = assayValue.Element(mToField).Value;
 
+                                DownholeSurveys surveys = await DesurveyMethods.ReturnSurveysPerInterval(azimuths, dips, distances, mFrom, mTo, totalDepth);
 
-
-
-
-
-
-                                bool bCheckDistance = true;
-
-                                Coordinate3D coordinate = new Coordinate3D();
-
-                                if (counter == 0) //always set as condition above shows collar coordiantes are valid
+                                for (int s = 0; s < surveys.distance.Count; s++)
                                 {
-                                    if (bCollar)
-                                    {
-                                        await DesurveyMethods.PopulateDesurveyObject(dblX, dblY, dblZ, 0, 0, dblAzimuth, dblDip, holeAttr, assayHoleAttr, hole, assayDesurveyDto,
-                                            DrillholeTableType.assay, false, true);
-                                    }
-                                    //TODO separate dip and azimuth
-                                    bCheckDistance = await DesurveyMethods.ValidateValues(null, null, null, null, assayHoleAttr, null, null, mFrom, mTo);
+                                    dblAzimuth = surveys.azimuth[s];
+                                    dblDip = surveys.dip[s];
 
-                                    if (bCheckDistance)
-                                    {
-                                        dblFrom = Convert.ToDouble(mFrom);
-                                        dblTo = Convert.ToDouble(mTo);
+                                    bool bCheckDistance = true;
 
-                                        coordinate = await DesurveyMethods.PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, dblAzimuth, dblDip, holeAttr, assayHoleAttr,
-                                            hole, assayDesurveyDto, DrillholeTableType.assay, true, false);
+                                    Coordinate3D coordinate = new Coordinate3D();
+
+                                    if (counter == 0) //always set as condition above shows collar coordiantes are valid
+                                    {
+                                        if (bCollar)
+                                        {
+                                            await DesurveyMethods.PopulateDesurveyObject(dblX, dblY, dblZ, 0, 0, dblAzimuth, dblDip, holeAttr, assayHoleAttr, hole, assayDesurveyDto,
+                                                DrillholeTableType.assay, false, true);
+                                        }
+                                        //TODO separate dip and azimuth
+                                        bCheckDistance = await DesurveyMethods.ValidateValues(null, null, null, null, assayHoleAttr, null, null, mFrom, mTo);
+
+                                        if (bCheckDistance)
+                                        {
+                                            dblFrom = Convert.ToDouble(mFrom);
+                                            dblTo = Convert.ToDouble(mTo);
+
+                                            coordinate = await DesurveyMethods.PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, dblAzimuth, dblDip, holeAttr, assayHoleAttr,
+                                                hole, assayDesurveyDto, DrillholeTableType.assay, true, false);
+                                        }
                                     }
+                                    else
+                                    {
+                                        //  bCheckDistance = await ValidateValues(null, null, null, null, assayHoleAttr, dip, azimuth, mFrom, mTo);
+
+                                        if (bCheckDistance)
+                                        {
+                                            dblFrom = Convert.ToDouble(mFrom);
+                                            dblTo = Convert.ToDouble(mTo);
+
+                                            coordinate = await DesurveyMethods.PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, dblAzimuth, dblDip, holeAttr, assayHoleAttr, hole,
+                                                assayDesurveyDto, DrillholeTableType.assay, true, false);
+                                        }
+                                    }
+
+                                    dblX = coordinate.x;
+                                    dblY = coordinate.y;
+                                    dblZ = coordinate.z;
+
+                                    counter++;
                                 }
-                                else
-                                {
-                                  //  bCheckDistance = await ValidateValues(null, null, null, null, assayHoleAttr, dip, azimuth, mFrom, mTo);
-
-                                    if (bCheckDistance)
-                                    {
-                                        dblFrom = Convert.ToDouble(mFrom);
-                                        dblTo = Convert.ToDouble(mTo);
-
-                                        coordinate = await DesurveyMethods.PopulateDesurveyObject(dblX, dblY, dblZ, dblFrom, dblTo, dblAzimuth, dblDip, holeAttr, assayHoleAttr, hole,
-                                            assayDesurveyDto, DrillholeTableType.assay, true, false);
-                                    }
-                                }
-
-                                dblX = coordinate.x;
-                                dblY = coordinate.y;
-                                dblZ = coordinate.z;
-
-                                counter++;
                             }
 
                             //check to add TD
@@ -1539,10 +1541,12 @@ namespace Drillholes.CreateDrillholes
             double dblTo = Convert.ToDouble(mTo);
             double dbltD = Convert.ToDouble(tD);
 
-            if (dblTo > dbltD)
-                dblTo = dbltD;
+            //TODO give user choice to restrict to hole length
+            //if (dblTo > dbltD)
+            //    dblTo = dbltD;
 
             double dblInterval = dblTo - dblFrom; //TODO, work out ratio of length for weighting
+           
 
             List<double> dblAzimuths = new List<double>();
             List<double> dblDips = new List<double>();
@@ -1550,7 +1554,7 @@ namespace Drillholes.CreateDrillholes
 
             for (int i = 0; i < dips.Count; i++)
             {
-                if (Information.IsNumeric(distances))
+                if (Information.IsNumeric(distances[i]))
                 {
                     dblDistances.Add(Convert.ToDouble(distances[i]));
                 }
@@ -1560,7 +1564,7 @@ namespace Drillholes.CreateDrillholes
 
                 }
 
-                if (Information.IsNumeric(dips))
+                if (Information.IsNumeric(dips[i]))
                 {
                     dblDips.Add(Convert.ToDouble(dips[i]));
 
@@ -1568,7 +1572,7 @@ namespace Drillholes.CreateDrillholes
                 else
                     dblDips.Add(-90);
 
-                if (Information.IsNumeric(azimuths))
+                if (Information.IsNumeric(azimuths[i]))
                 {
                     dblAzimuths.Add(Convert.ToDouble(azimuths[i]));
                 }
@@ -1577,54 +1581,196 @@ namespace Drillholes.CreateDrillholes
 
             }
 
+            bool bRepeat = false;
+            int counter = 0;
+
             DownholeSurveys downholeSurveys = new DownholeSurveys();
 
-            bool bLower = false;
-            double dblUpper = 0;
-            double dblDistance = 0;
-
-            int countUpper = 0;
-
-            for (int d = 0; d < dblDistances.Count; d++)
+            //TODO - create seperate procedure
+            for (int v = 0; v < dblDistances.Count; v++)
             {
-                downholeSurveys.distFrom.Add(dblFrom);
 
-                if (dblDistances[d] >= dblFrom)
+                if (dblFrom == dblDistances[v])
                 {
-                    if (dblDistances[d] == dblFrom)
+                    downholeSurveys.distFrom.Add(dblFrom);
+                    downholeSurveys.distance.Add(dblDistances[v]);
+                    downholeSurveys.dip.Add(dblDips[v]);
+                    downholeSurveys.azimuth.Add(dblAzimuths[v]);
+
+                    if (dblTo < dblDistances[v + 1])
                     {
-                        downholeSurveys.distance.Add(dblDistances[d]);
+                        downholeSurveys.distTo.Add(dblTo);
                     }
                     else
-                        downholeSurveys.distance.Add(dblDistances[d - 1]);
+                    {
+                        downholeSurveys.distTo.Add(dblDistances[v + 1]);
+
+                        dblFrom = dblDistances[v + 1];
+
+                        bRepeat = true;
+                    }
                 }
 
-                if (dblDistances[d+1] <= dblTo)
+                else if (dblFrom > dblDistances[v])
                 {
-                    downholeSurveys.distTo.Add(dblTo);
-                    downholeSurveys.azimuth.Add(dblAzimuths[d]);
-                    downholeSurveys.dip.Add(dblDips[d]);
+                    if (dblFrom < dblDistances[v + 1])
+                    {
+                        downholeSurveys.distFrom.Add(dblFrom);
+                        downholeSurveys.distance.Add(dblDistances[v]);
+                        downholeSurveys.dip.Add(dblDips[v]);
+                        downholeSurveys.azimuth.Add(dblAzimuths[v]);
+
+                        if (dblTo <= dblDistances[v + 1])
+                        {
+                            downholeSurveys.distTo.Add(dblTo);
+                        }
+                        else
+                        {
+                            downholeSurveys.distTo.Add(dblDistances[v + 1]);
+
+                            dblFrom = dblDistances[v + 1];
+
+                            bRepeat = true;
+                        }
+
+                    }
+                    else if (dblFrom == dblDistances[v + 1])
+                    {
+                        downholeSurveys.distFrom.Add(dblFrom);
+                        downholeSurveys.distance.Add(dblDistances[v + 1]);
+                        downholeSurveys.dip.Add(dblDips[v + 1]);
+                        downholeSurveys.azimuth.Add(dblAzimuths[v + 1]);
+                    }
+                    else if (dblFrom > dblDistances[v + 1])
+                    {
+                        //Loop
+                    }
+
 
                 }
-                else
-                {
-                    downholeSurveys.distTo.Add(dblDistances[d + 1]);
-                    downholeSurveys.azimuth.Add(dblAzimuths[d]);
-                    downholeSurveys.dip.Add(dblDips[d]);
 
-
-                    downholeSurveys.distFrom.Add(dblDistances[d + 1]);
-                    downholeSurveys.azimuth.Add(dblAzimuths[d+1]);
-                    downholeSurveys.dip.Add(dblDips[d+1]);
-                    //IF to is greater than the next interval then from and to will be survey values
-                   
-                    //TO
-                }
+                if (bRepeat)
+                    break;
 
             }
 
+            //for (int d = 0; d < dblDistances.Count; d++)
+            //{
+            //    //Survey 1
+            //    dblDistanceCheck = dblDistances[d];
+
+            //    if (!bLower)
+            //    {
+            //        if (counter < dblDistances.Count - 1 )
+            //        {
+
+            //            if (dblDistanceCheck >= dblFrom)
+            //            {
+            //                //Survey 1
+            //                downholeSurveys.distFrom.Add(dblFrom);
+
+            //                if (dblDistanceCheck == dblFrom)
+            //                {
+            //                    //Survey 1
+            //                    downholeSurveys.distance.Add(dblDistanceCheck);
+            //                }
+            //                else
+            //                    //Survey 1
+            //                    downholeSurveys.distance.Add(dblDistances[d - 1]);
+
+            //                bLower = true;
+            //            }
+            //        }
+
+            //        else
+            //        {
+            //            if (dblDistanceCheck == dblFrom)
+            //            {
+            //                //Survey 1
+            //                downholeSurveys.distance.Add(dblDistanceCheck);
+            //            }
+            //            else
+            //                //Survey 1
+            //                downholeSurveys.distance.Add(dblDistances[d - 1]);
+
+            //            bLower = true;
+            //        }
+
+            //    }
+                
+            //    if (bLower)
+            //    {
+            //        if (counter < dblDistances.Count - 1)
+            //        {
+            //            if (dblFrom <= dblDistanceCheck || dblDistanceCheck >= dblTo)
+            //            {
+            //                //Survey 1
+            //                downholeSurveys.distTo.Add(dblTo);
+            //                downholeSurveys.azimuth.Add(dblAzimuths[d]);
+            //                downholeSurveys.dip.Add(dblDips[d]);
+            //                break;
+            //            }
+            //            else //it means greater than end of survey, so create survey to end of survey interval, and then start a new survey
+            //            {
+            //                //Survey 1
+            //                downholeSurveys.distTo.Add(dblDistances[d]);
+            //                downholeSurveys.azimuth.Add(dblAzimuths[d]);
+            //                downholeSurveys.dip.Add(dblDips[d]);
+
+            //                //Survey 2
+            //                dblFrom = dblDistances[d];
+            //                downholeSurveys.distFrom.Add(dblFrom);
+            //                downholeSurveys.azimuth.Add(dblAzimuths[d + 1]);
+            //                downholeSurveys.dip.Add(dblDips[d + 1]);
+
+            //                bSurvey = await DistanceGreaterThanSurvey(dblDistances[d + 1], dblTo);
+
+            //                if (bSurvey)
+            //                {
+            //                    //Survey 2
+            //                    downholeSurveys.distTo.Add(dblTo);
+            //                }
+            //                else
+            //                {
+            //                    //Survey 2
+            //                    downholeSurveys.distTo.Add(dblDistances[d + 1]);
+            //                }
+
+            //                break;
+            //            }
+       
+            //        }
+            //        else
+            //        {
+            //            downholeSurveys.distTo.Add(dblDistances[d]);
+            //            downholeSurveys.azimuth.Add(dblAzimuths[d]);
+            //            downholeSurveys.dip.Add(dblDips[d]);
+            //        }
+            //    }
+
+            //    counter++;
+            //}
+
 
             return downholeSurveys;
+        }
+
+        private static async Task<bool> ReturnDistanceTo( double dblDistance, double mTo)
+        {
+            if (dblDistance >= mTo)
+                return true;
+            
+
+            return false;
+        }
+
+        private static async Task<bool> DistanceGreaterThanSurvey(double dblDistance, double mTo)
+        {
+            if (dblDistance >= mTo)
+                return true;
+
+
+            return false;
         }
 
         /// <summary>
