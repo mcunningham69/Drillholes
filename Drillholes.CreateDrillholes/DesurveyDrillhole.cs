@@ -1715,6 +1715,7 @@ namespace Drillholes.CreateDrillholes
         public static async Task<bool> IsNormalSurveyInterval(List<string> from, List<string> to, List<string> distances, double dblTD)
         {
             List<double> dblInterval = new List<double>();
+            List<double> dblDistanceMax = new List<double>();
             List<double> dblDistance = new List<double>();
 
             for (int i = 0; i < from.Count; i++)
@@ -1725,26 +1726,58 @@ namespace Drillholes.CreateDrillholes
                 dblInterval.Add(dblT - dblF);
             }
 
-            int counter = 0;
-            if (distances.Count == 1)
+            foreach(var value in distances)
             {
-                dblDistance.Add(Convert.ToDouble(distances[0]));
+                double dblVal = Convert.ToDouble(value);
+
+                if (dblVal <= dblTD)
+                {
+                    dblDistanceMax.Add(dblVal);
+                }
+                else
+                {
+                    dblDistanceMax.Add(dblTD);
+                }
+            }
+
+            int counter = 0;
+            if (dblDistanceMax.Count == 1)
+            {
+                dblDistance.Add(dblDistanceMax[0]);
             }
             else
             {
-                for (int d = 0; d < distances.Count; d++)
+                for (int d = 0; d < dblDistanceMax.Count; d++)
                 {
+                    double dblDistanceCheck = 0.0;
+                    double dblDistanceNext = 0.0;
 
                     if (d < distances.Count - 1)
-                        dblDistance.Add(Convert.ToDouble(Convert.ToDouble(distances[d + 1]) - Convert.ToDouble(distances[d])));
+                    {
+                        dblDistanceNext = dblDistanceMax[d + 1];
+
+                        if (dblDistanceNext < dblTD)
+                        {
+                            dblDistanceCheck = dblDistanceMax[d];
+
+                            dblDistance.Add(dblDistanceNext - dblDistanceCheck);
+                        }
+                        else
+                        {
+                            dblDistanceCheck = dblDistanceMax[d];
+
+                            dblDistance.Add(dblTD - dblDistanceCheck);
+                        }
+                    }
                     else
                     {
-                        if (Convert.ToDouble(distances[d]) <= dblTD)
+                        dblDistanceCheck = dblDistanceMax[d];
+                        if (dblDistanceCheck <= dblTD)
                         {
-                            if (Convert.ToDouble(dblTD - Convert.ToDouble(distances[d])) != 0)
+                            if (dblTD - dblDistanceCheck != 0)
                             {
-                                if (counter < distances.Count)
-                                    dblDistance.Add(Convert.ToDouble(dblTD - Convert.ToDouble(distances[d])));
+                                if (counter < dblDistanceMax.Count)
+                                    dblDistance.Add(dblTD - dblDistanceCheck);
                                 else
                                 { }
                             }
