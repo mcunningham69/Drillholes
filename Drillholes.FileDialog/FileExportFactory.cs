@@ -137,6 +137,8 @@ namespace Drillholes.FileDialog
                 }
             }
 
+            header.Add("dip");
+            header.Add("azimuth");
             header.Add("Comment"); //add a comment about coordinate type
             #endregion
 

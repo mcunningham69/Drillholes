@@ -73,13 +73,13 @@ namespace Drillholes.Windows.Calculate
             var contResults = await _desurveyService.ContinuousVerticalHole(continuousDesurvMapper, surveyMethod, collarTableFields, continuousTableFields, bToe, bCollar, continuousXmlData );
 
             //create tableFields table and store desurveyed results
-            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, contResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.continuous);
+            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, contResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.continuous, false);
 
             //save to xml
             if (savedSession)
-                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.continuous);
+                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.continuous, false);
 
-            StoreResultsToXml(contResults);
+            StoreResultsToXml(contResults,false);
 
             return true;
         }
@@ -92,7 +92,7 @@ namespace Drillholes.Windows.Calculate
             //surveymethod has to be Tangential
             var contResults = await _desurveyService.ContinuousSurveyHole(continuousDesurvMapper, surveyMethod, collarTableFields, continuousTableFields, bToe, bCollar, continuousXmlData);
 
-            StoreResultsToXml(contResults);
+            StoreResultsToXml(contResults,false);
 
             return true;
         }
@@ -105,20 +105,20 @@ namespace Drillholes.Windows.Calculate
             //surveymethod has to be Tangential
             var contResults = await _desurveyService.ContinuousDownhole(continuousDesurvMapper, surveyMethod, collarTableFields, continuousTableFields, surveyTableFields, bToe, bCollar, continuousXmlData);
 
-            StoreResultsToXml(contResults);
+            StoreResultsToXml(contResults, true);
 
             return true;
         }
 
-        private async void StoreResultsToXml(ContinuousDesurveyObject contResults)
+        private async void StoreResultsToXml(ContinuousDesurveyObject contResults, bool bDownhole)
         {
 
             //create tableFields table and store desurveyed results
-            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, contResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.continuous);
+            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, contResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.continuous, bDownhole);
 
             //save to xml
             if (savedSession)
-                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.continuous);
+                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.continuous, bDownhole);
 
         }
     }

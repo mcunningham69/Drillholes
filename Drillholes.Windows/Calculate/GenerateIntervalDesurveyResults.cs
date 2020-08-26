@@ -71,7 +71,7 @@ namespace Drillholes.Windows.Calculate
             //surveymethod has to be Tangential
             var intervalResults = await _desurveyService.IntervalVerticalHole(intervalDesurvMapper, surveyMethod, collarTableFields, intervalTableFields, bToe, bCollar, intervalXmlData);
 
-            StoreResultsToXml(intervalResults);
+            StoreResultsToXml(intervalResults,false);
            
             return true;
 
@@ -85,7 +85,7 @@ namespace Drillholes.Windows.Calculate
             //surveymethod has to be Tangential
             var intervalResults = await _desurveyService.IntervalSurveyHole(intervalDesurvMapper, surveyMethod, collarTableFields, intervalTableFields, bToe, bCollar, intervalXmlData);
 
-            StoreResultsToXml(intervalResults);
+            StoreResultsToXml(intervalResults,false);
 
             return true;
         }
@@ -98,19 +98,19 @@ namespace Drillholes.Windows.Calculate
             //surveymethod has to be Tangential
             var intervalResults = await _desurveyService.IntervalDownhole(intervalDesurvMapper, surveyMethod, collarTableFields, intervalTableFields, surveyTableFields, bToe, bCollar, intervalXmlData);
 
-            StoreResultsToXml(intervalResults);
+            StoreResultsToXml(intervalResults, true);
 
             return true;
         }
 
-        private async void StoreResultsToXml(IntervalDesurveyObject intervalResults)
+        private async void StoreResultsToXml(IntervalDesurveyObject intervalResults, bool bDownhole)
         {
             //create tableFields table and store desurveyed results
-            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, intervalResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.interval);
+            await _xmlService.Drillholedesurveydata(DesurveyTableXmlName, intervalResults, DrillholeConstants.drillholeDesurv, DrillholeTableType.interval, bDownhole);
 
             //save to xml
             if (savedSession)
-                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.interval);
+                await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.interval, bDownhole);
             ;
 
         }

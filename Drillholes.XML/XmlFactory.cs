@@ -26,9 +26,9 @@ namespace Drillholes.XML
             _xml = XmlManagement.xmlType(xmlMode);
         }
 
-        public async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
+        public async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName, bool bDownhole)
         {
-            return _xml.CreateXML(fullXmlName, xmlValues, tableType, rootName).Result;
+            return _xml.CreateXML(fullXmlName, xmlValues, tableType, rootName, bDownhole).Result;
         }
 
 
@@ -36,9 +36,9 @@ namespace Drillholes.XML
         {
             return _xml.OpenXML(fullXmlName).Result;
         }
-        public async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName, bool bDownhole)
         {
-            return _xml.ReplaceXmlNode(fullXmlName, xmlValues, xmlData, tableType, xmlNodeTableNam, rootName).Result;
+            return _xml.ReplaceXmlNode(fullXmlName, xmlValues, xmlData, tableType, xmlNodeTableNam, rootName, bDownhole).Result;
         }
         public async Task<XElement> UpdateXmlNode(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName)
         {
@@ -81,10 +81,10 @@ namespace Drillholes.XML
             return null;
         }
 
-        public abstract Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName);
+        public abstract Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName, bool bDownhole);
         public abstract Task<object> OpenXML(string fullXmlName);
         public abstract void SaveXML(XDocument xmlFile, string fullXmlName);
-        public abstract Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName);
+        public abstract Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName, bool bDownhole);
 
         public abstract Task<XElement> UpdateXmlNodes(string fullXmlName, string xmlName, object xmlChange, XDocument xmlData, DrillholeTableType tableType, string rootName);
 
@@ -96,7 +96,7 @@ namespace Drillholes.XML
 
     public class XmlTableParameters : XmlManagement
     {
-        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
+        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName, bool bDownhole)
         {
             var tableValues = (List<DrillholeTable>)xmlValues;
 
@@ -138,7 +138,7 @@ namespace Drillholes.XML
             xmlFile.Save(fullXmlName);
         }
 
-        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName, bool bDownhole)
         {
             var tableValues = (List<DrillholeTable>)xmlValues;
 
@@ -282,7 +282,7 @@ namespace Drillholes.XML
 
     public class XmlTableFields : XmlManagement
     {
-        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
+        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName, bool bDownhole)
         {
             var tableFields = (ImportTableFields)xmlValues;
 
@@ -331,7 +331,7 @@ namespace Drillholes.XML
             xmlFile.Save(fullXmlName);
         }
 
-        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName, bool bDownhole)
         {
             var tableFields = (ImportTableFields)xmlValues;
 
@@ -518,7 +518,7 @@ namespace Drillholes.XML
 
     public class XmlDrillholePreferences : XmlManagement
     {
-        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
+        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName, bool bDownhole)
         {
             var preferences = (DrillholePreferences)xmlValues;
 
@@ -571,7 +571,7 @@ namespace Drillholes.XML
             return XDocument.Load(fullXmlName);
         }
 
-        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName, bool bDownhole)
         {
             var preferences = (DrillholePreferences)xmlValues;
 
@@ -740,7 +740,7 @@ namespace Drillholes.XML
 
     public class XmlSavedSession : XmlManagement
     {
-        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
+        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName, bool bDownhole)
         {
             //xmlValues will be project name
             var projectProp = (DrillholeProjectProperties)xmlValues;
@@ -796,7 +796,7 @@ namespace Drillholes.XML
 
      
 
-        public override Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public override Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName, bool bDownhole)
         {
             throw new NotImplementedException();
         }
@@ -825,7 +825,7 @@ namespace Drillholes.XML
     public class XmlTableInputdata : XmlManagement
     {
 
-        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName)
+        public override async Task<XElement> CreateXML(string fullXmlName, object xmlValues, DrillholeTableType tableType, string rootName, bool bDownhole)
         {
             var tableValues = (XElement)xmlValues;
 
@@ -858,7 +858,7 @@ namespace Drillholes.XML
 
 
 
-        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName, bool bDownhole)
         {
             var tableValues = (XElement)xmlValues;
 
@@ -945,7 +945,7 @@ namespace Drillholes.XML
 
     public class XmlDrillholeResults : XmlManagement
     {
-        public override async Task<XElement> CreateXML(string fullXmlName, object desurveyObject, DrillholeTableType tableType, string rootName)
+        public override async Task<XElement> CreateXML(string fullXmlName, object desurveyObject, DrillholeTableType tableType, string rootName, bool bDownhole)
         {
             XDocument xmlFile = new XDocument(
             new XDeclaration("1.0", null, null),
@@ -964,13 +964,13 @@ namespace Drillholes.XML
                     xmlValues = await SaveDesurveyXml.SaveSurveyXml(desurveyObject as SurveyDesurveyObject, header);
                     break;
                 case (DrillholeTableType.assay):
-                    xmlValues = await SaveDesurveyXml.SaveAssayXml(desurveyObject as AssayDesurveyObject, header, false);
+                    xmlValues = await SaveDesurveyXml.SaveAssayXml(desurveyObject as AssayDesurveyObject, header, bDownhole);
                     break;
                 case (DrillholeTableType.interval):
-                    xmlValues = await SaveDesurveyXml.SaveIntervalXml(desurveyObject as IntervalDesurveyObject, header, false);
+                    xmlValues = await SaveDesurveyXml.SaveIntervalXml(desurveyObject as IntervalDesurveyObject, header, bDownhole);
                     break;
                 case (DrillholeTableType.continuous):
-                    xmlValues = await SaveDesurveyXml.SaveContinuousXml(desurveyObject as ContinuousDesurveyObject, header, false);
+                    xmlValues = await SaveDesurveyXml.SaveContinuousXml(desurveyObject as ContinuousDesurveyObject, header, bDownhole);
                     break;
                 default:
                     throw new Exception("Problem with desurvey table type");
@@ -994,7 +994,7 @@ namespace Drillholes.XML
 
         }
 
-        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName)
+        public override async Task<object> ReplaceXmlNode(string fullXmlName, object xmlValues, XDocument xmlData, DrillholeTableType tableType, string xmlNodeTableNam, string rootName, bool bDownhole)
         {
             var elements = xmlData.Descendants(rootName).Elements();
             var updateValues = elements.Where(e => e.Attribute("Value").Value == tableType.ToString());
@@ -1016,13 +1016,13 @@ namespace Drillholes.XML
                     xmlValues = await SaveDesurveyXml.SaveSurveyXml(xmlValues as SurveyDesurveyObject, header);
                     break;
                 case (DrillholeTableType.assay):
-                    xmlValues = await SaveDesurveyXml.SaveAssayXml(xmlValues as AssayDesurveyObject, header, false);
+                    xmlValues = await SaveDesurveyXml.SaveAssayXml(xmlValues as AssayDesurveyObject, header, bDownhole);
                     break;
                 case (DrillholeTableType.interval):
-                    xmlValues = await SaveDesurveyXml.SaveIntervalXml(xmlValues as IntervalDesurveyObject, header, false);
+                    xmlValues = await SaveDesurveyXml.SaveIntervalXml(xmlValues as IntervalDesurveyObject, header, bDownhole);
                     break;
                 case (DrillholeTableType.continuous):
-                    xmlValues = await SaveDesurveyXml.SaveContinuousXml(xmlValues as ContinuousDesurveyObject, header, false);
+                    xmlValues = await SaveDesurveyXml.SaveContinuousXml(xmlValues as ContinuousDesurveyObject, header, bDownhole);
                     break;
                 default:
                     throw new Exception("Problem with desurvey table type");

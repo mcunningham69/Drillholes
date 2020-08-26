@@ -31,18 +31,18 @@ namespace Drillholes.XML
                 factory.SetXmlType(DrillholesXmlEnum.DrillholeInputData);
 
             if (!File.Exists(fileName))
-                elements = await factory.CreateXML(fileName, xPreview, tableType, rootName);
+                elements = await factory.CreateXML(fileName, xPreview, tableType, rootName, false);
             else
             {
                 xmlFile = await factory.OpenXML(fileName) as XDocument;
 
                 if (xmlFile == null)
-                    elements = await factory.CreateXML(fileName, xPreview, tableType, rootName);
+                    elements = await factory.CreateXML(fileName, xPreview, tableType, rootName, false);
                 else
-                    elements = await factory.ReplaceXmlNode(fileName, xPreview, xmlFile, tableType, xmlNodeName, rootName) as XElement;
+                    elements = await factory.ReplaceXmlNode(fileName, xPreview, xmlFile, tableType, xmlNodeName, rootName, false) as XElement;
             }
 
-            return await factory.CreateXML(fileName, xPreview, tableType, rootName);
+            return await factory.CreateXML(fileName, xPreview, tableType, rootName, false);
         }
 
         public async void DrillholeData(string projectFile, string drillholePreferencesFile, string drillholeProjectRoot, DrillholeTableType tableType)
@@ -81,7 +81,7 @@ namespace Drillholes.XML
         }
         #endregion
 
-        public async Task<XElement> DrillholeDesurvey(string fileName, object desurveyObject, DrillholeTableType tableType, string xmlNodeName, string rootName)
+        public async Task<XElement> DrillholeDesurvey(string fileName, object desurveyObject, DrillholeTableType tableType, string xmlNodeName, string rootName, bool bDownhole)
         {
             XDocument xmlFile = null;
             XElement elements = null;
@@ -92,15 +92,15 @@ namespace Drillholes.XML
                 factory.SetXmlType(DrillholesXmlEnum.DrillholeDesurveyData);
 
             if (!File.Exists(fileName))
-                elements = await factory.CreateXML(fileName, desurveyObject, tableType, rootName);
+                elements = await factory.CreateXML(fileName, desurveyObject, tableType, rootName, bDownhole);
             else
             {
                 xmlFile = await factory.OpenXML(fileName) as XDocument;
 
                 if (xmlFile == null)
-                    elements = await factory.CreateXML(fileName, desurveyObject, tableType, rootName);
+                    elements = await factory.CreateXML(fileName, desurveyObject, tableType, rootName, bDownhole);
                 else
-                    elements = await factory.ReplaceXmlNode(fileName, desurveyObject, xmlFile, tableType, xmlNodeName, rootName) as XElement;
+                    elements = await factory.ReplaceXmlNode(fileName, desurveyObject, xmlFile, tableType, xmlNodeName, rootName, bDownhole) as XElement;
             }
 
             return elements;
@@ -121,7 +121,7 @@ namespace Drillholes.XML
 
         }
 
-        public async Task<XElement> DrillholeDesurvey(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType)
+        public async Task<XElement> DrillholeDesurvey(string projectFile, string drillholeTableFile, string drillholeProjectRoot, string drillholeRootname, DrillholeTableType tableType, bool bDownhole)
         {
             XElement xPreview = null;
 
@@ -153,17 +153,17 @@ namespace Drillholes.XML
                 factory.SetXmlType(DrillholesXmlEnum.DrillholePreferences);
 
             if (!File.Exists(fileName))
-                elements = await factory.CreateXML(fileName, preferences, DrillholeTableType.other, rootName);
+                elements = await factory.CreateXML(fileName, preferences, DrillholeTableType.other, rootName, false);
             else
             {
                 xmlFile = await factory.OpenXML(fileName) as XDocument;
 
                 if (xmlFile == null)
-                    elements = await factory.CreateXML(fileName, preferences, DrillholeTableType.other, rootName);
+                    elements = await factory.CreateXML(fileName, preferences, DrillholeTableType.other, rootName, false);
                 else
                 {
                     if (preferences != null)
-                        elements = await factory.ReplaceXmlNode(fileName, preferences, xmlFile, DrillholeTableType.other, "", rootName) as XElement;
+                        elements = await factory.ReplaceXmlNode(fileName, preferences, xmlFile, DrillholeTableType.other, "", rootName, false) as XElement;
                 }
 
             }
@@ -254,20 +254,20 @@ namespace Drillholes.XML
                 factory.SetXmlType(DrillholesXmlEnum.DrillholeFields);
 
             if (!File.Exists(fileName))
-                elements = await factory.CreateXML(fileName, fields, tableType, rootName);
+                elements = await factory.CreateXML(fileName, fields, tableType, rootName, false);
             else
             {
                 xmlFile = await factory.OpenXML(fileName) as XDocument;
 
                 if (xmlFile == null)
-                    elements = await factory.CreateXML(fileName, fields, tableType, rootName);
+                    elements = await factory.CreateXML(fileName, fields, tableType, rootName, false);
                 else
-                    elements = await factory.ReplaceXmlNode(fileName, fields, xmlFile, tableType, "", rootName) as XElement;
+                    elements = await factory.ReplaceXmlNode(fileName, fields, xmlFile, tableType, "", rootName, false) as XElement;
             }
 
             //todo check if XElement null and throw exception
             if (elements == null)
-                elements = await factory.CreateXML(fileName, fields, tableType, rootName);
+                elements = await factory.CreateXML(fileName, fields, tableType, rootName, false);
             else
                 xmlFile = await factory.OpenXML(fileName) as XDocument;
 
@@ -335,15 +335,15 @@ namespace Drillholes.XML
             //  File.Delete(fileName);
 
             if (!File.Exists(fileName))
-                elements = await factory.CreateXML(fileName, importTables, tableType, rootName);
+                elements = await factory.CreateXML(fileName, importTables, tableType, rootName, false);
             else
             {
                 xmlFile = await factory.OpenXML(fileName) as XDocument;
 
                 if (xmlFile == null)
-                    elements = await factory.CreateXML(fileName, importTables, tableType, rootName);
+                    elements = await factory.CreateXML(fileName, importTables, tableType, rootName, false);
                 else
-                    elements = await factory.ReplaceXmlNode(fileName, importTables, xmlFile, tableType, "", rootName) as XElement;
+                    elements = await factory.ReplaceXmlNode(fileName, importTables, xmlFile, tableType, "", rootName, false) as XElement;
             }
 
             return elements;
@@ -361,7 +361,7 @@ namespace Drillholes.XML
 
             if (!File.Exists(xmlValues.ProjectFile))
             {
-                elements = await factory.CreateXML(xmlValues.ProjectFile, xmlValues, DrillholeTableType.other, rootName);
+                elements = await factory.CreateXML(xmlValues.ProjectFile, xmlValues, DrillholeTableType.other, rootName, false);
             }
             else
             {
@@ -370,7 +370,7 @@ namespace Drillholes.XML
 
                 if (xmlFile == null)
                 {
-                    elements = await factory.CreateXML(xmlValues.ProjectFile, xmlValues, DrillholeTableType.other, rootName);
+                    elements = await factory.CreateXML(xmlValues.ProjectFile, xmlValues, DrillholeTableType.other, rootName, false);
                 }
             }
 
