@@ -816,10 +816,6 @@ namespace Drillholes.Windows.Dialogs
 
                 DataContext = collarPreviewModel;
 
-                //update key 
-               // await collarPreviewModel.UpdateHoleKeyInXml();
-
-                //TODO update changed field in XML
             }
 
             else if (_tabcontrol.SelectedIndex == 1)
@@ -830,10 +826,6 @@ namespace Drillholes.Windows.Dialogs
                 surveyPreviewModel.SetDataContext(dataPreview);
                 DataContext = surveyPreviewModel;
 
-                //update key 
-              //  await surveyPreviewModel.UpdateHoleKeyInXml();
-
-                //TODO update changed field in XML
             }
             else if (_tabcontrol.SelectedIndex == 2)
             {
@@ -843,10 +835,6 @@ namespace Drillholes.Windows.Dialogs
 
                 DataContext = assayPreviewModel;
 
-                //update key 
-                //await assayPreviewModel.UpdateHoleKeyInXml();
-
-                //TODO update changed field in XML
 
             }
             else if (_tabcontrol.SelectedIndex == 3)
@@ -856,10 +844,6 @@ namespace Drillholes.Windows.Dialogs
 
                 DataContext = intervalPreviewModel;
 
-                //update key 
-              //  await intervalPreviewModel.UpdateHoleKeyInXml();
-
-                //TODO update changed field in XML
             }
 
             else if (_tabcontrol.SelectedIndex == 4)

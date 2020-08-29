@@ -281,6 +281,9 @@ namespace Drillholes.FileDialog
             if (bCSV)
                 delimiter = ',';
 
+            if (!File.Exists(assayTableDto.tableLocation + "\\" + assayTableDto.tableName))
+                throw new AssayException("Problem with file");
+
             using (var reader = new StreamReader(assayTableDto.tableLocation + "\\" + assayTableDto.tableName))
             {
                 while (!reader.EndOfStream)

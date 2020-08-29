@@ -111,7 +111,7 @@ namespace Drillholes.Windows.Calculate
             //save to xml
             if (savedSession)
                 await _xmlService.Drillholedesurveydata(projectLocation + "\\" + sessionName + ".dh", DesurveyTableXmlName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeData, DrillholeTableType.interval, bDownhole);
-            ;
+            
 
         }
     }
