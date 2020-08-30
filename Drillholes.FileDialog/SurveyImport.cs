@@ -44,8 +44,7 @@ namespace Drillholes.FileDialog
             if (surveyTableDto == null)
                 surveyTableDto = new SurveyTableDto();
 
-          // if (surveyTableDto.tableIsValid)
-          //  {
+      
                 switch (surveyTableDto.tableFormat)
                 {
 
@@ -71,7 +70,7 @@ namespace Drillholes.FileDialog
                     default:
                         throw new SurveyException("Generic error with previewing Survey table");
                 }
-           // }
+           
 
             return surveyTableDto;
         }
@@ -119,7 +118,9 @@ namespace Drillholes.FileDialog
 
                             for (int i = 0; i < surveyTableDto.fields.Count; i++)
                             {
-                                XElement mNode = new XElement(surveyTableDto.fields[i], rows[i].results);
+                                string fieldName = surveyTableDto.fields[i].Replace(" ", "_");
+
+                                XElement mNode = new XElement(fieldName, rows[i].results);
                                 mFieldItems.Add(mNode);
                             }
 
@@ -298,7 +299,8 @@ namespace Drillholes.FileDialog
                     //first row only for columns
                     foreach (string column in values)
                     {
-                        surveyFields.Add(column);
+                        string columnMod = column.Replace(" ", "_");
+                        surveyFields.Add(columnMod);
 
                     }
                     break;

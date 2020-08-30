@@ -52,13 +52,11 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\bin\Debug\Drillh
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\bin\Debug\AutoMapper.pdb
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\bin\Debug\AutoMapper.xml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Drillholes.Windows.csprojAssemblyReference.cache
-C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeDialog.baml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeEdits.baml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeImport.baml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\GlassButton.baml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\GlassButton.baml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeCreate.g.cs
-C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeDialog.g.cs
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeEdits.g.cs
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeExcelSheet.g.cs
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeImport.g.cs

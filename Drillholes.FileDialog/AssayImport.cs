@@ -114,7 +114,8 @@ namespace Drillholes.FileDialog
 
                             for (int i = 0; i < assayTableDto.fields.Count; i++)
                             {
-                                XElement mNode = new XElement(assayTableDto.fields[i], rows[i].results);
+                                string fieldName = assayTableDto.fields[i].Replace(" ","_");
+                                XElement mNode = new XElement(fieldName, rows[i].results);
                                 mFieldItems.Add(mNode);
                             }
 
@@ -294,8 +295,8 @@ namespace Drillholes.FileDialog
                     //first row only for columns
                     foreach (string column in values)
                     {
-                        assayFields.Add(column);
-
+                        string columnMod = column.Replace(" ", "_");
+                        assayFields.Add(columnMod);
                     }
                     break;
                 }

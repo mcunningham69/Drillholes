@@ -32,8 +32,8 @@ namespace Drillholes.Windows.Pages
 
         private void Launch_Click(object sender, RoutedEventArgs e)
         {
-            Drillholes.Windows.Dialogs.DrillholeDialog dialog = new Dialogs.DrillholeDialog();
-            dialog.Show();
+           // Drillholes.Windows.Dialogs.DrillholeDialog dialog = new Dialogs.DrillholeDialog();
+          //  dialog.Show();
         }
     }
 }

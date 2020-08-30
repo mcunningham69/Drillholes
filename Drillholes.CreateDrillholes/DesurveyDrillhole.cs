@@ -208,9 +208,12 @@ namespace Drillholes.CreateDrillholes
 
                 XElement surElements = drillholeValues[1];
                 var surveyElements = surElements.Elements();
+                surveyElements = surveyElements.OrderBy(o => Convert.ToDouble(o.Element(distanceField).Value));
 
                 XElement assElements = drillholeValues[2];
                 var assayElements = assElements.Elements();
+                assayElements = assayElements.OrderBy(o => Convert.ToDouble(o.Element(mFromField).Value));
+
 
                 //CHECK FOR DUPLICATE HOLES AND CHANGE FLAG TO IGNORE ONE OF THEM
                 var dupHoles = collarElements.GroupBy(d => d.Element(collarHoleID).Value).Where(group => group.Count() > 1).Select(group => group.Key).ToList();
@@ -259,6 +262,7 @@ namespace Drillholes.CreateDrillholes
                         //check values are number otherwise go to next hole
                         bool bCheck = await DesurveyMethods.ValidateValues(xCoord, yCoord, zCoord, totalDepth, holeAttr, null, null, null, null);
 
+                        //  var distances = surveyElements.Where(h => h.Element(surveyHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").OrderByDescending(d => Convert.ToDouble(d.Element(distanceField).Value)).Select(d => d.Element(distanceField).Value).ToList();
                         var distances = surveyElements.Where(h => h.Element(surveyHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").Select(d => d.Element(distanceField).Value).ToList();
                         var dips = surveyElements.Where(h => h.Element(surveyHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").Select(d => d.Element(dipField).Value).ToList();
                         var azimuths = surveyElements.Where(h => h.Element(surveyHoleID).Value == hole).Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE").Select(d => d.Element(azimuthField).Value).ToList();
@@ -411,6 +415,7 @@ namespace Drillholes.CreateDrillholes
 
                 XElement assElements = drillholeValues[2];
                 var assayElements = assElements.Elements();
+                assayElements = assayElements.OrderBy(o => Convert.ToDouble(o.Element(mFromField).Value));
 
                 //return collar coordiantes and length for all holes which are not flagged to be ignored
                 var showElements = collarElements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
@@ -852,6 +857,7 @@ namespace Drillholes.CreateDrillholes
 
                 XElement contElements = drillholeValues[2];
                 var continuousElements = contElements.Elements();
+                continuousElements = continuousElements.OrderBy(o => Convert.ToDouble(o.Element(distField).Value));
 
                 //return collar coordiantes and length for all holes which are not flagged to be ignored
                 var showElements = collarElements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
@@ -1003,10 +1009,13 @@ namespace Drillholes.CreateDrillholes
 
                 XElement surElements = drillholeValues[1];
                 var surveyElements = surElements.Elements();
+                surveyElements = surveyElements.OrderBy(o => Convert.ToDouble(o.Element(distanceField).Value));
 
                 XElement contElements = drillholeValues[2];
                 var continuousElements = contElements.Elements();
-                    
+                continuousElements = continuousElements.OrderBy(o => Convert.ToDouble(o.Element(distField).Value));
+
+
                 //CHECK FOR DUPLICATE HOLES AND CHANGE FLAG TO IGNORE ONE OF THEM
                 var dupHoles = collarElements.GroupBy(d => d.Element(collarHoleID).Value).Where(group => group.Count() > 1).Select(group => group.Key).ToList();
                 for (int i = 0; i < dupHoles.Count; i++)
@@ -1353,6 +1362,7 @@ namespace Drillholes.CreateDrillholes
 
                 XElement intElements = drillholeValues[2];
                 var intervalElements = intElements.Elements();
+                intervalElements = intervalElements.OrderBy(o => Convert.ToDouble(o.Element(mFromField).Value));
 
                 //return collar coordiantes and length for all holes which are not flagged to be ignored
                 var showElements = collarElements.Where(a => a.Attribute("Ignore").Value.ToUpper() == "FALSE");
@@ -1504,9 +1514,11 @@ namespace Drillholes.CreateDrillholes
 
                 XElement surElements = drillholeValues[1];
                 var surveyElements = surElements.Elements();
+                surveyElements = surveyElements.OrderBy(o => Convert.ToDouble(o.Element(distanceField).Value));
 
                 XElement intElements = drillholeValues[2];
                 var intervalElements = intElements.Elements();
+                intervalElements = intervalElements.OrderBy(o => Convert.ToDouble(o.Element(mFromField).Value));
 
                 //CHECK FOR DUPLICATE HOLES AND CHANGE FLAG TO IGNORE ONE OF THEM
                 var dupHoles = collarElements.GroupBy(d => d.Element(collarHoleID).Value).Where(group => group.Count() > 1).Select(group => group.Key).ToList();

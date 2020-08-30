@@ -513,24 +513,25 @@ namespace Drillholes.Windows.Dialogs
 
             string strFormatName = DrillholeConstants.text.ToString(); ;
 
-            //setup collar
-
-
             //string collarName = "collar_pani.csv";
             //string surveyName = "survey_pani.csv";
             //string assayName = "assay_pani.csv";
             //string lithoName = "litho_pani.csv";
 
-            string collarName = "collar_ten.csv";
-            string surveyName = "survey_ten.csv";
-            string assayName = "assay_ten.csv";
-            string lithoName = "litho_ten.csv";
-            string distName = "distance_ten.csv";
+            //string collarName = "collar_ten.csv";
+            //string surveyName = "survey_ten.csv";
+            //string assayName = "assay_ten.csv";
+            //string lithoName = "litho_ten.csv";
+            //string distName = "distance_ten.csv";
 
-            //string path = @"C:\Projects\Source code\projectdata\panitest";
+            string collarName = "collar_eis.csv";
+            string surveyName = "survey_eis.csv";
+            string assayName = "assay_eis.csv";
+            string lithoName = "geology_eis.csv";
+            string distName = "structure_eis.csv";
 
-            string path = @"C:\Users\mcunningham\source\Workspaces\projectdata\Pani_test";
-            //string path = @"C:\Users\Mike\source\Workspaces\projectdata\Pani_test";
+            string path = @"C:\Users\mcunningham\source\Workspaces\projectdata\EIS";
+          //  string path = @"C:\Users\mcunningham\source\Workspaces\projectdata\Pani_test";
             string collarLoc = path;
 
             string surveyLoc = path;

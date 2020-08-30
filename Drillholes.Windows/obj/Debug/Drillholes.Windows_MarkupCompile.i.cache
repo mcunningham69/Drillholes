@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\App.xaml
-16-1849705512
+152001482843
 
-48676421100
+471686329497
 23-351152053
-Dialogs\DrillholeCreate.xaml;Dialogs\DrillholeDialog.xaml;Dialogs\DrillholeDialogPage.xaml;Dialogs\DrillholeEdits.xaml;Dialogs\DrillholeEditsPage.xaml;Dialogs\DrillholeExcelSheet.xaml;Dialogs\DrillholeImport.xaml;Dialogs\DrillholeImportPage.xaml;Dialogs\DrillholeStartup.xaml;Dialogs\DrillholeSummaryMessages.xaml;Dialogs\DrillholeSummaryMessagesPage.xaml;Dialogs\DrillholeSummaryStatistics.xaml;Dialogs\DrillholeSummaryStatisticsPage.xaml;Dialogs\GlassButton.xaml;GlassButton.xaml;Pages\StartPage.xaml;
+Dialogs\DrillholeCreate.xaml;Dialogs\DrillholeDialogPage.xaml;Dialogs\DrillholeEdits.xaml;Dialogs\DrillholeEditsPage.xaml;Dialogs\DrillholeExcelSheet.xaml;Dialogs\DrillholeImport.xaml;Dialogs\DrillholeImportPage.xaml;Dialogs\DrillholeStartup.xaml;Dialogs\DrillholeSummaryMessages.xaml;Dialogs\DrillholeSummaryMessagesPage.xaml;Dialogs\DrillholeSummaryStatistics.xaml;Dialogs\DrillholeSummaryStatisticsPage.xaml;Dialogs\GlassButton.xaml;GlassButton.xaml;Pages\StartPage.xaml;
 
-False
+True
 

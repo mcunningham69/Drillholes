@@ -79,13 +79,14 @@ namespace Drillholes.FileDialog
                                 rows.Add(new CsvRow { results = strValue });
                             }
 
-                            //mFieldItems = new XElement("Collar", new XAttribute("ID", (counter - 1).ToString()));
                             mFieldItems = new XElement("Collar", new XAttribute("ID", (counter - 1).ToString()), new XAttribute("Ignore", "false"));
 
 
                             for (int i = 0; i < collarTableDto.fields.Count; i++)
                             {
-                                XElement mNode = new XElement(collarTableDto.fields[i], rows[i].results);
+                                string fieldName = collarTableDto.fields[i].Replace(" ", "_"); ;
+
+                                XElement mNode = new XElement(fieldName, rows[i].results);
                                 mFieldItems.Add(mNode);
                             }
 
@@ -276,7 +277,9 @@ namespace Drillholes.FileDialog
                     //first row only for columns
                     foreach (string column in values)
                     {
-                        collarFields.Add(column);
+                        string columnMod = column.Replace(" ", "_");
+
+                        collarFields.Add(columnMod);
 
                     }
                     break;
