@@ -1964,6 +1964,7 @@ namespace Drillholes.CreateDrillholes
 
     public static class DesurveyMethods
     {
+        /*
         /// <summary>
         /// Checks to see if sample interval is less than minimum survey distance. If it is then returns true
         /// </summary>
@@ -2076,6 +2077,7 @@ namespace Drillholes.CreateDrillholes
 
             return true;
         }
+        */
 
         //public static async Task<DownholeSurveys> ReturnNormalSurveys(List<string> azimuths, List<string> dips, List<string> distances,
         //    string mFrom, string mTo)
@@ -2486,24 +2488,7 @@ namespace Drillholes.CreateDrillholes
             return count;
         }
 
-        private static async Task<bool> ReturnDistanceTo( double dblDistance, double mTo)
-        {
-            if (dblDistance >= mTo)
-                return true;
-            
-
-            return false;
-        }
-
-        private static async Task<bool> DistanceGreaterThanSurvey(double dblDistance, double mTo)
-        {
-            if (dblDistance >= mTo)
-                return true;
-
-
-            return false;
-        }
-
+       
         /// <summary>
         /// Checks for valid values
         /// </summary>
