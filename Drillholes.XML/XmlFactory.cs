@@ -1614,7 +1614,30 @@ namespace Drillholes.XML
                 nodes.Add(new XElement(zField, z.ToString()));
                 nodes.Add(new XElement(distField, dblDistance.ToString()));
 
+                if (continuousDesurvey.CalculatedAzimuth.Count > 0)
+                {
+                    nodes.Add(new XElement("CalcDip", continuousDesurvey.CalculatedDip[i]));
+                    nodes.Add(new XElement("CalcAzim", continuousDesurvey.CalculatedAzimuth[i]));
+
+                    if (continuousDesurvey.CalculatedPlunge.Count > 0)
+                    {
+                        nodes.Add(new XElement("CalcPlunge", continuousDesurvey.CalculatedPlunge[i]));
+                        nodes.Add(new XElement("CalcTrend", continuousDesurvey.CalculatedTrend[i]));
+                    }
+                }
+
+                // if (calcDip != "")
+                // {
+                //     calcAzi = continuousDesurvey.continuousTableFields.Where(f => f.columnHeader == "Alpha" || f.columnHeader == "Beta").Where(m => m.columnImportAs != DrillholeConstants.notImported).Select(f => f.columnHeader).SingleOrDefault();
+
+                //     calcPlunge = "";
+
+                //     if (calcPlunge != "")
+                //         calcTrend = "";
+                // }
+
                 string dipField = "", azimuthField = "";
+
                 if (bDownhole)
                 {
                     dipField = continuousDesurvey.surveyTableFields.Where(f => f.columnImportName == DrillholeConstants.dipName).Where(m => m.genericType == false).Select(f => f.columnHeader).SingleOrDefault();

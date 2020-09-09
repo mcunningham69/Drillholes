@@ -1097,7 +1097,15 @@ namespace Drillholes.Windows.Dialogs
                 else
                 {
                     continuousResults.surveyTableFields = surveyPreviewModel.surveyDataFields;
-                    await continuousResults.GenerateContinuousDesurveyFromDownhole(bToe, bCollar, preferences.DesurveyMethod);
+
+                    try
+                    {
+                        await continuousResults.GenerateContinuousDesurveyFromDownhole(bToe, bCollar, preferences.DesurveyMethod);
+                    }
+                    catch
+                    {
+                        throw new Exception("No survey fields selected for downhole");
+                    }
                 }
             }
 

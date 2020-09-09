@@ -8,9 +8,178 @@ namespace Drillholes.CreateDrillholes
 {
     public static class CalculateSurveys
     {
+        /// <summary>
+        /// This method utilises the average of Dip1 and Dip2 as an inclination, the average of azimuth1 and azimuth2 as a
+        /// direction, and assumes the entire survey interval to be tangent to the average angle.
+        /// </summary>
+        /// <param name="dblX"></param>
+        /// <param name="dblY"></param>
+        /// <param name="dblZ"></param>
+        /// <param name="dblAzim"></param>
+        /// <param name="dblDip"></param>
+        /// <param name="dblDistance"></param>
+        /// <returns></returns>
+        public static async Task<Coordinate3D> AverageAngleMethod(double dblX, double dblY, double dblZ, List<double> dblAzim, List<double> dblDip, List<double> dblDistance)
+        {
+            Coordinate3D coordinate3D = new Coordinate3D();
+
+            double dblDipAvg = (dblDip[0] + dblDip[1]) / 2;
+            double dblAziAvg = (dblAzim[0] + dblAzim[1]) / 2;
+
+            double dblRadAzimuth = (Math.PI / 180) * dblAziAvg;
+            double dblRadDip = (Math.PI / 180) * dblDipAvg;
+
+            double dblMD = dblDistance[1] - dblDistance[0];
+
+            ////formula is incorrect
+            //double dblChangeX = dblMD * Math.Sin(dblRadDip) * Math.Sin(dblRadAzimuth);
+            //double dblChangeY = dblMD * Math.Sin(dblRadDip) * Math.Cos(dblRadAzimuth);
+            //double dblChangeZ = dblMD * Math.Cos(dblRadDip);
+
+            double dX = dblMD * Math.Sin(dblRadAzimuth) * Math.Cos(dblRadDip);
+            double dY = dblMD * Math.Cos(dblRadAzimuth) * Math.Cos(dblRadDip);
+            double dZ = dblMD * Math.Sin(dblRadDip);
+
+            coordinate3D.x = dblX + dX;
+            coordinate3D.y = dblY + dY;
+            coordinate3D.z = dblZ + dZ;
+
+            return coordinate3D;
+        }
+
+        /// <summary>
+        /// Ths method treats half the measured dsitance as being tangent to dip1 and azimuth1
+        /// and the remainder as being tangent to dip2 and azimuth2
+        /// </summary>
+        /// <param name="dblX"></param>
+        /// <param name="dblY"></param>
+        /// <param name="dblZ"></param>
+        /// <param name="dblAzim"></param>
+        /// <param name="dblDip"></param>
+        /// <param name="dblDistance"></param>
+        /// <returns></returns>
+        public static async Task<Coordinate3D> BalancedTangentialMethod(double dblX, double dblY, double dblZ, List<double> dblAzim, List<double> dblDip, List<double> dblDistance)
+        {
+            Coordinate3D coordinate3D = new Coordinate3D();
+
+            double dblDip1 = dblDip[0];
+            double dblDip2 = dblDip[1];
+
+            double dblAzi1 = dblAzim[0];
+            double dblAzi2 = dblAzim[1];
+
+            double dblRadAzi1 = (Math.PI / 180) * dblAzi1;
+            double dblRadDip1 = (Math.PI / 180) * dblDip1;
+
+            double dblRadAzi2 = (Math.PI / 180) * dblAzi2;
+            double dblRadDip2 = (Math.PI / 180) * dblDip2;
+
+            double dblMD = dblDistance[1] - dblDistance[0];
+
+            //formula is incorrect
+            double dblChangeX = (dblMD / 2) * (Math.Sin(dblRadDip1) * Math.Sin(dblRadAzi1) + Math.Sin(dblRadDip2) * Math.Sin(dblRadAzi2));
+            double dblChangeY = (dblMD / 2) * (Math.Sin(dblRadDip1) * Math.Cos(dblRadAzi1) + Math.Sin(dblRadDip2) * Math.Cos(dblRadAzi2));
+            double dblChangeZ = (dblMD / 2) * (Math.Cos(dblRadDip2) + Math.Cos(dblRadDip1));
+
+            coordinate3D.x = dblX + dblChangeX;
+            coordinate3D.y = dblY + dblChangeY;
+            coordinate3D.z = dblZ + dblChangeZ;
+
+            return coordinate3D;
+        }
+
+        /// <summary>
+        /// This method smooths the two straight-line segments of the Balanced Tangential Method using
+        /// the Ratio Factor RF, where RF = 2 over beta * tan (beta over 2)
+        /// </summary>
+        /// <param name="dblX"></param>
+        /// <param name="dblY"></param>
+        /// <param name="dblZ"></param>
+        /// <param name="dblAzim"></param>
+        /// <param name="dblDip"></param>
+        /// <param name="dblDistance"></param>
+        /// <returns></returns>
+        public static async Task<Coordinate3D> MinimumCurvatureMethod(double dblX, double dblY, double dblZ, List<double> dblAzim, List<double> dblDip, List<double> dblDistance)
+        {
+            Coordinate3D coordinate3D = new Coordinate3D();
+
+            double dblDip1 = dblDip[0];
+            double dblDip2 = dblDip[1];
+
+            double dblAzi1 = dblAzim[0];
+            double dblAzi2 = dblAzim[1];
+
+            double RF = 0.0;
+
+            double dblRadAzi1 = (Math.PI / 180) * dblAzi1;
+            double dblRadDip1 = (Math.PI / 180) * dblDip1;
+
+            double dblRadAzi2 = (Math.PI / 180) * dblAzi2;
+            double dblRadDip2 = (Math.PI / 180) * dblDip2;
+
+            //calculate dogleg angle for beta
+            double beta = Math.Cos(dblRadDip2 - dblRadDip1) - Math.Sin(dblRadDip1) * (Math.Sin(dblRadDip2) * (1 - Math.Cos(dblRadAzi2 - dblRadAzi1)));
+
+            double betaRad = Math.Acos(beta);
+
+            RF = 2 / betaRad * Math.Tan(betaRad / 2);
+
+            double dblMD = dblDistance[1] - dblDistance[0];
+
+            //formula is incorrect
+            double dblChangeX = (dblMD / 2) * ((Math.Sin(dblRadDip1) * Math.Sin(dblRadAzi1) + Math.Sin(dblRadDip2) * Math.Sin(dblRadAzi2)) * RF);
+            double dblChangeY = (dblMD / 2) * ((Math.Sin(dblRadDip1) * Math.Cos(dblRadAzi1) + Math.Sin(dblRadDip2) * Math.Cos(dblRadAzi2)) * RF);
+            double dblChangeZ = (dblMD / 2) * ((Math.Cos(dblRadDip2) + Math.Cos(dblRadDip1)) * RF);
+
+            coordinate3D.x = dblX + dblChangeX;
+            coordinate3D.y = dblY + dblChangeY;
+            coordinate3D.z = dblZ + dblChangeZ;
+
+            return coordinate3D;
+        }
+
+        public static async Task<Coordinate3D> RadiusCurvatureMethod(double dblX, double dblY, double dblZ, List<double> dblAzim, List<double> dblDip, List<double> dblDistance)
+        {
+            Coordinate3D coordinate3D = new Coordinate3D();
+            double dblDip1 = dblDip[0];
+            double dblDip2 = dblDip[1];
+
+            double dblAzi1 = dblAzim[0];
+            double dblAzi2 = dblAzim[1];
+
+            double dblRadAzi1 = (Math.PI / 180) * dblAzi1;
+            double dblRadDip1 = (Math.PI / 180) * dblDip1;
+
+            double dblRadAzi2 = (Math.PI / 180) * dblAzi2;
+            double dblRadDip2 = (Math.PI / 180) * dblDip2;
+
+            double dblMD = dblDistance[1] - dblDistance[0];
+
+            double Denom = (dblDip2 - dblDip1) * (dblAzi2 - dblAzi1);
+
+            double ZDenom = dblDip2 - dblDip1;
+
+            double test = (dblDip2 - dblDip1) * (dblAzi2 - dblAzi1);
+            double test2 = (Math.PI / 180) * test;
+
+            double multi = 180 / Math.PI;
+            double powerMult = Math.Pow(multi, 2);
+
+            double dblChangeX = dblMD * ((Math.Cos(dblRadDip1) - Math.Cos(dblRadDip2)) * (Math.Cos(dblRadAzi2) - Math.Cos(dblRadAzi1)) / Denom) * powerMult;
+            double dblChangeY = dblMD * ((Math.Cos(dblRadDip1) - Math.Cos(dblRadDip2)) * (Math.Sin(dblRadAzi2) - Math.Sin(dblRadAzi1)) / Denom) * powerMult;
+            double dblChangeZ = dblMD * (Math.Sin(dblRadDip2) - Math.Sin(dblRadDip1)) / ZDenom * multi;
+
+            coordinate3D.x = dblX + dblChangeX;
+            coordinate3D.y = dblY + dblChangeY;
+            coordinate3D.z = dblZ + dblChangeZ;
+
+            return coordinate3D;
+        }
+
+
         public static async Task<Coordinate3D> ReturnCoordinateTangential(double dblX, double dblY, double dblZ, double dblDistance, double dblAzim, double dblDip)
         {
-            Coordinate3D coordinate3D = new Coordinate3D(); ;
+            Coordinate3D coordinate3D = new Coordinate3D(); 
 
             double dblRadAzimuth = (Math.PI / 180) * dblAzim;
             double dblRadDip = (Math.PI / 180) * dblDip;
@@ -22,6 +191,28 @@ namespace Drillholes.CreateDrillholes
             coordinate3D.x = dblX + dX;
             coordinate3D.y = dblY + dY;
             coordinate3D.z = dblZ + dZ;
+
+            return coordinate3D;
+        }
+
+        //Original code
+        public static async Task<Coordinate3D> TangentialMethod(double dblX, double dblY, double dblZ, double dblDistance, double dblAzim, double dblDip)
+        {
+            Coordinate3D coordinate3D = new Coordinate3D();
+
+           // dblDip = dblDip * -1;
+
+            //convert to radians
+            double dblRadAzimuth = (Math.PI / 180) * dblAzim;
+            double dblRadDip = (Math.PI / 180) * dblDip;
+
+            double dblChangeX = dblDistance * Math.Sin(dblRadDip) * Math.Sin(dblRadAzimuth);
+            double dblChangeY = dblDistance * Math.Sin(dblRadDip) * Math.Cos(dblRadAzimuth);
+            double dblChangeZ = dblDistance * Math.Cos(dblRadDip);
+
+            coordinate3D.x = dblX + dblChangeX;
+            coordinate3D.y = dblY + dblChangeY;
+            coordinate3D.z = dblZ + dblChangeZ;
 
             return coordinate3D;
         }

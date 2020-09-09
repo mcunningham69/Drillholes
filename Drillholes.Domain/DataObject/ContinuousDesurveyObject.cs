@@ -14,7 +14,10 @@ namespace Drillholes.Domain.DataObject
         public List<bool> isContinuous { get; set; }
         public List<int> contId { get; set; }
 
-
-
+        //from alpha beta gamma
+        public List<double> CalculatedDip { get; set; }
+        public List<double> CalculatedAzimuth { get; set; }
+        public List<double> CalculatedPlunge { get; set; }
+        public List<double> CalculatedTrend { get; set; }
     }
 }

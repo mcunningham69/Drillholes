@@ -14,6 +14,12 @@ namespace Drillholes.Domain.DTO
         public List<bool> isContinuous { get; set; }
         public List<int> contId { get; set; }
 
+        //from alpha beta gamma
+        public List<double> CalculatedDip { get; set; }
+        public List<double> CalculatedAzimuth { get; set; }
+        public List<double> CalculatedPlunge { get; set; }
+        public List<double> CalculatedTrend { get; set; }
+
         public ContinuousDesurveyDto()
         {
             contId = new List<int>();
@@ -25,7 +31,10 @@ namespace Drillholes.Domain.DTO
             isContinuous = new List<bool>();
             dip = new List<double>();
             azimuth = new List<double>();
-
+            CalculatedDip = new List<double>();
+            CalculatedAzimuth = new List<double>();
+            CalculatedPlunge = new List<double>();
+            CalculatedTrend = new List<double>();
         }
 
     }
