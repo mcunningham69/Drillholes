@@ -45,6 +45,7 @@
     <Compile Include="CalculateSurveys.cs" />
     <Compile Include="CreateHolesByType.cs" />
     <Compile Include="DesurveyDrillhole.cs" />
+    <Compile Include="DesurveyMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
