@@ -200,7 +200,7 @@ namespace Drillholes.CreateDrillholes
         {
             Coordinate3D coordinate3D = new Coordinate3D();
 
-           // dblDip = dblDip * -1;
+            dblDip = dblDip * -1;
 
             //convert to radians
             double dblRadAzimuth = (Math.PI / 180) * dblAzim;
@@ -208,11 +208,11 @@ namespace Drillholes.CreateDrillholes
 
             double dblChangeX = dblDistance * Math.Sin(dblRadDip) * Math.Sin(dblRadAzimuth);
             double dblChangeY = dblDistance * Math.Sin(dblRadDip) * Math.Cos(dblRadAzimuth);
-            double dblChangeZ = dblDistance * Math.Cos(dblRadDip);
+            double dblChangeZ = dblDistance * Math.Sin(dblRadDip);
 
             coordinate3D.x = dblX + dblChangeX;
             coordinate3D.y = dblY + dblChangeY;
-            coordinate3D.z = dblZ + dblChangeZ;
+            coordinate3D.z = dblZ - dblChangeZ;
 
             return coordinate3D;
         }
@@ -263,8 +263,11 @@ namespace Drillholes.CreateDrillholes
         /// <param name="beta"></param>
         /// <param name="TopCore"></param>
         /// <returns></returns>
-        public static async Task<double> CalculateDip(double azimuth, double dip, double alpha, double beta, bool TopCore)
+        public static async Task<double> CalculateDip(double azimuth, double dip, double alpha, double beta, bool bottomCore)
         {
+            if (dip < 0)
+                dip = dip * -1;
+
             #region Calculation of rotation axis, rotator, and matrix
             //Rotation axis
             double Ex = Math.Cos((azimuth + 90) / 180 * Math.PI); //Z
@@ -283,8 +286,8 @@ namespace Drillholes.CreateDrillholes
             double plunge = alpha / 180 * Math.PI; //AM => Pole to Sa
             double trend;
 
-            //true if reference orientation line on more is 'top', false if 'bottom'
-            if (TopCore) //AN
+            //false if reference orientation line is 'top'
+            if (!bottomCore) //AN
             {
                 trend = (azimuth + beta + 180) / 180 * Math.PI;
             }
@@ -314,8 +317,11 @@ namespace Drillholes.CreateDrillholes
         /// <param name="beta"></param>
         /// <param name="TopCore"></param>
         /// <returns></returns>
-        public static async Task<double> CalculateDipDirection(double azimuth, double dip, double alpha, double beta, bool TopCore)
+        public static async Task<double> CalculateDipDirection(double azimuth, double dip, double alpha, double beta, bool bottomCore)
         {
+            if (dip < 0)
+                dip = dip * -1;
+
             #region Calculation of rotation axis, rotator, and matrix
             //Rotation axis
             double Ex = Math.Cos((azimuth + 90) / 180 * Math.PI); //Z
@@ -343,7 +349,7 @@ namespace Drillholes.CreateDrillholes
             double trend;
 
             //true if reference orientation line on more is 'top', false if 'bottom'
-            if (TopCore) //AN
+            if (!bottomCore) //AN
                 trend = (azimuth + beta + 180) / 180 * Math.PI;
             else
                 trend = (azimuth + beta) / 180 * Math.PI;
@@ -389,11 +395,15 @@ namespace Drillholes.CreateDrillholes
         /// <param name="gamma"></param>
         /// <param name="TopCore"></param>
         /// <returns></returns>
-        public static async Task<CalculatedPlungeAndTrend> CalculateGammaValues(double azimuth, double dip, double alpha, double beta, double gamma, bool TopCore)
+        public static async Task<CalculatedPlungeAndTrend> CalculateGammaValues(double azimuth, double dip, double alpha, double beta, double gamma)
         {
             //only calculate if gamma measured
             if (gamma == 0.0)
                 return null;
+
+            //use positive values
+            if (dip < 0)
+                dip = dip * -1;
 
             #region Calculation of rotation axis, rotator, and matrix
             //Rotation axis

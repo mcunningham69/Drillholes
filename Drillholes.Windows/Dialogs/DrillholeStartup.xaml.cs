@@ -747,10 +747,12 @@ namespace Drillholes.Windows.Dialogs
             if ((bool)radBottom.IsChecked)
             {
                 geology[0] = true;
+                geology[1] = false;
             }
             else if ((bool)radTop.IsChecked)
             {
                 geology[1] = true;
+                geology[0] = false;
             }
 
             UpdateXmlGeologyContactPreferences(geology);
@@ -800,6 +802,9 @@ namespace Drillholes.Windows.Dialogs
             xmlName = "TopCore";
 
             UpdateXmlPreferences((bool)radTopCore.IsChecked);
+
+            xmlName = "BottomCore";
+            UpdateXmlPreferences((bool)radBotCore.IsChecked);
         }
 
         private void radBottomCore_Click(object sender, RoutedEventArgs e)
@@ -807,6 +812,10 @@ namespace Drillholes.Windows.Dialogs
             xmlName = "BottomCore";
 
             UpdateXmlPreferences((bool)radBotCore.IsChecked);
+
+            xmlName = "TopCore";
+
+            UpdateXmlPreferences((bool)radTopCore.IsChecked);
         }
 
         private void chkAlphaBeta_Click(object sender, RoutedEventArgs e)
@@ -957,15 +966,14 @@ namespace Drillholes.Windows.Dialogs
                 preferences.DefaultValue = Convert.ToDouble(txtDefault.Text);
             else
                 preferences.DefaultValue = -99.0; //default
+ 
+            var value = cboDesurvey.SelectionBoxItem;
 
-            //ComboBox text value uses the previous value if the user selects different method. Therefore must use selected item instead
-            var value = cboDesurvey.SelectedItem as ComboBoxItem;
-
-            DrillholeDesurveyEnum surveyMethod = DrillholeDesurveyEnum.Tangential;
+            DrillholeDesurveyEnum surveyMethod = DrillholeDesurveyEnum.AverageAngle;
 
             if (value != null)
             {
-                string selectedValue = value.Content.ToString();
+                string selectedValue = value.ToString();
 
                 if (selectedValue == DrillholeDesurveyEnum.BalancedTangential.ToString())
                     surveyMethod = DrillholeDesurveyEnum.BalancedTangential;
@@ -1170,10 +1178,10 @@ namespace Drillholes.Windows.Dialogs
         private async void ExportToText(string filter)
         {
            // string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\collar_export.csv";
-          //  string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\survey_export.csv";
+            string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\survey_export.csv";
            // string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\assay_export.csv";
-            string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\survey_newTangential_export.csv";
-            //string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\continuous_export.csv";
+           // string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\survey_newTangential_export.csv";
+           // string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\continuous_export.csv";
 
             //outputName = await ExportDataName(filter);
 
@@ -1239,9 +1247,12 @@ namespace Drillholes.Windows.Dialogs
 
             }
 
+
+            string defaultValue = txtDefault.Text;
+
             SetupExportService();
 
-            await _exportService.ExportTextCsv(outputName, drillholeName, drillholeFields, drillholeOtherFields, drillholeInputData, exportFormat, true, tableType);
+            await _exportService.ExportTextCsv(outputName, drillholeName, drillholeFields, drillholeOtherFields, drillholeInputData, exportFormat, true, tableType, defaultValue);
 
         }
 
@@ -1312,7 +1323,19 @@ namespace Drillholes.Windows.Dialogs
                 exportFormat= DrillholeImportFormat.text_csv;
         }
 
+        private void cboDesurvey_DropDownClosed_1(object sender, EventArgs e)
+        {
+            var test = sender as RibbonComboBox;
 
+            var value = test.SelectionBoxItem;
+
+            if (value == null)
+                return;
+
+            xmlName = "DesurveyMethod";
+            UpdateXmlPreferences(value.ToString());
+
+        }
     }
 
 

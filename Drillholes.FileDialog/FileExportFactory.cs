@@ -44,9 +44,10 @@ namespace Drillholes.FileDialog
             return await _exportTo.ExportIntervalTable(outputName, drillholeTableFile, drillholeCollarFields, drillholeIntervalFields, drillholeInputData, bAttributes);
 
         }
-        public async Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, string drillholeInputData, bool bAttributes)
+        public async Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, 
+            string drillholeInputData, bool bAttributes, string defaultValue)
         {
-            return await _exportTo.ExportContinuousTable(outputName, drillholeTableFile, drillholeCollarFields, drillholeContinuousFields, drillholeInputData, bAttributes);
+            return await _exportTo.ExportContinuousTable(outputName, drillholeTableFile, drillholeCollarFields, drillholeContinuousFields, drillholeInputData, bAttributes, defaultValue);
 
         }
 
@@ -72,7 +73,8 @@ namespace Drillholes.FileDialog
         public abstract Task<bool> ExportSurveyTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeSurveyFields, string drillholeInputData, bool bAttributes);
         public abstract Task<bool> ExportAssayTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeAssayFields, string drillholeInputData, bool bAttributes);
         public abstract Task<bool> ExportIntervalTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeIntervalFields, string drillholeInputData, bool bAttributes);
-        public abstract Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, string drillholeInputData, bool bAttributes);
+        public abstract Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, 
+            string drillholeInputData, bool bAttributes, string defaultValue);
 
     }
 
@@ -309,7 +311,8 @@ namespace Drillholes.FileDialog
             return true;
         }
 
-        public override async Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, string drillholeInputData, bool bAttributes)
+        public override async Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, 
+            string drillholeInputData, bool bAttributes, string defaultValue)
         {
 
             XDocument xmlResults = XDocument.Load(drillholeTableFile);
@@ -342,6 +345,7 @@ namespace Drillholes.FileDialog
 
             List<string> header = new List<string>(); //need these for CSV header
             List<string> attributes = new List<string>(); //use to search input data based on option imported fields
+            List<string> structures = new List<string>(); //add here for calculated fields from alpha, beta
 
             List<RowsForExport> rowsForExport = new List<RowsForExport>(); //helper class for writing results to CSV
 
@@ -358,9 +362,33 @@ namespace Drillholes.FileDialog
 
                 foreach (var field in optionalFields)
                 {
-                    header.Add(field.Attribute("Name").Value);
-                    attributes.Add(field.Attribute("Name").Value);
+                    if (field.Attribute("Name").Value != "Beta")
+                    {
+                        if (field.Attribute("Name").Value == "Alpha")
+                        {
+                            structures.Add(DrillholeConstants.CalculatedDip);
+                            structures.Add(DrillholeConstants.CalculatedAzim);
+                        }
+                        else if (field.Attribute("Name").Value == "Gamma")
+                        {
+                            structures.Add(DrillholeConstants.CalculatedPlunge);
+                            structures.Add(DrillholeConstants.CalculatedTrend);
+                        }
+                        else
+                        {
+                            header.Add(field.Attribute("Name").Value);
+                            attributes.Add(field.Attribute("Name").Value);
+                        }
+                    }
                 }
+            }
+
+            //put the calculated fields at the end but before Comment
+            if (structures.Count > 0)
+            {
+                foreach(string structure in structures)
+                    header.Add(structure);
+
             }
 
             header.Add("Comment"); //add a comment about coordinate type
@@ -404,12 +432,75 @@ namespace Drillholes.FileDialog
 
                     if (bAttributes)
                     {
-                        var inputTest = inputElements.Where(i => i.Attribute("ID").Value == continuousID); //search by optional field name in the input data table
-
-                        foreach (var attribute in attributes)
+                        foreach(var value in inputElements)
                         {
-                            attributeRow.attributes.Add(inputTest.Select(a => a.Element(attribute).Value).SingleOrDefault()); //add to the list
+                            if (value.Attribute("ID").Value == continuousID)
+                            {
+                                var inputTest = value.Nodes();
+
+                                foreach (var attribute in attributes)
+                                {
+                                    foreach(XElement node in inputTest)
+                                    {
+                                        XElement changeNode = node as XElement;
+
+                                        if (changeNode.Name == attribute)
+                                        {
+                                            attributeRow.attributes.Add(changeNode.Value);
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
                         }
+                    }
+
+                    if (structures.Count > 0)
+                    {
+                        foreach(XElement hole in desurvElements)
+                        {
+                            if (hole.Attribute("Name").Value == holeID)
+                            {
+                                var inputStructures = hole.Nodes();
+
+                                foreach (var structure in structures)
+                                {
+                                    foreach (XElement node in inputStructures)
+                                    {
+                                        if (node.Attribute("Type").Value == coordType)
+                                        {
+                                            XElement changeNode = node as XElement;
+
+                                            if (changeNode.Element("ContinuousID").Value == continuousID)
+                                            {
+                                                var values = changeNode.Elements().ToList();
+
+                                                foreach (var val in values)
+                                                {
+                                                    if (val.Name == structure)
+                                                    {
+                                                        if (val.Value == "-99")
+                                                            attributeRow.attributes.Add(defaultValue);
+                                                        else
+                                                            attributeRow.attributes.Add(val.Value);
+                                                        break;
+                                                    }
+                                                }
+
+                                                break;
+                                            }
+
+                                        }
+                                    }
+                                }
+                                break;
+
+
+                            }
+                        }
+
+                       
                     }
 
                     attributeRow.attributes.Add(coordType); //add type of coordiante

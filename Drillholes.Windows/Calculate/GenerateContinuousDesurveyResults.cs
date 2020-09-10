@@ -84,26 +84,26 @@ namespace Drillholes.Windows.Calculate
             return true;
         }
 
-        public async Task<bool> GenerateContinuousDesurveyFromCollarSurvey(bool bToe, bool bCollar, DrillholeDesurveyEnum surveyMethod)
+        public async Task<bool> GenerateContinuousDesurveyFromCollarSurvey(bool bToe, bool bCollar, DrillholeDesurveyEnum surveyMethod, bool bBottom)
         {
             if (continuousDesurvMapper == null)
                 InitialiseContinuousMapping();
 
             //surveymethod has to be Tangential
-            var contResults = await _desurveyService.ContinuousSurveyHole(continuousDesurvMapper, surveyMethod, collarTableFields, continuousTableFields, bToe, bCollar, continuousXmlData);
+            var contResults = await _desurveyService.ContinuousSurveyHole(continuousDesurvMapper, surveyMethod, collarTableFields, continuousTableFields, bToe, bCollar, continuousXmlData, bBottom);
 
             StoreResultsToXml(contResults,false);
 
             return true;
         }
 
-        public async Task<bool> GenerateContinuousDesurveyFromDownhole(bool bToe, bool bCollar, DrillholeDesurveyEnum surveyMethod)
+        public async Task<bool> GenerateContinuousDesurveyFromDownhole(bool bToe, bool bCollar, DrillholeDesurveyEnum surveyMethod, bool bBottom)
         {
             if (continuousDesurvMapper == null)
                 InitialiseContinuousMapping();
 
             //surveymethod has to be Tangential
-            var contResults = await _desurveyService.ContinuousDownhole(continuousDesurvMapper, surveyMethod, collarTableFields, continuousTableFields, surveyTableFields, bToe, bCollar, continuousXmlData);
+            var contResults = await _desurveyService.ContinuousDownhole(continuousDesurvMapper, surveyMethod, collarTableFields, continuousTableFields, surveyTableFields, bToe, bCollar, continuousXmlData, bBottom);
 
             StoreResultsToXml(contResults, true);
 

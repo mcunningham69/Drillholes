@@ -230,14 +230,30 @@
                     <RibbonRadioButton Name="radVertical" QuickAccessToolBarId="vh" SmallImageSource="../Images/DownArrow.png" Label="Vertical" IsChecked="True" Click="radVertical_Click"/>
                 </RibbonGroup>
                 <RibbonGroup Header="Survey Calculation" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="dsu" Width="Auto">
-                    <Label  Content="Desurvey:" />
-                    <ComboBox Name="cboDesurvey"  Width="Auto" DropDownClosed="cboDesurvey_DropDownClosed" SelectedIndex="3" SelectionChanged="Desurvey_Changed">
+                    <Label  Content="Desurvey Options:" />
+                    <RibbonComboBox Name="cboDesurvey" DropDownClosed="cboDesurvey_DropDownClosed_1">
+                        <RibbonGallery MinColumnCount="2" SelectedValue="Average Angle" SelectedValuePath="Content" Name="ribbonGallery">
+                            <RibbonGalleryCategory Header="Default">
+                                <RibbonGalleryItem FontFamily="Cambria">Average Angle</RibbonGalleryItem>
+                            </RibbonGalleryCategory>
+                            <RibbonGalleryCategory Header="Common Methods">
+                                <RibbonGalleryItem FontFamily="Courier New">Tangential</RibbonGalleryItem>
+                                <RibbonGalleryItem FontFamily="Courier New">Balanced Tangential</RibbonGalleryItem>
+                            </RibbonGalleryCategory>
+                            <RibbonGalleryCategory Header="Recommended">
+                                <RibbonGalleryItem FontFamily="Arial Black">Minimum Curvature</RibbonGalleryItem>
+                                <RibbonGalleryItem FontFamily="Arial Black">Radius Curvature</RibbonGalleryItem>
+
+                            </RibbonGalleryCategory>
+                        </RibbonGallery>
+                    </RibbonComboBox>
+                    <!--<ComboBox Name="cboDesurvey"  Width="Auto" DropDownClosed="cboDesurvey_DropDownClosed" SelectedIndex="0" SelectionChanged="Desurvey_Changed">
+                        <ComboBoxItem>Average Angle</ComboBoxItem>
+                        <ComboBoxItem>Balanced Tangential</ComboBoxItem>
                         <ComboBoxItem>Tangential</ComboBoxItem>
                         <ComboBoxItem>Minimum Curvature</ComboBoxItem>
                         <ComboBoxItem>Radius of Curvature</ComboBoxItem>
-                        <ComboBoxItem>Average Angle</ComboBoxItem>
-                        <ComboBoxItem>Balanced Tangential</ComboBoxItem>
-                    </ComboBox>
+                    </ComboBox>-->
 
                 </RibbonGroup>
                 <RibbonGroup Header="Export Data" SmallImageSource="../Images/ExportTheme.png" QuickAccessToolBarId="exp">
@@ -254,7 +270,6 @@
                     <RibbonCheckBox Name="chkDip" QuickAccessToolBarId="nd" SmallImageSource="../Images/Help.png" Label="Negative Dip (down)" IsChecked="True" Click="chkDip_Click"/>
                     <RibbonCheckBox Name="chkIgnore" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Ignore Invalid Values" Click="chkIgnore_Click"/>
                     <RibbonCheckBox Name="chkDetection" QuickAccessToolBarId="iv" SmallImageSource="../Images/Help.png" Label="Half Lower Detection" IsChecked="True" Click="chkDetection_Click"/>
-                   
                 </RibbonGroup>
 
                 <RibbonGroup Header="Oriented Core" SmallImageSource="../Images/Clipboard.png" QuickAccessToolBarId="ori">

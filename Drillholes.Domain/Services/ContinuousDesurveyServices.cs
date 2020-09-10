@@ -36,9 +36,9 @@ namespace Drillholes.Domain.Services
         }
 
         public async Task<ContinuousDesurveyObject> ContinuousSurveyHole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields,
-            bool bToe, bool bCollar, List<XElement> drillholeValues)
+            bool bToe, bool bCollar, List<XElement> drillholeValues, bool bTop)
         {
-            var desurvDto = await _drillhole.CreateContinuousSurveyHole(desurveyType, collarTableFields, contTableFields, bToe, bCollar, drillholeValues) as ContinuousDesurveyDto;
+            var desurvDto = await _drillhole.CreateContinuousSurveyHole(desurveyType, collarTableFields, contTableFields, bToe, bCollar, drillholeValues, bTop) as ContinuousDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {
@@ -49,9 +49,9 @@ namespace Drillholes.Domain.Services
         }
 
         public async Task<ContinuousDesurveyObject> ContinuousDownhole(IMapper mapper, DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields,
-            ImportTableFields surveyTableFields, bool bToe, bool bCollar, List<XElement> drillholeValues)
+            ImportTableFields surveyTableFields, bool bToe, bool bCollar, List<XElement> drillholeValues, bool bBottom)
         {
-            var desurvDto = await _drillhole.CreateContinuousDownhole(desurveyType, collarTableFields, contTableFields, surveyTableFields, bToe, bCollar, drillholeValues) as ContinuousDesurveyDto;
+            var desurvDto = await _drillhole.CreateContinuousDownhole(desurveyType, collarTableFields, contTableFields, surveyTableFields, bToe, bCollar, drillholeValues, bBottom) as ContinuousDesurveyDto;
 
             if (desurvDto.IsValid == false)
             {

@@ -638,7 +638,7 @@ namespace Drillholes.XML
             var importAssayColumns = elements.Select(n => n.Element("ImportAssayColumns").Value).SingleOrDefault();
             var importIntervalColumns = elements.Select(n => n.Element("ImportIntervalColumns").Value).SingleOrDefault();
             var importContinuousColumns = elements.Select(n => n.Element("ImportContinuousColumns").Value).SingleOrDefault();
-
+            var bottomCore = elements.Select(n => n.Element("BottomCore").Value).SingleOrDefault();
 
             var surveyType = elements.Select(n => n.Element("SurveyType").Value).SingleOrDefault();
             var surveyMethod = elements.Select(n => n.Element("DesurveyMethod").Value).SingleOrDefault();
@@ -678,7 +678,8 @@ namespace Drillholes.XML
                 ImportContinuousColumns = Convert.ToBoolean(importContinuousColumns),
                 DesurveyMethod = desurveyMethod,
                 CreateCollar = Convert.ToBoolean(createCollar),
-                CreateToe = Convert.ToBoolean(createToe)
+                CreateToe = Convert.ToBoolean(createToe),
+                BottomCore = Convert.ToBoolean(bottomCore)
             };
 
 
@@ -1616,25 +1617,15 @@ namespace Drillholes.XML
 
                 if (continuousDesurvey.CalculatedAzimuth.Count > 0)
                 {
-                    nodes.Add(new XElement("CalcDip", continuousDesurvey.CalculatedDip[i]));
-                    nodes.Add(new XElement("CalcAzim", continuousDesurvey.CalculatedAzimuth[i]));
+                    nodes.Add(new XElement(DrillholeConstants.CalculatedDip, continuousDesurvey.CalculatedDip[i]));
+                    nodes.Add(new XElement(DrillholeConstants.CalculatedAzim, continuousDesurvey.CalculatedAzimuth[i]));
 
                     if (continuousDesurvey.CalculatedPlunge.Count > 0)
                     {
-                        nodes.Add(new XElement("CalcPlunge", continuousDesurvey.CalculatedPlunge[i]));
-                        nodes.Add(new XElement("CalcTrend", continuousDesurvey.CalculatedTrend[i]));
+                        nodes.Add(new XElement(DrillholeConstants.CalculatedPlunge, continuousDesurvey.CalculatedPlunge[i]));
+                        nodes.Add(new XElement(DrillholeConstants.CalculatedTrend, continuousDesurvey.CalculatedTrend[i]));
                     }
                 }
-
-                // if (calcDip != "")
-                // {
-                //     calcAzi = continuousDesurvey.continuousTableFields.Where(f => f.columnHeader == "Alpha" || f.columnHeader == "Beta").Where(m => m.columnImportAs != DrillholeConstants.notImported).Select(f => f.columnHeader).SingleOrDefault();
-
-                //     calcPlunge = "";
-
-                //     if (calcPlunge != "")
-                //         calcTrend = "";
-                // }
 
                 string dipField = "", azimuthField = "";
 

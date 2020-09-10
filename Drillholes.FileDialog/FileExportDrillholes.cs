@@ -12,8 +12,8 @@ namespace Drillholes.FileDialog
     {
         FileExportFactory factory = null;
 
-        public async Task<bool>ExportResultsToCsv(string outputName, string drillholeTableFile, string drillholeFields, string drillholeOtherFields, string drillholeInputData, 
-            DrillholeImportFormat exportMode, bool bAttributes, DrillholeTableType tableType)
+        public async Task<bool> ExportResultsToCsv(string outputName, string drillholeTableFile, string drillholeFields, string drillholeOtherFields, string drillholeInputData,
+            DrillholeImportFormat exportMode, bool bAttributes, DrillholeTableType tableType, string defaultValue)
         {
             if (factory == null)
                 factory = new FileExportFactory(exportMode);
@@ -29,7 +29,7 @@ namespace Drillholes.FileDialog
             else if (tableType == DrillholeTableType.interval)
                 await factory.ExportIntervalTable(outputName, drillholeTableFile, drillholeFields, drillholeOtherFields, drillholeInputData, bAttributes);
             else if (tableType == DrillholeTableType.continuous)
-                await factory.ExportContinuousTable(outputName, drillholeTableFile, drillholeFields, drillholeOtherFields, drillholeInputData, bAttributes);
+                await factory.ExportContinuousTable(outputName, drillholeTableFile, drillholeFields, drillholeOtherFields, drillholeInputData, bAttributes, defaultValue);
 
             return true;
 

@@ -114,6 +114,8 @@ namespace Drillholes.FileDialog
                             for (int i = 0; i < continuousTableDto.fields.Count; i++)
                             {
                                 string fieldName = continuousTableDto.fields[i].Replace(" ", "_");
+
+
                                 XElement mNode = new XElement(fieldName, rows[i].results);
                                 mFieldItems.Add(mNode);
                             }

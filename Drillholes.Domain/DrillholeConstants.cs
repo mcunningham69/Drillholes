@@ -23,6 +23,12 @@ namespace Drillholes.Domain
         public const string RadiusCurvature = "Radius Curvature";
         public const string Tangential = "Tangential";
 
+        //structure
+        public const string CalculatedDip = "CalcDip";
+        public const string CalculatedAzim = "CalcAzim";
+        public const string CalculatedPlunge = "CalcPlunge";
+        public const string CalculatedTrend = "CalcTrend";
+
 
         //validation tests
         public const string checkHole = "Check 'HoleID' field";

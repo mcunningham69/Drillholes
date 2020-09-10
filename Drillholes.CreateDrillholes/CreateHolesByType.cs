@@ -107,10 +107,10 @@ namespace Drillholes.CreateDrillholes
 
         #region Continuous
         public async Task<ContinuousDesurveyDto> CreateContinuousDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields, ImportTableFields surveyTableFields, 
-            bool bToe, bool bCollar, List<XElement> drillholeVales)
+            bool bToe, bool bCollar, List<XElement> drillholeVales, bool bBottom)
         {
             DesurveyDrillhole continuousHole = new DesurveyDrillhole(DrillholeDesurveyEnum.Tangential);
-            var continuousDesurvey = await continuousHole.ContinuousDownholeTrace(collarTableFields, contTableFields, surveyTableFields, drillholeVales, bToe, bCollar);
+            var continuousDesurvey = await continuousHole.ContinuousDownholeTrace(collarTableFields, contTableFields, surveyTableFields, drillholeVales, bToe, bCollar, bBottom);
 
             if (continuousDesurvey.Count > 0)
             {
@@ -125,10 +125,10 @@ namespace Drillholes.CreateDrillholes
             return continuousDesurvey;
         }
 
-        public async Task<ContinuousDesurveyDto> CreateContinuousSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales)
+        public async Task<ContinuousDesurveyDto> CreateContinuousSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales, bool bBottom)
         {
             DesurveyDrillhole continuousHole = new DesurveyDrillhole(DrillholeDesurveyEnum.Tangential);
-            var continuousDesurvey = await continuousHole.ContinuousCollarSurveyTrace(collarTableFields, contTableFields, drillholeVales, bToe, bCollar);
+            var continuousDesurvey = await continuousHole.ContinuousCollarSurveyTrace(collarTableFields, contTableFields, drillholeVales, bToe, bCollar, bBottom);
 
             if (continuousDesurvey.Count > 0)
             {

@@ -949,7 +949,7 @@ namespace Drillholes.Windows.Dialogs
 
             bool bToe = preferences.CreateToe;
             bool bCollar = preferences.CreateCollar;
-
+            bool bBottom = preferences.BottomCore;
 
             if (_tabcontrol.SelectedIndex == 0) //collar
             {
@@ -1092,7 +1092,7 @@ namespace Drillholes.Windows.Dialogs
                 }
                 else if (preferences.surveyType == DrillholeSurveyType.collarsurvey)
                 {
-                    await continuousResults.GenerateContinuousDesurveyFromCollarSurvey(bToe, bCollar, preferences.DesurveyMethod);
+                    await continuousResults.GenerateContinuousDesurveyFromCollarSurvey(bToe, bCollar, preferences.DesurveyMethod, bBottom);
                 }
                 else
                 {
@@ -1100,7 +1100,7 @@ namespace Drillholes.Windows.Dialogs
 
                     try
                     {
-                        await continuousResults.GenerateContinuousDesurveyFromDownhole(bToe, bCollar, preferences.DesurveyMethod);
+                        await continuousResults.GenerateContinuousDesurveyFromDownhole(bToe, bCollar, preferences.DesurveyMethod, bBottom);
                     }
                     catch
                     {

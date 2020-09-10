@@ -27,9 +27,9 @@ namespace Drillholes.Domain.Interfaces
             ImportTableFields surveyTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales);
         Task<IntervalDesurveyDto> CreateIntervalVerticalHole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields intervalTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales);
 
-        Task<ContinuousDesurveyDto> CreateContinuousSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales);
+        Task<ContinuousDesurveyDto> CreateContinuousSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales, bool bBottom);
         Task<ContinuousDesurveyDto> CreateContinuousDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields,
-            ImportTableFields surveyTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales);
+            ImportTableFields surveyTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales, bool bBottom);
         Task<ContinuousDesurveyDto> CreateContinuousVerticalHole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields continuousTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales);
     }
 }
