@@ -103,7 +103,8 @@ namespace Drillholes.Windows.Calculate
                 InitialiseContinuousMapping();
 
             //surveymethod has to be Tangential
-            var contResults = await _desurveyService.ContinuousDownhole(continuousDesurvMapper, surveyMethod, collarTableFields, continuousTableFields, surveyTableFields, bToe, bCollar, continuousXmlData, bBottom);
+            var contResults = await _desurveyService.ContinuousDownhole(continuousDesurvMapper, surveyMethod, collarTableFields, continuousTableFields, surveyTableFields, bToe, 
+                bCollar, continuousXmlData, bBottom);
 
             StoreResultsToXml(contResults, true);
 
