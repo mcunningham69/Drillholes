@@ -1178,10 +1178,10 @@ namespace Drillholes.Windows.Dialogs
         private async void ExportToText(string filter)
         {
            // string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\collar_export.csv";
-            string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\survey_export.csv";
+          //  string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\survey_export.csv";
            // string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\assay_export.csv";
-           // string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\survey_newTangential_export.csv";
-           // string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\continuous_export.csv";
+            string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\survey_avgangle_export.csv";
+            //string outputName = "C:\\Users\\mcunningham\\source\\Workspaces\\continuous_export.csv";
 
             //outputName = await ExportDataName(filter);
 
@@ -1247,12 +1247,13 @@ namespace Drillholes.Windows.Dialogs
 
             }
 
+            bool bVertical = (bool) radVertical.IsChecked;
 
             string defaultValue = txtDefault.Text;
 
             SetupExportService();
 
-            await _exportService.ExportTextCsv(outputName, drillholeName, drillholeFields, drillholeOtherFields, drillholeInputData, exportFormat, true, tableType, defaultValue);
+            await _exportService.ExportTextCsv(outputName, drillholeName, drillholeFields, drillholeOtherFields, drillholeInputData, exportFormat, true, tableType, defaultValue, bVertical);
 
         }
 

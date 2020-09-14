@@ -344,7 +344,7 @@ namespace Drillholes.CreateDrillholes
 
             public override async Task<SurveyDesurveyDto> SurveyDownhole(ImportTableFields collarTableFields, ImportTableFields surveyTableFields, List<XElement> drillholeValues)
             {
-                SurveyDesurveyDto surveyDesurveyDto = await DesurveyMethods.SurveyDownhole(collarTableFields, surveyTableFields, drillholeValues, DrillholeDesurveyEnum.AverageAngle);
+                SurveyDesurveyDto surveyDesurveyDto = await DesurveyMethods.SurveyDownholeUpdate(collarTableFields, surveyTableFields, drillholeValues, DrillholeDesurveyEnum.AverageAngle);
 
                 return surveyDesurveyDto;
             }
@@ -1160,8 +1160,9 @@ namespace Drillholes.CreateDrillholes
          
             public override async Task<SurveyDesurveyDto> SurveyDownhole(ImportTableFields collarTableFields, ImportTableFields surveyTableFields, List<XElement> drillholeValues)
             {
-                SurveyDesurveyDto surveyDesurveyDto = await DesurveyMethods.SurveyDownhole(collarTableFields, surveyTableFields, drillholeValues, DrillholeDesurveyEnum.Tangential); 
-                
+                //SurveyDesurveyDto surveyDesurveyDto = await DesurveyMethods.SurveyDownhole(collarTableFields, surveyTableFields, drillholeValues, DrillholeDesurveyEnum.Tangential); 
+                SurveyDesurveyDto surveyDesurveyDto = await DesurveyMethods.SurveyDownholeUpdate(collarTableFields, surveyTableFields, drillholeValues, DrillholeDesurveyEnum.Tangential);
+
                 return surveyDesurveyDto;
             }
 

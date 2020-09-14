@@ -1246,7 +1246,7 @@ namespace Drillholes.XML
                 x = surveyDesurvey.x[i];
                 y = surveyDesurvey.y[i];
                 z = surveyDesurvey.z[i];
-                dblFrom = surveyDesurvey.distFrom[i];
+                dblFrom = surveyDesurvey.distSurvFrom[i];
                 azimuth = surveyDesurvey.azimuth[i];
                 dip = surveyDesurvey.dip[i];
 
@@ -1574,7 +1574,7 @@ namespace Drillholes.XML
 
             string hole = "";
             int colid = 0, contId = 0;
-            double x = 0.0, y = 0.0, z = 0.0, td = 0.0, dip = 0.0, azimuth = 0.0, dblDistance = 0.0;
+            double x = 0.0, y = 0.0, z = 0.0, dip = 0.0, azimuth = 0.0, dblDistance = 0.0;
 
             int counter = 0;
             for (int i = 0; i < continuousDesurvey.bhid.Count; i++)
@@ -1615,7 +1615,7 @@ namespace Drillholes.XML
                 nodes.Add(new XElement(zField, z.ToString()));
                 nodes.Add(new XElement(distField, dblDistance.ToString()));
 
-                if (continuousDesurvey.CalculatedAzimuth.Count > 0)
+                if (continuousDesurvey.CalculatedAzimuth.Count == continuousDesurvey.Count)
                 {
                     nodes.Add(new XElement(DrillholeConstants.CalculatedDip, continuousDesurvey.CalculatedDip[i]));
                     nodes.Add(new XElement(DrillholeConstants.CalculatedAzim, continuousDesurvey.CalculatedAzimuth[i]));

@@ -19,7 +19,7 @@ namespace Drillholes.CreateDrillholes
         /// <param name="dblDip"></param>
         /// <param name="dblDistance"></param>
         /// <returns></returns>
-        public static async Task<Coordinate3D> AverageAngleMethod(double dblX, double dblY, double dblZ, List<double> dblAzim, List<double> dblDip, List<double> dblDistance)
+        public static async Task<Coordinate3D> AverageAngleMethod(double dblX, double dblY, double dblZ, double[] dblAzim, double[] dblDip, double dblMD)
         {
             Coordinate3D coordinate3D = new Coordinate3D();
 
@@ -29,7 +29,7 @@ namespace Drillholes.CreateDrillholes
             double dblRadAzimuth = (Math.PI / 180) * dblAziAvg;
             double dblRadDip = (Math.PI / 180) * dblDipAvg;
 
-            double dblMD = dblDistance[1] - dblDistance[0];
+         //   double dblMD = dblDistance[1] - dblDistance[0];
 
             ////formula is incorrect
             //double dblChangeX = dblMD * Math.Sin(dblRadDip) * Math.Sin(dblRadAzimuth);
@@ -58,7 +58,7 @@ namespace Drillholes.CreateDrillholes
         /// <param name="dblDip"></param>
         /// <param name="dblDistance"></param>
         /// <returns></returns>
-        public static async Task<Coordinate3D> BalancedTangentialMethod(double dblX, double dblY, double dblZ, List<double> dblAzim, List<double> dblDip, List<double> dblDistance)
+        public static async Task<Coordinate3D> BalancedTangentialMethod(double dblX, double dblY, double dblZ, List<double> dblAzim, List<double> dblDip, double dblMD)
         {
             Coordinate3D coordinate3D = new Coordinate3D();
 
@@ -74,7 +74,7 @@ namespace Drillholes.CreateDrillholes
             double dblRadAzi2 = (Math.PI / 180) * dblAzi2;
             double dblRadDip2 = (Math.PI / 180) * dblDip2;
 
-            double dblMD = dblDistance[1] - dblDistance[0];
+        //    double dblMD = dblDistance[1] - dblDistance[0];
 
             //formula is incorrect
             double dblChangeX = (dblMD / 2) * (Math.Sin(dblRadDip1) * Math.Sin(dblRadAzi1) + Math.Sin(dblRadDip2) * Math.Sin(dblRadAzi2));
@@ -99,7 +99,7 @@ namespace Drillholes.CreateDrillholes
         /// <param name="dblDip"></param>
         /// <param name="dblDistance"></param>
         /// <returns></returns>
-        public static async Task<Coordinate3D> MinimumCurvatureMethod(double dblX, double dblY, double dblZ, List<double> dblAzim, List<double> dblDip, List<double> dblDistance)
+        public static async Task<Coordinate3D> MinimumCurvatureMethod(double dblX, double dblY, double dblZ, List<double> dblAzim, List<double> dblDip, double dblMD)
         {
             Coordinate3D coordinate3D = new Coordinate3D();
 
@@ -124,7 +124,7 @@ namespace Drillholes.CreateDrillholes
 
             RF = 2 / betaRad * Math.Tan(betaRad / 2);
 
-            double dblMD = dblDistance[1] - dblDistance[0];
+         //   double dblMD = dblDistance[1] - dblDistance[0];
 
             //formula is incorrect
             double dblChangeX = (dblMD / 2) * ((Math.Sin(dblRadDip1) * Math.Sin(dblRadAzi1) + Math.Sin(dblRadDip2) * Math.Sin(dblRadAzi2)) * RF);
@@ -138,7 +138,7 @@ namespace Drillholes.CreateDrillholes
             return coordinate3D;
         }
 
-        public static async Task<Coordinate3D> RadiusCurvatureMethod(double dblX, double dblY, double dblZ, List<double> dblAzim, List<double> dblDip, List<double> dblDistance)
+        public static async Task<Coordinate3D> RadiusCurvatureMethod(double dblX, double dblY, double dblZ, List<double> dblAzim, List<double> dblDip, double dblMD)
         {
             Coordinate3D coordinate3D = new Coordinate3D();
             double dblDip1 = dblDip[0];
@@ -153,14 +153,14 @@ namespace Drillholes.CreateDrillholes
             double dblRadAzi2 = (Math.PI / 180) * dblAzi2;
             double dblRadDip2 = (Math.PI / 180) * dblDip2;
 
-            double dblMD = dblDistance[1] - dblDistance[0];
+          //  double dblMD = dblDistance[1] - dblDistance[0];
 
             double Denom = (dblDip2 - dblDip1) * (dblAzi2 - dblAzi1);
 
             double ZDenom = dblDip2 - dblDip1;
 
-            double test = (dblDip2 - dblDip1) * (dblAzi2 - dblAzi1);
-            double test2 = (Math.PI / 180) * test;
+           // double test = (dblDip2 - dblDip1) * (dblAzi2 - dblAzi1);
+          //  double test2 = (Math.PI / 180) * test;
 
             double multi = 180 / Math.PI;
             double powerMult = Math.Pow(multi, 2);

@@ -45,9 +45,9 @@ namespace Drillholes.FileDialog
 
         }
         public async Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, 
-            string drillholeInputData, bool bAttributes, string defaultValue)
+            string drillholeInputData, bool bAttributes, string defaultValue, bool bVertical)
         {
-            return await _exportTo.ExportContinuousTable(outputName, drillholeTableFile, drillholeCollarFields, drillholeContinuousFields, drillholeInputData, bAttributes, defaultValue);
+            return await _exportTo.ExportContinuousTable(outputName, drillholeTableFile, drillholeCollarFields, drillholeContinuousFields, drillholeInputData, bAttributes, defaultValue, bVertical);
 
         }
 
@@ -74,7 +74,7 @@ namespace Drillholes.FileDialog
         public abstract Task<bool> ExportAssayTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeAssayFields, string drillholeInputData, bool bAttributes);
         public abstract Task<bool> ExportIntervalTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeIntervalFields, string drillholeInputData, bool bAttributes);
         public abstract Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, 
-            string drillholeInputData, bool bAttributes, string defaultValue);
+            string drillholeInputData, bool bAttributes, string defaultValue, bool bVertical);
 
     }
 
@@ -312,7 +312,7 @@ namespace Drillholes.FileDialog
         }
 
         public override async Task<bool> ExportContinuousTable(string outputName, string drillholeTableFile, string drillholeCollarFields, string drillholeContinuousFields, 
-            string drillholeInputData, bool bAttributes, string defaultValue)
+            string drillholeInputData, bool bAttributes, string defaultValue, bool bVertical)
         {
 
             XDocument xmlResults = XDocument.Load(drillholeTableFile);
@@ -362,22 +362,30 @@ namespace Drillholes.FileDialog
 
                 foreach (var field in optionalFields)
                 {
-                    if (field.Attribute("Name").Value != "Beta")
+                    if (bVertical)
                     {
-                        if (field.Attribute("Name").Value == "Alpha")
+                        header.Add(field.Attribute("Name").Value);
+                        attributes.Add(field.Attribute("Name").Value);
+                    }
+                    else
+                    {
+                        if (field.Attribute("Name").Value != "Beta")
                         {
-                            structures.Add(DrillholeConstants.CalculatedDip);
-                            structures.Add(DrillholeConstants.CalculatedAzim);
-                        }
-                        else if (field.Attribute("Name").Value == "Gamma")
-                        {
-                            structures.Add(DrillholeConstants.CalculatedPlunge);
-                            structures.Add(DrillholeConstants.CalculatedTrend);
-                        }
-                        else
-                        {
-                            header.Add(field.Attribute("Name").Value);
-                            attributes.Add(field.Attribute("Name").Value);
+                            if (field.Attribute("Name").Value == "Alpha")
+                            {
+                                structures.Add(DrillholeConstants.CalculatedDip);
+                                structures.Add(DrillholeConstants.CalculatedAzim);
+                            }
+                            else if (field.Attribute("Name").Value == "Gamma")
+                            {
+                                structures.Add(DrillholeConstants.CalculatedPlunge);
+                                structures.Add(DrillholeConstants.CalculatedTrend);
+                            }
+                            else
+                            {
+                                header.Add(field.Attribute("Name").Value);
+                                attributes.Add(field.Attribute("Name").Value);
+                            }
                         }
                     }
                 }
@@ -669,6 +677,8 @@ namespace Drillholes.FileDialog
             mandatorySurveyFields = xmlSurveyFields.Descendants(DrillholeConstants.drillholeFields).Descendants("TableType").Elements().Where(g => g.Element("GroupName").Value == "Mandatory Fields");
             string surveyHole = mandatorySurveyFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.holeID).Select(v => v.Attribute("Name").Value).FirstOrDefault();
             string distance = mandatorySurveyFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.distName).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string dip = mandatorySurveyFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.dipName).Select(v => v.Attribute("Name").Value).FirstOrDefault();
+            string azimuth = mandatorySurveyFields.Where(f => f.Element("ColumnImportAs").Value == DrillholeConstants.azimuthName).Select(v => v.Attribute("Name").Value).FirstOrDefault();
 
             List<string> header = new List<string>(); //need these for CSV header
             List<string> attributes = new List<string>(); //use to search input data based on option imported fields
@@ -680,6 +690,8 @@ namespace Drillholes.FileDialog
             header.Add(y);
             header.Add(z);
             header.Add(distance);
+            header.Add(dip);
+            header.Add(azimuth);
 
             if (bAttributes)
             {
@@ -731,6 +743,8 @@ namespace Drillholes.FileDialog
                     attributeRow.attributes.Add(coord.Element(y).Value);
                     attributeRow.attributes.Add(coord.Element(z).Value);
                     attributeRow.attributes.Add(coord.Element(distance).Value);
+                    attributeRow.attributes.Add(coord.Element(dip).Value);
+                    attributeRow.attributes.Add(coord.Element(azimuth).Value);
 
                     if (bAttributes)
                     {

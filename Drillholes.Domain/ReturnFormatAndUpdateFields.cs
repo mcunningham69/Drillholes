@@ -41,6 +41,8 @@ namespace Drillholes.Domain
                                                       keys = column.keys
                                                   }).FirstOrDefault();
 
+               
+
                 //take one to change and give to row that was previously assinged (i.e. reverse values)
                 ImportTableField queryFrom = tableData.Where(v => v.columnImportAs == changeTo).FirstOrDefault();
 
@@ -53,7 +55,11 @@ namespace Drillholes.Domain
                 string previousColumnImportName = "";
                 if (previousSelection == DrillholeConstants.notImported)
                 {
-                    previousColumnImportName = queryPrevious.columnHeader;
+                    if (queryPrevious != null)
+                        previousColumnImportName = queryPrevious.columnHeader;
+                    else
+                        previousColumnImportName = queryUpdate.columnImportName;
+
                 }
                 else
                 {

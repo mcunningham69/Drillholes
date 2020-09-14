@@ -91,9 +91,6 @@
     </Compile>
     <Compile Include="DisplaySummaryStatistics.cs" />
     <Compile Include="DisplayValidationMessages.cs" />
-    <Compile Include="Pages\StartPage.xaml.cs">
-      <DependentUpon>StartPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModel\ContinuousStatisticsView.cs" />
     <Compile Include="ViewModel\AssayStatisticsView.cs" />
     <Compile Include="ViewModel\AssayValidationView.cs" />
@@ -173,10 +170,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="GlassButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\StartPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

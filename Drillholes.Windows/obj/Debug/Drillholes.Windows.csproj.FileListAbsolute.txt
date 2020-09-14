@@ -75,7 +75,6 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialog
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeSummaryMessagesPage.g.cs
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeSummaryStatistics.g.cs
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeSummaryStatisticsPage.g.cs
-C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Pages\StartPage.g.cs
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\App.g.cs
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Drillholes.Windows_MarkupCompile.cache
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Drillholes.Windows_MarkupCompile.lref
@@ -87,7 +86,6 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialog
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeSummaryMessagesPage.baml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeSummaryStatistics.baml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Dialogs\DrillholeSummaryStatisticsPage.baml
-C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Pages\StartPage.baml
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Drillholes.Windows.g.resources
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Drillholes.Windows.Properties.Resources.resources
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Windows\obj\Debug\Drillholes.Windows.csproj.GenerateResource.cache

@@ -17,7 +17,7 @@ namespace Drillholes.CreateDrillholes
         public async Task<AssayDesurveyDto> CreateAssayDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields assayTableFields,
             ImportTableFields surveyTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales)
         {
-            DesurveyDrillhole assayHole = new DesurveyDrillhole(DrillholeDesurveyEnum.Tangential);
+            DesurveyDrillhole assayHole = new DesurveyDrillhole(desurveyType);
             var assayDesurvey = await assayHole.AssayDownholeTrace(collarTableFields, assayTableFields, surveyTableFields, drillholeVales, bToe, bCollar);
 
             if (assayDesurvey.Count > 0)
@@ -35,7 +35,7 @@ namespace Drillholes.CreateDrillholes
 
         public async Task<AssayDesurveyDto> CreateAssaySurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields assayTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales)
         {
-            DesurveyDrillhole assayHole = new DesurveyDrillhole(DrillholeDesurveyEnum.Tangential);
+            DesurveyDrillhole assayHole = new DesurveyDrillhole(desurveyType);
             var assayDesurvey = await assayHole.AssayCollarSurveyTrace(collarTableFields, assayTableFields, drillholeVales, bToe, bCollar);
 
             if (assayDesurvey.Count > 0)
@@ -109,7 +109,7 @@ namespace Drillholes.CreateDrillholes
         public async Task<ContinuousDesurveyDto> CreateContinuousDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields, ImportTableFields surveyTableFields, 
             bool bToe, bool bCollar, List<XElement> drillholeVales, bool bBottom)
         {
-            DesurveyDrillhole continuousHole = new DesurveyDrillhole(DrillholeDesurveyEnum.Tangential);
+            DesurveyDrillhole continuousHole = new DesurveyDrillhole(desurveyType);
             var continuousDesurvey = await continuousHole.ContinuousDownholeTrace(collarTableFields, contTableFields, surveyTableFields, drillholeVales, bToe, bCollar, bBottom);
 
             if (continuousDesurvey.Count > 0)
@@ -127,7 +127,7 @@ namespace Drillholes.CreateDrillholes
 
         public async Task<ContinuousDesurveyDto> CreateContinuousSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields contTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales, bool bBottom)
         {
-            DesurveyDrillhole continuousHole = new DesurveyDrillhole(DrillholeDesurveyEnum.Tangential);
+            DesurveyDrillhole continuousHole = new DesurveyDrillhole(desurveyType);
             var continuousDesurvey = await continuousHole.ContinuousCollarSurveyTrace(collarTableFields, contTableFields, drillholeVales, bToe, bCollar, bBottom);
 
             if (continuousDesurvey.Count > 0)
@@ -164,7 +164,7 @@ namespace Drillholes.CreateDrillholes
         public async Task<IntervalDesurveyDto> CreateIntervalDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields intervalTableFields, 
             ImportTableFields surveyTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales)
         {
-            DesurveyDrillhole intervalHole = new DesurveyDrillhole(DrillholeDesurveyEnum.Tangential);
+            DesurveyDrillhole intervalHole = new DesurveyDrillhole(desurveyType);
             var intervalDesurvey = await intervalHole.IntervalDownholeTrace(collarTableFields, intervalTableFields, surveyTableFields, drillholeVales, bToe, bCollar);
 
             if (intervalDesurvey.Count > 0)
@@ -182,7 +182,7 @@ namespace Drillholes.CreateDrillholes
 
         public async Task<IntervalDesurveyDto> CreateIntervalSurveyHole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields intervalTableFields, bool bToe, bool bCollar, List<XElement> drillholeVales)
         {
-            DesurveyDrillhole intervalHole = new DesurveyDrillhole(DrillholeDesurveyEnum.Tangential);
+            DesurveyDrillhole intervalHole = new DesurveyDrillhole(desurveyType);
             var intervalDesurvey = await intervalHole.IntervalCollarSurveyTrace(collarTableFields, intervalTableFields, drillholeVales, bToe, bCollar);
 
             if (intervalDesurvey.Count > 0)
@@ -217,7 +217,7 @@ namespace Drillholes.CreateDrillholes
 
         public async Task<SurveyDesurveyDto> CreateSurveyDownhole(DrillholeDesurveyEnum desurveyType, ImportTableFields collarTableFields, ImportTableFields surveyTableFields, bool bToe, bool bCollar, List<XElement> surveyValues)
         {
-            DesurveyDrillhole surveyHole = new DesurveyDrillhole(DrillholeDesurveyEnum.Tangential);
+            DesurveyDrillhole surveyHole = new DesurveyDrillhole(desurveyType);
             var surveyDesurvey = await surveyHole.SurveyDownholeTrace(collarTableFields, surveyTableFields, surveyValues);
 
             if (surveyDesurvey.Count > 0)

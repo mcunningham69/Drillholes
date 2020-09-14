@@ -11,6 +11,7 @@ namespace Drillholes.Domain.DTO
     public class AssayDesurveyDto : SurveyDesurveyDto
     {
         public ImportTableFields assayTableFields { get; set; }
+        public List<double> distFrom { get; set; }
         public List<double> distTo { get; set; }
         public List<bool> isAssay { get; set; }
         public List<int> assayId { get; set; }
@@ -20,6 +21,7 @@ namespace Drillholes.Domain.DTO
         {
             colId = new List<int>();
             bhid = new List<string>();
+            distSurvFrom = new List<double>();
             distFrom = new List<double>();
             distTo = new List<double>();
             length = new List<double>();
