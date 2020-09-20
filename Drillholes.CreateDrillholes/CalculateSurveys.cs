@@ -236,6 +236,7 @@ namespace Drillholes.CreateDrillholes
 
     public class DownholeSurveys
     {
+        public List<string>assayIDs { get; set; }
         public List<double> azimuth { get; set; }
         public List<double> dip { get; set; }
         public List<double>distance { get; set; }
@@ -249,6 +250,7 @@ namespace Drillholes.CreateDrillholes
             distance = new List<double>();
             distFrom = new List<double>();
             distTo = new List<double>();
+            assayIDs = new List<string>();
         }
     }
 

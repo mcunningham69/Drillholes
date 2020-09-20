@@ -17,4 +17,3 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillho
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csproj.CopyComplete
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.dll
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.pdb
-C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csprojAssemblyReference.cache
