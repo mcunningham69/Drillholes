@@ -275,12 +275,12 @@ namespace Drillholes.Windows.Dialogs
 
         private void btnReturn_Click(object sender, RoutedEventArgs e)
         {
-            if (this.NavigationService.CanGoBack)
-                this.NavigationService.GoBack();
-            else
-            {
-                MessageBox.Show("Sorry but no entries in back navigation history.", "Apologies", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            //if (this.NavigationService.CanGoBack)
+            //    this.NavigationService.GoBack();
+            //else
+            //{
+            //    MessageBox.Show("Sorry but no entries in back navigation history.", "Apologies", MessageBoxButton.OK, MessageBoxImage.Information);
+            //}
         }
     }
 }

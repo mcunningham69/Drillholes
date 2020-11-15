@@ -84,10 +84,13 @@ namespace Drillholes.FileDialog
 
                             for (int i = 0; i < collarTableDto.fields.Count; i++)
                             {
-                                string fieldName = collarTableDto.fields[i].Replace(" ", "_"); ;
+                                if (collarTableDto.fields[i] != "")
+                                {
+                                    string fieldName = collarTableDto.fields[i].Replace(" ", "_"); ;
 
-                                XElement mNode = new XElement(fieldName, rows[i].results);
-                                mFieldItems.Add(mNode);
+                                    XElement mNode = new XElement(fieldName, rows[i].results);
+                                    mFieldItems.Add(mNode);
+                                }
                             }
 
                             collarTableDto.xPreview.Add(mFieldItems);
@@ -262,7 +265,13 @@ namespace Drillholes.FileDialog
             if (bCSV)
                 delimiter = ',';
 
-            bool bExists = File.Exists(tableLocation + "\\" + tableName);
+            string fileNameToCheck = tableLocation + "\\" + tableName;
+
+            //E:\OneDrive - sonny-consulting.com\Projects\AusGold\Katanning\collar.csv
+
+           // bool bExists = File.Exists(tableLocation + "\\" + tableName);
+            bool bExists = File.Exists(fileNameToCheck);
+
 
             if (!bExists)
                 throw new Exception("File does not exist");
@@ -277,9 +286,12 @@ namespace Drillholes.FileDialog
                     //first row only for columns
                     foreach (string column in values)
                     {
-                        string columnMod = column.Replace(" ", "_");
+                        if (column != "")
+                        {
+                            string columnMod = column.Replace(" ", "_");
 
-                        collarFields.Add(columnMod);
+                            collarFields.Add(columnMod);
+                        }
 
                     }
                     break;
@@ -671,16 +683,19 @@ namespace Drillholes.FileDialog
 
                 for (int i = fieldIncrement; i < collarTableDto.fields.Count; i++)
                 {
-                    collarTableDto.tableData.Add(new ImportTableField
+                    if (collarTableDto.fields[i] != "")
                     {
-                        columnHeader = collarTableDto.fields[i],
-                        columnImportName = collarTableDto.fields[i],
-                        columnImportAs = DrillholeConstants.notImported,
-                        groupName = DrillholeConstants.GroupOtherFields,
-                        genericType = true,
-                        fieldType = "Text",
-                        keys = new KeyValuePair<bool, bool>(false, false)
-                    });
+                        collarTableDto.tableData.Add(new ImportTableField
+                        {
+                            columnHeader = collarTableDto.fields[i],
+                            columnImportName = collarTableDto.fields[i],
+                            columnImportAs = DrillholeConstants.notImported,
+                            groupName = DrillholeConstants.GroupOtherFields,
+                            genericType = true,
+                            fieldType = "Text",
+                            keys = new KeyValuePair<bool, bool>(false, false)
+                        });
+                    }
                 }
             }
 

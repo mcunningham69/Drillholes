@@ -17,3 +17,13 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillho
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csproj.CopyComplete
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.dll
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.pdb
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.Domain\bin\Debug\Drillholes.Domain.dll
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.Domain\bin\Debug\Drillholes.Domain.pdb
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.Domain\bin\Debug\AutoMapper.dll
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.Domain\bin\Debug\AutoMapper.pdb
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.Domain\bin\Debug\AutoMapper.xml
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csprojAssemblyReference.cache
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csproj.CoreCompileInputs.cache
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.csproj.CopyComplete
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.dll
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.Domain\obj\Debug\Drillholes.Domain.pdb

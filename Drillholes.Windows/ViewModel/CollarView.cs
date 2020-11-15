@@ -179,6 +179,7 @@ namespace Drillholes.Windows.ViewModel
 
             DrillholePreferences preferences = await _xmlService.ReadDrillholePreferences(fullPathnamePreferences, DrillholeConstants.drillholePref);
 
+            collarTableObject.surveyType = preferences.surveyType;
 
             return preferences;
         }

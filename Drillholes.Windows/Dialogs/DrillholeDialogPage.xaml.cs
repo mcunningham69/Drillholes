@@ -54,6 +54,8 @@ namespace Drillholes.Windows.Dialogs
             Startup();
             savedSession = false;
             xmlProjectFile = "";
+            projectLocation = "";
+            projectSession = "";
 
         }
 
@@ -301,7 +303,7 @@ namespace Drillholes.Windows.Dialogs
             {
                 await ManageXml();
 
-                NavigationService.Navigate(new DrillholeImportPage(importTables,savedSession,xmlProjectFile, projectSession, projectLocation));
+                NavigationService.Navigate(new DrillholeImportPage(importTables,savedSession,xmlProjectFile, projectSession, projectLocation, fullName));
 
             }
             catch (ImportFormatException ex)
@@ -368,7 +370,8 @@ namespace Drillholes.Windows.Dialogs
             // await _xmlService.DrillholeProjectProperties(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable, DrillholeTableType.other);
             //_xmlService.TableParameters(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeProject, DrillholeConstants.drillholeTable, DrillholeTableType.other);
 
-            _xmlService.TableParameters(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeProject, DrillholeTableType.other);
+            if (projectLocation != "")
+                _xmlService.TableParameters(projectLocation + "\\" + projectSession + ".dh", fullName, DrillholeConstants.drillholeProject, DrillholeTableType.other);
 
             return true;
         }
@@ -524,13 +527,20 @@ namespace Drillholes.Windows.Dialogs
             //string lithoName = "litho_ten.csv";
             //string distName = "distance_ten.csv";
 
-            string collarName = "collar_eis.csv";
-            string surveyName = "survey_eis.csv";
-            string assayName = "assay_eis.csv";
-            string lithoName = "geology_eis.csv";
-            string distName = "structure_eis.csv";
+            //string collarName = "collar_eis.csv";
+            //string surveyName = "survey_eis.csv";
+            //string assayName = "assay_eis.csv";
+            //string lithoName = "geology_eis.csv";
+            //string distName = "structure_eis.csv";
 
-            string path = @"C:\Users\mcunningham\source\Workspaces\projectdata\EIS";
+            string collarName = "collar.csv";
+            string surveyName = "survey.csv";
+            string assayName = "assay.csv";
+            string lithoName = "litho.csv";
+            string distName = "magsus.csv";
+
+            //string path = @"C:\Users\mcunningham\source\Workspaces\projectdata\EIS";
+            string path = @"E:\OneDrive - sonny-consulting.com\Projects\AusGold\Katanning";
           //  string path = @"C:\Users\mcunningham\source\Workspaces\projectdata\Pani_test";
             string collarLoc = path;
 

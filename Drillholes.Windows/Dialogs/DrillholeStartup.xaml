@@ -14,9 +14,9 @@
         
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="25"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="25"/>
+            <ColumnDefinition Width="15"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -304,7 +304,7 @@
 
         </Ribbon>
 
-        <StackPanel x:Name="stkLabel" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Visibility="Visible">
+        <StackPanel x:Name="stkLabel" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Width="Auto" Visibility="Visible" HorizontalAlignment="Stretch">
 
             <Frame Name="frameMain" Source="DrillholeDialogPage.xaml" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Width="Auto"  Visibility="Hidden" Navigated="frameMain_Navigated">
 
@@ -338,6 +338,7 @@
         </StackPanel>
 
         <Button Name="btnExit" Grid.Column="1" Grid.Row="1" Content="Close Application" Width="Auto" Height="30" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" IsCancel="True" Click="ExitForm"></Button>
+        <!--<Button Name="btnReturn" Grid.Column="1" Grid.Row="3" Width="Auto" Height="30" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" Content="Return to Main Import Page" Click="btnReturn_Click" Visibility="Hidden"/>-->
 
     </Grid>
 </RibbonWindow>

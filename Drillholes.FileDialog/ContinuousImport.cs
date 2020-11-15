@@ -113,11 +113,14 @@ namespace Drillholes.FileDialog
 
                             for (int i = 0; i < continuousTableDto.fields.Count; i++)
                             {
-                                string fieldName = continuousTableDto.fields[i].Replace(" ", "_");
+                                if (continuousTableDto.fields[i] != "")
+                                {
+                                    string fieldName = continuousTableDto.fields[i].Replace(" ", "_");
 
 
-                                XElement mNode = new XElement(fieldName, rows[i].results);
-                                mFieldItems.Add(mNode);
+                                    XElement mNode = new XElement(fieldName, rows[i].results);
+                                    mFieldItems.Add(mNode);
+                                }
                             }
 
                             continuousTableDto.xPreview.Add(mFieldItems);
@@ -280,9 +283,11 @@ namespace Drillholes.FileDialog
                     //first row only for columns
                     foreach (string column in values)
                     {
-                        string columnMod = column.Replace(" ", "_");
-                        continuousFields.Add(columnMod);
-
+                        if (column != "")
+                        {
+                            string columnMod = column.Replace(" ", "_");
+                            continuousFields.Add(columnMod);
+                        }
                     }
                     break;
                 }

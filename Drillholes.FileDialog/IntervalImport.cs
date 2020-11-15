@@ -113,9 +113,12 @@ namespace Drillholes.FileDialog
 
                             for (int i = 0; i < intervalTableDto.fields.Count; i++)
                             {
-                                string fieldName = intervalTableDto.fields[i].Replace(" ", "_");
-                                XElement mNode = new XElement(fieldName, rows[i].results);
-                                mFieldItems.Add(mNode);
+                                if (intervalTableDto.fields[i] != "")
+                                {
+                                    string fieldName = intervalTableDto.fields[i].Replace(" ", "_");
+                                    XElement mNode = new XElement(fieldName, rows[i].results);
+                                    mFieldItems.Add(mNode);
+                                }
                             }
 
                             intervalTableDto.xPreview.Add(mFieldItems);
@@ -291,8 +294,11 @@ namespace Drillholes.FileDialog
                     //first row only for columns
                     foreach (string column in values)
                     {
-                        string columnMod = column.Replace(" ", "_");
-                        intervalFields.Add(columnMod);
+                        if (column != "")
+                        {
+                            string columnMod = column.Replace(" ", "_");
+                            intervalFields.Add(columnMod);
+                        }
 
                     }
                     break;

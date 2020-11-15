@@ -207,7 +207,7 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Text="Table Name: " Grid.Column="0" Grid.Row="1" FontWeight="Bold"/>
+                                    <TextBox Text="Table Name: " Grid.Column="0" Grid.Row="1" FontWeight="Bold" IsReadOnly="True" TextWrapping="Wrap" Background="Transparent" BorderThickness="0" />
                                     <TextBlock Text="{Binding Path=tableName}"  Grid.Column="2" Grid.Row="1" />
                                     <TextBlock Text="Imported Path: " Grid.Column="0" Grid.Row="2" FontWeight="Bold"/>
                                     <TextBlock Text="{Binding Path=tableLocation}" Grid.Column="2" Grid.Row="2" />

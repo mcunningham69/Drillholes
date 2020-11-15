@@ -32,6 +32,7 @@ namespace Drillholes.Windows.Dialogs
         private string tableIntervalName { get; set; }
         private string tableContinuousLocation { get; set; }
         private string tableContinuousName { get; set; }
+        private string fullName { get; set; }
         DrillholeImportFormat collarTableFormat { get; set; }
         DrillholeImportFormat surveyTableFormat { get; set; }
         DrillholeImportFormat intervalTableFormat { get; set; }
@@ -73,7 +74,7 @@ namespace Drillholes.Windows.Dialogs
             InitializeComponent();
         }
 
-        public DrillholeImportPage(List<DrillholeTable> _classes, bool _savedSession, string _xmlProjectFile, string _projectSession, string _projectLocation)
+        public DrillholeImportPage(List<DrillholeTable> _classes, bool _savedSession, string _xmlProjectFile, string _projectSession, string _projectLocation, string _fullName)
         {
             InitializeComponent();
 
@@ -88,6 +89,7 @@ namespace Drillholes.Windows.Dialogs
             xmlProjectFile = _xmlProjectFile;
             projectSession = _projectSession;
             projectLocation = _projectLocation;
+            fullName = _fullName;
 
             var tabItems = _tabcontrol.Items;
 
@@ -426,7 +428,7 @@ namespace Drillholes.Windows.Dialogs
         private async Task<bool> LoadCollarTableAndFields(int nLimit)
         {
             //returns preferences on first read
-            CheckPreferencesFromXml();
+            await CheckPreferencesFromXml();
 
             await collarPreviewModel.RetrieveFieldsToMap(openSession); //on start, holeIDName set to empty string
 

@@ -118,10 +118,13 @@ namespace Drillholes.FileDialog
 
                             for (int i = 0; i < surveyTableDto.fields.Count; i++)
                             {
-                                string fieldName = surveyTableDto.fields[i].Replace(" ", "_");
+                                if (surveyTableDto.fields[i] != "")
+                                {
+                                    string fieldName = surveyTableDto.fields[i].Replace(" ", "_");
 
-                                XElement mNode = new XElement(fieldName, rows[i].results);
-                                mFieldItems.Add(mNode);
+                                    XElement mNode = new XElement(fieldName, rows[i].results);
+                                    mFieldItems.Add(mNode);
+                                }
                             }
 
                             surveyTableDto.xPreview.Add(mFieldItems);
@@ -299,9 +302,11 @@ namespace Drillholes.FileDialog
                     //first row only for columns
                     foreach (string column in values)
                     {
-                        string columnMod = column.Replace(" ", "_");
-                        surveyFields.Add(columnMod);
-
+                        if (column != "")
+                        {
+                            string columnMod = column.Replace(" ", "_");
+                            surveyFields.Add(columnMod);
+                        }
                     }
                     break;
                 }

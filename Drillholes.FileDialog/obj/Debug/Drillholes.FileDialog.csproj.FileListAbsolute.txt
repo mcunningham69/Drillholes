@@ -33,3 +33,15 @@ C:\Users\mcunningham\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Dri
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.csproj.CopyComplete
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.dll
 C:\Users\mcunningham\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.pdb
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\bin\Debug\Drillholes.FileDialog.dll
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\bin\Debug\Drillholes.FileDialog.pdb
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\bin\Debug\Drillholes.Domain.dll
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\bin\Debug\AutoMapper.dll
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\bin\Debug\Drillholes.Domain.pdb
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\bin\Debug\AutoMapper.pdb
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\bin\Debug\AutoMapper.xml
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.csprojAssemblyReference.cache
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.csproj.CoreCompileInputs.cache
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.csproj.CopyComplete
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.dll
+C:\Users\mjcunnin\source\repos\Drillholes\Drillholes.FileDialog\obj\Debug\Drillholes.FileDialog.pdb

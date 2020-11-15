@@ -93,8 +93,11 @@ namespace Drillholes.Windows.ViewModel
                 ImportTableField dipField = importFields.Where(o => o.columnImportName == DrillholeConstants.dipName).FirstOrDefault();
                 ImportTableField aziField = importFields.Where(o => o.columnImportName == DrillholeConstants.azimuthName).FirstOrDefault();
 
-                tempFields.Add(dipField);
-                tempFields.Add(aziField);
+                if (dipField != null)
+                    tempFields.Add(dipField);
+
+                if (aziField != null)
+                    tempFields.Add(aziField);
             }
 
             var summaryStatistics = await _collarStatisticsService.SummaryStatistics(statisticsMapper, tempFields,

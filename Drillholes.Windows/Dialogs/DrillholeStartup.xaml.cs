@@ -384,7 +384,7 @@ namespace Drillholes.Windows.Dialogs
                 {
                     if (_classes != null)
                     {
-                        DrillholeImportPage newPage = new DrillholeImportPage(_classes, true, projectFile, projectSession, projectLocation);
+                        DrillholeImportPage newPage = new DrillholeImportPage(_classes, true, projectFile, projectSession, projectLocation, fullName);
                         newPage.openSession = true;
 
                         frameMain.Navigate(newPage);
@@ -1335,6 +1335,11 @@ namespace Drillholes.Windows.Dialogs
 
             xmlName = "DesurveyMethod";
             UpdateXmlPreferences(value.ToString());
+
+        }
+
+        private void btnReturn_Click(object sender, RoutedEventArgs e)
+        {
 
         }
     }

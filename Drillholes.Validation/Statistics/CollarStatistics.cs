@@ -153,12 +153,26 @@ namespace Drillholes.Validation.Statistics
 
             if (d.Count > 0 && a.Count > 0)
             {
-                summaryStats.MinimumDip = Math.Round(d.Min(), 1).ToString();
-                summaryStats.AverageDip = Math.Round(d.Average(), 1).ToString();
-                summaryStats.MaximumDip = Math.Round(d.Max(), 1).ToString();
+                if (d.Average() < 0)
+                {
+                    summaryStats.MinimumDip = Math.Round(d.Max(), 1).ToString();
+                    summaryStats.MaximumDip = Math.Round(d.Min(), 1).ToString();
+                    summaryStats.AverageDip = Math.Round(d.Average(), 1).ToString();
+                }
+                else
+                {
+                    summaryStats.MinimumDip = Math.Round(d.Min(), 1).ToString();
+                    summaryStats.MinimumDip = Math.Round(d.Max(), 1).ToString();
+                    summaryStats.AverageDip = Math.Round(d.Average(), 1).ToString();
+                }
+
+
+               // summaryStats.MaximumDip = Math.Round(d.Max(), 1).ToString();
                 summaryStats.MinimumAzi = Math.Round(a.Min(), 1).ToString();
                 summaryStats.AverageAzi = Math.Round(a.Average(), 1).ToString();
                 summaryStats.MaximumAzi = Math.Round(a.Max(), 1).ToString();
+
+                
             }
             else
             {
